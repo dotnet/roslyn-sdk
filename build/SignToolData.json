@@ -1,0 +1,16 @@
+{
+  "sign": [
+    {
+      "certificate": "MicrosoftSHA2",
+      "strongName": "MsSharedLib72",
+      "values": [
+      ]
+    },
+    {
+      "certificate": "VsixSHA2",
+      "strongName": null,
+      "values": [
+      ]
+    }
+  ]
+}
