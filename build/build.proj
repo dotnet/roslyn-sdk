@@ -16,7 +16,7 @@
       Properties        List of properties to pass to each build phase ("Name=Value;Name=Value;...")
   -->
   <PropertyGroup>
-    <SolutionPath Condition="'$(SolutionPath)' == ''">$(MSBuildThisFileDirectory)..\ProjectSystemTools.sln</SolutionPath>
+    <SolutionPath Condition="'$(SolutionPath)' == ''">$(MSBuildThisFileDirectory)..\Roslyn-SDK.sln</SolutionPath>
   </PropertyGroup>
 
   <Import Project="..\Directory.build.props"/>
