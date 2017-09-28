@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Shell;
@@ -18,9 +18,8 @@ namespace Roslyn.SyntaxVisualizer.Extension
 
             if (vsTextView != null)
             {
-                object textViewHost;
-                Guid guidTextViewHost = DefGuidList.guidIWpfTextViewHost;
-                if (((IVsUserData)vsTextView).GetData(ref guidTextViewHost, out textViewHost) == VSConstants.S_OK && 
+                var guidTextViewHost = DefGuidList.guidIWpfTextViewHost;
+                if (((IVsUserData)vsTextView).GetData(ref guidTextViewHost, out var textViewHost) == VSConstants.S_OK && 
                     textViewHost != null)
                 {
                     wpfTextView = ((IWpfTextViewHost)textViewHost).TextView;

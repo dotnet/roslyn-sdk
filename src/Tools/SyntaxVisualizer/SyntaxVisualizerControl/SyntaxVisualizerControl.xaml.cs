@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Windows;
 using System.Windows.Controls;
@@ -64,12 +64,14 @@ namespace Roslyn.SyntaxVisualizer.Control
         {
             InitializeComponent();
 
-            _propertyGrid = new System.Windows.Forms.PropertyGrid();
-            _propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            _propertyGrid.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
-            _propertyGrid.HelpVisible = false;
-            _propertyGrid.ToolbarVisible = false;
-            _propertyGrid.CommandsVisibleIfAvailable = false;
+            _propertyGrid = new System.Windows.Forms.PropertyGrid
+            {
+                Dock = System.Windows.Forms.DockStyle.Fill,
+                PropertySort = System.Windows.Forms.PropertySort.Alphabetical,
+                HelpVisible = false,
+                ToolbarVisible = false,
+                CommandsVisibleIfAvailable = false
+            };
             windowsFormsHost.Child = _propertyGrid;
         }
 
@@ -234,7 +236,7 @@ namespace Roslyn.SyntaxVisualizer.Control
 
             if (current != null)
             {
-                SyntaxTag currentTag = (SyntaxTag)current.Tag;
+                var currentTag = (SyntaxTag)current.Tag;
                 if (currentTag.FullSpan.Contains(position))
                 {
                     CollapseEverythingBut(current);
@@ -267,7 +269,7 @@ namespace Roslyn.SyntaxVisualizer.Control
 
             if (current != null)
             {
-                SyntaxTag currentTag = (SyntaxTag)current.Tag;
+                var currentTag = (SyntaxTag)current.Tag;
                 if (currentTag.FullSpan.Contains(span))
                 {
                     if ((currentTag.Span == span || currentTag.FullSpan == span) && (kind == null || currentTag.Kind == kind))
