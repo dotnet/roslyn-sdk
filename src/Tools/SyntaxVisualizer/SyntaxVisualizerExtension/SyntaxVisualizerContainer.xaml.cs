@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -12,7 +12,6 @@ using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text.Editor;
-using Roslyn.SyntaxVisualizer.DgmlHelper;
 
 namespace Roslyn.SyntaxVisualizer.Extension
 {
@@ -40,10 +39,9 @@ namespace Roslyn.SyntaxVisualizer.Extension
             var shellService = GetService<IVsShell, SVsShell>(GlobalServiceProvider);
             if (shellService != null)
             {
-                int canDisplayDirectedSyntaxGraph;
 
                 // Only enable this feature if the Visual Studio package for DGML is installed.
-                shellService.IsPackageInstalled(GuidList.GuidProgressionPkg, out canDisplayDirectedSyntaxGraph);
+                shellService.IsPackageInstalled(GuidList.GuidProgressionPkg, out var canDisplayDirectedSyntaxGraph);
                 if (Convert.ToBoolean(canDisplayDirectedSyntaxGraph))
                 {
                     syntaxVisualizer.SyntaxNodeDirectedGraphRequested += DisplaySyntaxNodeDgml;
@@ -266,8 +264,10 @@ namespace Roslyn.SyntaxVisualizer.Extension
         {
             if (typingTimer == null)
             {
-                typingTimer = new DispatcherTimer();
-                typingTimer.Interval = typingTimerTimeout;
+                typingTimer = new DispatcherTimer
+                {
+                    Interval = typingTimerTimeout
+                };
                 typingTimer.Tick += HandleTypingTimerTimeout;
             }
 
@@ -384,11 +384,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
 
         private void DisplayDgml(XElement dgml)
         {
-            uint docItemId, cookie;
-            IVsUIHierarchy docUIHierarchy;
-            IVsWindowFrame docWindowFrame;
-            IVsHierarchy docHierarchy;
-            IntPtr docDataIUnknownPointer;
+            uint cookie;
             const int TRUE = -1;
 
             if (string.IsNullOrWhiteSpace(dgmlFilePath))
@@ -405,22 +401,21 @@ namespace Roslyn.SyntaxVisualizer.Extension
             // this new graph into the already open view of the file.
             if (VsShellUtilities.IsDocumentOpen(
                 ServiceProvider.GlobalProvider, dgmlFilePath, GuidList.GuidVsDesignerViewKind,
-                out docUIHierarchy, out docItemId, out docWindowFrame) && docWindowFrame != null)
+                out var docUIHierarchy, out var docItemId, out var docWindowFrame) && docWindowFrame != null)
             {
                 if (RunningDocumentTable.FindAndLockDocument((uint)_VSRDTFLAGS.RDT_NoLock, dgmlFilePath,
-                                                             out docHierarchy, out docItemId,
-                                                             out docDataIUnknownPointer,
+                                                             out var docHierarchy, out docItemId,
+                                                             out var docDataIUnknownPointer,
                                                              out cookie) == VSConstants.S_OK)
                 {
-                    IntPtr persistDocDataServicePointer;
                     var persistDocDataServiceGuid = typeof(IVsPersistDocData).GUID;
 
                     if (Marshal.QueryInterface(docDataIUnknownPointer, ref persistDocDataServiceGuid,
-                                               out persistDocDataServicePointer) == 0)
+                                               out var persistDocDataServicePointer) == 0)
                     {
                         try
                         {
-                            IVsPersistDocData persistDocDataService =
+                            var persistDocDataService =
                                 (IVsPersistDocData)Marshal.GetObjectForIUnknown(persistDocDataServicePointer);
 
                             if (persistDocDataService != null)
