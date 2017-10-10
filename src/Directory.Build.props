@@ -4,6 +4,11 @@
 
   <Import Project="$(RepoToolsetDir)Settings.props" />
 
+  <PropertyGroup>
+    <VisualStudioSetupOutputPath>$(ArtifactsConfigurationDir)VSIX\</VisualStudioSetupOutputPath>
+    <VisualStudioSetupIntermediateOutputPath>$(ArtifactsConfigurationDir)VSIX.obj\</VisualStudioSetupIntermediateOutputPath>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
