@@ -9,7 +9,6 @@
     <DefaultName>Analyzer</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <Icon>CodeInformation.ico</Icon>
-    <RequiredFrameworkVersion>4.6</RequiredFrameworkVersion>
   </TemplateData>
   <TemplateContent>
     <!-- These projects are created in the order they are listed. 

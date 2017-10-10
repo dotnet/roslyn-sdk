@@ -12,7 +12,6 @@
     <LocationField>Enabled</LocationField>
     <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
     <Icon>CodeInformation.ico</Icon>
-    <RequiredFrameworkVersion>4.6</RequiredFrameworkVersion>
     <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
   </TemplateData>
   <TemplateContent>
