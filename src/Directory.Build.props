@@ -5,8 +5,8 @@
   <Import Project="$(RepoToolsetDir)Settings.props" />
 
   <PropertyGroup>
-    <VisualStudioSetupOutputPath>$(ArtifactsConfigurationDir)VSIX\</VisualStudioSetupOutputPath>
-    <VisualStudioSetupIntermediateOutputPath>$(ArtifactsConfigurationDir)VSIX.obj\</VisualStudioSetupIntermediateOutputPath>
+    <VisualStudioSetupOutputPath>$(ArtifactsConfigurationDir)vsixes\</VisualStudioSetupOutputPath>
+    <VisualStudioSetupIntermediateOutputPath>$(ArtifactsConfigurationDir)obj\</VisualStudioSetupIntermediateOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
