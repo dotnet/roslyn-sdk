@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>Roslyn.SDK.VS2015</RootNamespace>
-    <AssemblyName>Roslyn.Templates</AssemblyName>
+    <AssemblyName>Roslyn.SDK.VS2015</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
