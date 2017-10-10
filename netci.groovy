@@ -10,7 +10,6 @@ static addArchival(def job, def configName) {
   archivalSettings.addFiles("**/artifacts/**")
   archivalSettings.excludeFiles("**/artifacts/${configName}/obj/**")
   archivalSettings.excludeFiles("**/artifacts/${configName}/tmp/**")
-  archivalSettings.excludeFiles("**/artifacts/${configName}/VSSetup.obj/**")
   archivalSettings.setFailIfNothingArchived()
   archivalSettings.setArchiveOnFailure()
 
