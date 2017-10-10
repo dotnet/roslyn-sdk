@@ -108,7 +108,9 @@
   </ItemGroup>
   <!-- Project References to Include In VSIX -->
   <ItemGroup>
-    <ProjectReference Include="..\..\Tools\RoslynSDKTemplateWizard\RoslynSDKTemplateWizard.csproj" />
+    <ProjectReference Include="..\..\Tools\RoslynSDKTemplateWizard\RoslynSDKTemplateWizard.csproj">
+      <Name>RoslynSDKTemplateWizard</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Tools\SyntaxVisualizer\SyntaxVisualizerControl\SyntaxVisualizerControl.csproj" />
     <ProjectReference Include="..\..\Tools\SyntaxVisualizer\SyntaxVisualizerDgmlHelper\SyntaxVisualizerDgmlHelper.vbproj" />
     <ProjectReference Include="..\..\Tools\SyntaxVisualizer\SyntaxVisualizerExtension\SyntaxVisualizerExtension.csproj">
@@ -184,9 +186,7 @@
     <ItemGroup>
       <_OriginalVSTemplate Include="@(VSTemplate)" />
     </ItemGroup>
-    <UpdateTemplateVersion VSTemplatesToRewrite="@(VSTemplate)" 
-                                 AssemblyVersion="$(AssemblyVersion)"
-                                 IntermediatePath="ModifiedTemplates">
+    <UpdateTemplateVersion VSTemplatesToRewrite="@(VSTemplate)" AssemblyVersion="$(AssemblyVersion)" IntermediatePath="ModifiedTemplates">
       <Output TaskParameter="NewVSTemplates" ItemName="VSTemplate" />
     </UpdateTemplateVersion>
     <ItemGroup>
