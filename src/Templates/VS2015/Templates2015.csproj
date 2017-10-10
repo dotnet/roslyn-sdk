@@ -2,10 +2,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-    <RootNamespace>Roslyn.RoslynSDK.Extension</RootNamespace>
-    <AssemblyName>Roslyn.RoslynSDK.Extension</AssemblyName>
+    <RootNamespace>Roslyn.SDK.VS2015</RootNamespace>
+    <AssemblyName>Roslyn.SDK.VS2015</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsProductComponent>false</IsProductComponent>
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <EnableDefaultItems>false</EnableDefaultItems>
     <!-- VSIX -->
     <ExtensionInstallationRoot>CommonExtensions</ExtensionInstallationRoot>
     <ExtensionInstallationFolder>Microsoft\RoslynSDK</ExtensionInstallationFolder>
@@ -179,7 +181,7 @@
       <VSIXSourceItem Include="$(NuGetPackageRoot)\Microsoft.CodeAnalysis.CSharp\$(MicrosoftCodeAnalysisCSharpVersionVS2015)\Microsoft.CodeAnalysis.CSharp.$(MicrosoftCodeAnalysisCSharpVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)\Microsoft.CodeAnalysis.VisualBasic.Workspaces\$(MicrosoftCodeAnalysisVisualBasicWorkspaceVersionVS2015)\Microsoft.CodeAnalysis.VisualBasic.Workspaces.$(MicrosoftCodeAnalysisVisualBasicWorkspaceVersionVS2015).nupkg">
+      <VSIXSourceItem Include="$(NuGetPackageRoot)\Microsoft.CodeAnalysis.VisualBasic.Workspaces\$(MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015)\Microsoft.CodeAnalysis.VisualBasic.Workspaces.$(MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
       <VSIXSourceItem Include="$(NuGetPackageRoot)\Microsoft.CodeAnalysis.VisualBasic\$(MicrosoftCodeAnalysisVisualBasicVersionVS2015)\Microsoft.CodeAnalysis.VisualBasic.$(MicrosoftCodeAnalysisVisualBasicVersionVS2015).nupkg">
