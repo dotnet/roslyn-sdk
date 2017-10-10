@@ -15,17 +15,23 @@
     <MicrosoftBuildEngineVersion>15.3.409</MicrosoftBuildEngineVersion>
     <MicrosoftBuildFrameworkVersion>15.3.409</MicrosoftBuildFrameworkVersion>
     
-    <!-- Roslyn -->
-    <MicrosoftCodeAnalysisAnalyzersVersion>1.1.0</MicrosoftCodeAnalysisAnalyzersVersion>
-    <MicrosoftCodeAnalysisCommonVersion>1.0.1</MicrosoftCodeAnalysisCommonVersion>
-    <MicrosoftCodeAnalysisCSharpVersion>1.0.1</MicrosoftCodeAnalysisCSharpVersion>
-    <MicrosoftCodeAnalysisCSharpWorkspacesVersion>1.0.1</MicrosoftCodeAnalysisCSharpWorkspacesVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesTextVersion>1.0.1</MicrosoftCodeAnalysisEditorFeaturesTextVersion>
-    <MicrosoftCodeAnalysisWorkspacesCommonVersion>1.0.1</MicrosoftCodeAnalysisWorkspacesCommonVersion>
-    <MicrosoftCodeAnalysisCSharpVersion>1.0.1</MicrosoftCodeAnalysisCSharpVersion>
-    <MicrosoftCodeAnalysisVisualBasicVersion>1.0.1</MicrosoftCodeAnalysisVisualBasicVersion>
+    <!-- Roslyn Templates for VS 2015 -->
+    <MicrosoftCodeAnalysisAnalyzersVersionVS2015>1.1.0</MicrosoftCodeAnalysisAnalyzersVersionVS2015>
+    <MicrosoftCodeAnalysisCommonVersionVS2015>1.0.1</MicrosoftCodeAnalysisCommonVersionVS2015>
+    <MicrosoftCodeAnalysisCSharpVersionVS2015>1.0.1</MicrosoftCodeAnalysisCSharpVersionVS2015>
+    <MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015>1.0.1</MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015>
+    <MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015>1.0.1</MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015>
+    <MicrosoftCodeAnalysisVisualBasicVersionVS2015>1.0.1</MicrosoftCodeAnalysisVisualBasicVersionVS2015>
+    <MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015>1.0.1</MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015>
+    <MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015>1.0.1</MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015>
+    <NuGetCommandLineVersionVS2015>2.8.5</NuGetCommandLineVersionVS2015>
+    <SystemCollectionsImmutableVersionVS2015>1.1.36</SystemCollectionsImmutableVersionVS2015>
+    <SystemCompositionVersionVS2015>1.0.31</SystemCompositionVersionVS2015>
+    <SystemReflectionMetadataVersionVS2015>1.0.21</SystemReflectionMetadataVersionVS2015>
 
     <!-- VS SDK -->
+    <VSLangProjVersion>7.0.3300</VSLangProjVersion>
+    <VSSDKTemplateWizardInterfaceVersion>12.0.4</VSSDKTemplateWizardInterfaceVersion>
     <EnvDTEVersion>8.0.1</EnvDTEVersion>
     <EnvDTE80Version>8.0.0</EnvDTE80Version>
     <MicrosoftVisualStudioComponentModelHostVersion>15.0.26606</MicrosoftVisualStudioComponentModelHostVersion>
