@@ -1,0 +1,115 @@
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <RootNamespace>Roslyn.SDK.VS2017</RootNamespace>
+    <AssemblyName>Roslyn.SDK.VS2017</AssemblyName>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <IsProductComponent>false</IsProductComponent>
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <!-- VSIX -->
+    <ExtensionInstallationRoot>CommonExtensions</ExtensionInstallationRoot>
+    <ExtensionInstallationFolder>Microsoft\RoslynSDK\2017</ExtensionInstallationFolder>
+    <VisualStudioInsertionComponent>RoslynSDK.2017</VisualStudioInsertionComponent>
+  </PropertyGroup>
+  <!-- Template Wizard Code -->
+  <ItemGroup>
+    <Compile Include="Wizard\*.cs" />
+  </ItemGroup>
+  <!-- Package References -->
+  <ItemGroup>
+    <PackageReference Include="EnvDTE" Version="$(EnvDTEVersion)" />
+    <PackageReference Include="EnvDTE80" Version="$(EnvDTE80Version)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Text" Version="$(MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015)" />
+    <PackageReference Include="Microsoft.VisualStudio.ComponentModelHost" Version="$(MicrosoftVisualStudioComponentModelHostVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.CoreUtility" Version="$(MicrosoftVisualStudioCoreUtilityVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Editor" Version="$(MicrosoftVisualStudioEditorVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Version="$(MicrosoftVisualStudioOLEInteropVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.14.0" Version="$(MicrosoftVisualStudioShell140Version)" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="$(MicrosoftVisualStudioShellInteropVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.8.0" Version="$(MicrosoftVisualStudioShellInterop80Version)" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.9.0" Version="$(MicrosoftVisualStudioShellInterop90Version)" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.10.0" Version="$(MicrosoftVisualStudioShellInterop100Version)" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.Data" Version="$(MicrosoftVisualStudioTextDataVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.Logic" Version="$(MicrosoftVisualStudioTextLogicVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.UI" Version="$(MicrosoftVisualStudioTextUIVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.TextManager.Interop" Version="$(MicrosoftVisualStudioTextManagerInteropVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="$(MicrosoftVisualStudioThreadingVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="$(MicrosoftVisualStudioUtilitiesVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="$(MicrosoftVisualStudioUtilitiesVersion)" />
+    <PackageReference Include="VSLangProj" Version="$(VSLangProjVersion)" />
+    <PackageReference Include="VSSDK.TemplateWizardInterface" Version="$(VSSDKTemplateWizardInterfaceVersion)" />
+  </ItemGroup>
+  <!-- Setting Template Content to None -->
+  <ItemGroup>
+    <None Include="ProjectTemplates\CSharp\**\*.cs" />
+    <None Include="ProjectTemplates\CSharp\**\*.csproj" />
+    <None Include="ProjectTemplates\**\*.vsixmanifest" />
+    <None Include="ProjectTemplates\**\CodeRefactoring\**\*.vstemplate" />
+    <None Include="ProjectTemplates\**\Diagnostic\**\*.vstemplate" />
+    <None Include="ProjectTemplates\**\ConsoleApplication\**\*.vstemplate" />
+    <None Include="*.vstemplate" />
+  </ItemGroup>
+  <!-- C# Project Templates -->
+  <ItemGroup>
+    <VSTemplate Include="CSRef.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+    <VSTemplate Include="CSharpDiagnostic.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+    <VSTemplate Include="ProjectTemplates\CSharp\ConsoleApplication\CSharpConsoleApplication.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+  </ItemGroup>
+  <!-- Content to Include in VSIX -->
+  <ItemGroup>
+    <Content Include="..\..\Tools\SyntaxVisualizer\SyntaxVisualizerExtension\SyntaxTree.bmp">
+      <Link>SyntaxTree.bmp</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\Tools\SyntaxVisualizer\SyntaxVisualizerExtension\SyntaxTree.ico">
+      <Link>SyntaxTree.ico</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\ThirdPartyNotices.rtf">
+      <Link>ThirdPartyNotices.rtf</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\EULA.rtf">
+      <Link>EULA.rtf</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+  <!-- Project References to Include In VSIX -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\Tools\SyntaxVisualizer\SyntaxVisualizerControl\SyntaxVisualizerControl.csproj" />
+    <ProjectReference Include="..\..\Tools\SyntaxVisualizer\SyntaxVisualizerDgmlHelper\SyntaxVisualizerDgmlHelper.vbproj" />
+    <ProjectReference Include="..\..\Tools\SyntaxVisualizer\SyntaxVisualizerExtension\SyntaxVisualizerExtension.csproj">
+      <Name>SyntaxVisualizerExtension</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bGetCopyToOutputDirectoryItems%3bPkgdefProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+      <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
+    </ProjectReference>
+  </ItemGroup>
+  <!-- rewriting of .vstemplate files to reference the correct assembly version number -->
+  <UsingTask AssemblyFile="$(ArtifactsBinDir)UpdateTemplateVersion\net461\UpdateTemplateVersion.dll" TaskName="UpdateTemplateVersion" />
+  <Target Name="UpdateAssemblyVersionInTemplates" BeforeTargets="GetZipFilesFromVSTemplates">
+    <ItemGroup>
+      <_OriginalVSTemplate Include="@(VSTemplate)" />
+    </ItemGroup>
+    <UpdateTemplateVersion VSTemplatesToRewrite="@(VSTemplate)" 
+                                 AssemblyVersion="$(AssemblyVersion)"
+                                 IntermediatePath="ModifiedTemplates">
+      <Output TaskParameter="NewVSTemplates" ItemName="VSTemplate" />
+    </UpdateTemplateVersion>
+    <ItemGroup>
+      <VSTemplate Remove="@(_OriginalVSTemplate)" />
+    </ItemGroup>
+  </Target>
+</Project>

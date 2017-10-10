@@ -26,6 +26,7 @@ bld/
 
 # ignore templates modified by build output
 src/Templates/VS2015/ModifiedTemplates
+src/Templates/VS2017/ModifiedTemplates
 
 # Visual Studio 2015 cache/options directory
 .vs/
