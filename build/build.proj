@@ -27,6 +27,13 @@
              Properties="BaseIntermediateOutputPath=$(MSBuildThisFileDirectory)..\artifacts\toolset\;ExcludeRestorePackageImports=true;DeployDeps=$(DeployDeps)" 
              Condition="'$(Restore)' == 'true'"/>
 
+    <MSBuild Projects="Tasks\UpdateTemplateVersion\UpdateTemplateVersion.vbproj" 
+             Targets="Restore"
+             Condition="'$(Restore)' == 'true'"/>
+
+    <MSBuild Projects="Tasks\UpdateTemplateVersion\UpdateTemplateVersion.vbproj" 
+             Properties="SolutionPath=$(SolutionPath);Configuration=$(Configuration);CIBuild=$(CIBuild);Restore=$(Restore);Build=$(Build);Rebuild=$(Rebuild);Deploy=$(Deploy);Test=$(Test);IntegrationTest=$(IntegrationTest);Sign=$(Sign);Pack=$(Pack);Properties=$(Properties)" />
+
     <MSBuild Projects="$(RepoToolsetDir)Build.proj" 
              Properties="SolutionPath=$(SolutionPath);Configuration=$(Configuration);CIBuild=$(CIBuild);Restore=$(Restore);Build=$(Build);Rebuild=$(Rebuild);Deploy=$(Deploy);Test=$(Test);IntegrationTest=$(IntegrationTest);Sign=$(Sign);Pack=$(Pack);Properties=$(Properties)" />
   </Target>
