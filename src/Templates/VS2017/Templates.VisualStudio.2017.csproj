@@ -24,6 +24,36 @@
     <None Include="ProjectTemplates\**\ConsoleApplication\**\*.vstemplate" />
     <None Include="*.vstemplate" />
   </ItemGroup>
+  <!-- C# Item Templates -->
+  <ItemGroup>
+    <VSTemplate Include="ItemTemplates\CSharp\Analyzer\CSharpAnalyzer.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+    <VSTemplate Include="ItemTemplates\CSharp\CodeFix\CSharpCodeFix.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+    <VSTemplate Include="ItemTemplates\CSharp\Refactoring\CSharpRefactoring.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+  </ItemGroup>
+  <!-- Visual Basic Item Templates -->
+  <ItemGroup>
+    <VSTemplate Include="ItemTemplates\VisualBasic\Refactoring\VBRefactoring.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+    <VSTemplate Include="ItemTemplates\VisualBasic\CodeFix\VBCodeFix.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+    <VSTemplate Include="ItemTemplates\VisualBasic\Analyzer\VBAnalyzer.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+  </ItemGroup>
   <!-- C# Project Templates -->
   <ItemGroup>
     <VSTemplate Include="CSRef.vstemplate">
