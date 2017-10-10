@@ -19,4 +19,8 @@
       <ProjectItem ReplaceParameters="true" TargetFileName="$saferootidentifiername$CodeRefactoringProvider.cs" OpenInEditor="true">CodeRefactoringProvider.cs</ProjectItem>
     </Project>
   </TemplateContent>
+  <WizardExtension>
+    <Assembly>Roslyn.SDK.Template.Wizard, Version=$(AssemblyVersion), Culture=neutral, PublicKeyToken=31bf3856ad364e35</Assembly>
+    <FullClassName>RoslynSDKAnalyzerTemplateWizard</FullClassName>
+  </WizardExtension>
 </VSTemplate>
