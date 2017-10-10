@@ -8,7 +8,7 @@
     <Tags>roslyn,template,SDK</Tags>
   </Metadata>
   <Installation InstalledByMsi="false">
-    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[14.0,15.3]" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[14.0,15.4]" />
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
@@ -27,7 +27,7 @@
     <Asset Type="Microsoft.VisualStudio.ItemTemplate" Path="VBAnalyzer"/>
     <Asset Type="Microsoft.VisualStudio.ItemTemplate" Path="VBCodeFix"/>
     <Asset Type="Microsoft.VisualStudio.ItemTemplate" Path="VBRefactoring"/>
-    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" AssemblyName="|%CurrentProject%;AssemblyName|" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="SyntaxVisualizerExtension" Path="|SyntaxVisualizerExtension|" AssemblyName="|SyntaxVisualizerExtension;AssemblyName|" />
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="SyntaxVisualizerExtension" Path="|SyntaxVisualizerExtension;PkgdefProjectOutputGroup|" />
   </Assets>
   <Prerequisites>
