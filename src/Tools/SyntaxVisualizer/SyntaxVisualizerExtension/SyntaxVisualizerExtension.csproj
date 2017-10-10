@@ -83,4 +83,15 @@
       <SubType>Designer</SubType>
     </VSCTCompile>
   </ItemGroup>
+  <ItemGroup>
+    <FilesToMove Include="**\*.bmp"/>
+    <FilesToMove Include="**\*.ico"/>
+  </ItemGroup>
+
+  <Target Name="Move_Assets" BeforeTargets="BeforeBuild">
+    <Copy
+        SourceFiles="@(FilesToMove)"
+        DestinationFolder="$(ArtifactsObjDir)SyntaxVisualizerExtension\net461\SyntaxVisualizerExtension.xlf"
+    />
+  </Target>
 </Project>
