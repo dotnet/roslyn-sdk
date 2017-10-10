@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>Roslyn.SDK.VS2015</RootNamespace>
-    <AssemblyName>Roslyn.SDK.VS2015</AssemblyName>
+    <AssemblyName>Roslyn.Templates</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
@@ -15,7 +15,7 @@
   </PropertyGroup>
   <!-- Template Wizard Code -->
   <ItemGroup>
-    <Code Include="Wizard\*.cs" />
+    <Compile Include="Wizard\*.cs" />
   </ItemGroup>
   <!-- Package References -->
   <ItemGroup>
@@ -53,6 +53,8 @@
     <None Include="ProjectTemplates\**\*.vsixmanifest" />
     <None Include="ProjectTemplates\**\CodeRefactoring\**\*.vstemplate" />
     <None Include="ProjectTemplates\**\Diagnostic\**\*.vstemplate" />
+    <None Include="ProjectTemplates\**\ConsoleApplication\**\*.vstemplate" />
+    <None Include="*.vstemplate" />
   </ItemGroup>
   <!-- C# Item Templates -->
   <ItemGroup>
