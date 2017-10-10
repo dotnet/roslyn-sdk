@@ -7,6 +7,7 @@
     <IsProductComponent>false</IsProductComponent>
 
     <!-- VSIX -->
+    <CreateVsixContainer>false</CreateVsixContainer>
     <ExtensionInstallationRoot>CommonExtensions</ExtensionInstallationRoot>
     <ExtensionInstallationFolder>Microsoft\SyntaxVisualizer</ExtensionInstallationFolder>
     <VisualStudioInsertionComponent>Roslyn.SyntaxVisualizer.Extension</VisualStudioInsertionComponent>
