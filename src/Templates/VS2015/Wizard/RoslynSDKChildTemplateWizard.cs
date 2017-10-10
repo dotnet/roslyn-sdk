@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using EnvDTE;
 using Microsoft.VisualStudio.TemplateWizard;
 
@@ -13,14 +9,12 @@ public partial class RoslynSDKChildTemplateWizard
     private void OnRunStarted(DTE dTE, Dictionary<string, string> replacementsDictionary, WizardRunKind runKind, object[] customParams)
     {
         // Add the root project name to the projects replacement dictionary
-        string safeRootProjectName;
-        if (RoslynSDKRootTemplateWizard.GlobalDictionary.TryGetValue("$saferootprojectname$", out safeRootProjectName))
+        if (RoslynSDKRootTemplateWizard.GlobalDictionary.TryGetValue("$saferootprojectname$", out var safeRootProjectName))
         {
             replacementsDictionary.Add("$saferootprojectname$", safeRootProjectName);
         }
 
-        string saferootidentifiername;
-        if (RoslynSDKRootTemplateWizard.GlobalDictionary.TryGetValue("$saferootidentifiername$", out saferootidentifiername))
+        if (RoslynSDKRootTemplateWizard.GlobalDictionary.TryGetValue("$saferootidentifiername$", out var saferootidentifiername))
         {
             replacementsDictionary.Add("$saferootidentifiername$", saferootidentifiername);
         }
