@@ -8,6 +8,7 @@
     <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <EnableDefaultItems>false</EnableDefaultItems>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
     <!-- VSIX -->
     <ExtensionInstallationRoot>CommonExtensions</ExtensionInstallationRoot>
     <ExtensionInstallationFolder>Microsoft\RoslynSDK\2017</ExtensionInstallationFolder>
