@@ -8,7 +8,7 @@
     <Tags>roslyn,template,SDK</Tags>
   </Metadata>
   <Installation InstalledByMsi="false">
-    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[15.5,)" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[15.0.27009,)" />
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
