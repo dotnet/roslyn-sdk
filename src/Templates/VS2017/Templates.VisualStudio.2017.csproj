@@ -9,8 +9,6 @@
     <EnableDefaultItems>false</EnableDefaultItems>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
     <!-- Visual Studio Setup Authoring -->
-    <IsProductComponent>true</IsProductComponent>
-    <PackageId>Roslyn.SDK.VS2017</PackageId>
     <ExtensionInstallationRoot>CommonExtensions</ExtensionInstallationRoot>
     <ExtensionInstallationFolder>Microsoft\RoslynSDK\2017</ExtensionInstallationFolder>
     <VisualStudioInsertionComponent>RoslynSDK.2017</VisualStudioInsertionComponent>
