@@ -4,12 +4,19 @@
       "certificate": "MicrosoftSHA2",
       "strongName": "MsSharedLib72",
       "values": [
+        "bin/RoslynSDKTemplateWizard/net461/Roslyn.SDK.Template.Wizard.dll",
+        "bin/SyntaxVisualizerControl/net461/Roslyn.SyntaxVisualizer.Control.dll",
+        "bin/SyntaxVisualizerDgmlHelper/net461/Roslyn.SyntaxVisualizer.DgmlHelper.dll",
+        "bin/SyntaxVisualizerExtension/net461/Roslyn.SyntaxVisualizer.Extension.dll",
+        "bin/SyntaxVisualizerExtension/net461/*/Roslyn.SyntaxVisualizer.Extension.resources.dll",
       ]
     },
     {
       "certificate": "VsixSHA2",
       "strongName": null,
       "values": [
+        "vsixes/Roslyn.SDK.VS2015.vsix",
+        "vsixes/Roslyn.SDK.VS2017.vsix",
       ]
     }
   ]

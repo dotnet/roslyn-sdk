@@ -5,11 +5,12 @@
     <RootNamespace>Roslyn.SDK.VS2017</RootNamespace>
     <AssemblyName>Roslyn.SDK.VS2017</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <EnableDefaultItems>false</EnableDefaultItems>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
-    <!-- VSIX -->
+    <!-- Visual Studio Setup Authoring -->
+    <IsProductComponent>true</IsProductComponent>
+    <PackageId>Roslyn.SDK.VS2017</PackageId>
     <ExtensionInstallationRoot>CommonExtensions</ExtensionInstallationRoot>
     <ExtensionInstallationFolder>Microsoft\RoslynSDK\2017</ExtensionInstallationFolder>
     <VisualStudioInsertionComponent>RoslynSDK.2017</VisualStudioInsertionComponent>
