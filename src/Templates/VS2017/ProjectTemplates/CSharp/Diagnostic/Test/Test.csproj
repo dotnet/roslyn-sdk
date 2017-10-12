@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\$safeprojectname$\$safeprojectname$.csproj" />
+    <ProjectReference Include="..\$saferootprojectname$\$saferootprojectname$.csproj" />
   </ItemGroup>
 
 </Project>

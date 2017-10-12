@@ -18,6 +18,15 @@
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" Path="CSharpConsoleApplication"/>
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" Path="CSharpDiagnostic"/>
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" Path="CSRef"/>
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" Path="CSharpAnalyzer"/>
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" Path="CSharpCodeFix"/>
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" Path="CSharpRefactoring"/>
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" Path="VBRef"/>
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" Path="VBConsoleApplication"/>
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" Path="VBDiagnostic"/>
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" Path="VBAnalyzer"/>
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" Path="VBCodeFix"/>
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" Path="VBRefactoring"/>
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="RoslynSDKTemplateWizard" Path="|RoslynSDKTemplateWizard|" AssemblyName="|RoslynSDKTemplateWizard;AssemblyName|" />
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="SyntaxVisualizerExtension" Path="|SyntaxVisualizerExtension;PkgdefProjectOutputGroup|" />
   </Assets>

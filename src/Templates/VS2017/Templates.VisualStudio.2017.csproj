@@ -69,6 +69,21 @@
       <OutputSubPath>Extensibility</OutputSubPath>
     </VSTemplate>
   </ItemGroup>
+  <!-- Visual Basic Project Templates -->
+  <ItemGroup>
+    <VSTemplate Include="VBRef.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+    <VSTemplate Include="VBDiagnostic.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+    <VSTemplate Include="ProjectTemplates\VisualBasic\ConsoleApplication\VBConsoleApplication.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+  </ItemGroup>
   <!-- Content to Include in VSIX -->
   <ItemGroup>
     <Content Include="..\..\Tools\SyntaxVisualizer\SyntaxVisualizerExtension\SyntaxTree.bmp">
