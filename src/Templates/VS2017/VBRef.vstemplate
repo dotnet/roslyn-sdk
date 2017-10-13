@@ -3,7 +3,7 @@
             Type="ProjectGroup"
             xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
   <TemplateData>
-    <Name>Code Refactoring (VSIX)</Name>
+    <Name>Code Refactoring (.NET Standard)</Name>
     <Description>Create a Visual Basic refactoring, deployed as a VSIX extension</Description>
     <Icon>CodeInformation.ico</Icon>
     <ProjectType>VisualBasic</ProjectType>
