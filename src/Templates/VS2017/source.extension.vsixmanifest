@@ -34,5 +34,7 @@
   <Prerequisites>
     <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />
     <Prerequisite Id="Microsoft.VisualStudio.Component.VSSDK" Version="[15.0,16.0)" DisplayName="Visual Studio SDK" />
+    <Prerequisite Id="Microsoft.Net.ComponentGroup.DevelopmentPrerequisites" Version="[15.0,16.0)" DisplayName=".NET Framework 4.6.1 development tools" />
+    <Prerequisite Id="Microsoft.Net.Core.Component.SDK" Version="[15.0,16.0)" DisplayName=".NET Core 2.0 development tools" />
   </Prerequisites>
 </PackageManifest>
