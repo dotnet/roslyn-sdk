@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\$saferootprojectname$\$saferootprojectname$.csproj" />
+    <ProjectReference Include="..\$saferootprojectname$\$saferootprojectname$.vbproj" />
   </ItemGroup>
 
 </Project>
