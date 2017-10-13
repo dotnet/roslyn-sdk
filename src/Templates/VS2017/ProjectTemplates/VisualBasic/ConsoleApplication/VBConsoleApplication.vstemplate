@@ -17,8 +17,8 @@
     <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
   </TemplateData>
   <TemplateContent>
-    <Project File="ConsoleApplication.vbproj" TargetFileName="$projectname$.csproj" ReplaceParameters="true">
-      <ProjectItem ReplaceParameters="true" OpenInEditor="true">Module1.vb</ProjectItem>
+    <Project File="ConsoleApplication.vbproj" TargetFileName="$projectname$.vbproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="$safeprojectname$.vb" OpenInEditor="true">Module1.vb</ProjectItem>
     </Project>
   </TemplateContent>
 </VSTemplate>

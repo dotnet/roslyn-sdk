@@ -1,4 +1,14 @@
-﻿<DiagnosticAnalyzer(LanguageNames.VisualBasic)>
+﻿Imports System
+Imports System.Collections.Generic
+Imports System.Collections.Immutable
+Imports System.Linq
+Imports System.Threading
+Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.VisualBasic
+Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
+Imports Microsoft.CodeAnalysis.Diagnostics
+
+<DiagnosticAnalyzer(LanguageNames.VisualBasic)>
 Public Class $saferootidentifiername$Analyzer
     Inherits DiagnosticAnalyzer
 

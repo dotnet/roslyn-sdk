@@ -1,3 +1,16 @@
+Imports System.Collections.Generic
+Imports System.Composition
+Imports System.Linq
+Imports System.Threading
+Imports System.Threading.Tasks
+Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.CodeActions
+Imports Microsoft.CodeAnalysis.CodeRefactorings
+Imports Microsoft.CodeAnalysis.VisualBasic
+Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
+Imports Microsoft.CodeAnalysis.Rename
+Imports Microsoft.CodeAnalysis.Text
+
 <ExportCodeRefactoringProvider(LanguageNames.VisualBasic, Name:=NameOf($saferootidentifiername$CodeRefactoringProvider)), [Shared]>
 Friend Class $saferootidentifiername$CodeRefactoringProvider
     Inherits CodeRefactoringProvider
