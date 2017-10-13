@@ -1,4 +1,4 @@
-﻿Module $safeitemname$
+﻿Module $safeprojectname$
 
     Sub Main()
 

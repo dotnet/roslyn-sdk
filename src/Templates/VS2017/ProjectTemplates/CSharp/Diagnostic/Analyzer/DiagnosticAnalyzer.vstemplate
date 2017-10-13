@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+<VSTemplate Version="3.0.0"
+            Type="Project"
+            xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
   <TemplateData>
     <Name>DiagnosticAnalyzer</Name>
     <Description>&lt;No description available&gt;</Description>
     <Icon></Icon>
     <ProjectType>CSharp</ProjectType>
+    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
     <SortOrder>952</SortOrder>
     <TemplateID>bb967cab-2ca5-4dac-8809-65b2b28a6350</TemplateID>
     <CreateNewFolder>true</CreateNewFolder>
+    <CreateInPlace>true</CreateInPlace>
     <DefaultName>DiagnosticAnalyzer</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
+    <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
   </TemplateData>
   <TemplateContent>
     <Project TargetFileName="$projectname$.csproj" File="DiagnosticAnalyzer.csproj" ReplaceParameters="true">

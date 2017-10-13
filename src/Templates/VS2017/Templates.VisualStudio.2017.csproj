@@ -5,11 +5,10 @@
     <RootNamespace>Roslyn.SDK.VS2017</RootNamespace>
     <AssemblyName>Roslyn.SDK.VS2017</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <EnableDefaultItems>false</EnableDefaultItems>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
-    <!-- VSIX -->
+    <!-- Visual Studio Setup Authoring -->
     <ExtensionInstallationRoot>CommonExtensions</ExtensionInstallationRoot>
     <ExtensionInstallationFolder>Microsoft\RoslynSDK\2017</ExtensionInstallationFolder>
     <VisualStudioInsertionComponent>RoslynSDK.2017</VisualStudioInsertionComponent>
@@ -65,6 +64,21 @@
       <OutputSubPath>Extensibility</OutputSubPath>
     </VSTemplate>
     <VSTemplate Include="ProjectTemplates\CSharp\ConsoleApplication\CSharpConsoleApplication.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+  </ItemGroup>
+  <!-- Visual Basic Project Templates -->
+  <ItemGroup>
+    <VSTemplate Include="VBRef.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+    <VSTemplate Include="VBDiagnostic.vstemplate">
+      <SubType>Designer</SubType>
+      <OutputSubPath>Extensibility</OutputSubPath>
+    </VSTemplate>
+    <VSTemplate Include="ProjectTemplates\VisualBasic\ConsoleApplication\VBConsoleApplication.vstemplate">
       <SubType>Designer</SubType>
       <OutputSubPath>Extensibility</OutputSubPath>
     </VSTemplate>

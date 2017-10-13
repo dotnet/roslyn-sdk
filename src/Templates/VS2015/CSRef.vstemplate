@@ -1,7 +1,7 @@
 <VSTemplate Version="2.0.0" Type="ProjectGroup"
     xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
   <TemplateData>
-    <Name>Code Refactoring (VSIX)</Name>
+    <Name>Code Refactoring (Portable Class Library)</Name>
     <Description>Create a C# refactoring, deployed as a VSIX extension</Description>
     <ProjectType>CSharp</ProjectType>
     <ProjectSubType></ProjectSubType>

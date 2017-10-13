@@ -1,5 +1,17 @@
-﻿Imports System.Collections.Immutable
+﻿Imports System
+Imports System.Collections.Generic
+Imports System.Collections.Immutable
+Imports System.Composition
+Imports System.Linq
+Imports System.Threading
+Imports System.Threading.Tasks
+Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.CodeFixes
+Imports Microsoft.CodeAnalysis.CodeActions
+Imports Microsoft.CodeAnalysis.VisualBasic
+Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.CodeAnalysis.Rename
+Imports Microsoft.CodeAnalysis.Text
 
 <ExportCodeFixProvider(LanguageNames.VisualBasic, Name:=NameOf($saferootidentifiername$CodeFixProvider)), [Shared]>
 Public Class $saferootidentifiername$CodeFixProvider

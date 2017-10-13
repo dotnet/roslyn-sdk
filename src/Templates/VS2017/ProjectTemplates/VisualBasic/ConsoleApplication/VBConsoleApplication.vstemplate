@@ -1,42 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+<VSTemplate Version="3.0.0"
+            Type="Project"
+            xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
   <TemplateData>
     <Name>Stand-Alone Code Analysis Tool</Name>
     <Description>Create a code analysis command-line application</Description>
-    <ProjectType>CSharp</ProjectType>
-    <ProjectSubType></ProjectSubType>
-    <SortOrder>950</SortOrder>
-    <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>ConsoleApplication</DefaultName>
-    <ProvideDefaultName>true</ProvideDefaultName>
-    <LocationField>Enabled</LocationField>
-    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
     <Icon>CodeAnalysisConsole.ico</Icon>
-    <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
-  </TemplateData>
-  <TemplateContent>
-    <Project File="ConsoleApplication.csproj" TargetFileName="$projectname$.csproj" ReplaceParameters="true">
-      <ProjectItem ReplaceParameters="true" OpenInEditor="true">Program.cs</ProjectItem>
-    </Project>
-  </TemplateContent>
-</VSTemplate><VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
-  <TemplateData>
-    <Name>Stand-Alone Code Analysis Tool</Name>
-    <Description>Create a code analysis command-line application</Description>
     <ProjectType>VisualBasic</ProjectType>
-    <ProjectSubType></ProjectSubType>
+    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
     <SortOrder>950</SortOrder>
+    <TemplateID>Microsoft.VisualBasic.StandaloneCodeAnalysis</TemplateID>
     <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>ConsoleApplication</DefaultName>
+    <CreateInPlace>true</CreateInPlace>
+    <DefaultName>CodeAnalysisApp</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
-    <LocationField>Enabled</LocationField>
-    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
-    <Icon>CodeAnalysisConsole.ico</Icon>
     <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
   </TemplateData>
   <TemplateContent>
-    <Project File="ConsoleApplication.vbproj" ReplaceParameters="true">
-      <ProjectItem ReplaceParameters="true" OpenInEditor="true" OpenOrder="10">Module1.vb</ProjectItem>
+    <Project File="ConsoleApplication.vbproj" TargetFileName="$projectname$.vbproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="$safeprojectname$.vb" OpenInEditor="true">Module1.vb</ProjectItem>
     </Project>
   </TemplateContent>
 </VSTemplate>
