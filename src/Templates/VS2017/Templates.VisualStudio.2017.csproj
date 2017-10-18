@@ -5,10 +5,11 @@
     <RootNamespace>Roslyn.SDK.VS2017</RootNamespace>
     <AssemblyName>Roslyn.SDK.VS2017</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <EnableDefaultItems>false</EnableDefaultItems>
-    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>   
+    <!-- VS Insertion -->
+    <VisualStudioInsertionComponent>Microsoft.CodeAnalysis.SDK</VisualStudioInsertionComponent>
   </PropertyGroup>
   <!-- Setting Template Content to None -->
   <ItemGroup>
