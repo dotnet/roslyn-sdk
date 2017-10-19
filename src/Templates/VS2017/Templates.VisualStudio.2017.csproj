@@ -7,11 +7,9 @@
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <EnableDefaultItems>false</EnableDefaultItems>
-    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
-    <!-- Visual Studio Setup Authoring -->
-    <ExtensionInstallationRoot>CommonExtensions</ExtensionInstallationRoot>
-    <ExtensionInstallationFolder>Microsoft\RoslynSDK\2017</ExtensionInstallationFolder>
-    <VisualStudioInsertionComponent>RoslynSDK.2017</VisualStudioInsertionComponent>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>   
+    <!-- VS Insertion -->
+    <VisualStudioInsertionComponent>Microsoft.CodeAnalysis.SDK</VisualStudioInsertionComponent>
   </PropertyGroup>
   <!-- Setting Template Content to None -->
   <ItemGroup>
