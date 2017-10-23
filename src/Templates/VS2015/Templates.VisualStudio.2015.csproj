@@ -119,17 +119,17 @@
   </ItemGroup>
   <!-- Nuget Packages To Include In VSIX -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="$(MicrosoftCodeAnalysisAnalyzersVersionVS2015)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="$(MicrosoftCodeAnalysisCommonVersionVS2015)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisCSharpVersionVS2015)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="$(MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="$(MicrosoftCodeAnalysisVisualBasicVersionVS2015)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015)" />
-    <PackageReference Include="NuGet.CommandLine" Version="$(NuGetCommandLineVersionVS2015)" />
-    <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersionVS2015)" />
-    <PackageReference Include="System.Composition" Version="$(SystemCompositionVersionVS2015)" />
-    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersionVS2015)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="[$(MicrosoftCodeAnalysisAnalyzersVersionVS2015)]" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="[$(MicrosoftCodeAnalysisCommonVersionVS2015)]" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="[$(MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015)]" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="[$(MicrosoftCodeAnalysisCSharpVersionVS2015)]" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="[$(MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015)]" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="[$(MicrosoftCodeAnalysisVisualBasicVersionVS2015)]" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="[$(MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015)]" />
+    <PackageReference Include="NuGet.CommandLine" Version="[$(NuGetCommandLineVersionVS2015)]" />
+    <PackageReference Include="System.Collections.Immutable" Version="[$(SystemCollectionsImmutableVersionVS2015)]" />
+    <PackageReference Include="System.Composition" Version="[$(SystemCompositionVersionVS2015)]" />
+    <PackageReference Include="System.Reflection.Metadata" Version="[$(SystemReflectionMetadataVersionVS2015)]" />
   </ItemGroup>
   <Target BeforeTargets="CreateVsixContainer" Name="MakeVsixOutputDirectory">
     <MakeDir Condition="!Exists('$(OutDir)$(VsixOutDirSuffix)')" Directories="$(OutDir)$(VsixOutDirSuffix)" />
@@ -142,37 +142,37 @@
       <VSIXSourceItem Include="@(IntermediateZipProject)">
         <VSIXSubPath>%(IntermediateZipProject.Filename)\%(IntermediateZipProject.Language)\%(IntermediateZipProject.OutputSubPath)\%(IntermediateZipProject.Culture)</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)\Microsoft.CodeAnalysis.Analyzers\$(MicrosoftCodeAnalysisAnalyzersVersionVS2015)\Microsoft.CodeAnalysis.Analyzers.$(MicrosoftCodeAnalysisAnalyzersVersionVS2015).nupkg">
+      <VSIXSourceItem Include="C:\Program Files\dotnet\sdk\NuGetFallbackFolder\Microsoft.CodeAnalysis.Analyzers\$(MicrosoftCodeAnalysisAnalyzersVersionVS2015)\Microsoft.CodeAnalysis.Analyzers.$(MicrosoftCodeAnalysisAnalyzersVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)\Microsoft.CodeAnalysis.Common\$(MicrosoftCodeAnalysisCommonVersionVS2015)\Microsoft.CodeAnalysis.Common.$(MicrosoftCodeAnalysisCommonVersionVS2015).nupkg">
+      <VSIXSourceItem Include="$(NuGetPackageRoot)Microsoft.CodeAnalysis.Common\$(MicrosoftCodeAnalysisCommonVersionVS2015)\Microsoft.CodeAnalysis.Common.$(MicrosoftCodeAnalysisCommonVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)\Microsoft.CodeAnalysis.CSharp.Workspaces\$(MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015)\Microsoft.CodeAnalysis.CSharp.Workspaces.$(MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015).nupkg">
+      <VSIXSourceItem Include="$(NuGetPackageRoot)Microsoft.CodeAnalysis.CSharp.Workspaces\$(MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015)\Microsoft.CodeAnalysis.CSharp.Workspaces.$(MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)\Microsoft.CodeAnalysis.CSharp\$(MicrosoftCodeAnalysisCSharpVersionVS2015)\Microsoft.CodeAnalysis.CSharp.$(MicrosoftCodeAnalysisCSharpVersionVS2015).nupkg">
+      <VSIXSourceItem Include="$(NuGetPackageRoot)Microsoft.CodeAnalysis.CSharp\$(MicrosoftCodeAnalysisCSharpVersionVS2015)\Microsoft.CodeAnalysis.CSharp.$(MicrosoftCodeAnalysisCSharpVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)\Microsoft.CodeAnalysis.VisualBasic.Workspaces\$(MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015)\Microsoft.CodeAnalysis.VisualBasic.Workspaces.$(MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015).nupkg">
+      <VSIXSourceItem Include="$(NuGetPackageRoot)Microsoft.CodeAnalysis.VisualBasic.Workspaces\$(MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015)\Microsoft.CodeAnalysis.VisualBasic.Workspaces.$(MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)\Microsoft.CodeAnalysis.VisualBasic\$(MicrosoftCodeAnalysisVisualBasicVersionVS2015)\Microsoft.CodeAnalysis.VisualBasic.$(MicrosoftCodeAnalysisVisualBasicVersionVS2015).nupkg">
+      <VSIXSourceItem Include="$(NuGetPackageRoot)Microsoft.CodeAnalysis.VisualBasic\$(MicrosoftCodeAnalysisVisualBasicVersionVS2015)\Microsoft.CodeAnalysis.VisualBasic.$(MicrosoftCodeAnalysisVisualBasicVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)\Microsoft.CodeAnalysis.Workspaces.Common\$(MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015)\Microsoft.CodeAnalysis.Workspaces.Common.$(MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015).nupkg">
+      <VSIXSourceItem Include="$(NuGetPackageRoot)Microsoft.CodeAnalysis.Workspaces.Common\$(MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015)\Microsoft.CodeAnalysis.Workspaces.Common.$(MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)\NuGet.CommandLine\$(NuGetCommandLineVersionVS2015)\NuGet.CommandLine.$(NuGetCommandLineVersionVS2015).nupkg">
+      <VSIXSourceItem Include="$(NuGetPackageRoot)NuGet.CommandLine\$(NuGetCommandLineVersionVS2015)\NuGet.CommandLine.$(NuGetCommandLineVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)\System.Collections.Immutable\$(SystemCollectionsImmutableVersionVS2015)\System.Collections.Immutable.$(SystemCollectionsImmutableVersionVS2015).nupkg">
+      <VSIXSourceItem Include="$(NuGetPackageRoot)System.Collections.Immutable\$(SystemCollectionsImmutableVersionVS2015)\System.Collections.Immutable.$(SystemCollectionsImmutableVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)\System.Composition\$(SystemCompositionVersionVS2015)\System.Composition.$(SystemCompositionVersionVS2015).nupkg">
+      <VSIXSourceItem Include="$(NuGetPackageRoot)System.Composition\$(SystemCompositionVersionVS2015)\System.Composition.$(SystemCompositionVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)\System.Reflection.Metadata\$(SystemReflectionMetadataVersionVS2015)\System.Reflection.Metadata.$(SystemReflectionMetadataVersionVS2015).nupkg">
+      <VSIXSourceItem Include="$(NuGetPackageRoot)System.Reflection.Metadata\$(SystemReflectionMetadataVersionVS2015)\System.Reflection.Metadata.$(SystemReflectionMetadataVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
     </ItemGroup>
