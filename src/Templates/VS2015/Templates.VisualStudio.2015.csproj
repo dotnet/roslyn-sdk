@@ -131,10 +131,27 @@
     <PackageReference Include="System.Composition" Version="[$(SystemCompositionVersionVS2015)]" />
     <PackageReference Include="System.Reflection.Metadata" Version="[$(SystemReflectionMetadataVersionVS2015)]" />
   </ItemGroup>
+
   <Target BeforeTargets="CreateVsixContainer" Name="MakeVsixOutputDirectory">
     <MakeDir Condition="!Exists('$(OutDir)$(VsixOutDirSuffix)')" Directories="$(OutDir)$(VsixOutDirSuffix)" />
   </Target>
   <Target Name="GetVsixTemplateItems" DependsOnTargets="ZipProjects;ZipItems">
+
+    <ItemGroup>
+      <MicrosoftCodeAnalysisAnalyzersPackage 
+        Condition="Exists('C:\Program Files\dotnet\sdk\NuGetFallbackFolder\Microsoft.CodeAnalysis.Analyzers\$(MicrosoftCodeAnalysisAnalyzersVersionVS2015)\Microsoft.CodeAnalysis.Analyzers.$(MicrosoftCodeAnalysisAnalyzersVersionVS2015).nupkg')" 
+        Include="C:\Program Files\dotnet\sdk\NuGetFallbackFolder\Microsoft.CodeAnalysis.Analyzers\$(MicrosoftCodeAnalysisAnalyzersVersionVS2015)\Microsoft.CodeAnalysis.Analyzers.$(MicrosoftCodeAnalysisAnalyzersVersionVS2015).nupkg" />
+      <MicrosoftCodeAnalysisAnalyzersPackage 
+        Condition="Exists('$(NuGetPackageRoot)Microsoft.CodeAnalysis.Analyzers\$(MicrosoftCodeAnalysisAnalyzersVersionVS2015)\Microsoft.CodeAnalysis.Analyzers.$(MicrosoftCodeAnalysisAnalyzersVersionVS2015).nupkg')" 
+        Include="$(NuGetPackageRoot)Microsoft.CodeAnalysis.Analyzers\$(MicrosoftCodeAnalysisAnalyzersVersionVS2015)\Microsoft.CodeAnalysis.Analyzers.$(MicrosoftCodeAnalysisAnalyzersVersionVS2015).nupkg" />
+      <SystemCompositionPackage 
+        Condition="Exists('C:\Program Files\dotnet\sdk\NuGetFallbackFolder\System.Composition\$(SystemCompositionVersionVS2015)\System.Composition.$(SystemCompositionVersionVS2015).nupkg')" 
+        Include="C:\Program Files\dotnet\sdk\NuGetFallbackFolder\System.Composition\$(SystemCompositionVersionVS2015)\System.Composition.$(SystemCompositionVersionVS2015).nupkg" />
+      <SystemCompositionPackage 
+        Condition="Exists('$(NuGetPackageRoot)System.Composition\$(SystemCompositionVersionVS2015)\System.Composition.$(SystemCompositionVersionVS2015).nupkg')" 
+        Include="$(NuGetPackageRoot)System.Composition\$(SystemCompositionVersionVS2015)\System.Composition.$(SystemCompositionVersionVS2015).nupkg" />
+    </ItemGroup>
+
     <ItemGroup>
       <VSIXSourceItem Include="@(IntermediateZipItem)">
         <VSIXSubPath>%(IntermediateZipItem.Filename)\%(IntermediateZipItem.Language)\%(IntermediateZipItem.OutputSubPath)\%(IntermediateZipItem.Culture)</VSIXSubPath>
@@ -142,7 +159,7 @@
       <VSIXSourceItem Include="@(IntermediateZipProject)">
         <VSIXSubPath>%(IntermediateZipProject.Filename)\%(IntermediateZipProject.Language)\%(IntermediateZipProject.OutputSubPath)\%(IntermediateZipProject.Culture)</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="C:\Program Files\dotnet\sdk\NuGetFallbackFolder\Microsoft.CodeAnalysis.Analyzers\$(MicrosoftCodeAnalysisAnalyzersVersionVS2015)\Microsoft.CodeAnalysis.Analyzers.$(MicrosoftCodeAnalysisAnalyzersVersionVS2015).nupkg">
+      <VSIXSourceItem Include="@(MicrosoftCodeAnalysisAnalyzersPackage)">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
       <VSIXSourceItem Include="$(NuGetPackageRoot)Microsoft.CodeAnalysis.Common\$(MicrosoftCodeAnalysisCommonVersionVS2015)\Microsoft.CodeAnalysis.Common.$(MicrosoftCodeAnalysisCommonVersionVS2015).nupkg">
@@ -169,7 +186,7 @@
       <VSIXSourceItem Include="$(NuGetPackageRoot)System.Collections.Immutable\$(SystemCollectionsImmutableVersionVS2015)\System.Collections.Immutable.$(SystemCollectionsImmutableVersionVS2015).nupkg">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
-      <VSIXSourceItem Include="$(NuGetPackageRoot)System.Composition\$(SystemCompositionVersionVS2015)\System.Composition.$(SystemCompositionVersionVS2015).nupkg">
+      <VSIXSourceItem Include="@(SystemCompositionPackage)">
         <VSIXSubPath>Packages</VSIXSubPath>
       </VSIXSourceItem>
       <VSIXSourceItem Include="$(NuGetPackageRoot)System.Reflection.Metadata\$(SystemReflectionMetadataVersionVS2015)\System.Reflection.Metadata.$(SystemReflectionMetadataVersionVS2015).nupkg">
