@@ -7,8 +7,9 @@
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <EnableDefaultItems>false</EnableDefaultItems>
-    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer> 
-    <IsProductComponent>false</IsProductComponent>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>   
+    <!-- VS Insertion -->
+    <VisualStudioInsertionComponent>Microsoft.CodeAnalysis.SDK</VisualStudioInsertionComponent>
   </PropertyGroup>
   <!-- Setting Template Content to None -->
   <ItemGroup>
