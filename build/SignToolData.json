@@ -4,11 +4,16 @@
       "certificate": "MicrosoftSHA2",
       "strongName": "MsSharedLib72",
       "values": [
-        "bin/RoslynSDKTemplateWizard/net461/Roslyn.SDK.Template.Wizard.dll",
-        "bin/SyntaxVisualizerControl/net461/Roslyn.SyntaxVisualizer.Control.dll",
-        "bin/SyntaxVisualizerDgmlHelper/net461/Roslyn.SyntaxVisualizer.DgmlHelper.dll",
-        "bin/SyntaxVisualizerExtension/net461/Roslyn.SyntaxVisualizer.Extension.dll",
-        "bin/SyntaxVisualizerExtension/net461/*/Roslyn.SyntaxVisualizer.Extension.resources.dll",
+        "bin/Templates/Templates.VisualStudio.2015/net461/Roslyn.SDK.Template.Wizard.dll",
+        "bin/Templates/Templates.VisualStudio.2015/net461/Roslyn.SyntaxVisualizer.Control.dll",
+        "bin/Templates/Templates.VisualStudio.2015/net461/Roslyn.SyntaxVisualizer.DgmlHelper.dll",
+        "bin/Templates/Templates.VisualStudio.2015/net461/Roslyn.SyntaxVisualizer.Extension.dll",
+        "bin/Templates/Templates.VisualStudio.2015/net461/*/Roslyn.SyntaxVisualizer.Extension.resources.dll",
+        "bin/Templates/Templates.VisualStudio.2017/net461/Roslyn.SDK.Template.Wizard.dll",
+        "bin/Templates/Templates.VisualStudio.2017/net461/Roslyn.SyntaxVisualizer.Control.dll",
+        "bin/Templates/Templates.VisualStudio.2017/net461/Roslyn.SyntaxVisualizer.DgmlHelper.dll",
+        "bin/Templates/Templates.VisualStudio.2017/net461/Roslyn.SyntaxVisualizer.Extension.dll",
+        "bin/Templates/Templates.VisualStudio.2017/net461/*/Roslyn.SyntaxVisualizer.Extension.resources.dll",
       ]
     },
     {
@@ -17,6 +22,7 @@
       "values": [
         "VSSetup/Roslyn.SDK.VS2015.vsix",
         "VSSetup/Roslyn.SDK.VS2017.vsix",
+        "VSSetup/Insertion/Roslyn.SDK.VS2017.vsix",
       ]
     }
   ]
