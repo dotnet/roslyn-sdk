@@ -5,7 +5,6 @@
     <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
     <OutputType>Exe</OutputType>
     <TargetFramework>net461</TargetFramework>
-    <RuntimeIdentifiers>win7</RuntimeIdentifiers>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>7.1</LangVersion>
