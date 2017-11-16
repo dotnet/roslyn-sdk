@@ -14,6 +14,7 @@
     <MicrosoftBuildVersion>15.3.409</MicrosoftBuildVersion>
     <MicrosoftBuildEngineVersion>15.3.409</MicrosoftBuildEngineVersion>
     <MicrosoftBuildFrameworkVersion>15.3.409</MicrosoftBuildFrameworkVersion>
+    <MicrosoftBuildTasksCoreVersion>15.3.409</MicrosoftBuildTasksCoreVersion>
     
     <!-- Roslyn Templates for VS 2015 -->
     <MicrosoftCodeAnalysisAnalyzersVersionVS2015>1.1.0</MicrosoftCodeAnalysisAnalyzersVersionVS2015>
@@ -28,6 +29,9 @@
     <SystemCollectionsImmutableVersionVS2015>1.1.36</SystemCollectionsImmutableVersionVS2015>
     <SystemCompositionVersionVS2015>1.0.31</SystemCompositionVersionVS2015>
     <SystemReflectionMetadataVersionVS2015>1.0.21</SystemReflectionMetadataVersionVS2015>
+
+    <!-- Roslyn -->
+    <MicrosoftCodeAnalysisVersion>2.6.0-beta2-62210-01</MicrosoftCodeAnalysisVersion>
 
     <!-- VS SDK -->
     <VSLangProjVersion>7.0.3300</VSLangProjVersion>
