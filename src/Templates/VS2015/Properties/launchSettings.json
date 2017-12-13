@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Templates.VisualStudio.2015": {
+      "commandName": "Executable",
+      "executablePath": "$(DevEnvDir)devenv.exe",
+      "commandLineArgs": "/rootsuffix RoslynDev /log"
+    }
+  }
+}
