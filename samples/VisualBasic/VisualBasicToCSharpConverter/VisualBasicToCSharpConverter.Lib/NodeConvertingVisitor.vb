@@ -729,7 +729,7 @@ Namespace VisualBasicToCSharpConverter
 
                 Dim subNewBlock As VB.Syntax.ConstructorBlockSyntax = node.Parent
 
-                Dim initializer As CS.Syntax.ConstructorInitializerSyntax
+                Dim initializer As CS.Syntax.ConstructorInitializerSyntax = Nothing
 
                 ' Check for chained constructor call.
                 If subNewBlock.Statements.Count >= 1 Then
@@ -808,7 +808,7 @@ Namespace VisualBasicToCSharpConverter
                 ' [DllImport("LibName", CharSet: CharSet.Ansi|Unicode|Auto, EntryPoint: AliasName|Name)]
                 ' extern ReturnType|void Name(ParameterList);
 
-                Dim charSet As CS.Syntax.ExpressionSyntax
+                Dim charSet As CS.Syntax.ExpressionSyntax = Nothing
                 If node.CharsetKeyword.IsKind(VB.SyntaxKind.None) Then
                     charSet = SystemRuntimeInteropServicesCharSetAutoExpression
                 Else
@@ -957,7 +957,7 @@ Namespace VisualBasicToCSharpConverter
 
                 Dim enumBlock As VB.Syntax.EnumBlockSyntax = node.Parent
 
-                Dim base As CS.Syntax.BaseListSyntax
+                Dim base As CS.Syntax.BaseListSyntax = Nothing
                 If node.UnderlyingType IsNot Nothing Then
                     base = BaseList(SingletonSeparatedList(Of BaseTypeSyntax)(SimpleBaseType(CType(VisitSimpleAsClause(node.UnderlyingType), CS.Syntax.TypeSyntax))))
                 End If
@@ -1534,7 +1534,7 @@ Namespace VisualBasicToCSharpConverter
 
                             Case VB.SyntaxKind.IntegerLiteralToken
 
-                                Dim literalText As String
+                                Dim literalText As String = Nothing
 
                                 Select Case node.Token.GetBase()
                                     Case VB.Syntax.LiteralBase.Decimal
@@ -1793,7 +1793,7 @@ Namespace VisualBasicToCSharpConverter
 
             Public Overrides Function VisitMultiLineIfBlock(node As VB.Syntax.MultiLineIfBlockSyntax) As SyntaxNode
 
-                Dim elseOpt As CS.Syntax.ElseClauseSyntax
+                Dim elseOpt As CS.Syntax.ElseClauseSyntax = Nothing
 
                 ' TODO: Transfer trivia for each elseif/else block.
                 If node.ElseBlock IsNot Nothing Then
@@ -2346,7 +2346,7 @@ Namespace VisualBasicToCSharpConverter
 
             Public Overrides Function VisitSingleLineIfStatement(node As VB.Syntax.SingleLineIfStatementSyntax) As SyntaxNode
 
-                Dim elseOpt As CS.Syntax.ElseClauseSyntax
+                Dim elseOpt As CS.Syntax.ElseClauseSyntax = Nothing
 
                 If node.ElseClause IsNot Nothing Then
                     elseOpt = ElseClause(Block(List(Visit(node.ElseClause.Statements))))
@@ -2616,7 +2616,7 @@ Namespace VisualBasicToCSharpConverter
 
                 Dim block As VB.Syntax.ClassBlockSyntax = node.Parent
 
-                Dim bases As CS.Syntax.BaseListSyntax
+                Dim bases As CS.Syntax.BaseListSyntax = Nothing
                 If block.Inherits.Count > 0 OrElse block.Implements.Count > 0 Then
                     bases = BaseList(SeparatedList(Of BaseTypeSyntax)(VisitInheritsStatements(block.Inherits).Union(VisitImplementsStatements(block.Implements)).
                                                                       Cast(Of CS.Syntax.TypeSyntax).Select(Function(t) SimpleBaseType(t))))
@@ -2637,7 +2637,7 @@ Namespace VisualBasicToCSharpConverter
 
                 Dim block As VB.Syntax.StructureBlockSyntax = node.Parent
 
-                Dim bases As CS.Syntax.BaseListSyntax
+                Dim bases As CS.Syntax.BaseListSyntax = Nothing
                 If block.Inherits.Count > 0 OrElse block.Implements.Count > 0 Then
                     bases = BaseList(SeparatedList(Of BaseTypeSyntax)(VisitInheritsStatements(block.Inherits).Union(VisitImplementsStatements(block.Implements)).
                                                                       Cast(Of CS.Syntax.TypeSyntax).Select(Function(t) SimpleBaseType(t))))
@@ -2658,7 +2658,7 @@ Namespace VisualBasicToCSharpConverter
 
                 Dim block As VB.Syntax.InterfaceBlockSyntax = node.Parent
 
-                Dim bases As CS.Syntax.BaseListSyntax
+                Dim bases As CS.Syntax.BaseListSyntax = Nothing
                 If block.Inherits.Count > 0 Then
                     bases = BaseList(SeparatedList(Of BaseTypeSyntax)(VisitInheritsStatements(block.Inherits).
                                                                       Cast(Of CS.Syntax.TypeSyntax).Select(Function(t) SimpleBaseType(t))))
