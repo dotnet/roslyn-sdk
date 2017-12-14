@@ -13,6 +13,5 @@
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
 
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
-    <UsingToolPdbConverter>true</UsingToolPdbConverter>
   </PropertyGroup>
 </Project>
