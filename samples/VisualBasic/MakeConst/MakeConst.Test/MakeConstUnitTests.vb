@@ -21,34 +21,7 @@ Namespace MakeConst.Test
         <TestMethod>
         Public Sub TestMethod2()
 
-            Dim test = "
-Module Module1
 
-    Sub Main()
-
-    End Sub
-
-End Module"
-            Dim expected = New DiagnosticResult With {.Id = "MakeConst",
-                .Message = String.Format("Type name '{0}' contains lowercase letters", "Module1"),
-                .Severity = DiagnosticSeverity.Warning,
-                .Locations = New DiagnosticResultLocation() {
-                        New DiagnosticResultLocation("Test0.vb", 2, 8)
-                    }
-            }
-
-
-            VerifyBasicDiagnostic(test, expected)
-
-            Dim fixtest = "
-Module MODULE1
-
-    Sub Main()
-
-    End Sub
-
-End Module"
-            VerifyBasicFix(test, fixtest)
         End Sub
 
         Protected Overrides Function GetBasicCodeFixProvider() As CodeFixProvider

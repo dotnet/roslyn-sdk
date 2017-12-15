@@ -56,7 +56,7 @@ namespace ConvertToConditional.Test
 {
     byte M(bool p)
     {
-        return (byte)(p ? 0 : 1);
+        return p ? 0 : 1;
     }
 }";
 
@@ -231,7 +231,7 @@ public class C
 {
     Func<int> Goo(bool x)
     {
-        return x ? (Func<int>)(() => 1) : () => 2;
+        return x ? () => 1 : () => 2;
     }
 }
 ";
