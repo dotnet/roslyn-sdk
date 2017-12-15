@@ -53,8 +53,8 @@
 
   <!-- Project References -->
   <ItemGroup>
-    <ProjectReference Include="..\SyntaxVisualizerControl\SyntaxVisualizerControl.csproj" />
-    <ProjectReference Include="..\SyntaxVisualizerDgmlHelper\SyntaxVisualizerDgmlHelper.vbproj" />
+    <ProjectReference Include="..\Roslyn.SyntaxVisualizer.Control\Roslyn.SyntaxVisualizer.Control.csproj" />
+    <ProjectReference Include="..\Roslyn.SyntaxVisualizer.DgmlHelper\Roslyn.SyntaxVisualizer.DgmlHelper.vbproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,14 +84,11 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <FilesToMove Include="**\*.bmp"/>
-    <FilesToMove Include="**\*.ico"/>
+    <FilesToMove Include="**\*.bmp" />
+    <FilesToMove Include="**\*.ico" />
   </ItemGroup>
 
   <Target Name="Move_Assets" BeforeTargets="BeforeBuild">
-    <Copy
-        SourceFiles="@(FilesToMove)"
-        DestinationFolder="$(ArtifactsObjDir)SyntaxVisualizerExtension\net461\SyntaxVisualizerExtension.xlf"
-    />
+    <Copy SourceFiles="@(FilesToMove)" DestinationFolder="$(ArtifactsObjDir)Roslyn.SyntaxVisualizer.Extension\net461\Roslyn.SyntaxVisualizer.Extension.xlf" />
   </Target>
 </Project>
