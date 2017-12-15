@@ -3,23 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27030.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyntaxVisualizerControl", "src\Tools\SyntaxVisualizer\SyntaxVisualizerControl\SyntaxVisualizerControl.csproj", "{3B6ED9E7-C19E-4501-AAE6-9BE4EA6C18D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SyntaxVisualizer.Control", "src\Tools\SyntaxVisualizer\Roslyn.SyntaxVisualizer.Control\Roslyn.SyntaxVisualizer.Control.csproj", "{3B6ED9E7-C19E-4501-AAE6-9BE4EA6C18D7}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "SyntaxVisualizerDgmlHelper", "src\Tools\SyntaxVisualizer\SyntaxVisualizerDgmlHelper\SyntaxVisualizerDgmlHelper.vbproj", "{A098CF55-9DE1-4C92-ADEC-931CFBFA8536}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Roslyn.SyntaxVisualizer.DgmlHelper", "src\Tools\SyntaxVisualizer\Roslyn.SyntaxVisualizer.DgmlHelper\Roslyn.SyntaxVisualizer.DgmlHelper.vbproj", "{A098CF55-9DE1-4C92-ADEC-931CFBFA8536}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyntaxVisualizerExtension", "src\Tools\SyntaxVisualizer\SyntaxVisualizerExtension\SyntaxVisualizerExtension.csproj", "{E268163A-17EB-4C14-A892-868ADFB3108E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SyntaxVisualizer.Extension", "src\Tools\SyntaxVisualizer\Roslyn.SyntaxVisualizer.Extension\Roslyn.SyntaxVisualizer.Extension.csproj", "{E268163A-17EB-4C14-A892-868ADFB3108E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{DC4EAEF7-A2C9-4628-85FA-809F7287E234}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SyntaxVisualizer", "SyntaxVisualizer", "{65AB9A87-CEB0-4CC1-BFFE-FBC393C4DA75}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Templates.VisualStudio.2015", "src\Templates\VS2015\Templates.VisualStudio.2015.csproj", "{E31F654A-1D4C-4898-8D3C-7A487F82317E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK.VS2015", "src\Templates\VS2015\Roslyn.SDK.VS2015.csproj", "{E31F654A-1D4C-4898-8D3C-7A487F82317E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{AB77CD09-4C32-4F58-8F07-915F8B050520}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Templates.VisualStudio.2017", "src\Templates\VS2017\Templates.VisualStudio.2017.csproj", "{44E6D9DB-89FD-41C8-BAEB-5B96AA7793F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK.VS2017", "src\Templates\VS2017\Roslyn.SDK.VS2017.csproj", "{44E6D9DB-89FD-41C8-BAEB-5B96AA7793F6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoslynSDKTemplateWizard", "src\Tools\RoslynSDKTemplateWizard\RoslynSDKTemplateWizard.csproj", "{ECFF0F53-89D5-4D7D-95D0-EAC1514D84E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK.Template.Wizard", "src\Tools\Roslyn.SDK.Template.Wizard\Roslyn.SDK.Template.Wizard.csproj", "{ECFF0F53-89D5-4D7D-95D0-EAC1514D84E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
