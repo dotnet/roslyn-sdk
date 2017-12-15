@@ -6,15 +6,12 @@
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     
-    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\'))</RepoRoot>
-    <SignToolDataPath>$(RepoRoot)build\SignToolData.json</SignToolDataPath>
-    <VersionsPropsPath>$(RepoRoot)build\Versions.props</VersionsPropsPath>
-    <RepoToolsetDir>$(NuGetPackageRoot)RoslynTools.Microsoft.RepoToolset\$(RoslynToolsMicrosoftRepoToolsetVersion)\tools\</RepoToolsetDir>
+    <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+    <RepoToolsetDir>$(NuGetPackageRoot)roslyntools.repotoolset\$(RoslynToolsRepoToolsetVersion)\tools\</RepoToolsetDir>
     
     <RepositoryUrl>https://github.com/dotnet/roslyn-sdk</RepositoryUrl>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
 
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
-    <UsingToolPdbConverter>true</UsingToolPdbConverter>
   </PropertyGroup>
 </Project>

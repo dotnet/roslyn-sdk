@@ -4,16 +4,11 @@
       "certificate": "MicrosoftSHA2",
       "strongName": "MsSharedLib72",
       "values": [
-        "bin/Templates/Templates.VisualStudio.2015/net461/Roslyn.SDK.Template.Wizard.dll",
-        "bin/Templates/Templates.VisualStudio.2015/net461/Roslyn.SyntaxVisualizer.Control.dll",
-        "bin/Templates/Templates.VisualStudio.2015/net461/Roslyn.SyntaxVisualizer.DgmlHelper.dll",
-        "bin/Templates/Templates.VisualStudio.2015/net461/Roslyn.SyntaxVisualizer.Extension.dll",
-        "bin/Templates/Templates.VisualStudio.2015/net461/*/Roslyn.SyntaxVisualizer.Extension.resources.dll",
-        "bin/Templates/Templates.VisualStudio.2017/net461/Roslyn.SDK.Template.Wizard.dll",
-        "bin/Templates/Templates.VisualStudio.2017/net461/Roslyn.SyntaxVisualizer.Control.dll",
-        "bin/Templates/Templates.VisualStudio.2017/net461/Roslyn.SyntaxVisualizer.DgmlHelper.dll",
-        "bin/Templates/Templates.VisualStudio.2017/net461/Roslyn.SyntaxVisualizer.Extension.dll",
-        "bin/Templates/Templates.VisualStudio.2017/net461/*/Roslyn.SyntaxVisualizer.Extension.resources.dll",
+        "bin/RoslynSDKTemplateWizard/net461/Roslyn.SDK.Template.Wizard.dll",
+        "bin/SyntaxVisualizerControl/net461/Roslyn.SyntaxVisualizer.Control.dll",
+        "bin/SyntaxVisualizerDgmlHelper/net461/Roslyn.SyntaxVisualizer.DgmlHelper.dll",
+        "bin/SyntaxVisualizerExtension/net461/Roslyn.SyntaxVisualizer.Extension.dll",
+        "bin/SyntaxVisualizerExtension/net461/*/Roslyn.SyntaxVisualizer.Extension.resources.dll",
       ]
     },
     {
@@ -25,5 +20,18 @@
         "VSSetup/Insertion/Roslyn.SDK.VS2017.vsix",
       ]
     }
+  ],
+  "exclude": [ 
+    "Microsoft.CodeAnalysis.Analyzers.1.1.0.nupkg",
+    "Microsoft.CodeAnalysis.Common.1.0.1.nupkg",
+    "Microsoft.CodeAnalysis.CSharp.1.0.1.nupkg",
+    "Microsoft.CodeAnalysis.CSharp.Workspaces.1.0.1.nupkg",
+    "Microsoft.CodeAnalysis.VisualBasic.1.0.1.nupkg",
+    "Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.0.1.nupkg",
+    "Microsoft.CodeAnalysis.Workspaces.Common.1.0.1.nupkg",
+    "NuGet.CommandLine.2.8.5.nupkg",
+    "System.Collections.Immutable.1.1.36.nupkg",
+    "System.Composition.1.0.31.nupkg",
+    "System.Reflection.Metadata.1.0.21.nupkg",
   ]
 }
