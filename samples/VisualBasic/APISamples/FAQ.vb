@@ -251,43 +251,47 @@ End Module
             Dim symbols = model.LookupSymbols(position)
 
             ' Note: "Windows" only appears as a symbol at this location in Windows 8.1.
-            Dim results = String.Join(vbLf, From symbol In symbols
-                                            Select result = symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
-                                            Where result <> "Windows"
-                                            Order By result)
+            Dim actual = String.Join(vbLf, From symbol In symbols
+                                           Select result = symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
+                                           Where result <> "Windows"
+                                           Order By result)
 
-            Assert.Equal(
-<text>C
+            Dim expected As String = <text>C
+FxResources
+Internal
 j As Integer
 Microsoft
 Program
 Program.i As Integer
 Sub Program.Main()
-System</text>.Value, results)
+System</text>.Value
+            Assert.Equal(expected, actual)
 
             ' Filter results by looking at Kind of returned symbols (only get locals and fields).
-            results = String.Join(vbLf, From symbol In symbols
-                                        Where symbol.Kind = SymbolKind.Local OrElse
+            actual = String.Join(vbLf, From symbol In symbols
+                                       Where symbol.Kind = SymbolKind.Local OrElse
                                               symbol.Kind = SymbolKind.Field
-                                        Select result = symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
-                                        Order By result)
+                                       Select result = symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
+                                       Order By result)
             Assert.Equal(
 <text>j As Integer
-Program.i As Integer</text>.Value, results)
+Program.i As Integer</text>.Value, actual)
 
             ' Filter results - get namespaces and types.
             ' Note: "Windows" only appears as a symbol at this location in Windows 8.1.
             symbols = model.LookupNamespacesAndTypes(position)
-            results = String.Join(vbLf, From symbol In symbols
-                                        Select result = symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
-                                        Where result <> "Windows"
-                                        Order By result)
+            actual = String.Join(vbLf, From symbol In symbols
+                                       Select result = symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
+                                       Where result <> "Windows"
+                                       Order By result)
 
             Assert.Equal(
 <text>C
+FxResources
+Internal
 Microsoft
 Program
-System</text>.Value, results)
+System</text>.Value, actual)
         End Sub
 
         <FAQAttribute(5)>
@@ -499,7 +503,7 @@ End Module</text>.Value
         End Sub
 
         <FAQAttribute(8)>
-        <Fact>
+        <Fact(Skip:="Need to load correct assembly references now that this is a .NET core app")>
         Public Sub FindAllInvocationsToMethodsFromAParticularNamespace()
             Dim tree = SyntaxFactory.ParseSyntaxTree(
 <text>
@@ -2200,7 +2204,7 @@ End Class
         End Sub
 
         <FAQAttribute(34)>
-        <Fact>
+        <Fact(Skip:="Need to load correct assembly references now that this is a .NET core app")>
         Public Sub InsertLoggingStatements()
             Dim tree = SyntaxFactory.ParseSyntaxTree(
 <text>
@@ -2405,8 +2409,7 @@ End Module
             document = document.WithSyntaxRoot(newRoot)
             document = Simplifier.ReduceAsync(document).Result
 
-            Assert.Equal(
-<text>Imports System.Diagnostics
+            Dim expected As String = <text>Imports System.Diagnostics
 Imports System
 Imports System.IO
 
@@ -2421,12 +2424,14 @@ Module Program
 
     Public Sub Main()
         Dim i As Integer = 0
-        Console.WriteLine(i.ToString())
+        System.Console.WriteLine(i.ToString())
         Dim p As Process = Process.GetCurrentProcess()
         Console.WriteLine(p.Id)
     End Sub
 End Module
-</text>.Value, document.GetSyntaxRootAsync().Result.ToString().Replace(vbCrLf, vbLf))
+</text>.Value
+            Dim actual As String = document.GetSyntaxRootAsync().Result.ToString().Replace(vbCrLf, vbLf)
+            Assert.Equal(expected, actual)
         End Sub
 
 #End Region
