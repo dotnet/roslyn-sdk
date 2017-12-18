@@ -5,9 +5,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:custom="clr-namespace:Roslyn.SyntaxVisualizer.Control"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="300">
-    <Grid Margin="5">
+    <Grid Margin="5"
+          KeyboardNavigation.TabNavigation="Cycle">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -110,7 +112,7 @@
                     <Label Grid.Row="2" Grid.Column="1" Name="kindValueLabel" Padding="5,2,5,2"/>
                 </Grid>
             </Border>
-            <WindowsFormsHost Grid.Row="1" Name="windowsFormsHost" Padding="5" />
+            <WindowsFormsHost Grid.Row="1" x:Name="windowsFormsHost" Padding="0" />
         </Grid>
     </Grid>
 </UserControl>
