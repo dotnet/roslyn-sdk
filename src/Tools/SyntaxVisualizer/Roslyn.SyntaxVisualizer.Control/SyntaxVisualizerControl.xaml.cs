@@ -196,6 +196,20 @@ namespace Roslyn.SyntaxVisualizer.Control
 
             return matchFound;
         }
+
+        public bool TryHandleEscape()
+        {
+            if (legendPopup.IsOpen)
+            {
+                legendPopup.IsOpen = false;
+                legendButton.Focus();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         #endregion
 
         #region Private Helpers - TreeView Navigation
@@ -795,7 +809,7 @@ namespace Roslyn.SyntaxVisualizer.Control
 
         private void LegendButton_Click(object sender, RoutedEventArgs e)
         {
-            legendPopup.IsOpen = true;
+            legendPopup.IsOpen = !legendPopup.IsOpen;
         }
         #endregion
     }

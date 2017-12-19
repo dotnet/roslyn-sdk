@@ -2,6 +2,8 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 
 namespace Roslyn.SyntaxVisualizer.Extension
@@ -16,8 +18,11 @@ namespace Roslyn.SyntaxVisualizer.Extension
     /// implementation of the IVsUIElementPane interface.
     /// </summary>
     [Guid("da7e21aa-da94-452d-8aa1-d1b23f73f576")]
-    public class SyntaxVisualizerToolWindow : ToolWindowPane
+    public class SyntaxVisualizerToolWindow : ToolWindowPane, IOleCommandTarget
     {
+        private const int OLECMDERR_E_NOTSUPPORTED = unchecked((int)0x80040100);
+        private readonly SyntaxVisualizerContainer _container;
+
         /// <summary>
         /// Standard constructor for the tool window.
         /// </summary>
@@ -38,14 +43,46 @@ namespace Roslyn.SyntaxVisualizer.Extension
             // This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
             // we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on 
             // the object returned by the Content property.
-            Content = new SyntaxVisualizerContainer(this);
+            _container = new SyntaxVisualizerContainer(this);
+            Content = _container;
         }
 
-        internal TServiceInterface GetVsService<TServiceInterface, TService>() 
+        internal TServiceInterface GetVsService<TServiceInterface, TService>()
             where TServiceInterface : class
             where TService : class
         {
             return (TServiceInterface)GetService(typeof(TService));
+        }
+
+        protected override object GetService(Type serviceType)
+        {
+            if (serviceType == typeof(IOleCommandTarget))
+            {
+                return this;
+            }
+
+            return base.GetService(serviceType);
+        }
+
+        public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
+        {
+            var baseTarget = (IOleCommandTarget)base.GetService(typeof(IOleCommandTarget));
+            return baseTarget?.QueryStatus(pguidCmdGroup, cCmds, prgCmds, pCmdText) ?? OLECMDERR_E_NOTSUPPORTED;
+        }
+
+        public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
+        {
+            // Triggered when Escape is pressed in the tool window. If the popup is open, we want to close
+            // the popup and return S_OK, so that focus is not set to the main text document window.
+            if (pguidCmdGroup == VSConstants.GUID_VSStandardCommandSet97 &&
+                (VSConstants.VSStd97CmdID)nCmdID == VSConstants.VSStd97CmdID.PaneActivateDocWindow &&
+                _container.TryHandleEscape())
+            {
+                return VSConstants.S_OK;
+            }
+
+            var baseTarget = (IOleCommandTarget)base.GetService(typeof(IOleCommandTarget));
+            return baseTarget?.Exec(pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut) ?? OLECMDERR_E_NOTSUPPORTED;
         }
     }
 }

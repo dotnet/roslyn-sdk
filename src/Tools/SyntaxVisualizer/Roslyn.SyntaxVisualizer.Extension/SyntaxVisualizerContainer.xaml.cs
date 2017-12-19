@@ -78,6 +78,11 @@ namespace Roslyn.SyntaxVisualizer.Extension
             syntaxVisualizer.Clear();
         }
 
+        internal bool TryHandleEscape()
+        {
+            return syntaxVisualizer.TryHandleEscape();
+        }
+
         #region Helpers - GetService
         private static Microsoft.VisualStudio.OLE.Interop.IServiceProvider globalServiceProvider;
         private static Microsoft.VisualStudio.OLE.Interop.IServiceProvider GlobalServiceProvider
