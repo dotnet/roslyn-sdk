@@ -72,7 +72,14 @@ namespace Roslyn.SyntaxVisualizer.Control
                 ToolbarVisible = false,
                 CommandsVisibleIfAvailable = false
             };
-            windowsFormsHost.Child = _propertyGrid;
+            var tabStopPanel = new TabStopPanel(windowsFormsHost)
+            {
+                PropertyGrid = _propertyGrid,
+                BorderStyle = System.Windows.Forms.BorderStyle.None,
+                Padding = System.Windows.Forms.Padding.Empty,
+                Margin = System.Windows.Forms.Padding.Empty
+            };
+            windowsFormsHost.Child = tabStopPanel;
         }
 
         public void Clear()
