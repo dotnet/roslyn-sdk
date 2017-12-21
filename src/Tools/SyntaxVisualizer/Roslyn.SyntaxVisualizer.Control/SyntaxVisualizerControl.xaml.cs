@@ -35,6 +35,8 @@ namespace Roslyn.SyntaxVisualizer.Control
 
         #region Private State
         private TreeViewItem _currentSelection;
+        private Brush _previousForeground;
+        private Brush _previousBackground;
         private bool _isNavigatingFromSourceToTree;
         private bool _isNavigatingFromTreeToSource;
         private readonly System.Windows.Forms.PropertyGrid _propertyGrid;
@@ -656,7 +658,21 @@ namespace Roslyn.SyntaxVisualizer.Control
         {
             if (treeView.SelectedItem != null)
             {
+                if (_previousBackground != null)
+                {
+                    _currentSelection.Background = _previousBackground;
+                }
+
+                if (_previousForeground != null)
+                {
+                    _currentSelection.Foreground = _previousForeground;
+                }
+
                 _currentSelection = (TreeViewItem)treeView.SelectedItem;
+                _previousBackground = _currentSelection.Background;
+                _previousForeground = _currentSelection.Foreground;
+                _currentSelection.Foreground = SystemColors.HighlightTextBrush;
+                _currentSelection.Background = SystemColors.HighlightBrush;
             }
         }
 
