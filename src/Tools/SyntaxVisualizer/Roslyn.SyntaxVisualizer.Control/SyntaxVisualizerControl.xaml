@@ -87,7 +87,7 @@
                 </ContextMenu>
             </TreeView.ContextMenu>
         </TreeView>
-        <GridSplitter Grid.Row="2" ResizeDirection="Rows" HorizontalAlignment="Stretch" Height="5"/>
+        <GridSplitter Grid.Row="2" AutomationProperties.Name="Horizontal" ResizeDirection="Rows" HorizontalAlignment="Stretch" Height="5"/>
         <Grid Grid.Row="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
