@@ -23,41 +23,41 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" VerticalAlignment="Center" Content="Syntax Tree" FontWeight="Bold"/>
-                <Button Grid.Column="2" Name="legendButton" Click="LegendButton_Click" AutomationProperties.Name ="Legend" Visibility="Hidden" Margin="3" Padding="2" >
-                    <StackPanel>
+                <StackPanel Grid.Column="2" Margin="3">
+                    <Button Name="legendButton" Click="LegendButton_Click" AutomationProperties.Name="Legend" Visibility="Hidden" Padding="2">
                         <TextBlock>Legend</TextBlock>
-                        <Popup StaysOpen="False" Name="legendPopup">
-                            <Border BorderThickness="1" BorderBrush="#FF828790">
-                                <Grid Background="White">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Label Grid.Row="0" Grid.Column="0" Content="Blue" Foreground="Blue" Margin="5,5,0,0"/>
-                                    <Label Grid.Row="0" Grid.Column="1" Content="SyntaxNode" Margin="0,5,5,0"/>
-                                    <Label Grid.Row="1" Grid.Column="0" Content="Green" Foreground="DarkGreen" Margin="5,0,0,0"/>
-                                    <Label Grid.Row="1" Grid.Column="1" Content="SyntaxToken" Margin="0,0,5,0"/>
-                                    <Label Grid.Row="2" Grid.Column="0" Content="Lead:Maroon" Foreground="Maroon" Margin="5,0,0,0"/>
-                                    <Label Grid.Row="2" Grid.Column="1" Content="Leading SyntaxTrivia" Margin="0,0,5,0"/>
-                                    <Label Grid.Row="3" Grid.Column="0" Content="Trail:Maroon" Foreground="Maroon" Margin="5,0,0,0"/>
-                                    <Label Grid.Row="3" Grid.Column="1" Content="Trailing SyntaxTrivia" Margin="0,0,5,0"/>
-                                    <Label Grid.Row="4" Grid.Column="0" Content="Pink" Background="Pink" Margin="10,0,0,5" Padding="5,1"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                    <Label Grid.Row="4" Grid.Column="1" Content="Has Diagnostics" Margin="0,0,5,5"/>
-                                    <Label Name="highlightLegendTextLabel" Visibility="Collapsed" Grid.Row="5" Grid.Column="0"  Content="Yellow" BorderThickness="1" BorderBrush="Black" Background="Yellow" Margin="10,-5,0,5" Padding="5,1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                    <Label Name="highlightLegendDescriptionLabel" Visibility="Collapsed" Grid.Row="5" Grid.Column="1" Content="Of Interest" Margin="0,-5,5,5"/>
-                                </Grid>
-                            </Border>
-                        </Popup>
-                    </StackPanel>
-                </Button>
+                    </Button>
+                    <Popup Name="legendPopup" StaysOpen="False">
+                        <Border BorderThickness="1" BorderBrush="#FF828790">
+                            <Grid Background="White">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Row="0" Grid.Column="0" Content="Blue" Foreground="Blue" Margin="5,5,0,0"/>
+                                <Label Grid.Row="0" Grid.Column="1" Content="SyntaxNode" Margin="0,5,5,0"/>
+                                <Label Grid.Row="1" Grid.Column="0" Content="Green" Foreground="DarkGreen" Margin="5,0,0,0"/>
+                                <Label Grid.Row="1" Grid.Column="1" Content="SyntaxToken" Margin="0,0,5,0"/>
+                                <Label Grid.Row="2" Grid.Column="0" Content="Lead:Maroon" Foreground="Maroon" Margin="5,0,0,0"/>
+                                <Label Grid.Row="2" Grid.Column="1" Content="Leading SyntaxTrivia" Margin="0,0,5,0"/>
+                                <Label Grid.Row="3" Grid.Column="0" Content="Trail:Maroon" Foreground="Maroon" Margin="5,0,0,0"/>
+                                <Label Grid.Row="3" Grid.Column="1" Content="Trailing SyntaxTrivia" Margin="0,0,5,0"/>
+                                <Label Grid.Row="4" Grid.Column="0" Content="Pink" Background="Pink" Margin="10,0,0,5" Padding="5,1"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Label Grid.Row="4" Grid.Column="1" Content="Has Diagnostics" Margin="0,0,5,5"/>
+                                <Label Name="highlightLegendTextLabel" Visibility="Collapsed" Grid.Row="5" Grid.Column="0"  Content="Yellow" BorderThickness="1" BorderBrush="Black" Background="Yellow" Margin="10,-5,0,5" Padding="5,1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Label Name="highlightLegendDescriptionLabel" Visibility="Collapsed" Grid.Row="5" Grid.Column="1" Content="Of Interest" Margin="0,-5,5,5"/>
+                            </Grid>
+                        </Border>
+                    </Popup>
+                </StackPanel>
             </Grid>
         </Border>
         <TreeView Grid.Row="1" Name="treeView" SelectedItemChanged="TreeView_SelectedItemChanged" PreviewMouseRightButtonDown="TreeView_PreviewMouseRightButtonDown" ContextMenuOpening="TreeView_ContextMenuOpening" Padding="5">
