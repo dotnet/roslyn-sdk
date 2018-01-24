@@ -211,7 +211,7 @@ Public Module SyntaxDgmlHelper
 
 #Region "GetLabel*"
     Private Function GetLabelForNode(node As SyntaxNode) As String
-        Return node.GetKind()
+        Return node.GetKind() + " Node"
     End Function
 
     Private Function GetLabelForToken(token As SyntaxToken) As String
@@ -226,7 +226,7 @@ Public Module SyntaxDgmlHelper
             End If
         End If
 
-        Return label
+        Return label + " Token"
     End Function
 
     Private Function GetLabelForTrivia(trivia As SyntaxTrivia) As String
