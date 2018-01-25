@@ -9,7 +9,7 @@
         "bin/Roslyn.SyntaxVisualizer.DgmlHelper/net461/Roslyn.SyntaxVisualizer.DgmlHelper.dll",
         "bin/Roslyn.SyntaxVisualizer.Extension/net461/Roslyn.SyntaxVisualizer.Extension.dll",
         "bin/Roslyn.SyntaxVisualizer.Extension/net461/*/Roslyn.SyntaxVisualizer.Extension.resources.dll",
-	"bin/Roslyn.SyntaxVisualizer.DgmlHelper/net461/*/Roslyn.SyntaxVisualizer.DgmlHelper.resources.dll",
+	      "bin/Roslyn.SyntaxVisualizer.DgmlHelper/net461/*/Roslyn.SyntaxVisualizer.DgmlHelper.resources.dll",
       ]
     },
     {
