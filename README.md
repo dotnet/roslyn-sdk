@@ -1,22 +1,20 @@
 # Roslyn SDK
 
-|Branch|Unit Tests (Debug)|Unit Tests (Release)|
-|---|:--:|:--:|
-|[master](https://github.com/dotnet/roslyn-sdk/tree/master)|[![Build Status](https://ci.dot.net/job/Private/job/dotnet_roslyn-sdk/job/master/job/windows_debug//badge/icon)](https://ci.dot.net/job/Private/job/dotnet_roslyn-sdk/job/master/job/windows_debug/)|[![Build Status](https://ci.dot.net/job/Private/job/dotnet_roslyn-sdk/job/master/job/windows_release//badge/icon)](https://ci.dot.net/job/Private/job/dotnet_roslyn-sdk/job/master/job/windows_release/)|
+This branch contains a version of the syntax visualizer that can be used to generate unit tests for IOperation and Dataflow analysis. Steps to build and use:
 
-# What is the Roslyn-SDK?
+1. Build Roslyn with `build.cmd -restore -buildAll -pack`
+    a. At some point @jaredpar might remove `-buildAll`. At that point, just `-build` should work.
+2. Publish updated Roslyn to the dev hive. Can be done by opening Roslyn.sln and rebuilding the entire solution.
+3. Update [build/Versions.props](build/Versions.props) line 67 with the location of the published NuGet packages (should be roslyn-root/Binaries/Debug/NuGet/PerBuildPreRelease).
+4. Run Restore.cmd. If you are redoing this, make sure to clear the developer versions from the nuget cache, or your changes won't be picked up.
+5. F5 Roslyn.SDK.VS2017
+6. Open a solution. Make sure that `<Features>flow-analysis</Features>` is in the project file.
+7. Open the syntax visualizer and right-click on a block, and choose `Generate IOperation Test (If Possible)`. Test will appear in the bottom pane.
 
-Roslyn is the compiler platform for .NET. It consists of the compiler itself and a powerful set of APIs to interact with the compiler. The Roslyn platform is hosted at [github.com/dotnet/roslyn](https://github.com/dotnet/roslyn). The compiler is part of every .NET installation. The APIs to interact with the compiler are available via NuGet (see the [Roslyn repository](https://github.com/dotnet/roslyn) for details). The Roslyn SDK includes additional components to get you started with advanced topics such as distributing a Roslyn analyzer as Visual Studio extension or to inspect code with the Syntax Vizualizer. The documentation for the Roslyn platform can be found at [docs.microsoft.com/dotnet/csharp/roslyn-sdk](https://docs.microsoft.com/dotnet/csharp/roslyn-sdk). This repository contains code for both the Roslyn-SDK templates and Syntax Vizualizer.
+For updates that do not change the shape of the IOperation types or the test generator code, simply redeploying Roslyn will be fine. If changes are made that update the actual types or flow graph string builder code, then you'll need to update the dlls in the extension. You can either follow all instructions above again, or just replace the following files:
 
-# Installation instructions
+* Microsoft.VisualStudio.IntegrationTest.Utilities.dll
+* Roslyn.Services.Test.Utilities.dll
+* Roslyn.Test.Utilities.dll 
 
-## Visual Studio 2017 (Version 15.5 and above)
-
-1. Run **Visual Studio Installer**
-2. Hit **Modify**
-3. Select the **Individual components** tab
-4. Check the box for **.NET Compiler Platform SDK**
-
-## Visual Studio 2015
-
-For older versions of Visual Studio the [.NET Compiler Platform SDK](https://visualstudiogallery.msdn.microsoft.com/2ddb7240-5249-4c8c-969e-5d05823bcb89) is available as an extension in the Visual Studio gallery.
+Replace them in `%localappdata%/Microsoft/VisualStudio/15.0_<hive here>/Extensions/Microsoft/.NET Compiler Platform SDK For Visual Studio 2017/42.42.42.42/`

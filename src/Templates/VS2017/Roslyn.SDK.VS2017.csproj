@@ -113,6 +113,25 @@
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
     </ProjectReference>
+    <VSIXCopyLocalReferenceSourceItem Include="$(NuGetPackageRoot)\Microsoft.VisualStudio.IntegrationTest.Utilities\$(MicrosoftVisualStudioIntegrationTestsVersion)\lib\net461\Microsoft.VisualStudio.IntegrationTest.Utilities.dll">
+      <ForceIncludeInVsix>true</ForceIncludeInVsix>
+      <Private>true</Private>
+    </VSIXCopyLocalReferenceSourceItem>
+    <VSIXCopyLocalReferenceSourceItem Include="$(NuGetPackageRoot)\Microsoft.VisualStudio.IntegrationTest.Utilities\$(MicrosoftVisualStudioIntegrationTestsVersion)\lib\net461\Roslyn.Test.Utilities.dll">
+      <ForceIncludeInVsix>true</ForceIncludeInVsix>
+      <Private>true</Private>
+    </VSIXCopyLocalReferenceSourceItem>
+    <VSIXCopyLocalReferenceSourceItem Include="$(NuGetPackageRoot)\Microsoft.VisualStudio.IntegrationTest.Utilities\$(MicrosoftVisualStudioIntegrationTestsVersion)\lib\net461\Roslyn.Services.Test.Utilities.dll">
+      <ForceIncludeInVsix>true</ForceIncludeInVsix>
+      <Private>true</Private>
+    </VSIXCopyLocalReferenceSourceItem>
+    <VSIXCopyLocalReferenceSourceItem Include="$(NuGetPackageRoot)\xunit.assert\$(xunitassertVersion)\lib\netstandard1.1\xunit.assert.dll">
+      <ForceIncludeInVsix>true</ForceIncludeInVsix>
+      <Private>true</Private>
+    </VSIXCopyLocalReferenceSourceItem>
+    <PackageReference Include="Microsoft.VisualStudio.IntegrationTest.Utilities" Version="$(MicrosoftVisualStudioIntegrationTestsVersion)" />
+    <PackageReference Include="xunit" Version="$(xunitVersion)" />
+    <PackageReference Include="xunit.assert" Version="$(xunitassertVersion)" />
   </ItemGroup>
   <!-- rewriting of .vstemplate files to reference the correct assembly version number -->
   <UsingTask AssemblyFile="$(ArtifactsBinDir)UpdateTemplateVersion\net461\UpdateTemplateVersion.dll" TaskName="UpdateTemplateVersion" />
