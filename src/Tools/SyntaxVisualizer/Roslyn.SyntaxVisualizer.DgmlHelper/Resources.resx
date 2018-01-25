@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SyntaxNodeLabel" xml:space="preserve">
-    <value>'{0}' Node</value>
+    <value>{0} Node</value>
   </data>
   <data name="SyntaxTokenLabel" xml:space="preserve">
     <value>'{0}' Token</value>
