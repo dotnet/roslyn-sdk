@@ -669,14 +669,18 @@ namespace Roslyn.SyntaxVisualizer.Control
         #region Event Handlers
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (treeView.SelectedItem != null)
+            // Restore the regular colors on the newly unselected item
+            var previousSelection = _currentSelection;
+            if (previousSelection != null)
             {
-                if (_previousForeground != null)
-                {
-                    _currentSelection.Foreground = _previousForeground;
-                }
+                previousSelection.Foreground = _previousForeground;
+            }
 
-                _currentSelection = (TreeViewItem)treeView.SelectedItem;
+            // Remember the selected item's normal colors and choose definitely contrasting colors
+            // while it is selected
+            _currentSelection = (TreeViewItem)treeView.SelectedItem;
+            if (_currentSelection != null)
+            {
                 _previousForeground = _currentSelection.Foreground;
                 _currentSelection.ClearValue(TreeViewItem.ForegroundProperty);
             }
