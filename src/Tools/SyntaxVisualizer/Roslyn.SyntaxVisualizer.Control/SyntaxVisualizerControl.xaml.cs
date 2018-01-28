@@ -678,7 +678,7 @@ namespace Roslyn.SyntaxVisualizer.Control
 
                 _currentSelection = (TreeViewItem)treeView.SelectedItem;
                 _previousForeground = _currentSelection.Foreground;
-                _currentSelection.Foreground = SystemColors.HighlightTextBrush;
+                _currentSelection.ClearValue(TreeViewItem.ForegroundProperty);
             }
         }
 
