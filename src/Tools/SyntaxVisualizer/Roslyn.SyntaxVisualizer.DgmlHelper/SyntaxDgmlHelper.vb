@@ -464,7 +464,7 @@ Public Module SyntaxDgmlHelper
                            </Style>
                            <Style TargetType="Node" GroupLabel="Bad / Skipped" ValueLabel="Has category">
                                <Condition Expression="HasCategory('5')"/>
-                               <Setter Property="Background" Value="Red"/>
+                               <Setter Property="Background" Value="Maroon"/>
                                <Setter Property="FontStyle" Value="Bold"/>
                                <Setter Property="NodeRadius" Value="5"/>
                            </Style>
