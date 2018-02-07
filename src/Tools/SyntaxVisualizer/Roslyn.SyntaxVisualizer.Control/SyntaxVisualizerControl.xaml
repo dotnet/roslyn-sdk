@@ -5,17 +5,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="300">
-    <Grid Margin="5"
-          KeyboardNavigation.TabNavigation="Cycle">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextBrushKey}}" />
+        </Style>
+    </UserControl.Resources>
+    <Grid KeyboardNavigation.TabNavigation="Cycle">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" BorderThickness="1,1,1,0" BorderBrush="#FF828790" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" >
+        <Border Grid.Row="0" BorderThickness="0" Background="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarGradientBrushKey}}" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -30,6 +35,11 @@
                     <Popup Name="legendPopup" StaysOpen="False">
                         <Border BorderThickness="1" BorderBrush="#FF828790">
                             <Grid Background="White">
+                                <Grid.Resources>
+                                    <Style TargetType="{x:Type Label}">
+                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+                                    </Style>
+                                </Grid.Resources>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -87,13 +97,13 @@
                 </ContextMenu>
             </TreeView.ContextMenu>
         </TreeView>
-        <GridSplitter Grid.Row="2" AutomationProperties.Name="Horizontal" ResizeDirection="Rows" HorizontalAlignment="Stretch" Height="5"/>
+        <GridSplitter Grid.Row="2" AutomationProperties.Name="Horizontal" ResizeDirection="Rows" HorizontalAlignment="Stretch" Height="4" Margin="0" Background="{DynamicResource {x:Static vsui:EnvironmentColors.EnvironmentBackgroundBrushKey}}"/>
         <Grid Grid.Row="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" BorderThickness="1,1,1,0" BorderBrush="#FF828790" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+            <Border Grid.Row="0" BorderThickness="0" Background="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowBackgroundBrushKey}}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
