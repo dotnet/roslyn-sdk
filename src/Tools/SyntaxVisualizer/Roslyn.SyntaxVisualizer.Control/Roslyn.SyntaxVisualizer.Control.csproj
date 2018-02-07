@@ -1,5 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
+  <!-- workaround for https://github.com/NuGet/Home/issues/5894 -->
+  <Import Project="$(ArtifactsObjDir)$(AssemblyName)\*.props" Condition="'$(MSBuildProjectExtension)' == '.tmp_proj'" />
+
+  <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>Roslyn.SyntaxVisualizer.Control</RootNamespace>
     <AssemblyName>Roslyn.SyntaxVisualizer.Control</AssemblyName>
@@ -35,4 +38,7 @@
     </Page>
     <Resource Include="SyntaxGraph.ico" />
   </ItemGroup>
+
+  <!-- workaround for https://github.com/NuGet/Home/issues/5894 -->
+  <Import Project="$(ArtifactsObjDir)$(AssemblyName)\*.targets" Condition="'$(MSBuildProjectExtension)' == '.tmp_proj'" />
 </Project>

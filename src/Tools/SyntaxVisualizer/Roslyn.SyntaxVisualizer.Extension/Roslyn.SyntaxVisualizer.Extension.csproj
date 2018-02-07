@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <!-- workaround for https://github.com/NuGet/Home/issues/5894 -->
+  <Import Project="$(ArtifactsObjDir)$(AssemblyName)\*.props" Condition="'$(MSBuildProjectExtension)' == '.tmp_proj'" />
+
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>Roslyn.SyntaxVisualizer.Extension</RootNamespace>
@@ -91,4 +94,7 @@
   <Target Name="Move_Assets" BeforeTargets="BeforeBuild">
     <Copy SourceFiles="@(FilesToMove)" DestinationFolder="$(ArtifactsObjDir)Roslyn.SyntaxVisualizer.Extension\net461\Roslyn.SyntaxVisualizer.Extension.xlf" />
   </Target>
+
+  <!-- workaround for https://github.com/NuGet/Home/issues/5894 -->
+  <Import Project="$(ArtifactsObjDir)$(AssemblyName)\*.targets" Condition="'$(MSBuildProjectExtension)' == '.tmp_proj'" />
 </Project>
