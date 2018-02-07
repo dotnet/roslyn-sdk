@@ -43,6 +43,7 @@
     <MicrosoftVisualStudioShellInterop80Version>8.0.50727</MicrosoftVisualStudioShellInterop80Version>
     <MicrosoftVisualStudioShellInterop90Version>9.0.30729</MicrosoftVisualStudioShellInterop90Version>
     <MicrosoftVisualStudioShellInterop100Version>10.0.30319</MicrosoftVisualStudioShellInterop100Version>
+    <MicrosoftVisualStudioShellInterop110Version>11.0.61030</MicrosoftVisualStudioShellInterop110Version>
     <MicrosoftVisualStudioTextDataVersion>15.0.26606</MicrosoftVisualStudioTextDataVersion>
     <MicrosoftVisualStudioTextLogicVersion>15.0.26606</MicrosoftVisualStudioTextLogicVersion>
     <MicrosoftVisualStudioTextManagerInteropVersion>7.10.6070</MicrosoftVisualStudioTextManagerInteropVersion>
