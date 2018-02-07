@@ -52,6 +52,12 @@ namespace Roslyn.SyntaxVisualizer.Extension
                 }
             }
 
+            var uiShellService = GetService<IVsUIShell5, SVsUIShell>(GlobalServiceProvider);
+            if (uiShellService != null)
+            {
+                syntaxVisualizer.SetPropertyGridColors(uiShellService);
+            }
+
             syntaxVisualizer.SyntaxNodeNavigationToSourceRequested += node => NavigateToSource(node.Span);
             syntaxVisualizer.SyntaxTokenNavigationToSourceRequested += token => NavigateToSource(token.Span);
             syntaxVisualizer.SyntaxTriviaNavigationToSourceRequested += trivia => NavigateToSource(trivia.Span);

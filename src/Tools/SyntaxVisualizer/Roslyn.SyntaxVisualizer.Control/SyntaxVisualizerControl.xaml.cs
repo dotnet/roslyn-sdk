@@ -6,6 +6,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using SystemInformation = System.Windows.Forms.SystemInformation;
 
 namespace Roslyn.SyntaxVisualizer.Control
 {
@@ -109,6 +113,49 @@ namespace Roslyn.SyntaxVisualizer.Control
                 Margin = System.Windows.Forms.Padding.Empty
             };
             windowsFormsHost.Child = tabStopPanel;
+        }
+
+        public void SetPropertyGridColors(IVsUIShell5 shell)
+        {
+            var backgroundColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.ToolWindowBackgroundColorKey);
+            var foregroundColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.ToolWindowTextColorKey);
+            var lineColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.ToolWindowContentGridColorKey);
+            var disabledColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.SystemGrayTextColorKey);
+            var highlightColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.SystemHighlightColorKey);
+            var highlightTextColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.SystemHighlightTextColorKey);
+            var hyperLinkColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.ControlLinkTextColorKey);
+            var hyperLinkActiveColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.ControlLinkTextPressedColorKey);
+
+            if (!SystemInformation.HighContrast || !DotNetFrameworkUtilities.IsInstalledFramework471OrAbove())
+            {
+                _propertyGrid.LineColor = lineColor;
+            }
+
+            _propertyGrid.ViewBackColor = backgroundColor;
+            _propertyGrid.ViewForeColor = foregroundColor;
+            _propertyGrid.ViewBorderColor = lineColor;
+
+            _propertyGrid.HelpBackColor = backgroundColor;
+            _propertyGrid.HelpForeColor = foregroundColor;
+            _propertyGrid.HelpBorderColor = backgroundColor;
+
+            _propertyGrid.CategoryForeColor = foregroundColor;
+            _propertyGrid.CategorySplitterColor = lineColor;
+
+            _propertyGrid.CommandsActiveLinkColor = hyperLinkActiveColor;
+            _propertyGrid.CommandsDisabledLinkColor = disabledColor;
+            _propertyGrid.CommandsLinkColor = hyperLinkColor;
+            _propertyGrid.CommandsForeColor = foregroundColor;
+            _propertyGrid.CommandsBackColor = backgroundColor;
+            _propertyGrid.CommandsDisabledLinkColor = disabledColor;
+            _propertyGrid.CommandsBorderColor = backgroundColor;
+
+            _propertyGrid.SelectedItemWithFocusForeColor = highlightTextColor;
+            _propertyGrid.SelectedItemWithFocusBackColor = highlightColor;
+
+            _propertyGrid.DisabledItemForeColor = disabledColor;
+
+            _propertyGrid.CanShowVisualStyleGlyphs = false;
         }
 
         public void Clear()
