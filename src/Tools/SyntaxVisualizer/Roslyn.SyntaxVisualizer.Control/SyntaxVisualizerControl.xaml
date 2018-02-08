@@ -5,6 +5,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Roslyn.SyntaxVisualizer.Control"
              xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="300">
@@ -47,6 +48,9 @@
                                 <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderHoverBrushKey}}"/>
                                 <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonHoverTextBrushKey}}"/>
                             </Trigger>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=local:SyntaxVisualizerControl}, Path=LegendPopup.IsOpen, Mode=OneWay}" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderPressedBrushKey}}"/>
+                            </DataTrigger>
                             <Trigger Property="IsPressed" Value="true">
                                 <Setter Property="Background" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonPressedBrushKey}}"/>
                                 <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderPressedBrushKey}}"/>

@@ -2,6 +2,7 @@
 
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.CodeAnalysis;
@@ -114,6 +115,11 @@ namespace Roslyn.SyntaxVisualizer.Control
             };
             windowsFormsHost.Child = tabStopPanel;
         }
+
+        /// <summary>
+        /// Allows templates defined in XAML to bind to properties of <see cref="legendPopup"/>.
+        /// </summary>
+        public Popup LegendPopup => legendPopup;
 
         public void SetPropertyGridColors(IVsUIShell5 shell)
         {
