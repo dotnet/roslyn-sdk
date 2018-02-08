@@ -30,6 +30,8 @@
     <SystemReflectionMetadataVersionVS2015>1.0.21</SystemReflectionMetadataVersionVS2015>
 
     <!-- VS SDK -->
+    <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2015
+               we need out extensions to work on both. -->
     <VSLangProjVersion>7.0.3300</VSLangProjVersion>
     <VSSDKTemplateWizardInterfaceVersion>12.0.4</VSSDKTemplateWizardInterfaceVersion>
     <EnvDTEVersion>8.0.1</EnvDTEVersion>
