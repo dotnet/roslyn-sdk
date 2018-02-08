@@ -8,7 +8,7 @@
     
     <!-- Toolset -->
     <RoslynToolsRepoToolsetVersion>1.0.0-beta-62512-01</RoslynToolsRepoToolsetVersion>
-    <VSWhereVersion>1.0.47</VSWhereVersion>
+    <VSWhereVersion>2.3.2</VSWhereVersion>
 
     <!-- MSBuild -->
     <MicrosoftBuildVersion>15.3.409</MicrosoftBuildVersion>
