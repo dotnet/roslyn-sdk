@@ -4,6 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 
 namespace Roslyn.SyntaxVisualizer.Extension
@@ -44,6 +45,23 @@ namespace Roslyn.SyntaxVisualizer.Extension
             // the object returned by the Content property.
             _container = new SyntaxVisualizerContainer(this);
             Content = _container;
+
+            VSColorTheme.ThemeChanged += HandleThemeChanged;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                VSColorTheme.ThemeChanged -= HandleThemeChanged;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        private void HandleThemeChanged(ThemeChangedEventArgs e)
+        {
+            _container.UpdateThemedColors();
         }
 
         internal TServiceInterface GetVsService<TServiceInterface, TService>()
