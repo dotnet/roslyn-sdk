@@ -105,16 +105,11 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <Label Grid.Row="0" Grid.Column="0" Content="Blue" Foreground="{StaticResource SyntaxNodeText.Brush}" Margin="5,5,0,0"/>
-                                <Label Grid.Row="0" Grid.Column="1" Content="SyntaxNode" Margin="0,5,5,0"/>
-                                <Label Grid.Row="1" Grid.Column="0" Content="Green" Foreground="{StaticResource SyntaxTokenText.Brush}" Margin="5,0,0,0"/>
-                                <Label Grid.Row="1" Grid.Column="1" Content="SyntaxToken" Margin="0,0,5,0"/>
-                                <Label Grid.Row="2" Grid.Column="0" Content="Lead:Maroon" Foreground="{StaticResource SyntaxTriviaText.Brush}" Margin="5,0,0,0"/>
-                                <Label Grid.Row="2" Grid.Column="1" Content="Leading SyntaxTrivia" Margin="0,0,5,0"/>
-                                <Label Grid.Row="3" Grid.Column="0" Content="Trail:Maroon" Foreground="{StaticResource SyntaxTriviaText.Brush}" Margin="5,0,0,0"/>
-                                <Label Grid.Row="3" Grid.Column="1" Content="Trailing SyntaxTrivia" Margin="0,0,5,0"/>
-                                <Label Grid.Row="4" Grid.Column="0" Content="Pink" Background="Pink" Margin="10,0,0,5" Padding="5,1"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <Label Grid.Row="4" Grid.Column="1" Content="Has Diagnostics" Margin="0,0,5,5"/>
+                                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="SyntaxNode" Foreground="{StaticResource SyntaxNodeText.Brush}" Margin="5,5,5,0"/>
+                                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="SyntaxToken" Foreground="{StaticResource SyntaxTokenText.Brush}" Margin="5,0,5,0"/>
+                                <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Leading SyntaxTrivia" Foreground="{StaticResource SyntaxTriviaText.Brush}" Margin="5,0,5,0"/>
+                                <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Trailing SyntaxTrivia" Foreground="{StaticResource SyntaxTriviaText.Brush}" Margin="5,0,5,0"/>
+                                <Label Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Content="Has Diagnostics" Background="Pink" Margin="10,0,5,5" Padding="5,1"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <Label Name="highlightLegendTextLabel" Visibility="Collapsed" Grid.Row="5" Grid.Column="0"  Content="Yellow" BorderThickness="1" BorderBrush="Black" Background="Yellow" Margin="10,-5,0,5" Padding="5,1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <Label Name="highlightLegendDescriptionLabel" Visibility="Collapsed" Grid.Row="5" Grid.Column="1" Content="Of Interest" Margin="0,-5,5,5"/>
                             </Grid>
