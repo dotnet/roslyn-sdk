@@ -4,7 +4,7 @@
 *.groovy @dotnet/roslyn-infrastructure
 .github/ @dotnet/roslyn-infrastructure
 build/ @dotnet/roslyn-infrastructure
-samples/ @jmarolf
+samples/ @dotnet/analyzer-samples
 src/Templates/ @jmarolf
 src/Tools/ @dotnet/roslyn-ide
 
