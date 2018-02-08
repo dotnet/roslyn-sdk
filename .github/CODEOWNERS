@@ -1,0 +1,10 @@
+# Automatically request reviews when a pull request changes any owned files
+# More information: https://github.com/blog/2392-introducing-code-owners 
+
+*.groovy @dotnet/roslyn-infrastructure
+.github/ @dotnet/roslyn-infrastructure
+build/ @dotnet/roslyn-infrastructure
+samples/ @jmarolf
+src/Templates/ @jmarolf
+src/Tools/ @dotnet/roslyn-ide
+
