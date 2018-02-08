@@ -16,25 +16,16 @@
             <Setter Property="Control.Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonFocusedBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
-        <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
-        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
-        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
-        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
-        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
-        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
-        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
-        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
         <Style TargetType="{x:Type Button}">
             <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
-            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonTextBrushKey}}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -47,20 +38,24 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsDefaulted" Value="true">
-                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                                <Setter Property="Background" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonDefaultBrushKey}}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderDefaultBrushKey}}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonDefaultTextBrushKey}}"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                                <Setter Property="Background" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonHoverBrushKey}}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderHoverBrushKey}}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonHoverTextBrushKey}}"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                                <Setter Property="Background" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonPressedBrushKey}}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderPressedBrushKey}}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonPressedTextBrushKey}}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
-                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                                <Setter Property="Background" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonDisabledBrushKey}}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderDisabledBrushKey}}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonDisabledTextBrushKey}}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
