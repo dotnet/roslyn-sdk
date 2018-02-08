@@ -81,50 +81,63 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-                <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Checked.Fill" Color="#FF595959"/>
-                <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Checked.Stroke" Color="#FF262626"/>
                 <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Stroke" Color="#FF27C7F7"/>
-                <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Fill" Color="#FFCCEEFB"/>
-                <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Checked.Stroke" Color="#FF1CC4F7"/>
-                <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Checked.Fill" Color="#FF82DFFB"/>
-                <PathGeometry x:Key="TreeArrow" Figures="M0,0 L0,6 L6,0 z"/>
-                <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Fill" Color="#FFFFFFFF"/>
-                <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Stroke" Color="#FF818181"/>
+                <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Checked.Fill" Color="#FF27C7F7"/>
+                <PathGeometry x:Key="ExpandedArrow" Figures="M 5 0 L 0 5 L 5 5 Z" />
+                <PathGeometry x:Key="CollapsedArrow" Figures="M 0 0 L 4 4 L 0 8 Z" />
                 <Style x:Key="ExpandCollapseToggleStyle" TargetType="{x:Type ToggleButton}">
                     <Setter Property="Focusable" Value="False"/>
                     <Setter Property="Width" Value="16"/>
                     <Setter Property="Height" Value="16"/>
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Transparent" />
+                    <Setter Property="BorderBrush" Value="Black" />
+                    <Setter Property="BorderThickness" Value="1" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                <Border Background="Transparent" Height="16" Padding="5,5,5,5" Width="16">
-                                    <Path x:Name="ExpandPath" Data="{StaticResource TreeArrow}" Fill="{StaticResource TreeViewItem.TreeArrow.Static.Fill}" Stroke="{StaticResource TreeViewItem.TreeArrow.Static.Stroke}">
-                                        <Path.RenderTransform>
-                                            <RotateTransform Angle="135" CenterY="3" CenterX="3"/>
-                                        </Path.RenderTransform>
-                                    </Path>
+                                <Border x:Name="ExpandPathBorder" Width="16" Height="16" Background="{TemplateBinding Background}">
+                                    <Image x:Name="ExpandImage" Margin="5,3,0,0" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top" UseLayoutRounding="True">
+                                        <Image.Source>
+                                            <DrawingImage>
+                                                <DrawingImage.Drawing>
+                                                    <GeometryDrawing x:Name="ExpandGeometry" Geometry="{StaticResource CollapsedArrow}" Brush="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}">
+                                                        <GeometryDrawing.Pen>
+                                                            <Pen Thickness="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness}" Brush="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderBrush}" />
+                                                        </GeometryDrawing.Pen>
+                                                    </GeometryDrawing>
+                                                </DrawingImage.Drawing>
+                                            </DrawingImage>
+                                        </Image.Source>
+                                    </Image>
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsChecked" Value="True">
-                                        <Setter Property="RenderTransform" TargetName="ExpandPath">
+                                        <Setter TargetName="ExpandImage" Property="Source">
                                             <Setter.Value>
-                                                <RotateTransform Angle="180" CenterY="3" CenterX="3"/>
+                                                <DrawingImage>
+                                                    <DrawingImage.Drawing>
+                                                        <GeometryDrawing Geometry="{StaticResource ExpandedArrow}" Brush="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}">
+                                                            <GeometryDrawing.Pen>
+                                                                <Pen Thickness="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness}" Brush="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderBrush}" />
+                                                            </GeometryDrawing.Pen>
+                                                        </GeometryDrawing>
+                                                    </DrawingImage.Drawing>
+                                                </DrawingImage>
                                             </Setter.Value>
                                         </Setter>
-                                        <Setter Property="Fill" TargetName="ExpandPath" Value="{StaticResource TreeViewItem.TreeArrow.Static.Checked.Fill}"/>
-                                        <Setter Property="Stroke" TargetName="ExpandPath" Value="{StaticResource TreeViewItem.TreeArrow.Static.Checked.Stroke}"/>
+                                        <Setter TargetName="ExpandImage" Property="Margin" Value="4.5,4.5,0,0" />
+                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
                                     </Trigger>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Stroke" TargetName="ExpandPath" Value="{StaticResource TreeViewItem.TreeArrow.MouseOver.Stroke}"/>
-                                        <Setter Property="Fill" TargetName="ExpandPath" Value="{StaticResource TreeViewItem.TreeArrow.MouseOver.Fill}"/>
+                                        <Setter Property="BorderBrush" Value="{StaticResource TreeViewItem.TreeArrow.MouseOver.Stroke}"/>
                                     </Trigger>
                                     <MultiTrigger>
                                         <MultiTrigger.Conditions>
                                             <Condition Property="IsMouseOver" Value="True"/>
                                             <Condition Property="IsChecked" Value="True"/>
                                         </MultiTrigger.Conditions>
-                                        <Setter Property="Stroke" TargetName="ExpandPath" Value="{StaticResource TreeViewItem.TreeArrow.MouseOver.Checked.Stroke}"/>
-                                        <Setter Property="Fill" TargetName="ExpandPath" Value="{StaticResource TreeViewItem.TreeArrow.MouseOver.Checked.Fill}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource TreeViewItem.TreeArrow.MouseOver.Checked.Fill}"/>
                                     </MultiTrigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
