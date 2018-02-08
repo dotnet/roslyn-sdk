@@ -66,6 +66,10 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <SolidColorBrush x:Key="SyntaxNodeText.Brush" Color="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextColorKey}}"/>
+        <SolidColorBrush x:Key="SyntaxTokenText.Brush" Color="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextColorKey}}"/>
+        <SolidColorBrush x:Key="SyntaxTriviaText.Brush" Color="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextColorKey}}"/>
     </UserControl.Resources>
     <Grid KeyboardNavigation.TabNavigation="Cycle">
         <Grid.RowDefinitions>
@@ -87,13 +91,8 @@
                         <TextBlock>Legend</TextBlock>
                     </Button>
                     <Popup Name="legendPopup" StaysOpen="False">
-                        <Border BorderThickness="1" BorderBrush="#FF828790">
-                            <Grid Background="White">
-                                <Grid.Resources>
-                                    <Style TargetType="{x:Type Label}">
-                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-                                    </Style>
-                                </Grid.Resources>
+                        <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static vsui:EnvironmentColors.DropDownPopupBorderBrushKey}}">
+                            <Grid Background="{DynamicResource {x:Static vsui:EnvironmentColors.DropDownPopupBackgroundGradientBrushKey}}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -106,13 +105,13 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <Label Grid.Row="0" Grid.Column="0" Content="Blue" Foreground="Blue" Margin="5,5,0,0"/>
+                                <Label Grid.Row="0" Grid.Column="0" Content="Blue" Foreground="{StaticResource SyntaxNodeText.Brush}" Margin="5,5,0,0"/>
                                 <Label Grid.Row="0" Grid.Column="1" Content="SyntaxNode" Margin="0,5,5,0"/>
-                                <Label Grid.Row="1" Grid.Column="0" Content="Green" Foreground="DarkGreen" Margin="5,0,0,0"/>
+                                <Label Grid.Row="1" Grid.Column="0" Content="Green" Foreground="{StaticResource SyntaxTokenText.Brush}" Margin="5,0,0,0"/>
                                 <Label Grid.Row="1" Grid.Column="1" Content="SyntaxToken" Margin="0,0,5,0"/>
-                                <Label Grid.Row="2" Grid.Column="0" Content="Lead:Maroon" Foreground="Maroon" Margin="5,0,0,0"/>
+                                <Label Grid.Row="2" Grid.Column="0" Content="Lead:Maroon" Foreground="{StaticResource SyntaxTriviaText.Brush}" Margin="5,0,0,0"/>
                                 <Label Grid.Row="2" Grid.Column="1" Content="Leading SyntaxTrivia" Margin="0,0,5,0"/>
-                                <Label Grid.Row="3" Grid.Column="0" Content="Trail:Maroon" Foreground="Maroon" Margin="5,0,0,0"/>
+                                <Label Grid.Row="3" Grid.Column="0" Content="Trail:Maroon" Foreground="{StaticResource SyntaxTriviaText.Brush}" Margin="5,0,0,0"/>
                                 <Label Grid.Row="3" Grid.Column="1" Content="Trailing SyntaxTrivia" Margin="0,0,5,0"/>
                                 <Label Grid.Row="4" Grid.Column="0" Content="Pink" Background="Pink" Margin="10,0,0,5" Padding="5,1"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <Label Grid.Row="4" Grid.Column="1" Content="Has Diagnostics" Margin="0,0,5,5"/>
@@ -124,7 +123,10 @@
                 </StackPanel>
             </Grid>
         </Border>
-        <TreeView Grid.Row="1" Name="treeView" SelectedItemChanged="TreeView_SelectedItemChanged" PreviewMouseRightButtonDown="TreeView_PreviewMouseRightButtonDown" ContextMenuOpening="TreeView_ContextMenuOpening" Padding="5">
+        <TreeView Grid.Row="1" Name="treeView" SelectedItemChanged="TreeView_SelectedItemChanged" PreviewMouseRightButtonDown="TreeView_PreviewMouseRightButtonDown" ContextMenuOpening="TreeView_ContextMenuOpening" Padding="5"
+                  BorderThickness="0,1,0,0"
+                  Background="{DynamicResource {x:Static vsui:TreeViewColors.BackgroundBrushKey}}"
+                  BorderBrush="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowBorderBrushKey}}">
             <TreeView.Resources>
                 <Style x:Key="TreeViewItemFocusVisual">
                     <Setter Property="Control.Template">
@@ -135,8 +137,6 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-                <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Stroke" Color="#FF27C7F7"/>
-                <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Checked.Fill" Color="#FF27C7F7"/>
                 <PathGeometry x:Key="ExpandedArrow" Figures="M 5 0 L 0 5 L 5 5 Z" />
                 <PathGeometry x:Key="CollapsedArrow" Figures="M 0 0 L 4 4 L 0 8 Z" />
                 <Style x:Key="ExpandCollapseToggleStyle" TargetType="{x:Type ToggleButton}">
@@ -145,7 +145,7 @@
                     <Setter Property="Height" Value="16"/>
                     <Setter Property="Background" Value="Transparent" />
                     <Setter Property="Foreground" Value="Transparent" />
-                    <Setter Property="BorderBrush" Value="Black" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsui:TreeViewColors.GlyphBrushKey}}" />
                     <Setter Property="BorderThickness" Value="1" />
                     <Setter Property="Template">
                         <Setter.Value>
@@ -181,17 +181,17 @@
                                             </Setter.Value>
                                         </Setter>
                                         <Setter TargetName="ExpandImage" Property="Margin" Value="4.5,4.5,0,0" />
-                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vsui:TreeViewColors.GlyphBrushKey}}" />
                                     </Trigger>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="BorderBrush" Value="{StaticResource TreeViewItem.TreeArrow.MouseOver.Stroke}"/>
+                                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsui:TreeViewColors.GlyphMouseOverBrushKey}}"/>
                                     </Trigger>
                                     <MultiTrigger>
                                         <MultiTrigger.Conditions>
                                             <Condition Property="IsMouseOver" Value="True"/>
                                             <Condition Property="IsChecked" Value="True"/>
                                         </MultiTrigger.Conditions>
-                                        <Setter Property="Foreground" Value="{StaticResource TreeViewItem.TreeArrow.MouseOver.Checked.Fill}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vsui:TreeViewColors.GlyphMouseOverBrushKey}}"/>
                                     </MultiTrigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>

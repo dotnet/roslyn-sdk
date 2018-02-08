@@ -7,9 +7,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text.Classification;
 using SystemInformation = System.Windows.Forms.SystemInformation;
 
 namespace Roslyn.SyntaxVisualizer.Control
@@ -25,6 +27,10 @@ namespace Roslyn.SyntaxVisualizer.Control
     // A control for visually displaying the contents of a SyntaxTree.
     public partial class SyntaxVisualizerControl : UserControl
     {
+        private static readonly string SyntaxNodeTextBrushKey = "SyntaxNodeText.Brush";
+        private static readonly string SyntaxTokenTextBrushKey = "SyntaxTokenText.Brush";
+        private static readonly string SyntaxTriviaTextBrushKey = "SyntaxTriviaText.Brush";
+
         // Instances of this class are stored in the Tag field of each item in the treeview.
         private class SyntaxTag
         {
@@ -162,6 +168,41 @@ namespace Roslyn.SyntaxVisualizer.Control
             _propertyGrid.DisabledItemForeColor = disabledColor;
 
             _propertyGrid.CanShowVisualStyleGlyphs = false;
+        }
+
+        public void SetTreeViewColors(
+            IClassificationTypeRegistryService classificationTypeRegistryService,
+            IClassificationFormatMap classificationFormatMap,
+            IEditorFormatMap editorFormatMap)
+        {
+            var syntaxNodeBrush = (SolidColorBrush)FindResource(SyntaxNodeTextBrushKey);
+            syntaxNodeBrush.Color = GetForegroundColor(editorFormatMap.GetProperties(classificationFormatMap.GetEditorFormatMapKey(classificationTypeRegistryService.GetClassificationType(PredefinedClassificationTypeNames.Keyword))));
+
+            var syntaxTokenBrush = (SolidColorBrush)FindResource(SyntaxTokenTextBrushKey);
+            syntaxTokenBrush.Color = GetForegroundColor(editorFormatMap.GetProperties(classificationFormatMap.GetEditorFormatMapKey(classificationTypeRegistryService.GetClassificationType(PredefinedClassificationTypeNames.Comment))));
+
+            var syntaxTriviaBrush = (SolidColorBrush)FindResource(SyntaxTriviaTextBrushKey);
+            syntaxTriviaBrush.Color = GetForegroundColor(editorFormatMap.GetProperties(classificationFormatMap.GetEditorFormatMapKey(classificationTypeRegistryService.GetClassificationType(PredefinedClassificationTypeNames.String))));
+        }
+
+        private static Color GetForegroundColor(ResourceDictionary resourceDictionary)
+        {
+            if (resourceDictionary == null)
+                return Colors.Transparent;
+
+            if (resourceDictionary.Contains(EditorFormatDefinition.ForegroundColorId))
+            {
+                var color = (Color)resourceDictionary[EditorFormatDefinition.ForegroundColorId];
+                return color;
+            }
+
+            if (resourceDictionary.Contains(EditorFormatDefinition.ForegroundBrushId))
+            {
+                if (resourceDictionary[EditorFormatDefinition.ForegroundBrushId] is SolidColorBrush brush)
+                    return brush.Color;
+            }
+
+            return Colors.Transparent;
         }
 
         public void Clear()
@@ -438,10 +479,11 @@ namespace Roslyn.SyntaxVisualizer.Control
             {
                 Tag = tag,
                 IsExpanded = false,
-                Foreground = Brushes.Blue,
-                Background = node.ContainsDiagnostics ? Brushes.Pink : Brushes.White,
+                Background = node.ContainsDiagnostics ? Brushes.Pink : Brushes.Transparent,
                 Header = tag.Kind + " " + node.Span.ToString()
             };
+
+            item.SetResourceReference(ForegroundProperty, SyntaxNodeTextBrushKey);
 
             if (SyntaxTree != null && node.ContainsDiagnostics)
             {
@@ -533,10 +575,11 @@ namespace Roslyn.SyntaxVisualizer.Control
             {
                 Tag = tag,
                 IsExpanded = false,
-                Foreground = Brushes.DarkGreen,
-                Background = token.ContainsDiagnostics ? Brushes.Pink : Brushes.White,
+                Background = token.ContainsDiagnostics ? Brushes.Pink : Brushes.Transparent,
                 Header = tag.Kind + " " + token.Span.ToString()
             };
+
+            item.SetResourceReference(ForegroundProperty, SyntaxTokenTextBrushKey);
 
             if (SyntaxTree != null && token.ContainsDiagnostics)
             {
@@ -638,10 +681,11 @@ namespace Roslyn.SyntaxVisualizer.Control
             {
                 Tag = tag,
                 IsExpanded = false,
-                Foreground = Brushes.Maroon,
-                Background = trivia.ContainsDiagnostics ? Brushes.Pink : Brushes.White,
+                Background = trivia.ContainsDiagnostics ? Brushes.Pink : Brushes.Transparent,
                 Header = (isLeadingTrivia ? "Lead: " : "Trail: ") + tag.Kind + " " + trivia.Span.ToString()
             };
+
+            item.SetResourceReference(ForegroundProperty, SyntaxTriviaTextBrushKey);
 
             if (SyntaxTree != null && trivia.ContainsDiagnostics)
             {

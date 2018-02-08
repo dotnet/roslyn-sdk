@@ -37,6 +37,7 @@
     <MicrosoftVisualStudioComponentModelHostVersion>15.0.26606</MicrosoftVisualStudioComponentModelHostVersion>
     <MicrosoftVisualStudioCoreUtilityVersion>15.0.26606</MicrosoftVisualStudioCoreUtilityVersion>
     <MicrosoftVisualStudioEditorVersion>15.0.26606</MicrosoftVisualStudioEditorVersion>
+    <MicrosoftVisualStudioLanguageStandardClassificationVersion>15.0.26606</MicrosoftVisualStudioLanguageStandardClassificationVersion>
     <MicrosoftVisualStudioOLEInteropVersion>7.10.6070</MicrosoftVisualStudioOLEInteropVersion>
     <MicrosoftVisualStudioShell140Version>14.3.25407</MicrosoftVisualStudioShell140Version>
     <MicrosoftVisualStudioShellInteropVersion>7.10.6071</MicrosoftVisualStudioShellInteropVersion>
@@ -48,6 +49,7 @@
     <MicrosoftVisualStudioTextLogicVersion>15.0.26606</MicrosoftVisualStudioTextLogicVersion>
     <MicrosoftVisualStudioTextManagerInteropVersion>7.10.6070</MicrosoftVisualStudioTextManagerInteropVersion>
     <MicrosoftVisualStudioTextUIVersion>15.0.26606</MicrosoftVisualStudioTextUIVersion>
+    <MicrosoftVisualStudioTextUIWpfVersion>15.0.26606</MicrosoftVisualStudioTextUIWpfVersion>
     <MicrosoftVisualStudioUtilitiesVersion>15.0.26606</MicrosoftVisualStudioUtilitiesVersion>
     <MicrosoftVisualStudioThreadingVersion>15.3.20</MicrosoftVisualStudioThreadingVersion>
 
