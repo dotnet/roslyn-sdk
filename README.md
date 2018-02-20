@@ -17,7 +17,7 @@ This repository contains code for both the Roslyn-SDK templates and Syntax Vizua
 
 ## Visual Studio 2015
 
-For older versions of visual studio the [.NET Compiler Platform SDK](https://visualstudiogallery.msdn.microsoft.com/2ddb7240-5249-4c8c-969e-5d05823bcb89) is available as an extension in the Visual Studio gallery.
+For older versions of Visual Studio the [.NET Compiler Platform SDK](https://visualstudiogallery.msdn.microsoft.com/2ddb7240-5249-4c8c-969e-5d05823bcb89) is available as an extension in the Visual Studio gallery.
 
 # Syntax Visualizer
 
@@ -177,4 +177,4 @@ Note that the above VB examples can be easily replicated in C# (for the alias, t
 ![fig20.png](images/fig20.png)
 
 ## Closing and Disabling Syntax Visualizer
-The visualizer tool window can be closed at any time and once closed it should cease to have any impact. You can also disable / uninstall the visualizer extension completely using Tools –> Extensions and Updates in Visual Studio.
+The visualizer tool window can be closed at any time and once closed it should cease to have any impact.
