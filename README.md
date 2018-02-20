@@ -15,14 +15,24 @@ This repository contains code for both the Roslyn-SDK templates and Syntax Vizua
 * [Inspecting Semantics](#inspecting-semantics)
 * [Closing and Disabling Syntax Visualizer](#closing-and-disabling-syntax-visualizer)
 
-This document is an overview of the Syntax Visualizer tool that ships as part of the .NET Compiler Platform (“Roslyn”) SDK Preview. The Syntax Visualizer is a Visual Studio Extension that facilitates inspection and exploration of Roslyn syntax trees and can be used as a debugging aid when you develop your own applications atop the .NET Compiler Platform (“Roslyn”) APIs.
+This document is an overview of the Syntax Visualizer tool that ships as part of the .NET Compiler Platform (“Roslyn”) SDK. The Syntax Visualizer facilitates inspection and exploration of Roslyn syntax trees and can be used as a debugging aid when you develop your own applications atop the .NET Compiler Platform (“Roslyn”) APIs.
 
 ## Getting Started
+
+To understand the concepts presented in this document better, I would strongly recommend reading the [.NET Compiler Platform (“Roslyn”) Overview document](https://github.com/dotnet/roslyn/wiki/Roslyn%20Overview). This document provides a very good overview of the .NET Compiler Platform (“Roslyn”) APIs including syntax trees, nodes, tokens, and trivia.
+
+### Installation instruction for Visual Studio 2017
+
+* Run Visual Studio Installer
+* Hit Modify
+* Select the Individual components tab
+* Check the box for .NET Compiler Platform SDK
+
+### Installation instructions for Visual Studio 2015
+
 Let’s begin by getting a box set up with [Visual Studio 2015](https://github.com/dotnet/roslyn/wiki/Getting-Started-on-Visual-Studio-2015).
 
 The Syntax Visualizer is installed as part of the [.NET Compiler Platform SDK](https://visualstudiogallery.msdn.microsoft.com/2ddb7240-5249-4c8c-969e-5d05823bcb89).
-
-To understand the concepts presented in this document better, I would strongly recommend reading the [.NET Compiler Platform (“Roslyn”) Overview document](https://github.com/dotnet/roslyn/wiki/Roslyn%20Overview). This document provides a very good overview of the .NET Compiler Platform (“Roslyn”) APIs including syntax trees, nodes, tokens, and trivia.
 
 ## Syntax Visualizer
 Once installed, the Syntax Visualizer enables inspection of the syntax tree for any C# or VB code file that is open inside the Visual Studio IDE. The visualizer can be launched by clicking on View –> Other Windows –> Roslyn Syntax Visualizer.
