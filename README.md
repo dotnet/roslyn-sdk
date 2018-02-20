@@ -10,10 +10,10 @@ This repository contains code for both the Roslyn-SDK templates and Syntax Vizua
 
 ## Visual Studio 2017
 
-* Run Visual Studio Installer
-* Hit Modify
-* Select the Individual components tab
-* Check the box for .NET Compiler Platform SDK
+1. Run **Visual Studio Installer**
+2. Hit **Modify**
+3. Select the **Individual components** tab
+4. Check the box for **.NET Compiler Platform SDK**
 
 ## Visual Studio 2015
 
