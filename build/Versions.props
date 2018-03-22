@@ -5,16 +5,16 @@
 
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
-    
+
     <!-- Toolset -->
     <RoslynToolsRepoToolsetVersion>1.0.0-beta-62705-01</RoslynToolsRepoToolsetVersion>
-    <VSWhereVersion>2.3.2</VSWhereVersion>
+    <VSWhereVersion>2.3.7</VSWhereVersion>
 
     <!-- MSBuild -->
     <MicrosoftBuildVersion>15.3.409</MicrosoftBuildVersion>
     <MicrosoftBuildEngineVersion>15.3.409</MicrosoftBuildEngineVersion>
     <MicrosoftBuildFrameworkVersion>15.3.409</MicrosoftBuildFrameworkVersion>
-    
+
     <!-- Roslyn Templates for VS 2015 -->
     <MicrosoftCodeAnalysisAnalyzersVersionVS2015>1.1.0</MicrosoftCodeAnalysisAnalyzersVersionVS2015>
     <MicrosoftCodeAnalysisCommonVersionVS2015>1.0.1</MicrosoftCodeAnalysisCommonVersionVS2015>
