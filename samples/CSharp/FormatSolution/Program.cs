@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MSBuild;
@@ -9,6 +10,9 @@ static class Program
 {
     static async Task Main(string[] args)
     {
+        // Locate and register the default instance of MSBuild installed on this machine.
+        MSBuildLocator.RegisterDefaults();
+
         // The test solution is copied to the output directory when you build this sample.
         MSBuildWorkspace workspace = MSBuildWorkspace.Create();
 

@@ -1,5 +1,6 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+Imports Microsoft.Build.Locator
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Formatting
 Imports Microsoft.CodeAnalysis.MSBuild
@@ -8,12 +9,14 @@ Imports Microsoft.CodeAnalysis.MSBuild
 Module Program
 
     Sub Main(args As String())
+        ' Locate and register the default instance of MSBuild installed on this machine.
+        MSBuildLocator.RegisterDefaults()
 
         ' The test solution is copied to the output directory when you build this sample.
         Dim workspace As MSBuildWorkspace = MSBuildWorkspace.Create()
 
         ' Open the solution within the workspace.
-        Dim originalSolution As Solution = workspace.OpenSolutionAsync("TestSolutionForVB\Test.sln").Result
+        Dim originalSolution As Solution = workspace.OpenSolutionAsync(args(0)).Result
 
         ' Declare a variable to store the intermediate solution snapshot at each step.
         Dim newSolution As Solution = originalSolution
