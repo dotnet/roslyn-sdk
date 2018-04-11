@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,9 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="15.3.409" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.3.409" />
-    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="2.6.0" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.0.13" />
+
+    <!-- These package versions should be updated to 2.9.0 when released on NuGet -->
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="2.9.0-beta4-62810-05" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="2.9.0-beta4-62810-05" />
   </ItemGroup>
 
 </Project>
