@@ -33,7 +33,7 @@ namespace MSBuildWorkspaceTester.Services
                 return Array.Empty<VisualStudioInstance>();
             }
 
-            Logger.LogInformation("The following MSBuild instances have benen discovered:");
+            Logger.LogInformation("The following MSBuild instances have been discovered:");
             Logger.LogInformation(string.Empty);
 
             for (int i = 0; i < instances.Length; i++)
