@@ -2,6 +2,8 @@
 
 Imports System.Collections.Generic
 Imports System.Linq
+Imports System
+Imports System.Resources
 Imports System.Runtime.CompilerServices
 Imports System.Xml.Linq
 Imports Microsoft.CodeAnalysis
@@ -211,7 +213,7 @@ Public Module SyntaxDgmlHelper
 
 #Region "GetLabel*"
     Private Function GetLabelForNode(node As SyntaxNode) As String
-        Return node.GetKind()
+        Return String.Format(Resources.SyntaxNodeLabel, node.GetKind())
     End Function
 
     Private Function GetLabelForToken(token As SyntaxToken) As String
@@ -226,7 +228,7 @@ Public Module SyntaxDgmlHelper
             End If
         End If
 
-        Return label
+        Return String.Format(Resources.SyntaxTokenLabel, label)
     End Function
 
     Private Function GetLabelForTrivia(trivia As SyntaxTrivia) As String
@@ -462,7 +464,7 @@ Public Module SyntaxDgmlHelper
                            </Style>
                            <Style TargetType="Node" GroupLabel="Bad / Skipped" ValueLabel="Has category">
                                <Condition Expression="HasCategory('5')"/>
-                               <Setter Property="Background" Value="Red"/>
+                               <Setter Property="Background" Value="Maroon"/>
                                <Setter Property="FontStyle" Value="Bold"/>
                                <Setter Property="NodeRadius" Value="5"/>
                            </Style>

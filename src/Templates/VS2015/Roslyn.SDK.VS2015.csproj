@@ -10,6 +10,17 @@
     <EnableDefaultItems>false</EnableDefaultItems>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+      Never deploy the Visual Studio 2015 extension automatically. We are building in Visual Studio 2017 or newer,
+      and the current SDK does not allow cross-deploying extensions to other versions.
+    -->
+    <DeployExtension>False</DeployExtension>
+    <!-- Workaround for https://github.com/dotnet/roslyn-tools/issues/153 -->
+    <DeployProjectOutput>$(DeployExtension)</DeployProjectOutput>
+  </PropertyGroup>
+
   <!-- Setting Template Content to None -->
   <ItemGroup>
     <None Include="ItemTemplates\CSharp\**\*.cs" />

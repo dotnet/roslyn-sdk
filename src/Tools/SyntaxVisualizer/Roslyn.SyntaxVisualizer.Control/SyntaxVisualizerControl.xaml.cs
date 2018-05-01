@@ -50,6 +50,35 @@ namespace Roslyn.SyntaxVisualizer.Control
         private readonly System.Windows.Forms.RichTextBox _textBox;
         private readonly TabStopPanel _tabStopPanel;
         private static readonly Thickness s_defaultBorderThickness = new Thickness(1);
+
+        /// <remarks>
+        /// Every unselected item in the TreeView has a foreground (indicating if it is a node/
+        /// token/trivia) and background color (indicating the presence of diagnostics). When an
+        /// item is selected (active or inactive), we want to ensure that it looks obviously 
+        /// selected while maintaining contrasting colors.
+        /// 
+        /// To that end, we want to use these custom colors when unselected and the ControlTemplate
+        /// colors when selected. Unfortunately, our use of hard-coded color values to instantiate
+        /// TreeViewItems in code makes this very difficult to accomplish declaratively. We should
+        /// remove the hard-coded color approach in favor of a data class with a DataTemplate in
+        /// the future.
+        /// 
+        /// Instead, we listen for when items are selected/unselected and manually swap colors 
+        /// around. With the goal of using custom colors when unselected and the ControlTemplate 
+        /// when selected, we handle the colors by:
+        ///
+        ///   - Background colors: The item's control template hides the specified background color
+        /// when it is selected (active or inactive) by overlaying a Border colored by the 
+        /// highlight brush. When the item becomes unselected again, the added Border is hidden, 
+        /// allowing the originally specified background color to show again, so we don't need any
+        /// custom handling.
+        /// 
+        ///   - Foreground colors: The item's control template does *not* override the specified
+        /// foreground when it is selected. To use the control templates correctly themed defaults,
+        /// we temporarily clear the specified foreground color and restore it when the item is
+        /// unselected. This field is used to save and restore that foreground color.
+        /// </remarks>
+        private Brush _currentSelectionUnselectedForeground;
         #endregion
 
         #region Public Properties, Events
@@ -683,11 +712,23 @@ namespace Roslyn.SyntaxVisualizer.Control
         #region Event Handlers
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (treeView.SelectedItem != null)
+            // Restore the regular colors on the newly unselected item
+            var previousSelection = _currentSelection;
+            if (previousSelection != null)
             {
-                _currentSelection = (TreeViewItem)treeView.SelectedItem;
-                windowsFormsHost.Child = _tabStopPanel;
+                previousSelection.Foreground = _currentSelectionUnselectedForeground;
             }
+
+            // Remember the newly selected item's specified foreground color and then clear it to
+            // allow the ControlTemplate to correctly set contrasting colors.
+            _currentSelection = (TreeViewItem)treeView.SelectedItem;
+            if (_currentSelection != null)
+            {
+                _currentSelectionUnselectedForeground = _currentSelection.Foreground;
+                _currentSelection.ClearValue(TreeViewItem.ForegroundProperty);
+            }
+
+            windowsFormsHost.Child = _tabStopPanel;
         }
 
         private void TreeView_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -702,6 +743,12 @@ namespace Roslyn.SyntaxVisualizer.Control
 
         private void TreeView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
+            if (_currentSelection == null)
+            {
+                e.Handled = true;
+                return;
+            }
+
             var directedSyntaxGraphEnabled =
                 (SyntaxNodeDirectedGraphRequested != null) &&
                 (SyntaxTokenDirectedGraphRequested != null) &&
@@ -751,6 +798,12 @@ namespace Roslyn.SyntaxVisualizer.Control
 
         private void SymbolDetailsMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (_currentSelection == null)
+            {
+                e.Handled = true;
+                return;
+            }
+
             var currentTag = (SyntaxTag)_currentSelection.Tag;
             if ((SemanticModel != null) && (currentTag.Category == SyntaxCategory.SyntaxNode))
             {
@@ -771,6 +824,12 @@ namespace Roslyn.SyntaxVisualizer.Control
 
         private void TypeSymbolDetailsMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (_currentSelection == null)
+            {
+                e.Handled = true;
+                return;
+            }
+
             var currentTag = (SyntaxTag)_currentSelection.Tag;
             if ((SemanticModel != null) && (currentTag.Category == SyntaxCategory.SyntaxNode))
             {
@@ -781,6 +840,12 @@ namespace Roslyn.SyntaxVisualizer.Control
 
         private void ConvertedTypeSymbolDetailsMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (_currentSelection == null)
+            {
+                e.Handled = true;
+                return;
+            }
+
             var currentTag = (SyntaxTag)_currentSelection.Tag;
             if ((SemanticModel != null) && (currentTag.Category == SyntaxCategory.SyntaxNode))
             {
@@ -791,6 +856,12 @@ namespace Roslyn.SyntaxVisualizer.Control
 
         private void AliasSymbolDetailsMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (_currentSelection == null)
+            {
+                e.Handled = true;
+                return;
+            }
+
             var currentTag = (SyntaxTag)_currentSelection.Tag;
             if ((SemanticModel != null) && (currentTag.Category == SyntaxCategory.SyntaxNode))
             {
@@ -801,6 +872,12 @@ namespace Roslyn.SyntaxVisualizer.Control
 
         private void ConstantValueDetailsMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (_currentSelection == null)
+            {
+                e.Handled = true;
+                return;
+            }
+
             var currentTag = (SyntaxTag)_currentSelection.Tag;
             if ((SemanticModel != null) && (currentTag.Category == SyntaxCategory.SyntaxNode))
             {
