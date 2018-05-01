@@ -7,8 +7,8 @@
     <UsingToolVSSDK>true</UsingToolVSSDK>
     
     <!-- Toolset -->
-    <RoslynToolsRepoToolsetVersion>1.0.0-beta-62506-01</RoslynToolsRepoToolsetVersion>
-    <VSWhereVersion>1.0.47</VSWhereVersion>
+    <RoslynToolsRepoToolsetVersion>1.0.0-beta-62705-01</RoslynToolsRepoToolsetVersion>
+    <VSWhereVersion>2.3.2</VSWhereVersion>
 
     <!-- MSBuild -->
     <MicrosoftBuildVersion>15.3.409</MicrosoftBuildVersion>
@@ -31,25 +31,27 @@
     <SystemReflectionMetadataVersionVS2015>1.0.21</SystemReflectionMetadataVersionVS2015>
 
     <!-- VS SDK -->
+    <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2015
+               we need out extensions to work on both. -->
     <VSLangProjVersion>7.0.3300</VSLangProjVersion>
     <VSSDKTemplateWizardInterfaceVersion>12.0.4</VSSDKTemplateWizardInterfaceVersion>
     <EnvDTEVersion>8.0.1</EnvDTEVersion>
     <EnvDTE80Version>8.0.0</EnvDTE80Version>
-    <MicrosoftVisualStudioComponentModelHostVersion>15.0.26606</MicrosoftVisualStudioComponentModelHostVersion>
-    <MicrosoftVisualStudioCoreUtilityVersion>15.0.26606</MicrosoftVisualStudioCoreUtilityVersion>
-    <MicrosoftVisualStudioEditorVersion>15.0.26606</MicrosoftVisualStudioEditorVersion>
+    <MicrosoftVisualStudioComponentModelHostVersion>14.0.25424</MicrosoftVisualStudioComponentModelHostVersion>
+    <MicrosoftVisualStudioCoreUtilityVersion>14.3.25407</MicrosoftVisualStudioCoreUtilityVersion>
+    <MicrosoftVisualStudioEditorVersion>14.3.25407</MicrosoftVisualStudioEditorVersion>
     <MicrosoftVisualStudioOLEInteropVersion>7.10.6070</MicrosoftVisualStudioOLEInteropVersion>
     <MicrosoftVisualStudioShell140Version>14.3.25407</MicrosoftVisualStudioShell140Version>
     <MicrosoftVisualStudioShellInteropVersion>7.10.6071</MicrosoftVisualStudioShellInteropVersion>
     <MicrosoftVisualStudioShellInterop80Version>8.0.50727</MicrosoftVisualStudioShellInterop80Version>
     <MicrosoftVisualStudioShellInterop90Version>9.0.30729</MicrosoftVisualStudioShellInterop90Version>
     <MicrosoftVisualStudioShellInterop100Version>10.0.30319</MicrosoftVisualStudioShellInterop100Version>
-    <MicrosoftVisualStudioTextDataVersion>15.0.26606</MicrosoftVisualStudioTextDataVersion>
-    <MicrosoftVisualStudioTextLogicVersion>15.0.26606</MicrosoftVisualStudioTextLogicVersion>
+    <MicrosoftVisualStudioTextDataVersion>14.3.25407</MicrosoftVisualStudioTextDataVersion>
+    <MicrosoftVisualStudioTextLogicVersion>14.3.25407</MicrosoftVisualStudioTextLogicVersion>
     <MicrosoftVisualStudioTextManagerInteropVersion>7.10.6070</MicrosoftVisualStudioTextManagerInteropVersion>
-    <MicrosoftVisualStudioTextUIVersion>15.0.26606</MicrosoftVisualStudioTextUIVersion>
-    <MicrosoftVisualStudioUtilitiesVersion>15.0.26606</MicrosoftVisualStudioUtilitiesVersion>
-    <MicrosoftVisualStudioThreadingVersion>15.3.20</MicrosoftVisualStudioThreadingVersion>
+    <MicrosoftVisualStudioTextUIVersion>14.3.25407</MicrosoftVisualStudioTextUIVersion>
+    <MicrosoftVisualStudioUtilitiesVersion>14.3.25407</MicrosoftVisualStudioUtilitiesVersion>
+    <MicrosoftVisualStudioThreadingVersion>14.1.131 </MicrosoftVisualStudioThreadingVersion>
 
     <!-- Libs -->
     <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>

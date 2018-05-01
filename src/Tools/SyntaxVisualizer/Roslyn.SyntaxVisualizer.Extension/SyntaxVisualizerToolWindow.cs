@@ -20,7 +20,6 @@ namespace Roslyn.SyntaxVisualizer.Extension
     [Guid("da7e21aa-da94-452d-8aa1-d1b23f73f576")]
     public class SyntaxVisualizerToolWindow : ToolWindowPane, IOleCommandTarget
     {
-        private const int OLECMDERR_E_NOTSUPPORTED = unchecked((int)0x80040100);
         private readonly SyntaxVisualizerContainer _container;
 
         /// <summary>
@@ -67,7 +66,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
         public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
         {
             var baseTarget = (IOleCommandTarget)base.GetService(typeof(IOleCommandTarget));
-            return baseTarget?.QueryStatus(pguidCmdGroup, cCmds, prgCmds, pCmdText) ?? OLECMDERR_E_NOTSUPPORTED;
+            return baseTarget?.QueryStatus(pguidCmdGroup, cCmds, prgCmds, pCmdText) ?? (int)Constants.OLECMDERR_E_NOTSUPPORTED;
         }
 
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
@@ -82,7 +81,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
             }
 
             var baseTarget = (IOleCommandTarget)base.GetService(typeof(IOleCommandTarget));
-            return baseTarget?.Exec(pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut) ?? OLECMDERR_E_NOTSUPPORTED;
+            return baseTarget?.Exec(pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut) ?? (int)Constants.OLECMDERR_E_NOTSUPPORTED;
         }
     }
 }
