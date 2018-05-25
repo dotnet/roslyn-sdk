@@ -40,9 +40,12 @@ namespace ImplementNotifyPropertyChangedCS
 
             if (properties.Any())
             {
-                context.RegisterRefactoring(
-                   CodeAction.Create("Apply INotifyPropertyChanged pattern", (c) =>
-                                     ImplementNotifyPropertyChangedAsync(document, root, model, properties, c)));
+                CodeAction action = CodeAction.Create(
+                    "Apply INotifyPropertyChanged pattern",
+                    c => ImplementNotifyPropertyChangedAsync(document, root, model, properties, c),
+                    equivalenceKey: nameof(ImplementNotifyPropertyChangedCodeRefactoringProvider));
+
+                context.RegisterRefactoring(action);
             }
         }
 

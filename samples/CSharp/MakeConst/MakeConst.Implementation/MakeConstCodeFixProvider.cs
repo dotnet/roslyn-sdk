@@ -36,7 +36,12 @@ namespace MakeConst
             LocalDeclarationStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LocalDeclarationStatementSyntax>().First();
 
             // Register a code action that will invoke the fix.
-            context.RegisterCodeFix(CodeAction.Create("Make constant", c => MakeConstAsync(context.Document, declaration, c), equivalenceKey: diagnostic.Location.ToString()), diagnostic);
+            CodeAction action = CodeAction.Create(
+                "Make constant",
+                c => MakeConstAsync(context.Document, declaration, c),
+                equivalenceKey: nameof(MakeConstCodeFixProvider));
+
+            context.RegisterCodeFix(action, diagnostic);
         }
 
         private async Task<Document> MakeConstAsync(Document document, LocalDeclarationStatementSyntax localDeclaration, CancellationToken cancellationToken)
