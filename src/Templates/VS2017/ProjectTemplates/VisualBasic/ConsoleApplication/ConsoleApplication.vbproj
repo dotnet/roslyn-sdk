@@ -8,8 +8,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" Version="15.3.409" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.3.409" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="[2.6.0]" />
     <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="2.8.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.0" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>
