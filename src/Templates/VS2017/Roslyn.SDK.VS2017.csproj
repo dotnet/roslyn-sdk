@@ -1,4 +1,4 @@
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
@@ -113,15 +113,15 @@
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
     </ProjectReference>
-    <VSIXCopyLocalReferenceSourceItem Include="$(NuGetPackageRoot)\Microsoft.VisualStudio.IntegrationTest.Utilities\$(MicrosoftVisualStudioIntegrationTestsVersion)\lib\net461\Microsoft.VisualStudio.IntegrationTest.Utilities.dll">
+    <VSIXCopyLocalReferenceSourceItem Include="$(NuGetPackageRoot)\Microsoft.VisualStudio.IntegrationTest.Utilities\$(MicrosoftVisualStudioIntegrationTestsVersion)\lib\net46\Microsoft.VisualStudio.IntegrationTest.Utilities.dll">
       <ForceIncludeInVsix>true</ForceIncludeInVsix>
       <Private>true</Private>
     </VSIXCopyLocalReferenceSourceItem>
-    <VSIXCopyLocalReferenceSourceItem Include="$(NuGetPackageRoot)\Microsoft.VisualStudio.IntegrationTest.Utilities\$(MicrosoftVisualStudioIntegrationTestsVersion)\lib\net461\Roslyn.Test.Utilities.dll">
+    <VSIXCopyLocalReferenceSourceItem Include="$(NuGetPackageRoot)\Microsoft.VisualStudio.IntegrationTest.Utilities\$(MicrosoftVisualStudioIntegrationTestsVersion)\lib\net46\Roslyn.Test.Utilities.dll">
       <ForceIncludeInVsix>true</ForceIncludeInVsix>
       <Private>true</Private>
     </VSIXCopyLocalReferenceSourceItem>
-    <VSIXCopyLocalReferenceSourceItem Include="$(NuGetPackageRoot)\Microsoft.VisualStudio.IntegrationTest.Utilities\$(MicrosoftVisualStudioIntegrationTestsVersion)\lib\net461\Roslyn.Services.Test.Utilities.dll">
+    <VSIXCopyLocalReferenceSourceItem Include="$(NuGetPackageRoot)\Microsoft.VisualStudio.IntegrationTest.Utilities\$(MicrosoftVisualStudioIntegrationTestsVersion)\lib\net46\Roslyn.Services.Test.Utilities.dll">
       <ForceIncludeInVsix>true</ForceIncludeInVsix>
       <Private>true</Private>
     </VSIXCopyLocalReferenceSourceItem>

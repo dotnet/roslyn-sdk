@@ -17,14 +17,14 @@
     
     <!-- Roslyn Templates for VS 2015 -->
     <MicrosoftCodeAnalysisAnalyzersVersionVS2015>1.1.0</MicrosoftCodeAnalysisAnalyzersVersionVS2015>
-    <MicrosoftCodeAnalysisCommonVersionVS2015>2.8.0-dev-65535-01</MicrosoftCodeAnalysisCommonVersionVS2015>
-    <MicrosoftCodeAnalysisCSharpVersionVS2015>2.8.0-dev-65535-01</MicrosoftCodeAnalysisCSharpVersionVS2015>
-    <MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015>2.8.0-dev-65535-01</MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015>
-    <MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015>2.8.0-dev-65535-01</MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015>
-    <MicrosoftCodeAnalysisVisualBasicVersionVS2015>2.8.0-dev-65535-01</MicrosoftCodeAnalysisVisualBasicVersionVS2015>
-    <MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015>2.8.0-dev-65535-01</MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015>
-    <MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015>2.8.0-dev-65535-01</MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015>
-    <MicrosoftVisualStudioIntegrationTestsVersion>2.8.0-dev-65535-01</MicrosoftVisualStudioIntegrationTestsVersion>
+    <MicrosoftCodeAnalysisCommonVersionVS2015>2.9.0-dev</MicrosoftCodeAnalysisCommonVersionVS2015>
+    <MicrosoftCodeAnalysisCSharpVersionVS2015>2.9.0-dev</MicrosoftCodeAnalysisCSharpVersionVS2015>
+    <MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015>2.9.0-dev</MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015>
+    <MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015>2.9.0-dev</MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015>
+    <MicrosoftCodeAnalysisVisualBasicVersionVS2015>2.9.0-dev</MicrosoftCodeAnalysisVisualBasicVersionVS2015>
+    <MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015>2.9.0-dev</MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015>
+    <MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015>2.9.0-dev</MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015>
+    <MicrosoftVisualStudioIntegrationTestsVersion>2.9.0-dev</MicrosoftVisualStudioIntegrationTestsVersion>
     <NuGetCommandLineVersionVS2015>2.8.5</NuGetCommandLineVersionVS2015>
     <SystemCollectionsImmutableVersionVS2015>1.1.36</SystemCollectionsImmutableVersionVS2015>
     <SystemCompositionVersionVS2015>1.0.31</SystemCompositionVersionVS2015>
@@ -66,7 +66,7 @@
         <!-- Feeds to use to restore dependent packages from. -->  
     <RestoreSources>
       $(RestoreSources);
-      C:\Users\frsilb\Documents\git\roslyn\Binaries\Debug\NuGet\PerBuildPreRelease
+      C:\Users\frsilb\Documents\git\roslyn\Binaries\Debug\NuGet\PreRelease
     </RestoreSources>
 
   </PropertyGroup>

@@ -987,7 +987,7 @@ namespace Roslyn.SyntaxVisualizer.Control
             string diagnosticIndent = indent + "    ";
 
             writer.Write(outerIndent);
-            writer.WriteLine("[CompilerTrait(CompilerFeature.IOperation, CompilerFeature.Dataflow)]");
+            writer.WriteLine($"[CompilerTrait(CompilerFeature.IOperation{(useDataflow ?", CompilerFeature.Dataflow" : "")})]");
             writer.Write(outerIndent);
             writer.WriteLine("[Fact]");
             writer.Write(outerIndent);
@@ -1083,7 +1083,7 @@ namespace Roslyn.SyntaxVisualizer.Control
             string diagnosticIndent = indent + "    ";
 
             writer.Write(outerIndent);
-            writer.WriteLine("<CompilerTrait(CompilerFeature.IOperation, CompilerFeature.Dataflow)>");
+            writer.WriteLine($"<CompilerTrait(CompilerFeature.IOperation{(useDataflow ? ", CompilerFeature.Dataflow" : "")})>");
             writer.Write(outerIndent);
             writer.WriteLine("<Fact()>");
             writer.Write(outerIndent);
@@ -1199,8 +1199,36 @@ namespace Roslyn.SyntaxVisualizer.Control
             }
             else if (flowGraph)
             {
-                var block = (IBlockOperation)operation;
-                var graph = SemanticModel.GetControlFlowGraph(block);
+                ControlFlowGraph graph;
+                switch (operation.Kind)
+                {
+                    case OperationKind.MethodBodyOperation:
+                        graph = SemanticModel.GetControlFlowGraph((IMethodBodyOperation)operation);
+                        break;
+
+                    case OperationKind.FieldInitializer:
+                        graph = SemanticModel.GetControlFlowGraph((IFieldInitializerOperation)operation);
+                        break;
+
+                    case OperationKind.PropertyInitializer:
+                        graph = SemanticModel.GetControlFlowGraph((IPropertyInitializerOperation)operation);
+                        break;
+
+                    case OperationKind.ParameterInitializer:
+                        graph = SemanticModel.GetControlFlowGraph((IParameterInitializerOperation)operation);
+                        break;
+
+                    case OperationKind.ConstructorBodyOperation:
+                        graph = SemanticModel.GetControlFlowGraph((IConstructorBodyOperation)operation);
+                        break;
+
+                    case OperationKind.Block:
+                        graph = SemanticModel.GetControlFlowGraph((IBlockOperation)operation);
+                        break;
+
+                    default:
+                        throw new ArgumentException($"Cannot create graph for node {operation.Kind} - {operation.Syntax.ToString()}");
+                }
                 return ControlFlowGraphVerifier.GetFlowGraph(semanticModel.Compilation, graph);
             }
             else
