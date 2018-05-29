@@ -55,7 +55,7 @@ Module $safeprojectname$
         While True
             Dim userResponse = Console.ReadLine()
             Dim instanceNumber As Integer = 0
-            If (Integer.TryParse(userResponse, instanceNumber) AndAlso instanceNumber > 0 AndAlso instanceNumber <= visualStudioInstances.Length) Then
+            If Integer.TryParse(userResponse, instanceNumber) AndAlso instanceNumber > 0 AndAlso instanceNumber <= visualStudioInstances.Length Then
                 Return visualStudioInstances(instanceNumber - 1)
             End If
             Console.WriteLine("Input not accepted, try again.")
