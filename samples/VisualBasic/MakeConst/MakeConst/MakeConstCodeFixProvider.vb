@@ -34,7 +34,12 @@ Public Class MakeConstCodeFixProvider
         Dim declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType(Of LocalDeclarationStatementSyntax)().First()
 
         ' Register a code action that will invoke the fix.
-        context.RegisterCodeFix(CodeAction.Create("Make constant", Function(c) MakeConstAsync(context.Document, declaration, c)), diagnostic)
+        Dim action = CodeAction.Create(
+            "Make constant",
+            Function(c) MakeConstAsync(context.Document, declaration, c),
+            equivalenceKey:=NameOf(MakeConstCodeFixProvider))
+
+        context.RegisterCodeFix(action, diagnostic)
     End Function
 
     Private Async Function MakeConstAsync(document As Document, localDeclaration As LocalDeclarationStatementSyntax, cancellationToken As CancellationToken) As Task(Of Document)

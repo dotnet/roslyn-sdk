@@ -34,9 +34,12 @@ Friend Class ImplementNotifyPropertyChangedCodeRefactoringProvider
         Dim properties = ExpansionChecker.GetExpandableProperties(textSpan, root, model)
 
         If properties.Any Then
-            context.RegisterRefactoring(
-                CodeAction.Create("Apply INotifyPropertyChanged pattern",
-                                  Function(c) ImplementNotifyPropertyChangedAsync(document, root, model, properties, c)))
+            Dim action = CodeAction.Create(
+                "Apply INotifyPropertyChanged pattern",
+                Function(c) ImplementNotifyPropertyChangedAsync(document, root, model, properties, c),
+                equivalenceKey:=NameOf(ImplementNotifyPropertyChangedCodeRefactoringProvider))
+
+            context.RegisterRefactoring(action)
         End If
     End Function
 
