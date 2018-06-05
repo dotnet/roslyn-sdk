@@ -70,6 +70,27 @@
         <SolidColorBrush x:Key="SyntaxNodeText.Brush" Color="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextColorKey}}"/>
         <SolidColorBrush x:Key="SyntaxTokenText.Brush" Color="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextColorKey}}"/>
         <SolidColorBrush x:Key="SyntaxTriviaText.Brush" Color="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextColorKey}}"/>
+        <SolidColorBrush x:Key="ErrorSquiggle.Brush" Color="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextColorKey}}"/>
+
+        <Style x:Key="SquiggleStyle" TargetType="{x:Type Shape}">
+            <Setter Property="Fill">
+                <Setter.Value>
+                    <!-- TODO: use Viewport.Top -0.4 when SystemParameters.HighContrast is true -->
+                    <DrawingBrush Stretch="None" TileMode="Tile" Viewport="0,-0.6,6,4.3" ViewportUnits="Absolute">
+                        <DrawingBrush.Drawing>
+                            <GeometryDrawing Geometry="M0,0 L1.5,-1.5 4.5,1.5 6,0">
+                                <GeometryDrawing.Pen>
+                                    <!-- TODO: use thickness 1.2 when SystemParameters.HighContrast is true -->
+                                    <Pen Brush="{StaticResource ErrorSquiggle.Brush}"
+                                         StartLineCap="Square" EndLineCap="Square" LineJoin="Round" MiterLimit="10"
+                                         Thickness="0.8" />
+                                </GeometryDrawing.Pen>
+                            </GeometryDrawing>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Grid KeyboardNavigation.TabNavigation="Cycle">
         <Grid.RowDefinitions>
@@ -109,7 +130,12 @@
                                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="SyntaxToken" Foreground="{StaticResource SyntaxTokenText.Brush}" Margin="5,0,5,0"/>
                                 <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Leading SyntaxTrivia" Foreground="{StaticResource SyntaxTriviaText.Brush}" Margin="5,0,5,0"/>
                                 <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Trailing SyntaxTrivia" Foreground="{StaticResource SyntaxTriviaText.Brush}" Margin="5,0,5,0"/>
-                                <Label Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Content="Has Diagnostics" Background="Pink" Margin="10,0,5,5" Padding="5,1"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,0,5,0">
+                                    <Label Name="hasDiagnosticsLegend" Content="Has Diagnostics" Foreground="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextBrushKey}}" HorizontalAlignment="Left" />
+                                    <Rectangle HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="3.0"
+                                               Style="{StaticResource SquiggleStyle}"
+                                               Width="{Binding ElementName=hasDiagnosticsLegend, Path=ActualWidth}" />
+                                </Grid>
                                 <Label Name="highlightLegendTextLabel" Visibility="Collapsed" Grid.Row="5" Grid.Column="0"  Content="Yellow" BorderThickness="1" BorderBrush="Black" Background="Yellow" Margin="10,-5,0,5" Padding="5,1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <Label Name="highlightLegendDescriptionLabel" Visibility="Collapsed" Grid.Row="5" Grid.Column="1" Content="Of Interest" Margin="0,-5,5,5"/>
                             </Grid>

@@ -3,14 +3,18 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Classification;
 using SystemInformation = System.Windows.Forms.SystemInformation;
 
@@ -30,6 +34,8 @@ namespace Roslyn.SyntaxVisualizer.Control
         private static readonly string SyntaxNodeTextBrushKey = "SyntaxNodeText.Brush";
         private static readonly string SyntaxTokenTextBrushKey = "SyntaxTokenText.Brush";
         private static readonly string SyntaxTriviaTextBrushKey = "SyntaxTriviaText.Brush";
+        private static readonly string ErrorSquiggleBrushKey = "ErrorSquiggle.Brush";
+        private static readonly string SquiggleStyleKey = "SquiggleStyle";
 
         // Instances of this class are stored in the Tag field of each item in the treeview.
         private class SyntaxTag
@@ -183,6 +189,9 @@ namespace Roslyn.SyntaxVisualizer.Control
 
             var syntaxTriviaBrush = (SolidColorBrush)FindResource(SyntaxTriviaTextBrushKey);
             syntaxTriviaBrush.Color = GetForegroundColor(editorFormatMap.GetProperties(classificationFormatMap.GetEditorFormatMapKey(classificationTypeRegistryService.GetClassificationType(PredefinedClassificationTypeNames.String))));
+
+            var errorBrush = (SolidColorBrush)FindResource(ErrorSquiggleBrushKey);
+            errorBrush.Color = GetForegroundColor(editorFormatMap.GetProperties(PredefinedErrorTypeNames.SyntaxError));
         }
 
         private static Color GetForegroundColor(ResourceDictionary resourceDictionary)
@@ -475,14 +484,7 @@ namespace Roslyn.SyntaxVisualizer.Control
                 ParentItem = parentItem
             };
 
-            var item = new TreeViewItem()
-            {
-                Tag = tag,
-                IsExpanded = false,
-                Background = node.ContainsDiagnostics ? Brushes.Pink : Brushes.Transparent,
-                Header = tag.Kind + " " + node.Span.ToString()
-            };
-
+            var item = CreateTreeViewItem(tag, tag.Kind + " " + node.Span.ToString(), node.ContainsDiagnostics);
             item.SetResourceReference(ForegroundProperty, SyntaxNodeTextBrushKey);
 
             if (SyntaxTree != null && node.ContainsDiagnostics)
@@ -571,14 +573,7 @@ namespace Roslyn.SyntaxVisualizer.Control
                 ParentItem = parentItem
             };
 
-            var item = new TreeViewItem()
-            {
-                Tag = tag,
-                IsExpanded = false,
-                Background = token.ContainsDiagnostics ? Brushes.Pink : Brushes.Transparent,
-                Header = tag.Kind + " " + token.Span.ToString()
-            };
-
+            var item = CreateTreeViewItem(tag, tag.Kind + " " + token.Span.ToString(), token.ContainsDiagnostics);
             item.SetResourceReference(ForegroundProperty, SyntaxTokenTextBrushKey);
 
             if (SyntaxTree != null && token.ContainsDiagnostics)
@@ -677,14 +672,7 @@ namespace Roslyn.SyntaxVisualizer.Control
                 ParentItem = parentItem
             };
 
-            var item = new TreeViewItem()
-            {
-                Tag = tag,
-                IsExpanded = false,
-                Background = trivia.ContainsDiagnostics ? Brushes.Pink : Brushes.Transparent,
-                Header = (isLeadingTrivia ? "Lead: " : "Trail: ") + tag.Kind + " " + trivia.Span.ToString()
-            };
-
+            var item = CreateTreeViewItem(tag, (isLeadingTrivia ? "Lead: " : "Trail: ") + tag.Kind + " " + trivia.Span.ToString(), trivia.ContainsDiagnostics);
             item.SetResourceReference(ForegroundProperty, SyntaxTriviaTextBrushKey);
 
             if (SyntaxTree != null && trivia.ContainsDiagnostics)
@@ -757,6 +745,41 @@ namespace Roslyn.SyntaxVisualizer.Control
                 }
             }
         }
+
+        private TreeViewItem CreateTreeViewItem(SyntaxTag tag, string text, bool containsDiagnostics)
+        {
+            var item = new TreeViewItem()
+            {
+                Tag = tag,
+                IsExpanded = false,
+                Background = Brushes.Transparent,
+            };
+
+            if (containsDiagnostics)
+            {
+                var textBlock = new TextBlock(new Run(text));
+
+                var brush = new SolidColorBrush();
+                BindingOperations.SetBinding(brush, SolidColorBrush.ColorProperty, new Binding { Source = FindResource(ErrorSquiggleBrushKey), Path = new PropertyPath(SolidColorBrush.ColorProperty.Name) });
+
+                var rectangle = new Rectangle
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    Height = 3.0,
+                };
+
+                rectangle.SetResourceReference(StyleProperty, SquiggleStyleKey);
+                BindingOperations.SetBinding(rectangle, WidthProperty, new Binding { Source = textBlock, Path = new PropertyPath(ActualWidthProperty.Name) });
+                item.Header = new Grid { Children = { textBlock, rectangle } };
+            }
+            else
+            {
+                item.Header = new TextBlock(new Run(text));
+            }
+
+            return item;
+        }
         #endregion
 
         #region Private Helpers - Other
@@ -784,7 +807,14 @@ namespace Roslyn.SyntaxVisualizer.Control
         {
             while (source != null && !(source is TreeViewItem))
             {
-                source = VisualTreeHelper.GetParent(source);
+                if (source is ContentElement contentElement)
+                {
+                    source = ContentOperations.GetParent(contentElement);
+                }
+                else
+                {
+                    source = VisualTreeHelper.GetParent(source);
+                }
             }
 
             return (TreeViewItem)source;
