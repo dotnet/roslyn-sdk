@@ -2,10 +2,21 @@
 
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Language.StandardClassification;
+using Microsoft.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text.Adornments;
+using Microsoft.VisualStudio.Text.Classification;
+using SystemInformation = System.Windows.Forms.SystemInformation;
 
 namespace Roslyn.SyntaxVisualizer.Control
 {
@@ -20,6 +31,12 @@ namespace Roslyn.SyntaxVisualizer.Control
     // A control for visually displaying the contents of a SyntaxTree.
     public partial class SyntaxVisualizerControl : UserControl
     {
+        private static readonly string SyntaxNodeTextBrushKey = "SyntaxNodeText.Brush";
+        private static readonly string SyntaxTokenTextBrushKey = "SyntaxTokenText.Brush";
+        private static readonly string SyntaxTriviaTextBrushKey = "SyntaxTriviaText.Brush";
+        private static readonly string ErrorSquiggleBrushKey = "ErrorSquiggle.Brush";
+        private static readonly string SquiggleStyleKey = "SquiggleStyle";
+
         // Instances of this class are stored in the Tag field of each item in the treeview.
         private class SyntaxTag
         {
@@ -109,6 +126,92 @@ namespace Roslyn.SyntaxVisualizer.Control
                 Margin = System.Windows.Forms.Padding.Empty
             };
             windowsFormsHost.Child = tabStopPanel;
+        }
+
+        /// <summary>
+        /// Allows templates defined in XAML to bind to properties of <see cref="legendPopup"/>.
+        /// </summary>
+        public Popup LegendPopup => legendPopup;
+
+        public void SetPropertyGridColors(IVsUIShell5 shell)
+        {
+            var backgroundColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.ToolWindowBackgroundColorKey);
+            var foregroundColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.ToolWindowTextColorKey);
+            var lineColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.ToolWindowContentGridColorKey);
+            var disabledColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.SystemGrayTextColorKey);
+            var highlightColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.SystemHighlightColorKey);
+            var highlightTextColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.SystemHighlightTextColorKey);
+            var hyperLinkColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.ControlLinkTextColorKey);
+            var hyperLinkActiveColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.ControlLinkTextPressedColorKey);
+
+            if (!SystemInformation.HighContrast || !DotNetFrameworkUtilities.IsInstalledFramework471OrAbove())
+            {
+                _propertyGrid.LineColor = lineColor;
+            }
+
+            _propertyGrid.ViewBackColor = backgroundColor;
+            _propertyGrid.ViewForeColor = foregroundColor;
+            _propertyGrid.ViewBorderColor = lineColor;
+
+            _propertyGrid.HelpBackColor = backgroundColor;
+            _propertyGrid.HelpForeColor = foregroundColor;
+            _propertyGrid.HelpBorderColor = backgroundColor;
+
+            _propertyGrid.CategoryForeColor = foregroundColor;
+            _propertyGrid.CategorySplitterColor = lineColor;
+
+            _propertyGrid.CommandsActiveLinkColor = hyperLinkActiveColor;
+            _propertyGrid.CommandsDisabledLinkColor = disabledColor;
+            _propertyGrid.CommandsLinkColor = hyperLinkColor;
+            _propertyGrid.CommandsForeColor = foregroundColor;
+            _propertyGrid.CommandsBackColor = backgroundColor;
+            _propertyGrid.CommandsDisabledLinkColor = disabledColor;
+            _propertyGrid.CommandsBorderColor = backgroundColor;
+
+            _propertyGrid.SelectedItemWithFocusForeColor = highlightTextColor;
+            _propertyGrid.SelectedItemWithFocusBackColor = highlightColor;
+
+            _propertyGrid.DisabledItemForeColor = disabledColor;
+
+            _propertyGrid.CanShowVisualStyleGlyphs = false;
+        }
+
+        public void SetTreeViewColors(
+            IClassificationTypeRegistryService classificationTypeRegistryService,
+            IClassificationFormatMap classificationFormatMap,
+            IEditorFormatMap editorFormatMap)
+        {
+            var syntaxNodeBrush = (SolidColorBrush)FindResource(SyntaxNodeTextBrushKey);
+            syntaxNodeBrush.Color = GetForegroundColor(editorFormatMap.GetProperties(classificationFormatMap.GetEditorFormatMapKey(classificationTypeRegistryService.GetClassificationType(PredefinedClassificationTypeNames.Keyword))));
+
+            var syntaxTokenBrush = (SolidColorBrush)FindResource(SyntaxTokenTextBrushKey);
+            syntaxTokenBrush.Color = GetForegroundColor(editorFormatMap.GetProperties(classificationFormatMap.GetEditorFormatMapKey(classificationTypeRegistryService.GetClassificationType(PredefinedClassificationTypeNames.Comment))));
+
+            var syntaxTriviaBrush = (SolidColorBrush)FindResource(SyntaxTriviaTextBrushKey);
+            syntaxTriviaBrush.Color = GetForegroundColor(editorFormatMap.GetProperties(classificationFormatMap.GetEditorFormatMapKey(classificationTypeRegistryService.GetClassificationType(PredefinedClassificationTypeNames.String))));
+
+            var errorBrush = (SolidColorBrush)FindResource(ErrorSquiggleBrushKey);
+            errorBrush.Color = GetForegroundColor(editorFormatMap.GetProperties(PredefinedErrorTypeNames.SyntaxError));
+        }
+
+        private static Color GetForegroundColor(ResourceDictionary resourceDictionary)
+        {
+            if (resourceDictionary == null)
+                return Colors.Transparent;
+
+            if (resourceDictionary.Contains(EditorFormatDefinition.ForegroundColorId))
+            {
+                var color = (Color)resourceDictionary[EditorFormatDefinition.ForegroundColorId];
+                return color;
+            }
+
+            if (resourceDictionary.Contains(EditorFormatDefinition.ForegroundBrushId))
+            {
+                if (resourceDictionary[EditorFormatDefinition.ForegroundBrushId] is SolidColorBrush brush)
+                    return brush.Color;
+            }
+
+            return Colors.Transparent;
         }
 
         public void Clear()
@@ -381,14 +484,8 @@ namespace Roslyn.SyntaxVisualizer.Control
                 ParentItem = parentItem
             };
 
-            var item = new TreeViewItem()
-            {
-                Tag = tag,
-                IsExpanded = false,
-                Foreground = Brushes.Blue,
-                Background = node.ContainsDiagnostics ? Brushes.Pink : Brushes.White,
-                Header = tag.Kind + " " + node.Span.ToString()
-            };
+            var item = CreateTreeViewItem(tag, tag.Kind + " " + node.Span.ToString(), node.ContainsDiagnostics);
+            item.SetResourceReference(ForegroundProperty, SyntaxNodeTextBrushKey);
 
             if (SyntaxTree != null && node.ContainsDiagnostics)
             {
@@ -476,14 +573,8 @@ namespace Roslyn.SyntaxVisualizer.Control
                 ParentItem = parentItem
             };
 
-            var item = new TreeViewItem()
-            {
-                Tag = tag,
-                IsExpanded = false,
-                Foreground = Brushes.DarkGreen,
-                Background = token.ContainsDiagnostics ? Brushes.Pink : Brushes.White,
-                Header = tag.Kind + " " + token.Span.ToString()
-            };
+            var item = CreateTreeViewItem(tag, tag.Kind + " " + token.Span.ToString(), token.ContainsDiagnostics);
+            item.SetResourceReference(ForegroundProperty, SyntaxTokenTextBrushKey);
 
             if (SyntaxTree != null && token.ContainsDiagnostics)
             {
@@ -581,14 +672,8 @@ namespace Roslyn.SyntaxVisualizer.Control
                 ParentItem = parentItem
             };
 
-            var item = new TreeViewItem()
-            {
-                Tag = tag,
-                IsExpanded = false,
-                Foreground = Brushes.Maroon,
-                Background = trivia.ContainsDiagnostics ? Brushes.Pink : Brushes.White,
-                Header = (isLeadingTrivia ? "Lead: " : "Trail: ") + tag.Kind + " " + trivia.Span.ToString()
-            };
+            var item = CreateTreeViewItem(tag, (isLeadingTrivia ? "Lead: " : "Trail: ") + tag.Kind + " " + trivia.Span.ToString(), trivia.ContainsDiagnostics);
+            item.SetResourceReference(ForegroundProperty, SyntaxTriviaTextBrushKey);
 
             if (SyntaxTree != null && trivia.ContainsDiagnostics)
             {
@@ -660,6 +745,41 @@ namespace Roslyn.SyntaxVisualizer.Control
                 }
             }
         }
+
+        private TreeViewItem CreateTreeViewItem(SyntaxTag tag, string text, bool containsDiagnostics)
+        {
+            var item = new TreeViewItem()
+            {
+                Tag = tag,
+                IsExpanded = false,
+                Background = Brushes.Transparent,
+            };
+
+            if (containsDiagnostics)
+            {
+                var textBlock = new TextBlock(new Run(text));
+
+                var brush = new SolidColorBrush();
+                BindingOperations.SetBinding(brush, SolidColorBrush.ColorProperty, new Binding { Source = FindResource(ErrorSquiggleBrushKey), Path = new PropertyPath(SolidColorBrush.ColorProperty.Name) });
+
+                var rectangle = new Rectangle
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    Height = 3.0,
+                };
+
+                rectangle.SetResourceReference(StyleProperty, SquiggleStyleKey);
+                BindingOperations.SetBinding(rectangle, WidthProperty, new Binding { Source = textBlock, Path = new PropertyPath(ActualWidthProperty.Name) });
+                item.Header = new Grid { Children = { textBlock, rectangle } };
+            }
+            else
+            {
+                item.Header = new TextBlock(new Run(text));
+            }
+
+            return item;
+        }
         #endregion
 
         #region Private Helpers - Other
@@ -687,7 +807,14 @@ namespace Roslyn.SyntaxVisualizer.Control
         {
             while (source != null && !(source is TreeViewItem))
             {
-                source = VisualTreeHelper.GetParent(source);
+                if (source is ContentElement contentElement)
+                {
+                    source = ContentOperations.GetParent(contentElement);
+                }
+                else
+                {
+                    source = VisualTreeHelper.GetParent(source);
+                }
             }
 
             return (TreeViewItem)source;

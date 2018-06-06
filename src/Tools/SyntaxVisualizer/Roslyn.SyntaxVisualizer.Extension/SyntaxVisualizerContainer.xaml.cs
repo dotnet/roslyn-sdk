@@ -13,6 +13,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace Roslyn.SyntaxVisualizer.Extension
@@ -21,8 +22,10 @@ namespace Roslyn.SyntaxVisualizer.Extension
     // logic necessary for interaction with Visual Studio's code documents and directed graph documents.
     internal partial class SyntaxVisualizerContainer : UserControl, IVsRunningDocTableEvents, IVsSolutionEvents, IDisposable
     {
-        private SyntaxVisualizerToolWindow parent;
+        private readonly SyntaxVisualizerToolWindow parent;
         private IWpfTextView activeWpfTextView;
+        private IClassificationFormatMap activeClassificationFormatMap;
+        private IEditorFormatMap activeEditorFormatMap;
         private SyntaxTree activeSyntaxTree;
         private DispatcherTimer typingTimer;
 
@@ -52,9 +55,31 @@ namespace Roslyn.SyntaxVisualizer.Extension
                 }
             }
 
+            UpdateThemedColors();
+
             syntaxVisualizer.SyntaxNodeNavigationToSourceRequested += node => NavigateToSource(node.Span);
             syntaxVisualizer.SyntaxTokenNavigationToSourceRequested += token => NavigateToSource(token.Span);
             syntaxVisualizer.SyntaxTriviaNavigationToSourceRequested += trivia => NavigateToSource(trivia.Span);
+        }
+
+        internal void UpdateThemedColors()
+        {
+            var uiShellService = GetService<IVsUIShell5, SVsUIShell>(GlobalServiceProvider);
+            if (uiShellService != null)
+            {
+                syntaxVisualizer.SetPropertyGridColors(uiShellService);
+            }
+
+            if (activeClassificationFormatMap != null && activeEditorFormatMap != null)
+            {
+                var classificationTypeRegistryService = GetMefService<IClassificationTypeRegistryService>();
+                syntaxVisualizer.SetTreeViewColors(classificationTypeRegistryService, activeClassificationFormatMap, activeEditorFormatMap);
+            }
+        }
+
+        private void HandleFormatMappingChanged(object sender, EventArgs e)
+        {
+            UpdateThemedColors();
         }
 
         internal void Clear()
@@ -72,6 +97,18 @@ namespace Roslyn.SyntaxVisualizer.Extension
                 activeWpfTextView.TextBuffer.Changed -= HandleTextBufferChanged;
                 activeWpfTextView.LostAggregateFocus -= HandleTextViewLostFocus;
                 activeWpfTextView = null;
+            }
+
+            if (activeClassificationFormatMap != null)
+            {
+                activeClassificationFormatMap.ClassificationFormatMappingChanged -= HandleFormatMappingChanged;
+                activeClassificationFormatMap = null;
+            }
+
+            if (activeEditorFormatMap != null)
+            {
+                activeEditorFormatMap.FormatMappingChanged -= HandleFormatMappingChanged;
+                activeEditorFormatMap = null;
             }
 
             activeSyntaxTree = null;
@@ -313,6 +350,15 @@ namespace Roslyn.SyntaxVisualizer.Extension
                         activeWpfTextView.Selection.SelectionChanged += HandleSelectionChanged;
                         activeWpfTextView.TextBuffer.Changed += HandleTextBufferChanged;
                         activeWpfTextView.LostAggregateFocus += HandleTextViewLostFocus;
+
+                        var classificationFormatMapService = GetMefService<IClassificationFormatMapService>();
+                        var editorFormatMapService = GetMefService<IEditorFormatMapService>();
+                        activeClassificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(activeWpfTextView);
+                        activeClassificationFormatMap.ClassificationFormatMappingChanged += HandleFormatMappingChanged;
+                        activeEditorFormatMap = editorFormatMapService.GetEditorFormatMap(activeWpfTextView);
+                        activeEditorFormatMap.FormatMappingChanged += HandleFormatMappingChanged;
+
+                        UpdateThemedColors();
                         RefreshSyntaxVisualizer();
                     }
                 }
