@@ -114,6 +114,7 @@
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
     </ProjectReference>
   </ItemGroup>
+
   <!-- rewriting of .vstemplate files to reference the correct assembly version number -->
   <UsingTask AssemblyFile="$(ArtifactsBinDir)UpdateTemplateVersion\net461\UpdateTemplateVersion.dll" TaskName="UpdateTemplateVersion" />
   <Target Name="UpdateAssemblyVersionInTemplates" BeforeTargets="GetZipFilesFromVSTemplates">

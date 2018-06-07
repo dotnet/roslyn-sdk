@@ -28,7 +28,6 @@
     <SystemCollectionsImmutableVersionVS2015>1.1.36</SystemCollectionsImmutableVersionVS2015>
     <SystemCompositionVersionVS2015>1.0.31</SystemCompositionVersionVS2015>
     <SystemReflectionMetadataVersionVS2015>1.0.21</SystemReflectionMetadataVersionVS2015>
-
     <!-- VS SDK -->
     <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2015
                we need out extensions to work on both. -->
