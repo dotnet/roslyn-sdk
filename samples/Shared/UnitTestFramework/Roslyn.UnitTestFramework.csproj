@@ -1,14 +1,27 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\bin\CSharp\Roslyn.UnitTestFramework'))</OutputPath>
+    <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="2.6.0" />
-    <PackageReference Include="Moq " Version="4.7.142" />
+    <!-- This package is used for testing analyzers that support Visual Studio 2015. Do not increase this version number. -->
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="1.2.1" />
+
+    <PackageReference Include="Microsoft.VisualStudio.Composition" Version="15.6.36" />
     <PackageReference Include="xunit" Version="2.3.1" />
   </ItemGroup>
+
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'netstandard1.5'">
+      <PropertyGroup>
+        <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+      </PropertyGroup>
+    </When>
+  </Choose>
 
 </Project>

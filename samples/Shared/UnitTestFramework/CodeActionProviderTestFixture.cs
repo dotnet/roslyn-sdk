@@ -23,9 +23,13 @@ namespace Roslyn.UnitTestFramework
             // find these assemblies in the running process
             string[] simpleNames = { "mscorlib", "System.Core", "System" };
 
+#if !NETSTANDARD1_5
             IEnumerable<PortableExecutableReference> references = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(a => simpleNames.Contains(a.GetName().Name, StringComparer.OrdinalIgnoreCase))
                 .Select(a => MetadataReference.CreateFromFile(a.Location));
+#else
+            IEnumerable<PortableExecutableReference> references = Enumerable.Empty<PortableExecutableReference>();
+#endif
 
             return new AdhocWorkspace().CurrentSolution
                 .AddProject(projectId, "TestProject", "TestProject", LanguageName)
