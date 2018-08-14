@@ -268,7 +268,7 @@ namespace Roslyn.UnitTestFramework
         /// </summary>
         public List<Func<Solution, ProjectId, Solution>> SolutionTransforms { get; } = new List<Func<Solution, ProjectId, Solution>>();
 
-        public async Task RunAsync(CancellationToken cancellationToken)
+        public async Task RunAsync(CancellationToken cancellationToken = default)
         {
             Assert.NotEmpty(TestSources);
 
@@ -336,7 +336,8 @@ namespace Roslyn.UnitTestFramework
 
         private static bool IsSubjectToExclusion(DiagnosticResult result)
         {
-            if (result.Id.StartsWith("CS", StringComparison.Ordinal))
+            if (result.Id.StartsWith("CS", StringComparison.Ordinal)
+                || result.Id.StartsWith("VB", StringComparison.Ordinal))
             {
                 // This is a compiler diagnostic
                 return false;
@@ -348,7 +349,7 @@ namespace Roslyn.UnitTestFramework
                 return false;
             }
 
-            if (result.Spans.Length == 0)
+            if (result.Spans.IsEmpty)
             {
                 return false;
             }
