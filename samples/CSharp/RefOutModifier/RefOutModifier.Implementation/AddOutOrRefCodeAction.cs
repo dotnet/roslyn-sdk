@@ -86,8 +86,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
         {
             foreach (ISymbol symbol in symbols)
             {
-                IParameterSymbol parameterSymbol = symbol as IParameterSymbol;
-                if (parameterSymbol == null)
+                if (!(symbol is IParameterSymbol parameterSymbol))
                 {
                     continue;
                 }

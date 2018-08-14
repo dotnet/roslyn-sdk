@@ -40,8 +40,7 @@ namespace CSharpToVisualBasicConverter.Utilities
 
         public static TypeSyntax GetVariableType(this VariableDeclaratorSyntax variable)
         {
-            VariableDeclarationSyntax parent = variable.Parent as VariableDeclarationSyntax;
-            if (parent == null)
+            if (!(variable.Parent is VariableDeclarationSyntax parent))
             {
                 return null;
             }

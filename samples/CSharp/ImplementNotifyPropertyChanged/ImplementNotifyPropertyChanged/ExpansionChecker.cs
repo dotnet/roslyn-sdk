@@ -120,8 +120,7 @@ namespace ImplementNotifyPropertyChangedCS
                 return null;
             }
 
-            ReturnStatementSyntax returnStatement = statements.Single() as ReturnStatementSyntax;
-            if (returnStatement == null || returnStatement.Expression == null)
+            if (!(statements.Single() is ReturnStatementSyntax returnStatement) || returnStatement.Expression == null)
             {
                 return null;
             }
@@ -230,8 +229,7 @@ namespace ImplementNotifyPropertyChangedCS
                 return false;
             }
 
-            IfStatementSyntax ifStatement = statements[0] as IfStatementSyntax;
-            if (ifStatement == null)
+            if (!(statements[0] is IfStatementSyntax ifStatement))
             {
                 return false;
             }
@@ -248,8 +246,7 @@ namespace ImplementNotifyPropertyChangedCS
                 statement = blockStatements[0];
             }
 
-            ExpressionStatementSyntax expressionStatement = statement as ExpressionStatementSyntax;
-            if (expressionStatement == null)
+            if (!(statement is ExpressionStatementSyntax expressionStatement))
             {
                 return false;
             }
@@ -259,8 +256,7 @@ namespace ImplementNotifyPropertyChangedCS
                 return false;
             }
 
-            BinaryExpressionSyntax condition = ifStatement.Condition as BinaryExpressionSyntax;
-            if (condition == null ||
+            if (!(ifStatement.Condition is BinaryExpressionSyntax condition) ||
                 condition.Kind() != SyntaxKind.NotEqualsExpression)
             {
                 return false;
@@ -284,8 +280,7 @@ namespace ImplementNotifyPropertyChangedCS
                 return false;
             }
 
-            IfStatementSyntax ifStatement = statements[0] as IfStatementSyntax;
-            if (ifStatement == null)
+            if (!(statements[0] is IfStatementSyntax ifStatement))
             {
                 return false;
             }
@@ -302,15 +297,13 @@ namespace ImplementNotifyPropertyChangedCS
                 statement = blockStatements[0];
             }
 
-            ReturnStatementSyntax returnStatement = statement as ReturnStatementSyntax;
-            if (returnStatement == null ||
+            if (!(statement is ReturnStatementSyntax returnStatement) ||
                 returnStatement.Expression != null)
             {
                 return false;
             }
 
-            ExpressionStatementSyntax expressionStatement = statements[1] as ExpressionStatementSyntax;
-            if (expressionStatement == null)
+            if (!(statements[1] is ExpressionStatementSyntax expressionStatement))
             {
                 return false;
             }
@@ -320,8 +313,7 @@ namespace ImplementNotifyPropertyChangedCS
                 return false;
             }
 
-            BinaryExpressionSyntax condition = ifStatement.Condition as BinaryExpressionSyntax;
-            if (condition == null ||
+            if (!(ifStatement.Condition is BinaryExpressionSyntax condition) ||
                 condition.Kind() != SyntaxKind.EqualsExpression)
             {
                 return false;
