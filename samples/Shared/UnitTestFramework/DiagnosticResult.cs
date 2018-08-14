@@ -145,12 +145,12 @@ namespace Roslyn.UnitTestFramework
         {
             DiagnosticResult result = this;
             ImmutableArray<FileLinePositionSpan>.Builder spansBuilder = result._spans.ToBuilder();
-            for (int i = 0; i < result._spans.Length; i++)
+            for (int i = 0; i < result.Spans.Length; i++)
             {
-                LinePosition newStartLinePosition = new LinePosition(result._spans[i].StartLinePosition.Line + offset, result._spans[i].StartLinePosition.Character);
-                LinePosition newEndLinePosition = new LinePosition(result._spans[i].EndLinePosition.Line + offset, result._spans[i].EndLinePosition.Character);
+                LinePosition newStartLinePosition = new LinePosition(result.Spans[i].StartLinePosition.Line + offset, result.Spans[i].StartLinePosition.Character);
+                LinePosition newEndLinePosition = new LinePosition(result.Spans[i].EndLinePosition.Line + offset, result.Spans[i].EndLinePosition.Character);
 
-                spansBuilder[i] = new FileLinePositionSpan(result._spans[i].Path, newStartLinePosition, newEndLinePosition);
+                spansBuilder[i] = new FileLinePositionSpan(result.Spans[i].Path, newStartLinePosition, newEndLinePosition);
             }
 
             result._spans = spansBuilder.MoveToImmutable();
@@ -159,7 +159,7 @@ namespace Roslyn.UnitTestFramework
 
         private DiagnosticResult AppendSpan(FileLinePositionSpan span)
         {
-            ImmutableArray<FileLinePositionSpan> newSpans = _spans.Add(span);
+            ImmutableArray<FileLinePositionSpan> newSpans = Spans.Add(span);
 
             // clone the object, so that the fluent syntax will work on immutable objects.
             return new DiagnosticResult

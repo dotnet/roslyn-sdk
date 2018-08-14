@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net452;netstandard1.5</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+      Make sure any documentation comments which are included in code get checked for syntax during the build, but do
+      not report warnings for missing comments.
+
+      CS1573: Parameter 'parameter' has no matching param tag in the XML comment for 'parameter' (but other parameters do)
+      CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
+      CS1712: Type parameter 'parameter' has no matching typeparam tag in the XML comment for 'Type_or_member' (but other type parameters do)
+    -->
+    <NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UnitTestFramework\Roslyn.UnitTestFramework.csproj" />
+  </ItemGroup>
+
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'netstandard1.5'">
+      <PropertyGroup>
+        <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+</Project>
