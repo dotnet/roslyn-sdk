@@ -16,6 +16,7 @@ namespace Roslyn.UnitTestFramework
         private static readonly object[] EmptyArguments = new object[0];
 
         private ImmutableArray<FileLinePositionSpan> _spans;
+        private bool _suppressMessage;
         private string _message;
 
         public DiagnosticResult(string id, DiagnosticSeverity severity)
@@ -57,6 +58,11 @@ namespace Roslyn.UnitTestFramework
         {
             get
             {
+                if (_suppressMessage)
+                {
+                    return null;
+                }
+
                 if (_message != null)
                 {
                     return _message;
@@ -109,6 +115,7 @@ namespace Roslyn.UnitTestFramework
         {
             DiagnosticResult result = this;
             result._message = message;
+            result._suppressMessage = message is null;
             return result;
         }
 
@@ -159,18 +166,9 @@ namespace Roslyn.UnitTestFramework
 
         private DiagnosticResult AppendSpan(FileLinePositionSpan span)
         {
-            ImmutableArray<FileLinePositionSpan> newSpans = Spans.Add(span);
-
-            // clone the object, so that the fluent syntax will work on immutable objects.
-            return new DiagnosticResult
-            {
-                Id = Id,
-                _message = _message,
-                MessageFormat = MessageFormat,
-                MessageArguments = MessageArguments,
-                Severity = Severity,
-                _spans = newSpans,
-            };
+            DiagnosticResult result = this;
+            result._spans = Spans.Add(span);
+            return result;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -432,6 +433,98 @@ class ClassName
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Expected 1 additional locations but got 0 for Diagnostic", ex.Message);
+        }
+
+        [Fact]
+        public async Task TestDiagnosticsUnorderedAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    int property;
+    int PropertyName
+    {
+        get{return this.property;}
+        set{this.property = value;}
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments("followed").WithLocation(7, 33),
+                Diagnostic().WithArguments("followed").WithLocation(8, 34),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            expected = expected.Reverse().ToArray();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMarkupThenExplicitAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    int property;
+    int PropertyName
+    {
+        get{return this.property[|;|]}
+        set{this.property = value;}
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments("followed").WithLocation(8, 34),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExplicitThenMarkupAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    int property;
+    int PropertyName
+    {
+        get{return this.property;}
+        set{this.property = value[|;|]}
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments("followed").WithLocation(7, 33),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMarkupAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    int property;
+    int PropertyName
+    {
+        get{return this.property[|;|]}
+        set{this.property = value[|;|]}
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private class ErrorThrowingAnalyzer : CSharpSyntaxTreeDiagnosticAnalyzer

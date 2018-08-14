@@ -251,6 +251,27 @@ namespace Roslyn.UnitTestFramework
         public int? NumberOfFixAllIterations { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether markup can be used to identify diagnostics within expected inputs
+        /// and outputs. The default value is <see langword="true"/>.
+        /// </summary>
+        /// <remarks>
+        /// <para>Diagnostics expressed using markup are combined with explicitly-specified expected diagnostics.</para>
+        ///
+        /// <para>Supported markup syntax includes the following:</para>
+        ///
+        /// <list type="bullet">
+        /// <item><description><c>[|text|]</c>: indicates that a diagnostic is reported for <c>text</c>. The diagnostic
+        /// descriptor is located via <see cref="GetDiagnosticAnalyzers"/>. This syntax may only be used when the first
+        /// analyzer provided by <see cref="GetDiagnosticAnalyzers"/> supports a single diagnostic.</description></item>
+        /// <item><description><c>{|ID1:text|}</c>: indicates that a diagnostic with ID <c>ID1</c> is reported for
+        /// <c>text</c>. The diagnostic descriptor for <c>ID1</c> is located via <see cref="GetDiagnosticAnalyzers"/>.
+        /// If no matching descriptor is found, the diagnostic is assumed to be a compiler-reported diagnostic with the
+        /// specified ID and severity <see cref="DiagnosticSeverity.Error"/>.</description></item>
+        /// </list>
+        /// </remarks>
+        public bool AllowMarkup { get; set; } = true;
+
+        /// <summary>
         /// Gets or sets a value indicating whether new compiler diagnostics are allowed to appear in code fix outputs.
         /// The default value is <see langword="false"/>.
         /// </summary>
@@ -272,20 +293,102 @@ namespace Roslyn.UnitTestFramework
         {
             Assert.NotEmpty(TestSources);
 
-            DiagnosticResult[] expected = ExpectedDiagnostics.ToArray();
-            await VerifyDiagnosticsAsync(TestSources.ToArray(), expected, cancellationToken).ConfigureAwait(false);
+            (DiagnosticResult[] expected, (string filename, string content)[] testSources) = ProcessMarkupSources(TestSources, ExpectedDiagnostics);
+            await VerifyDiagnosticsAsync(testSources, expected, cancellationToken).ConfigureAwait(false);
             if (HasFixableDiagnostics())
             {
-                DiagnosticResult[] remainingDiagnostics = FixedSources.SequenceEqual(TestSources) ? expected : RemainingDiagnostics.ToArray();
-                await VerifyDiagnosticsAsync(FixedSources.ToArray(), remainingDiagnostics, cancellationToken).ConfigureAwait(false);
+                (DiagnosticResult[] remainingDiagnostics, (string filename, string content)[] fixedSources) = FixedSources.SequenceEqual(TestSources)
+                    ? (expected, testSources)
+                    : ProcessMarkupSources(FixedSources, RemainingDiagnostics);
+                await VerifyDiagnosticsAsync(fixedSources, remainingDiagnostics, cancellationToken).ConfigureAwait(false);
                 if (BatchFixedSources.Any())
                 {
-                    DiagnosticResult[] batchRemainingDiagnostics = BatchFixedSources.SequenceEqual(TestSources) ? expected : BatchRemainingDiagnostics.ToArray();
-                    await VerifyDiagnosticsAsync(BatchFixedSources.ToArray(), batchRemainingDiagnostics, cancellationToken).ConfigureAwait(false);
+                    (DiagnosticResult[] batchRemainingDiagnostics, (string filename, string content)[] batchFixedSources) = BatchFixedSources.SequenceEqual(TestSources)
+                        ? (expected, testSources)
+                        : ProcessMarkupSources(BatchFixedSources, BatchRemainingDiagnostics);
+                    await VerifyDiagnosticsAsync(batchFixedSources, batchRemainingDiagnostics, cancellationToken).ConfigureAwait(false);
                 }
 
                 await VerifyFixAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
             }
+        }
+
+        private (DiagnosticResult[], (string filename, string content)[]) ProcessMarkupSources(IEnumerable<(string filename, string content)> sources, IEnumerable<DiagnosticResult> explicitDiagnostics)
+        {
+            if (!AllowMarkup)
+            {
+                return (ToOrderedArray(explicitDiagnostics), sources.ToArray());
+            }
+
+            DiagnosticAnalyzer[] analyzers = GetDiagnosticAnalyzers().ToArray();
+            List<(string filename, string content)> sourceFiles = new List<(string filename, string content)>();
+            List<DiagnosticResult> diagnostics = new List<DiagnosticResult>(explicitDiagnostics);
+            foreach ((string filename, string content) in sources)
+            {
+                MarkupTestFile.GetSpans(content, out string output, out IDictionary<string, IList<TextSpan>> namedSpans);
+                sourceFiles.Add((filename, output));
+                if (namedSpans.Count == 0)
+                {
+                    // No markup notation in this input
+                    continue;
+                }
+
+                SourceText sourceText = SourceText.From(output);
+                foreach ((string name, IList<TextSpan> spans) in namedSpans)
+                {
+                    foreach (TextSpan span in spans)
+                    {
+                        diagnostics.Add(CreateDiagnosticForSpan(analyzers, name, filename, sourceText, span));
+                    }
+                }
+            }
+
+            return (ToOrderedArray(diagnostics), sourceFiles.ToArray());
+        }
+
+        private DiagnosticResult CreateDiagnosticForSpan(DiagnosticAnalyzer[] analyzers, string diagnosticId, string filename, SourceText content, TextSpan span)
+        {
+            LinePositionSpan linePositionSpan = content.Lines.GetLinePositionSpan(span);
+
+            DiagnosticResult diagnosticResult;
+            if (diagnosticId == "")
+            {
+                diagnosticResult = new DiagnosticResult(analyzers.First().SupportedDiagnostics.Single());
+            }
+            else
+            {
+                DiagnosticDescriptor descriptor = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics).SingleOrDefault(d => d.Id == diagnosticId);
+                if (descriptor != null)
+                {
+                    diagnosticResult = new DiagnosticResult(descriptor);
+                }
+                else
+                {
+                    // This must be a compiler error
+                    diagnosticResult = new DiagnosticResult(diagnosticId, DiagnosticSeverity.Error);
+                }
+            }
+
+            return diagnosticResult
+                .WithMessage(null)
+                .WithSpan(
+                    filename,
+                    linePositionSpan.Start.Line + 1,
+                    linePositionSpan.Start.Character + 1,
+                    linePositionSpan.End.Line + 1,
+                    linePositionSpan.End.Character + 1);
+        }
+
+        private static DiagnosticResult[] ToOrderedArray(IEnumerable<DiagnosticResult> diagnosticResults)
+        {
+            return diagnosticResults
+                .OrderBy(diagnosticResult => diagnosticResult.Spans.FirstOrDefault().Path, StringComparer.Ordinal)
+                .ThenBy(diagnosticResult => diagnosticResult.Spans.FirstOrDefault().Span.Start.Line)
+                .ThenBy(diagnosticResult => diagnosticResult.Spans.FirstOrDefault().Span.Start.Character)
+                .ThenBy(diagnosticResult => diagnosticResult.Spans.FirstOrDefault().Span.End.Line)
+                .ThenBy(diagnosticResult => diagnosticResult.Spans.FirstOrDefault().Span.End.Character)
+                .ThenBy(diagnosticResult => diagnosticResult.Id, StringComparer.Ordinal)
+                .ToArray();
         }
 
         /// <summary>
@@ -450,7 +553,7 @@ namespace Roslyn.UnitTestFramework
         /// <see cref="Diagnostic.Location"/> and <see cref="Diagnostic.Id"/>.</returns>
         private static Diagnostic[] SortDistinctDiagnostics(IEnumerable<Diagnostic> diagnostics)
         {
-            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ThenBy(d => d.Id).ToArray();
+            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ThenBy(d => d.Location.SourceSpan.End).ThenBy(d => d.Id).ToArray();
         }
 
         /// <summary>
@@ -732,7 +835,7 @@ namespace Roslyn.UnitTestFramework
                     Assert.True(false, message);
                 }
 
-                if (actual.GetMessage() != expected.Message)
+                if (expected.Message != null && actual.GetMessage() != expected.Message)
                 {
                     string message =
                         string.Format(
