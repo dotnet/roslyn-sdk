@@ -34,8 +34,7 @@ namespace ConvertToConditional
                 return;
             }
 
-            IfStatementSyntax ifStatement = token.Parent as IfStatementSyntax;
-            if (ifStatement == null || ifStatement.Else == null)
+            if (!(token.Parent is IfStatementSyntax ifStatement) || ifStatement.Else == null)
             {
                 return;
             }

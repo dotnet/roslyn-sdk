@@ -66,14 +66,12 @@ namespace ConvertToConditional
             whenTrueStatement = null;
             whenFalseStatement = null;
 
-            ReturnStatementSyntax statement = ifStatement.Statement.SingleStatementOrSelf() as ReturnStatementSyntax;
-            if (statement == null)
+            if (!(ifStatement.Statement.SingleStatementOrSelf() is ReturnStatementSyntax statement))
             {
                 return false;
             }
 
-            ReturnStatementSyntax elseStatement = ifStatement.Else.Statement.SingleStatementOrSelf() as ReturnStatementSyntax;
-            if (elseStatement == null)
+            if (!(ifStatement.Else.Statement.SingleStatementOrSelf() is ReturnStatementSyntax elseStatement))
             {
                 return false;
             }
