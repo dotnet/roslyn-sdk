@@ -5,6 +5,19 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <!--
+      Make sure any documentation comments which are included in code get checked for syntax during the build, but do
+      not report warnings for missing comments.
+
+      CS1573: Parameter 'parameter' has no matching param tag in the XML comment for 'parameter' (but other parameters do)
+      CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
+      CS1712: Type parameter 'parameter' has no matching typeparam tag in the XML comment for 'Type_or_member' (but other type parameters do)
+    -->
+    <NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
@@ -12,6 +25,7 @@
     <!-- This package is used for testing analyzers that support Visual Studio 2015. Do not increase this version number. -->
     <PackageReference Include="Microsoft.CodeAnalysis" Version="1.2.1" />
 
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="15.6.36" />
     <PackageReference Include="xunit" Version="2.3.1" />
   </ItemGroup>

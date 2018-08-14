@@ -59,6 +59,13 @@ namespace Roslyn.UnitTestFramework
         }
 #endif
 
+        protected GenericAnalyzerTest()
+        {
+            TestSources = new SourceFileList(DefaultFilePathPrefix, Language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt);
+            FixedSources = new SourceFileList(DefaultFilePathPrefix, Language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt);
+            BatchFixedSources = new SourceFileList(DefaultFilePathPrefix, Language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt);
+        }
+
         /// <summary>
         /// Gets the language name used for the test.
         /// </summary>
@@ -82,7 +89,7 @@ namespace Roslyn.UnitTestFramework
             }
         }
 
-        public List<string> TestSources { get; } = new List<string>();
+        public SourceFileList TestSources { get; }
 
         public Dictionary<string, string> XmlReferences { get; } = new Dictionary<string, string>();
 
@@ -91,6 +98,8 @@ namespace Roslyn.UnitTestFramework
         public List<DiagnosticResult> RemainingDiagnostics { get; } = new List<DiagnosticResult>();
 
         public List<DiagnosticResult> BatchRemainingDiagnostics { get; } = new List<DiagnosticResult>();
+
+        public bool VerifyExclusions { get; set; } = true;
 
         public List<string> DisabledDiagnostics { get; } = new List<string>();
 
@@ -108,7 +117,7 @@ namespace Roslyn.UnitTestFramework
             }
         }
 
-        public List<string> FixedSources { get; } = new List<string>();
+        public SourceFileList FixedSources { get; }
 
         public string BatchFixedCode
         {
@@ -122,7 +131,7 @@ namespace Roslyn.UnitTestFramework
             }
         }
 
-        public List<string> BatchFixedSources { get; } = new List<string>();
+        public SourceFileList BatchFixedSources { get; }
 
         public int? NumberOfIncrementalIterations { get; set; }
 
@@ -139,15 +148,15 @@ namespace Roslyn.UnitTestFramework
             Assert.NotEmpty(TestSources);
 
             DiagnosticResult[] expected = ExpectedDiagnostics.ToArray();
-            await VerifyDiagnosticsAsync(TestSources.ToArray(), expected, filenames: null, cancellationToken).ConfigureAwait(false);
+            await VerifyDiagnosticsAsync(TestSources.ToArray(), expected, cancellationToken).ConfigureAwait(false);
             if (HasFixableDiagnostics())
             {
                 DiagnosticResult[] remainingDiagnostics = FixedSources.SequenceEqual(TestSources) ? expected : RemainingDiagnostics.ToArray();
-                await VerifyDiagnosticsAsync(FixedSources.ToArray(), remainingDiagnostics, filenames: null, cancellationToken).ConfigureAwait(false);
+                await VerifyDiagnosticsAsync(FixedSources.ToArray(), remainingDiagnostics, cancellationToken).ConfigureAwait(false);
                 if (BatchFixedSources.Any())
                 {
                     DiagnosticResult[] batchRemainingDiagnostics = BatchFixedSources.SequenceEqual(TestSources) ? expected : BatchRemainingDiagnostics.ToArray();
-                    await VerifyDiagnosticsAsync(BatchFixedSources.ToArray(), batchRemainingDiagnostics, filenames: null, cancellationToken).ConfigureAwait(false);
+                    await VerifyDiagnosticsAsync(BatchFixedSources.ToArray(), batchRemainingDiagnostics, cancellationToken).ConfigureAwait(false);
                 }
 
                 await VerifyFixAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -184,10 +193,10 @@ namespace Roslyn.UnitTestFramework
             }
 
             Assert.True(FixedSources.Count == 0
-                || (FixedSources.Count == 1 && string.IsNullOrEmpty(FixedSources[0]))
+                || (FixedSources.Count == 1 && string.IsNullOrEmpty(FixedSources[0].content))
                 || FixedSources.SequenceEqual(TestSources));
             Assert.True(BatchFixedSources.Count == 0
-                || (BatchFixedSources.Count == 1 && string.IsNullOrEmpty(BatchFixedSources[0]))
+                || (BatchFixedSources.Count == 1 && string.IsNullOrEmpty(BatchFixedSources[0].content))
                 || BatchFixedSources.SequenceEqual(TestSources));
             Assert.Empty(RemainingDiagnostics);
             Assert.Empty(BatchRemainingDiagnostics);
@@ -227,16 +236,15 @@ namespace Roslyn.UnitTestFramework
         /// <param name="sources">An array of strings to create source documents from to run the analyzers on.</param>
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s that should appear after the analyzer
         /// is run on the sources.</param>
-        /// <param name="filenames">The filenames or null if the default filename should be used.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task VerifyDiagnosticsAsync(string[] sources, DiagnosticResult[] expected, string[] filenames, CancellationToken cancellationToken)
+        private async Task VerifyDiagnosticsAsync((string filename, string content)[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             ImmutableArray<DiagnosticAnalyzer> analyzers = GetDiagnosticAnalyzers().ToImmutableArray();
-            VerifyDiagnosticResults(await GetSortedDiagnosticsAsync(sources, analyzers, filenames, cancellationToken).ConfigureAwait(false), analyzers, expected);
+            VerifyDiagnosticResults(await GetSortedDiagnosticsAsync(sources, analyzers, cancellationToken).ConfigureAwait(false), analyzers, expected);
 
-            // If filenames is null we want to test for exclusions too
-            if (filenames == null)
+            // Automatically test for exclusions
+            if (VerifyExclusions)
             {
                 // Also check if the analyzer honors exclusions
                 if (expected.Any(IsSubjectToExclusion))
@@ -249,7 +257,7 @@ namespace Roslyn.UnitTestFramework
                         .Select(x => x.WithLineOffset(1))
                         .ToArray();
 
-                    VerifyDiagnosticResults(await GetSortedDiagnosticsAsync(sources.Select(x => " // <auto-generated>\r\n" + x).ToArray(), analyzers, null, cancellationToken).ConfigureAwait(false), analyzers, expectedResults);
+                    VerifyDiagnosticResults(await GetSortedDiagnosticsAsync(sources.Select(x => (x.filename, " // <auto-generated>\r\n" + x.content)).ToArray(), analyzers, cancellationToken).ConfigureAwait(false), analyzers, expectedResults);
                 }
             }
         }
@@ -324,13 +332,12 @@ namespace Roslyn.UnitTestFramework
         /// </summary>
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="analyzers">The analyzers to be run on the sources.</param>
-        /// <param name="filenames">The filenames or <see langword="null"/> if the default filename should be used.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, ImmutableArray<DiagnosticAnalyzer> analyzers, string[] filenames, CancellationToken cancellationToken)
+        private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync((string filename, string content)[] sources, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
         {
-            return GetSortedDiagnosticsFromDocumentsAsync(analyzers, GetDocuments(sources, filenames), cancellationToken);
+            return GetSortedDiagnosticsFromDocumentsAsync(analyzers, GetDocuments(sources), cancellationToken);
         }
 
         /// <summary>
@@ -338,16 +345,15 @@ namespace Roslyn.UnitTestFramework
         /// documents and spans of it.
         /// </summary>
         /// <param name="sources">Classes in the form of strings.</param>
-        /// <param name="filenames">The filenames or <see langword="null"/> if the default filename should be used.</param>
         /// <returns>A collection of <see cref="Document"/>s representing the sources.</returns>
-        private Document[] GetDocuments(string[] sources, string[] filenames)
+        private Document[] GetDocuments((string filename, string content)[] sources)
         {
             if (Language != LanguageNames.CSharp && Language != LanguageNames.VisualBasic)
             {
                 throw new ArgumentException("Unsupported Language");
             }
 
-            Project project = CreateProject(sources, Language, filenames);
+            Project project = CreateProject(sources, Language);
             Document[] documents = project.Documents.ToArray();
 
             if (sources.Length != documents.Length)
@@ -368,12 +374,11 @@ namespace Roslyn.UnitTestFramework
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
-        /// <param name="filenames">The filenames or <see langword="null"/> if the default filename should be used.</param>
         /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
         /// strings.</returns>
-        protected Project CreateProject(string[] sources, string language = LanguageNames.CSharp, string[] filenames = null)
+        protected Project CreateProject((string filename, string content)[] sources, string language = LanguageNames.CSharp)
         {
-            Project project = CreateProjectImpl(sources, language, filenames);
+            Project project = CreateProjectImpl(sources, language);
             return ApplyCompilationOptions(project);
         }
 
@@ -383,10 +388,9 @@ namespace Roslyn.UnitTestFramework
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
-        /// <param name="filenames">The filenames or <see langword="null"/> if the default filename should be used.</param>
         /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
         /// strings.</returns>
-        protected virtual Project CreateProjectImpl(string[] sources, string language, string[] filenames)
+        protected virtual Project CreateProjectImpl((string filename, string content)[] sources, string language)
         {
             string fileNamePrefix = DefaultFilePathPrefix;
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
@@ -397,8 +401,7 @@ namespace Roslyn.UnitTestFramework
             int count = 0;
             for (int i = 0; i < sources.Length; i++)
             {
-                string source = sources[i];
-                string newFileName = filenames?[i] ?? fileNamePrefix + count + "." + fileExt;
+                (string newFileName, string source) = sources[i];
                 DocumentId documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
                 solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
                 count++;
@@ -735,15 +738,13 @@ namespace Roslyn.UnitTestFramework
         /// <summary>
         /// Called to test a C# code fix when applied on the input source as a string.
         /// </summary>
-        /// <param name="oldFileNames">An array of file names in the project before the code fix was applied.</param>
-        /// <param name="newFileNames">An array of file names in the project after the code fix was applied.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected async Task VerifyFixAsync(string[] oldFileNames = null, string[] newFileNames = null, CancellationToken cancellationToken = default)
+        protected async Task VerifyFixAsync(CancellationToken cancellationToken)
         {
-            string[] oldSources = TestSources.ToArray();
-            string[] newSources = FixedSources.ToArray();
-            string[] batchNewSources = BatchFixedSources.Any() ? BatchFixedSources.ToArray() : newSources;
+            (string filename, string content)[] oldSources = TestSources.ToArray();
+            (string filename, string content)[] newSources = FixedSources.ToArray();
+            (string filename, string content)[] batchNewSources = BatchFixedSources.Any() ? BatchFixedSources.ToArray() : newSources;
 
             int numberOfIncrementalIterations;
             int numberOfFixAllIterations;
@@ -753,7 +754,7 @@ namespace Roslyn.UnitTestFramework
             }
             else
             {
-                if (!HasAnyChange(oldSources, newSources, oldFileNames, newFileNames))
+                if (!HasAnyChange(oldSources, newSources))
                 {
                     numberOfIncrementalIterations = 0;
                 }
@@ -769,7 +770,7 @@ namespace Roslyn.UnitTestFramework
             }
             else
             {
-                if (!HasAnyChange(oldSources, batchNewSources, oldFileNames, newFileNames))
+                if (!HasAnyChange(oldSources, batchNewSources))
                 {
                     numberOfFixAllIterations = 0;
                 }
@@ -779,7 +780,7 @@ namespace Roslyn.UnitTestFramework
                 }
             }
 
-            ConfiguredTaskAwaitable t1 = VerifyFixpublicAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, newSources, oldFileNames, newFileNames, numberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
+            ConfiguredTaskAwaitable t1 = VerifyFixpublicAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, newSources, numberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
 
             ImmutableArray<FixAllProvider> fixAllProvider = GetCodeFixProviders().Select(codeFixProvider => codeFixProvider.GetFixAllProvider()).Where(codeFixProvider => codeFixProvider != null).ToImmutableArray();
 
@@ -794,19 +795,19 @@ namespace Roslyn.UnitTestFramework
                     await t1;
                 }
 
-                ConfiguredTaskAwaitable t2 = VerifyFixpublicAsync(LanguageNames.CSharp, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
+                ConfiguredTaskAwaitable t2 = VerifyFixpublicAsync(LanguageNames.CSharp, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t2;
                 }
 
-                ConfiguredTaskAwaitable t3 = VerifyFixpublicAsync(LanguageNames.CSharp, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
+                ConfiguredTaskAwaitable t3 = VerifyFixpublicAsync(LanguageNames.CSharp, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t3;
                 }
 
-                ConfiguredTaskAwaitable t4 = VerifyFixpublicAsync(LanguageNames.CSharp, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
+                ConfiguredTaskAwaitable t4 = VerifyFixpublicAsync(LanguageNames.CSharp, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t4;
@@ -827,27 +828,13 @@ namespace Roslyn.UnitTestFramework
             string language,
             ImmutableArray<DiagnosticAnalyzer> analyzers,
             ImmutableArray<CodeFixProvider> codeFixProviders,
-            string[] oldSources,
-            string[] newSources,
-            string[] oldFileNames,
-            string[] newFileNames,
+            (string filename, string content)[] oldSources,
+            (string filename, string content)[] newSources,
             int numberOfIterations,
             Func<ImmutableArray<DiagnosticAnalyzer>, ImmutableArray<CodeFixProvider>, int?, Project, int, CancellationToken, Task<Project>> getFixedProject,
             CancellationToken cancellationToken)
         {
-            if (oldFileNames != null)
-            {
-                // Make sure the test case is consistent regarding the number of sources and file names before the code fix
-                Assert.Equal($"{oldSources.Length} old file names", $"{oldFileNames.Length} old file names");
-            }
-
-            if (newFileNames != null)
-            {
-                // Make sure the test case is consistent regarding the number of sources and file names after the code fix
-                Assert.Equal($"{newSources.Length} new file names", $"{newFileNames.Length} new file names");
-            }
-
-            Project project = CreateProject(oldSources, language, oldFileNames);
+            Project project = CreateProject(oldSources, language);
             ImmutableArray<Diagnostic> compilerDiagnostics = await GetCompilerDiagnosticsAsync(project, cancellationToken).ConfigureAwait(false);
 
             project = await getFixedProject(analyzers, codeFixProviders, CodeFixIndex, project, numberOfIterations, cancellationToken).ConfigureAwait(false);
@@ -882,28 +869,14 @@ namespace Roslyn.UnitTestFramework
             for (int i = 0; i < updatedDocuments.Length; i++)
             {
                 string actual = await GetStringFromDocumentAsync(updatedDocuments[i], cancellationToken).ConfigureAwait(false);
-                Assert.Equal(newSources[i], actual);
-
-                if (newFileNames != null)
-                {
-                    Assert.Equal(newFileNames[i], updatedDocuments[i].Name);
-                }
+                Assert.Equal(newSources[i].content, actual);
+                Assert.Equal(newSources[i].filename, updatedDocuments[i].Name);
             }
         }
 
-        private static bool HasAnyChange(string[] oldSources, string[] newSources, string[] oldFileNames, string[] newFileNames)
+        private static bool HasAnyChange((string filename, string content)[] oldSources, (string filename, string content)[] newSources)
         {
-            if (!oldSources.SequenceEqual(newSources))
-            {
-                return true;
-            }
-
-            if (oldFileNames != null && newFileNames != null && !oldFileNames.SequenceEqual(newFileNames))
-            {
-                return true;
-            }
-
-            return false;
+            return !oldSources.SequenceEqual(newSources);
         }
 
         private static async Task<Project> FixEachAnalyzerDiagnosticAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, Project project, int numberOfIterations, CancellationToken cancellationToken)
