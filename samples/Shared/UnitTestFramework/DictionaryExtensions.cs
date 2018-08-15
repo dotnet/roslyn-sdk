@@ -21,5 +21,11 @@ namespace Roslyn.UnitTestFramework
 
         public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> function)
             => dictionary.GetOrAdd(key, _ => function());
+
+        public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> pair, out TKey key, out TValue value)
+        {
+            key = pair.Key;
+            value = pair.Value;
+        }
     }
 }

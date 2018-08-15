@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
+    <TargetFrameworks>net452;netstandard1.5</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -22,12 +22,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- This package is used for testing analyzers that support Visual Studio 2015. Do not increase this version number. -->
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="1.2.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+  </ItemGroup>
 
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Composition" Version="15.6.36" />
-    <PackageReference Include="xunit" Version="2.3.1" />
+  <ItemGroup>
+    <ProjectReference Include="..\UnitTestFramework\Roslyn.UnitTestFramework.csproj" />
   </ItemGroup>
 
   <Choose>
