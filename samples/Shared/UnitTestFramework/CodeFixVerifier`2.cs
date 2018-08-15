@@ -46,6 +46,27 @@ namespace Roslyn.UnitTestFramework
             return test.RunAsync(cancellationToken);
         }
 
+        public static Task VerifyVisualBasicDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken = default)
+            => DiagnosticVerifier<TAnalyzer>.VerifyVisualBasicDiagnosticAsync(source, expected, cancellationToken);
+
+        public static Task VerifyVisualBasicDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken = default)
+            => DiagnosticVerifier<TAnalyzer>.VerifyVisualBasicDiagnosticAsync(source, expected, cancellationToken);
+
+        public static Task VerifyVisualBasicFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken = default)
+            => VerifyVisualBasicFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
+
+        public static Task VerifyVisualBasicFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken = default)
+        {
+            VisualBasicTest test = new VisualBasicTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
+        }
+
         public class CSharpTest : DiagnosticVerifier<TAnalyzer>.CSharpTest
         {
             protected override IEnumerable<CodeFixProvider> GetCodeFixProviders()

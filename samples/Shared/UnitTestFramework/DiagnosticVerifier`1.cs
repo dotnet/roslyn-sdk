@@ -54,6 +54,20 @@ namespace Roslyn.UnitTestFramework
             return test.RunAsync(cancellationToken);
         }
 
+        public static Task VerifyVisualBasicDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken = default)
+            => VerifyVisualBasicDiagnosticAsync(source, new[] { expected }, cancellationToken);
+
+        public static Task VerifyVisualBasicDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken = default)
+        {
+            VisualBasicTest test = new VisualBasicTest
+            {
+                TestCode = source,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
+        }
+
         public class CSharpTest : GenericAnalyzerTest
         {
             public override string Language => LanguageNames.CSharp;
