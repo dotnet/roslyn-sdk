@@ -2,18 +2,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-    <RootNamespace>Analyzers.CSharp.Vsix</RootNamespace>
-    <AssemblyName>Analyzers.CSharp</AssemblyName>
+    <RootNamespace>MakeConst.CSharp.Vsix</RootNamespace>
+    <AssemblyName>MakeConst.CSharp</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <EnableDefaultItems>false</EnableDefaultItems>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
   </PropertyGroup>
+
   <ItemGroup>
-    <None Include="source.extension.vsixmanifest" />
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Analyzers.Implementation\Analyzers.csproj" Name="Analyzers" />
+    <ProjectReference Include="..\MakeConst.Implementation\MakeConst.csproj"/>
   </ItemGroup>
 </Project>
