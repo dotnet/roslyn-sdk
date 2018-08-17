@@ -113,19 +113,27 @@
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
     </ProjectReference>
+    <PackageReference Include="UpdateTemplateVersion" Version="$(UpdateTemplateVersionVersion)" />
   </ItemGroup>
 
   <!-- rewriting of .vstemplate files to reference the correct assembly version number -->
-  <!-- <UsingTask AssemblyFile="$(ArtifactsBinDir)UpdateTemplateVersion\net461\UpdateTemplateVersion.dll" TaskName="UpdateTemplateVersion" />
+  <PropertyGroup>
+    <_UpdateTemplateVersionAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(NuGetPackageRoot)\UpdateTemplateVersion\$(UpdateTemplateVersionVersion)\tools\net461\UpdateTemplateVersion.dll</_UpdateTemplateVersionAssembly>
+    <_UpdateTemplateVersionAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(NuGetPackageRoot)\UpdateTemplateVersion\$(UpdateTemplateVersionVersion)\tools\netcoreapp2.0\UpdateTemplateVersion.dll</_UpdateTemplateVersionAssembly>
+  </PropertyGroup>
+  
+  <UsingTask AssemblyFile="$(_UpdateTemplateVersionAssembly)" TaskName="UpdateTemplateVersion" />
   <Target Name="UpdateAssemblyVersionInTemplates" BeforeTargets="GetZipFilesFromVSTemplates">
     <ItemGroup>
       <_OriginalVSTemplate Include="@(VSTemplate)" />
     </ItemGroup>
-    <UpdateTemplateVersion VSTemplatesToRewrite="@(VSTemplate)" AssemblyVersion="$(AssemblyVersion)" IntermediatePath="ModifiedTemplates">
+    <UpdateTemplateVersion VSTemplatesToRewrite="@(VSTemplate)"
+                           AssemblyVersion="$(AssemblyVersion)"
+                           IntermediatePath="ModifiedTemplates">
       <Output TaskParameter="NewVSTemplates" ItemName="VSTemplate" />
     </UpdateTemplateVersion>
     <ItemGroup>
       <VSTemplate Remove="@(_OriginalVSTemplate)" />
     </ItemGroup>
-  </Target> -->
+  </Target>
 </Project>

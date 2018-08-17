@@ -141,6 +141,7 @@
     <PackageReference Include="System.Collections.Immutable" Version="[$(SystemCollectionsImmutableVersionVS2015)]" />
     <PackageReference Include="System.Composition" Version="[$(SystemCompositionVersionVS2015)]" />
     <PackageReference Include="System.Reflection.Metadata" Version="[$(SystemReflectionMetadataVersionVS2015)]" />
+    <PackageReference Include="UpdateTemplateVersion" Version="$(UpdateTemplateVersionVersion)" />
   </ItemGroup>
 
   <Target BeforeTargets="CreateVsixContainer" Name="MakeVsixOutputDirectory">
@@ -206,12 +207,19 @@
     </ItemGroup>
   </Target>
   <!-- rewriting of .vstemplate files to reference the correct assembly version number -->
-  <!-- <UsingTask AssemblyFile="$(ArtifactsBinDir)UpdateTemplateVersion\net461\UpdateTemplateVersion.dll" TaskName="UpdateTemplateVersion" />
+  <PropertyGroup>
+    <_UpdateTemplateVersionAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(NuGetPackageRoot)\UpdateTemplateVersion\$(UpdateTemplateVersionVersion)\tools\net461\UpdateTemplateVersion.dll</_UpdateTemplateVersionAssembly>
+    <_UpdateTemplateVersionAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(NuGetPackageRoot)\UpdateTemplateVersion\$(UpdateTemplateVersionVersion)\tools\netcoreapp2.0\UpdateTemplateVersion.dll</_UpdateTemplateVersionAssembly>
+  </PropertyGroup>
+  
+  <UsingTask AssemblyFile="$(_UpdateTemplateVersionAssembly)" TaskName="UpdateTemplateVersion" />
   <Target Name="UpdateAssemblyVersionInTemplates" BeforeTargets="GetZipFilesFromVSTemplates">
     <ItemGroup>
       <_OriginalVSTemplate Include="@(VSTemplate)" />
     </ItemGroup>
-    <UpdateTemplateVersion VSTemplatesToRewrite="@(VSTemplate)" AssemblyVersion="$(AssemblyVersion)" IntermediatePath="ModifiedTemplates">
+    <UpdateTemplateVersion VSTemplatesToRewrite="@(VSTemplate)"
+                           AssemblyVersion="$(AssemblyVersion)"
+                           IntermediatePath="ModifiedTemplates">
       <Output TaskParameter="NewVSTemplates" ItemName="VSTemplate" />
     </UpdateTemplateVersion>
     <ItemGroup>
@@ -220,5 +228,5 @@
   </Target>
   <PropertyGroup>
     <GetVsixSourceItemsDependsOn>$(GetVsixSourceItemsDependsOn);GetVsixTemplateItems</GetVsixSourceItemsDependsOn>
-  </PropertyGroup> -->
+  </PropertyGroup>
 </Project>

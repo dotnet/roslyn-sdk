@@ -17,8 +17,8 @@
     <MicrosoftBuildVersion>15.3.409</MicrosoftBuildVersion>
     <MicrosoftBuildEngineVersion>15.3.409</MicrosoftBuildEngineVersion>
     <MicrosoftBuildFrameworkVersion>15.3.409</MicrosoftBuildFrameworkVersion>
-    
-        <!-- Roslyn Templates for VS 2015 -->
+    <UpdateTemplateVersionVersion>1.0.4-beta1</UpdateTemplateVersionVersion>
+    <!-- Roslyn Templates for VS 2015 -->
     <MicrosoftCodeAnalysisAnalyzersVersionVS2015>1.1.0</MicrosoftCodeAnalysisAnalyzersVersionVS2015>
     <MicrosoftCodeAnalysisCommonVersionVS2015>1.0.1</MicrosoftCodeAnalysisCommonVersionVS2015>
     <MicrosoftCodeAnalysisCSharpVersionVS2015>1.0.1</MicrosoftCodeAnalysisCSharpVersionVS2015>
