@@ -2,20 +2,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-    <RootNamespace>Analyzers.CSharp.Vsix</RootNamespace>
-    <AssemblyName>Analyzers.CSharp</AssemblyName>
+    <RootNamespace>RemoveByVal.VisualBasic.Vsix</RootNamespace>
+    <AssemblyName>RemoveByVal.VisualBasic</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <EnableDefaultItems>false</EnableDefaultItems>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
-    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\$(Configuration)\bin\samples\CSharp\Analyzers.Vsix'))</OutputPath>
-    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\obj\samples\CSharp\Analyzers.Vsix'))</IntermediateOutputPath>
+    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\$(Configuration)\bin\samples\VisualBasic\RemoveByVal.Vsix'))</OutputPath>
+    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\obj\samples\VisualBasic\RemoveByVal.Vsix'))</IntermediateOutputPath>
   </PropertyGroup>
+
   <ItemGroup>
-    <None Include="source.extension.vsixmanifest" />
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Analyzers.Implementation\Analyzers.csproj" Name="Analyzers" />
+    <ProjectReference Include="..\RemoveByVal\RemoveByVal.vbproj" />
   </ItemGroup>
 </Project>

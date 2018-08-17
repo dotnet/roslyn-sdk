@@ -1,20 +1,23 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
   <PropertyGroup>
-    <VersionBase>2.5.0</VersionBase>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+
+    <!-- This repo version -->
+    <VersionPrefix>2.10.0</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
-    
-    <!-- Toolset -->
-    <RoslynToolsRepoToolsetVersion>1.0.0-beta-62705-01</RoslynToolsRepoToolsetVersion>
-    <VSWhereVersion>2.3.2</VSWhereVersion>
+    <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
 
+    <!-- Dependencies -->
+    
     <!-- MSBuild -->
     <MicrosoftBuildVersion>15.3.409</MicrosoftBuildVersion>
     <MicrosoftBuildEngineVersion>15.3.409</MicrosoftBuildEngineVersion>
     <MicrosoftBuildFrameworkVersion>15.3.409</MicrosoftBuildFrameworkVersion>
-    
+    <UpdateTemplateVersionVersion>1.0.4-beta1</UpdateTemplateVersionVersion>
     <!-- Roslyn Templates for VS 2015 -->
     <MicrosoftCodeAnalysisAnalyzersVersionVS2015>1.1.0</MicrosoftCodeAnalysisAnalyzersVersionVS2015>
     <MicrosoftCodeAnalysisCommonVersionVS2015>1.0.1</MicrosoftCodeAnalysisCommonVersionVS2015>
@@ -58,6 +61,15 @@
     <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>
     <SystemCompositionVersion>1.1.0</SystemCompositionVersion>
     <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
+    
+  </PropertyGroup>
 
+  <PropertyGroup>
+    <RestoreSources>
+      $(RestoreSources);
+      https://dotnet.myget.org/F/roslyn/api/v3/index.json;
+      https://dotnet.myget.org/F/roslyn-tools/api/v3/index.json;
+      https://api.nuget.org/v3/index.json
+    </RestoreSources>
   </PropertyGroup>
 </Project>

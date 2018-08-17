@@ -52,7 +52,7 @@ def createJob(def platform, def configName, def isPR) {
 
       newJob.with {
         steps {
-          batchFile(".\\build\\CIBuild.cmd -configuration ${configName} -prepareMachine")
+          batchFile(".\\eng\\common\\CIBuild.cmd -configuration ${configName} -prepareMachine")
         }
       }
     }
