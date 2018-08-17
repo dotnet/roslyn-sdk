@@ -10,8 +10,6 @@
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <EnableDefaultItems>false</EnableDefaultItems>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
-    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\$(Configuration)\bin\samples\VisualBasic\ConvertToAutoProperty.Vsix'))</OutputPath>
-    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\obj\samples\VisualBasic\ConvertToAutoProperty.Vsix'))</IntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

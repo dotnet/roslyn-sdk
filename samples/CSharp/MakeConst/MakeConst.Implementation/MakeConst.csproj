@@ -4,7 +4,6 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\bin\CSharp\MakeConst'))</OutputPath>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -18,8 +17,6 @@
     <Copyright>Copyright</Copyright>
     <PackageTags>MakeConst, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\$(Configuration)\bin\samples\CSharp\MakeConst.Implementation'))</OutputPath>
-    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\obj\samples\CSharp\MakeConst.Implementation'))</IntermediateOutputPath>
   </PropertyGroup>
    
   <ItemGroup>

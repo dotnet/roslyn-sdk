@@ -48,7 +48,7 @@ def createJob(def platform, def configName, def isPR) {
     ['debug', 'release'].each { configName ->
       def newJob = createJob(platform, configName, isPR)
 
-      Utilities.setMachineAffinity(newJob, 'Windows_NT', 'latest-dev15-3')
+      Utilities.setMachineAffinity(newJob, 'Windows_NT', 'Windows.10.Amd64.ClientRS3.DevEx.Open')
 
       newJob.with {
         steps {

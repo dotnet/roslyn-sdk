@@ -3,8 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net461</TargetFramework>
-    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\artifacts\$(Configuration)\bin\samples\VisualBasic\ConsoleClassifier'))</OutputPath>
-    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\artifacts\obj\samples\VisualBasic\ConsoleClassifier'))</IntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

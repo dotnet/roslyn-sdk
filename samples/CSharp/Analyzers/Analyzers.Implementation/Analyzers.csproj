@@ -4,8 +4,6 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\$(Configuration)\bin\samples\CSharp\Analyzers'))</OutputPath>
-    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\obj\samples\CSharp\Analyzers'))</IntermediateOutputPath>
   </PropertyGroup>
   
   <PropertyGroup>

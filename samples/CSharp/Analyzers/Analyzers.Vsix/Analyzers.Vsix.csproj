@@ -9,8 +9,6 @@
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <EnableDefaultItems>false</EnableDefaultItems>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
-    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\$(Configuration)\bin\samples\CSharp\Analyzers.Vsix'))</OutputPath>
-    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\obj\samples\CSharp\Analyzers.Vsix'))</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Include="source.extension.vsixmanifest" />

@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\$(Configuration)\bin\samples\CSharp\RefOutModifier.Implementation'))</OutputPath>
-    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\obj\samples\CSharp\RefOutModifier.Implementation'))</IntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

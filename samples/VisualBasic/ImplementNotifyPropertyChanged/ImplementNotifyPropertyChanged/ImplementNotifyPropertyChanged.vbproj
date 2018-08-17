@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\$(Configuration)\bin\samples\VisualBasic\ImplementNotifyPropertyChanged'))</OutputPath>
-    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\obj\samples\VisualBasic\ImplementNotifyPropertyChanged'))</IntermediateOutputPath>
   </PropertyGroup>
   
   <ItemGroup>

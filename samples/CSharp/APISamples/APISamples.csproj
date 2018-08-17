@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\artifacts\$(Configuration)\bin\samples\CSharp\APISamples'))</OutputPath>
-    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\artifacts\obj\samples\CSharp\APISamples'))</IntermediateOutputPath>
   </PropertyGroup>
   
   <ItemGroup>
