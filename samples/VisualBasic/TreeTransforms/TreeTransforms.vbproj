@@ -3,6 +3,8 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net461</TargetFramework>
+    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\artifacts\$(Configuration)\bin\samples\VisualBasic\TreeTransforms'))</OutputPath>
+    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\artifacts\obj\samples\VisualBasic\TreeTransforms'))</IntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

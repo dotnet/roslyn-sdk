@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\bin\CSharp\Roslyn.UnitTestFramework'))</OutputPath>
+    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\artifacts\$(Configuration)\bin\samples\Shared\Roslyn.UnitTestFramework'))</OutputPath>
+    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\artifacts\obj\samples\Shared\Roslyn.UnitTestFramework'))</IntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

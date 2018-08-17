@@ -18,6 +18,8 @@
     <Copyright>Copyright</Copyright>
     <PackageTags>MakeConst, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
+    <OutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\$(Configuration)\bin\samples\CSharp\MakeConst.Implementation'))</OutputPath>
+    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\obj\samples\CSharp\MakeConst.Implementation'))</IntermediateOutputPath>
   </PropertyGroup>
    
   <ItemGroup>
