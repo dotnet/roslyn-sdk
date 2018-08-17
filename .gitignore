@@ -8,6 +8,8 @@
 *.user
 *.userosscache
 *.sln.docstates
+.vs/
+.vscode/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -23,6 +25,14 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+artifacts/
+Debug/
+Release/
+bin/
+obj/
+.dotnet/
+.tools/
+.package
 
 # ignore templates modified by build output
 src/Templates/VS2015/ModifiedTemplates
