@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3;net461</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>7.3</LangVersion>
+    <AssemblyName>Microsoft.CodeAnalysis.CSharp.Codefix.Testing.xUnit</AssemblyName>
+    <RootNamespace>Microsoft.CodeAnalysis.CSharp.Codefix.Testing.xUnit</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>Roslyn Codefix xUnit Framework C# Types.</Description>
+    <PackageReleaseNotes>Roslyn Codefix xUnit Framework C# Types.</PackageReleaseNotes>
+    <PackageTags>Roslyn Codefix xUnit Framework C# Types</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Codefix.Testing\Microsoft.CodeAnalysis.Codefix.Testing.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.CSharp.Codefix.Testing\Microsoft.CodeAnalysis.CSharp.Codefix.Testing.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Testing.Verifiers.xUnit\Microsoft.CodeAnalysis.Testing.Verifiers.xUnit.csproj" />
+  </ItemGroup>
+
+</Project>

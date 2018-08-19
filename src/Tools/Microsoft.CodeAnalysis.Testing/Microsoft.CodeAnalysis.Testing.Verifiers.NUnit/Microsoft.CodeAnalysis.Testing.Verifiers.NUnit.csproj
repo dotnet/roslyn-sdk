@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>7.3</LangVersion>
+    <AssemblyName>Microsoft.CodeAnalysis.Testing.Verifiers.NUnit</AssemblyName>
+    <RootNamespace>Microsoft.CodeAnalysis.Testing.Verifiers.NUnit</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>Roslyn Test Verifiers for NUnit.</Description>
+    <PackageReleaseNotes>Roslyn Test Verifiers for NUnit.</PackageReleaseNotes>
+    <PackageTags>Roslyn Test Verifiers for NUnit</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.10.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj" />
+  </ItemGroup>
+
+</Project>

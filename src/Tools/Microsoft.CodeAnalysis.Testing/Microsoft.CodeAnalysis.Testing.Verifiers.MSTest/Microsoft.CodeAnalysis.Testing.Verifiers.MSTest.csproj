@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3;net461</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>7.3</LangVersion>
+    <AssemblyName>Microsoft.CodeAnalysis.Testing.Verifiers.MSTest</AssemblyName>
+    <RootNamespace>Microsoft.CodeAnalysis.Testing.Verifiers.MSTest</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>Roslyn Test Verifiers for MSTest.</Description>
+    <PackageReleaseNotes>Roslyn Test Verifiers for MSTest.</PackageReleaseNotes>
+    <PackageTags>Roslyn Test Verifiers for MSTest</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj" />
+  </ItemGroup>
+
+</Project>
