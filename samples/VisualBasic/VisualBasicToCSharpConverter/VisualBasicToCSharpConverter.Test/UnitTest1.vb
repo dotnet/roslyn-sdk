@@ -11,7 +11,7 @@ Namespace VisualBasicToCSharpConverter.UnitTests.Converting
     Public Class VisualBasicToCSharpConverterTests
 
         ' File-level or project-level code snippets would be nice :).
-        '<Fact()>
+        '<Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestTemplate()
 
             AssertConversion(
@@ -25,7 +25,7 @@ Namespace VisualBasicToCSharpConverter.UnitTests.Converting
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertSimpleTypes()
 
             AssertConversion(
@@ -84,7 +84,7 @@ enum E
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertLoadedSimpleTypes()
 
             AssertConversion(
@@ -141,7 +141,7 @@ public enum E : ushort
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertFieldsAndLocalVariables()
             'Array modifiers aren't supported yet.
             'Private F5(), F6?(), F7 As T3
@@ -181,7 +181,7 @@ class C
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertTypeCharactersAndVariableModifiers()
 
             AssertConversion(
@@ -213,7 +213,7 @@ class C
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertAsNewAndInitializers()
 
             AssertConversion(
@@ -249,7 +249,7 @@ class C
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertInterfaceMembers()
 
             AssertConversion(
@@ -285,7 +285,7 @@ interface IA : IB, IC, ID
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertArrayDeclarations()
 
             AssertConversion(
@@ -327,7 +327,7 @@ class C
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertAbstractMembers()
 
             AssertConversion(
@@ -359,7 +359,7 @@ abstract class C
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertCompilationUnit()
 
             AssertConversion(
@@ -497,7 +497,7 @@ class C
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertNamespace()
 
             ' TODO: Test RootNamespace.
@@ -550,7 +550,7 @@ namespace G
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertTrySyncUsing()
 
             AssertConversion(
@@ -704,7 +704,7 @@ class C
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertIf()
 
             AssertConversion(
@@ -766,7 +766,7 @@ class C
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertSelectCase()
 
             AssertConversion(
@@ -808,7 +808,7 @@ class C
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertCasts()
 
             AssertConversion(
@@ -844,7 +844,7 @@ class C
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertLoops()
 
             AssertConversion(
@@ -1113,7 +1113,7 @@ void M()
 
         End Sub
 
-        <Fact()>
+        <Fact(Skip:="Embedded resources not working with repotoolset")>
         Sub TestConvertUnsupportedDoesntThrow()
             Dim actual = Converter.ConvertTree(VB.SyntaxFactory.ParseSyntaxTree(My.Resources.VBAllInOne))
         End Sub
