@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>ConvertToAutoProperty.CSharp.Vsix</RootNamespace>
-    <AssemblyName>ConvertToAutoProperty.CSharp</AssemblyName>
+    <AssemblyName>ConvertToAutoProperty.CSharp.Vsix</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>

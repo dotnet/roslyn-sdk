@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>ImplementNotifyPropertyChanged.CSharp.Vsix</RootNamespace>
-    <AssemblyName>ImplementNotifyPropertyChanged.CSharp</AssemblyName>
+    <AssemblyName>ImplementNotifyPropertyChanged.CSharp.Vsix</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>

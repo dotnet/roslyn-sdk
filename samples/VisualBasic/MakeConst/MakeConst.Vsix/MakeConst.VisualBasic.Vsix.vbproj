@@ -17,6 +17,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MakeConst\MakeConst.vbproj" />
+    <ProjectReference Include="..\MakeConst\MakeConst.VisualBasic.vbproj" />
   </ItemGroup>
 </Project>

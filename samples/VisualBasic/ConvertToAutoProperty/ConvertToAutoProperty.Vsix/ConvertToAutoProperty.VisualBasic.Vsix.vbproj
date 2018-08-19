@@ -4,7 +4,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>ConvertToAutoProperty.VisualBasic.Vsix</RootNamespace>
-    <AssemblyName>ConvertToAutoProperty.VisualBasic</AssemblyName>
+    <AssemblyName>ConvertToAutoProperty.VisualBasic.Vsix</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>

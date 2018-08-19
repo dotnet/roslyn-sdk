@@ -101,7 +101,7 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "RemoveByVal.VisualBasic.Vsi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MakeConst", "MakeConst", "{8E328BEA-C8D7-4F4B-A357-4A84CAF76EDE}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "MakeConst", "samples\VisualBasic\MakeConst\MakeConst\MakeConst.vbproj", "{AB0EC03A-DC42-448D-BECA-C764DC6461EE}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "MakeConst", "samples\VisualBasic\MakeConst\MakeConst\MakeConst.VisualBasic.vbproj", "{AB0EC03A-DC42-448D-BECA-C764DC6461EE}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "MakeConst.Test", "samples\VisualBasic\MakeConst\MakeConst.Test\MakeConst.Tests.vbproj", "{20E6E463-CC7E-4A74-98BF-DF956D651360}"
 EndProject

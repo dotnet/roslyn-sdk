@@ -6,13 +6,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="2.9" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="1.1.18" />
-    <PackageReference Include="MSTest.TestFramework" Version="1.1.18" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MakeConst\MakeConst.vbproj" />
+    <ProjectReference Include="..\MakeConst\MakeConst.VisualBasic.vbproj" />
   </ItemGroup>
 
 </Project>
