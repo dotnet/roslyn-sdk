@@ -17,6 +17,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ConvertToConditional.Implementation\ConvertToConditional.csproj" />
+    <ProjectReference Include="..\ConvertToConditional.Implementation\ConvertToConditional.CSharp.csproj" />
   </ItemGroup>
 </Project>

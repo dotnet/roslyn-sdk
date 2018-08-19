@@ -18,6 +18,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ConvertToAutoProperty\ConvertToAutoProperty.vbproj" />
+    <ProjectReference Include="..\ConvertToAutoProperty\ConvertToAutoProperty.VisualBasic.vbproj" />
   </ItemGroup>
 </Project>

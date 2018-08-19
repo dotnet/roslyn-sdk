@@ -17,6 +17,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MakeConst.Implementation\MakeConst.csproj"/>
+    <ProjectReference Include="..\MakeConst.Implementation\MakeConst.CSharp.csproj"/>
   </ItemGroup>
 </Project>

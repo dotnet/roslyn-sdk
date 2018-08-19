@@ -17,6 +17,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged.vbproj" />
+    <ProjectReference Include="..\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged.VisualBasic.vbproj" />
   </ItemGroup>
 </Project>

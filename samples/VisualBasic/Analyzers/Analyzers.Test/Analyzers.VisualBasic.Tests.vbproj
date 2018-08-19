@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Analyzers.Implementation\Analyzers.vbproj" />
+    <ProjectReference Include="..\Analyzers.Implementation\Analyzers.VisualBasic.vbproj" />
   </ItemGroup>
 
 </Project>

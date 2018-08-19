@@ -17,6 +17,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ConvertToAutoProperty.Implementation\ConvertToAutoProperty.csproj" />
+    <ProjectReference Include="..\ConvertToAutoProperty.Implementation\ConvertToAutoProperty.CSharp.csproj" />
   </ItemGroup>
 </Project>

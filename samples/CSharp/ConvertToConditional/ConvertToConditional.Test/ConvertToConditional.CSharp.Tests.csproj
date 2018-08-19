@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\UnitTestFramework\Roslyn.UnitTestFramework.csproj" />
-    <ProjectReference Include="..\ConvertToConditional.Implementation\ConvertToConditional.csproj" />
+    <ProjectReference Include="..\ConvertToConditional.Implementation\ConvertToConditional.CSharp.csproj" />
   </ItemGroup>
 
 </Project>

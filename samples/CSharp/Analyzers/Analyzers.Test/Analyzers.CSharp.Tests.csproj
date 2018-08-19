@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Analyzers.Implementation\Analyzers.csproj" />
+    <ProjectReference Include="..\Analyzers.Implementation\Analyzers.CSharp.csproj" />
   </ItemGroup>
 
 </Project>

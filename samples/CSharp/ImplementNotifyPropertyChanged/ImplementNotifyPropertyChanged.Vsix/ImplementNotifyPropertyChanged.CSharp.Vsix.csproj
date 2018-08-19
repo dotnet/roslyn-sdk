@@ -17,6 +17,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged.csproj" />
+    <ProjectReference Include="..\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged.CSharp.csproj" />
   </ItemGroup>
 </Project>

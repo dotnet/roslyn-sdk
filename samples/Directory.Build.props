@@ -6,4 +6,4 @@
 
   <Import Project="Sdk.props" Sdk="RoslynTools.RepoToolset" />
 
-</Project>
+</Project> 
