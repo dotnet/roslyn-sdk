@@ -1,24 +1,23 @@
 ﻿Imports MakeConst
-Imports MakeConst.Test.TestHelper
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.VisualStudio.TestTools.UnitTesting
+Imports TestHelper
+Imports Xunit
 
 Namespace MakeConst.Test
-    <TestClass>
     Public Class UnitTest
         Inherits CodeFixVerifier
 
         'No diagnostics expected to show up
-        <TestMethod>
+        <Fact>
         Public Sub TestMethod1()
             Dim test = ""
             VerifyBasicDiagnostic(test)
         End Sub
 
         'Diagnostic And CodeFix both triggered And checked for
-        <TestMethod>
+        <Fact>
         Public Sub TestMethod2()
 
 

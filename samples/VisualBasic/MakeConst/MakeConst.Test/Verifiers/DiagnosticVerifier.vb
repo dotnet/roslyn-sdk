@@ -1,7 +1,7 @@
 ﻿Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.VisualStudio.TestTools.UnitTesting
 Imports System.Text
+Imports Xunit
 
 Namespace TestHelper
     ''' <summary> Superclass of all Unit Tests for DiagnosticAnalyzers. </summary>
@@ -101,7 +101,7 @@ Namespace TestHelper
 
                 Dim diagnosticsOutput = If(actualResults.Any(), FormatDiagnostics(analyzer, actualResults.ToArray()), "    NONE.")
 
-                Assert.IsTrue(False,
+                Assert.True(False,
                     String.Format(
 "Mismatch between number of diagnostics returned, expected ""{0}"" actual ""{1}""
 
@@ -119,7 +119,7 @@ Diagnostics:
 
                     If (actual.Location <> Location.None) Then
 
-                        Assert.IsTrue(False,
+                        Assert.True(False,
                         String.Format(
 "Expected:
 A project diagnostic with No location
@@ -135,7 +135,7 @@ Actual:
 
                     If (additionalLocations.Length <> expected.Locations.Length - 1) Then
 
-                        Assert.IsTrue(False,
+                        Assert.True(False,
                     String.Format(
 "Expected {0} additional locations but got {1} for Diagnostic:
     {2}
@@ -152,7 +152,7 @@ Actual:
 
                 If (actual.Id <> expected.Id) Then
 
-                    Assert.IsTrue(False,
+                    Assert.True(False,
     String.Format(
 "Expected diagnostic id to be ""{0}"" was ""{1}""
 
@@ -164,7 +164,7 @@ Diagnostic:
 
                 If (actual.Severity <> expected.Severity) Then
 
-                    Assert.IsTrue(False,
+                    Assert.True(False,
 String.Format(
 "Expected diagnostic severity to be ""{0}"" was ""{1}""
 
@@ -176,7 +176,7 @@ Diagnostic:
 
                 If (actual.GetMessage() <> expected.Message) Then
 
-                    Assert.IsTrue(False,
+                    Assert.True(False,
 String.Format(
 "Expected diagnostic message to be ""{0}"" was ""{1}""
 
@@ -199,7 +199,7 @@ Diagnostic:
 
             Dim actualSpan = actual.GetLineSpan()
 
-            Assert.IsTrue(actualSpan.Path = expected.Path OrElse (actualSpan.Path IsNot Nothing AndAlso actualSpan.Path.Contains("Test0.") AndAlso expected.Path.Contains("Test.")),
+            Assert.True(actualSpan.Path = expected.Path OrElse (actualSpan.Path IsNot Nothing AndAlso actualSpan.Path.Contains("Test0.") AndAlso expected.Path.Contains("Test.")),
                 String.Format(
 "Expected diagnostic to be in file ""{0}"" was actually in file ""{1}""
 
@@ -215,7 +215,7 @@ Diagnostic:
 
                 If (actualLinePosition.Line + 1.0 <> expected.Line) Then
 
-                    Assert.IsTrue(False,
+                    Assert.True(False,
                         String.Format(
 "Expected diagnostic to be on line ""{0}"" was actually on line ""{1}""
                         
@@ -231,7 +231,7 @@ Diagnostic:
 
                 If (actualLinePosition.Character + 1.0 <> expected.Column) Then
 
-                    Assert.IsTrue(False,
+                    Assert.True(False,
                         String.Format(
 "Expected diagnostic to start at column ""{0}"" was actually at column ""{1}""
 
@@ -266,12 +266,12 @@ Diagnostic:
                     If (rule IsNot Nothing AndAlso rule.Id = diagnostics(i).Id) Then
 
                         Dim location = diagnostics(i).Location
-                        If (location = location.None) Then
+                        If (location = Location.None) Then
 
                             builder.AppendFormat("GetGlobalResult({0}.{1})", analyzerType.Name, rule.Id)
                         Else
 
-                            Assert.IsTrue(location.IsInSource,
+                            Assert.True(location.IsInSource,
                                 $"Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata: {diagnostics(i)}
                                 ")
 

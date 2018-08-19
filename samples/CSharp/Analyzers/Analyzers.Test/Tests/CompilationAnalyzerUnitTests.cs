@@ -2,18 +2,17 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestHelper;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp;
+using Xunit;
 
 namespace Sample.Analyzers.Test
 {
-    [TestClass]
     public class CompilationAnalyzerUnitTests
         : DiagnosticVerifier
     {
-        [TestMethod]
+        [Fact]
         public void CompilationAnalyzerTest()
         {
             string test = @"

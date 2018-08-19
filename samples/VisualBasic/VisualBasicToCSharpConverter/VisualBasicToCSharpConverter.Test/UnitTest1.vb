@@ -1,4 +1,6 @@
-﻿Imports Microsoft.CodeAnalysis
+﻿Option Strict Off
+
+Imports Microsoft.CodeAnalysis
 Imports Xunit
 Imports CS = Microsoft.CodeAnalysis.CSharp
 Imports VB = Microsoft.CodeAnalysis.VisualBasic

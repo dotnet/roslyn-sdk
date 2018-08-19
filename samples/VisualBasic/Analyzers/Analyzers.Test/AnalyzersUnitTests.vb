@@ -1,11 +1,9 @@
-﻿Imports Analyzers.Test.TestHelper
-Imports Microsoft.CodeAnalysis
+﻿Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.VisualStudio.TestTools.UnitTesting
+Imports TestHelper
 
 Namespace Samples.Analyzers.Test
-    <TestClass>
     Public Class UnitTest
         Inherits CodeFixVerifier
 

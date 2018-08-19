@@ -2,17 +2,16 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestHelper;
 using Microsoft.CodeAnalysis.CSharp;
+using Xunit;
 
 namespace Sample.Analyzers.Test
 {
-    [TestClass]
     public class SyntaxTreeAnalyzerUnitTests
         : DiagnosticVerifier
     {
-        [TestMethod]
+        [Fact]
         public void SyntaxTreeAnalyzerTest()
         {
             string test = @"

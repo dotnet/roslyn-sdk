@@ -2,16 +2,15 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestHelper;
+using Xunit;
 
 namespace Sample.Analyzers.Test
 {
-    [TestClass]
     public class CodeBlockStartedAnalyzerUnitTests
         : DiagnosticVerifier
     {
-        [TestMethod]
+        [Fact]
         public void CodeBlockStartedAnalyzerTest()
         {
             string test = @"

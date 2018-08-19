@@ -3,9 +3,9 @@ Imports Microsoft.CodeAnalysis.CodeActions
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.Formatting
-Imports Microsoft.VisualStudio.TestTools.UnitTesting
 Imports System.Collections.Generic
 Imports System.Threading
+Imports Xunit
 
 Namespace TestHelper
     ''' <summary>
@@ -68,7 +68,7 @@ Namespace TestHelper
         Private Sub VerifyFix(language As String, analyzer As DiagnosticAnalyzer, codeFixProvider As CodeFixProvider, oldSource As String, newSource As String, codeFixIndex As Integer?, allowNewCompilerDiagnostics As Boolean)
 
             Dim document = CreateDocument(oldSource, language)
-            Dim analyzerDiagnostics = GetSortedDiagnosticsFromDocuments(analyzer, New document() {document})
+            Dim analyzerDiagnostics = GetSortedDiagnosticsFromDocuments(analyzer, New Document() {document})
             Dim compilerDiagnostics = GetCompilerDiagnostics(document)
             Dim attempts = analyzerDiagnostics.Length
 
@@ -87,7 +87,7 @@ Namespace TestHelper
                 End If
 
                 document = ApplyFix(document, actions.ElementAt(0))
-                analyzerDiagnostics = GetSortedDiagnosticsFromDocuments(analyzer, New document() {document})
+                analyzerDiagnostics = GetSortedDiagnosticsFromDocuments(analyzer, New Document() {document})
 
                 Dim newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, GetCompilerDiagnostics(document))
 
@@ -97,7 +97,7 @@ Namespace TestHelper
                     document = document.WithSyntaxRoot(Formatter.Format(document.GetSyntaxRootAsync().Result, Formatter.Annotation, document.Project.Solution.Workspace))
                     newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, GetCompilerDiagnostics(document))
 
-                    Assert.IsTrue(False,
+                    Assert.True(False,
                         String.Format("Fix introduced new compiler diagnostics:{2}{0}{2}{2}New document:{2}{1}{2}",
                             String.Join(vbNewLine, newCompilerDiagnostics.Select(Function(d) d.ToString())),
                             document.GetSyntaxRootAsync().Result.ToFullString(), vbNewLine))
@@ -111,7 +111,7 @@ Namespace TestHelper
 
             'after applying all of the code fixes, compare the resulting string to the inputted one
             Dim actual = GetStringFromDocument(document)
-            Assert.AreEqual(newSource, actual)
+            Assert.Equal(newSource, actual)
         End Sub
     End Class
 End Namespace
