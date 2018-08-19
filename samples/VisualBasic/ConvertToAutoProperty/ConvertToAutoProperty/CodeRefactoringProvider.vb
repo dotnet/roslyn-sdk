@@ -168,8 +168,8 @@ Class ConvertToAutoPropertyCodeRefactoringProvider
     Private Class ConvertToAutopropertyCodeAction
         Inherits CodeAction
 
-        Private generateDocument As Func(Of CancellationToken, Task(Of Document))
-        Private _title As String
+        Private ReadOnly generateDocument As Func(Of CancellationToken, Task(Of Document))
+        Private ReadOnly _title As String
 
         Public Overrides ReadOnly Property Title As String
             Get

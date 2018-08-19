@@ -50,7 +50,7 @@ namespace MSBuildWorkspaceTester.ViewModels
 
         protected override void OnViewCreated(Window view)
         {
-            var tabControl = view.FindName<TabControl>("Tabs");
+            TabControl tabControl = view.FindName<TabControl>("Tabs");
             tabControl.SelectedIndex = 0;
 
             _openDocumentService.SelectedPageChanged += (_, page) =>
@@ -63,7 +63,7 @@ namespace MSBuildWorkspaceTester.ViewModels
 
         private async void OpenProjectExecuted()
         {
-            var dialog = new OpenFileDialog
+            OpenFileDialog dialog = new OpenFileDialog
             {
                 Title = "Open Project or Solution",
                 Filter = "Supported Files (*.sln,*.csproj,*.vbproj)|*.sln;*.csproj;*.vbproj|" +
@@ -72,10 +72,10 @@ namespace MSBuildWorkspaceTester.ViewModels
                          "All Files (*.*)|*.*"
             };
 
-            if (dialog.ShowDialog(this.View) == true)
+            if (dialog.ShowDialog(View) == true)
             {
-                var fileName = dialog.FileName;
-                var extension = Path.GetExtension(fileName);
+                string fileName = dialog.FileName;
+                string extension = Path.GetExtension(fileName);
 
                 _logger.LogInformation($"\r\nLoading {fileName}...\r\n");
 

@@ -16,17 +16,17 @@ namespace MSBuildWorkspaceTester.ViewModels
             _projectId = projectId;
             _folders = new Dictionary<string, FolderViewModel>(StringComparer.OrdinalIgnoreCase);
 
-            var solution = workspace.CurrentSolution;
-            var project = solution.GetProject(projectId);
+            Solution solution = workspace.CurrentSolution;
+            Project project = solution.GetProject(projectId);
 
-            foreach (var documentId in project.DocumentIds)
+            foreach (DocumentId documentId in project.DocumentIds)
             {
-                var documentViewModel = new DocumentViewModel(workspace, documentId);
+                DocumentViewModel documentViewModel = new DocumentViewModel(workspace, documentId);
 
-                var folders = solution.GetDocument(documentId).Folders;
+                IReadOnlyList<string> folders = solution.GetDocument(documentId).Folders;
                 if (folders.Count > 0)
                 {
-                    var folderViewModel = GetOrCreateFolder(workspace, folders);
+                    FolderViewModel folderViewModel = GetOrCreateFolder(workspace, folders);
                     folderViewModel.AddChild(documentViewModel);
                 }
                 else
@@ -36,7 +36,7 @@ namespace MSBuildWorkspaceTester.ViewModels
             }
 
             // Add root folders
-            foreach (var folder in _folders)
+            foreach (KeyValuePair<string, FolderViewModel> folder in _folders)
             {
                 if (!folder.Key.Contains('\\'))
                 {
@@ -51,9 +51,9 @@ namespace MSBuildWorkspaceTester.ViewModels
             {
                 referencesFolderViewModel = new ReferencesFolderViewModel(workspace);
 
-                foreach (var metadataReference in project.MetadataReferences)
+                foreach (MetadataReference metadataReference in project.MetadataReferences)
                 {
-                    var metadataReferenceViewModel = new MetadataReferenceViewModel(workspace, metadataReference);
+                    MetadataReferenceViewModel metadataReferenceViewModel = new MetadataReferenceViewModel(workspace, metadataReference);
                     referencesFolderViewModel.AddChild(metadataReferenceViewModel);
                 }
             }
@@ -65,9 +65,9 @@ namespace MSBuildWorkspaceTester.ViewModels
                     referencesFolderViewModel = new ReferencesFolderViewModel(workspace);
                 }
 
-                foreach (var projectReference in project.ProjectReferences)
+                foreach (ProjectReference projectReference in project.ProjectReferences)
                 {
-                    var projectReferenceViewModel = new ProjectReferenceViewModel(workspace, projectReference);
+                    ProjectReferenceViewModel projectReferenceViewModel = new ProjectReferenceViewModel(workspace, projectReference);
                     referencesFolderViewModel.AddChild(projectReferenceViewModel);
                 }
             }
@@ -80,18 +80,18 @@ namespace MSBuildWorkspaceTester.ViewModels
 
         private FolderViewModel GetOrCreateFolder(Workspace workspace, IReadOnlyList<string> folders)
         {
-            var folderPath = string.Join(@"\", folders);
+            string folderPath = string.Join(@"\", folders);
 
-            if (_folders.TryGetValue(folderPath, out var folderViewModel))
+            if (_folders.TryGetValue(folderPath, out FolderViewModel folderViewModel))
             {
                 return folderViewModel;
             }
 
-            var currentFolderPath = folderPath;
+            string currentFolderPath = folderPath;
 
-            foreach (var folder in folders.Reverse())
+            foreach (string folder in folders.Reverse())
             {
-                var newFolderViewModel = new FolderViewModel(workspace, folder);
+                FolderViewModel newFolderViewModel = new FolderViewModel(workspace, folder);
 
                 if (folderViewModel != null)
                 {
@@ -101,15 +101,15 @@ namespace MSBuildWorkspaceTester.ViewModels
                 folderViewModel = newFolderViewModel;
                 _folders.Add(currentFolderPath, folderViewModel);
 
-                var lastSlashIndex = currentFolderPath.LastIndexOf('\\');
+                int lastSlashIndex = currentFolderPath.LastIndexOf('\\');
                 if (lastSlashIndex < 0)
                 {
                     break;
                 }
 
-                var parentFolderPath = currentFolderPath.Substring(0, lastSlashIndex);
+                string parentFolderPath = currentFolderPath.Substring(0, lastSlashIndex);
 
-                if (_folders.TryGetValue(parentFolderPath, out var parentFolderViewModel))
+                if (_folders.TryGetValue(parentFolderPath, out FolderViewModel parentFolderViewModel))
                 {
                     parentFolderViewModel.AddChild(folderViewModel);
                     return folderViewModel;

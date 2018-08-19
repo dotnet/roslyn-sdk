@@ -26,7 +26,7 @@ namespace MSBuildWorkspaceTester.Framework
             Task = task;
             if (!task.IsCompleted)
             {
-                var _ = WatchTaskAsync(task);
+                Task _ = WatchTaskAsync(task);
             }
         }
 
@@ -34,7 +34,7 @@ namespace MSBuildWorkspaceTester.Framework
         {
             await task;
 
-            var handler = PropertyChanged;
+            PropertyChangedEventHandler handler = PropertyChanged;
             if (handler == null)
             {
                 return;

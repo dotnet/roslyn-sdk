@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>RefOutModifier.CSharp.Vsix</RootNamespace>
-    <AssemblyName>RefOutModifier.CSharp</AssemblyName>
+    <AssemblyName>RefOutModifier.CSharp.Vsix</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
@@ -17,6 +17,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RefOutModifier.Implementation\RefOutModifier.csproj" />
+    <ProjectReference Include="..\RefOutModifier.Implementation\RefOutModifier.CSharp.csproj" />
   </ItemGroup>
 </Project>

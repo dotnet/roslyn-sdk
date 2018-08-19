@@ -3,7 +3,6 @@
 Imports System.Collections.Immutable
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Analyzers.My.Resources
 
 Namespace BasicAnalyzers
     ''' <summary>
@@ -30,9 +29,9 @@ Namespace BasicAnalyzers
         Inherits DiagnosticAnalyzer
 
 #Region "Descriptor fields"
-        Friend Shared ReadOnly Title As LocalizableString = New LocalizableResourceString(NameOf(Resources.CompilationStartedAnalyzerWithCompilationWideAnalysisTitle), Resources.ResourceManager, GetType(Resources))
-        Friend Shared ReadOnly MessageFormat As LocalizableString = New LocalizableResourceString(NameOf(Resources.CompilationStartedAnalyzerWithCompilationWideAnalysisMessageFormat), Resources.ResourceManager, GetType(Resources))
-        Friend Shared ReadOnly Description As LocalizableString = New LocalizableResourceString(NameOf(Resources.CompilationStartedAnalyzerWithCompilationWideAnalysisDescription), Resources.ResourceManager, GetType(Resources))
+        Friend Shared ReadOnly Title As LocalizableString = "Secure types must not implement interfaces with unsecure methods"
+        Friend Shared ReadOnly MessageFormat As LocalizableString = "Type '{0}' is a secure type as it implements interface '{1}', but it also implements interface '{2}' which has unsecure method(s)."
+        Friend Shared ReadOnly Description As LocalizableString = "Secure types must not implement interfaces with unsecure methods."
 
         Friend Shared Rule As New DiagnosticDescriptor(DiagnosticIds.CompilationStartedAnalyzerWithCompilationWideAnalysisRuleId, Title, MessageFormat, DiagnosticCategories.Stateful, DiagnosticSeverity.Warning, isEnabledByDefault:=True, description:=Description)
 #End Region

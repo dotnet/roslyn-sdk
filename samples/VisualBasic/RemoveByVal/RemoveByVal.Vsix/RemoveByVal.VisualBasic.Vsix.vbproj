@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>RemoveByVal.VisualBasic.Vsix</RootNamespace>
-    <AssemblyName>RemoveByVal.VisualBasic</AssemblyName>
+    <AssemblyName>RemoveByVal.VisualBasic.Vsix</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
@@ -17,6 +17,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RemoveByVal\RemoveByVal.vbproj" />
+    <ProjectReference Include="..\RemoveByVal\RemoveByVal.VisualBasic.vbproj" />
   </ItemGroup>
 </Project>

@@ -8,8 +8,8 @@ namespace MSBuildWorkspaceTester.ViewModels
         public SolutionViewModel(Workspace workspace)
             : base(workspace)
         {
-            var solution = workspace.CurrentSolution;
-            foreach (var projectId in solution.ProjectIds)
+            Solution solution = workspace.CurrentSolution;
+            foreach (ProjectId projectId in solution.ProjectIds)
             {
                 AddChild(new ProjectViewModel(workspace, projectId));
             }

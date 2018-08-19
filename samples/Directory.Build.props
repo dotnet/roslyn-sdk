@@ -2,6 +2,9 @@
 <Project>  
   <PropertyGroup>
     <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
+    
+    <!-- Opt-out repo features -->
+    <UsingToolXliff>false</UsingToolXliff>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="RoslynTools.RepoToolset" />

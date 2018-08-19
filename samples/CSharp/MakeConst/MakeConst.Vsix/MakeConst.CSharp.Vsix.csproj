@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>MakeConst.CSharp.Vsix</RootNamespace>
-    <AssemblyName>MakeConst.CSharp</AssemblyName>
+    <AssemblyName>MakeConst.CSharp.Vsix</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>

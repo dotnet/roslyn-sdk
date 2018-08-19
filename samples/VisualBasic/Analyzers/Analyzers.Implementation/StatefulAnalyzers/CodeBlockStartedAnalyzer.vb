@@ -5,7 +5,6 @@ Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
-Imports Analyzers.My.Resources
 
 Namespace BasicAnalyzers
     ''' <summary>
@@ -24,9 +23,9 @@ Namespace BasicAnalyzers
         Inherits DiagnosticAnalyzer
 
 #Region "Descriptor fields"
-        Friend Shared ReadOnly Title As LocalizableString = New LocalizableResourceString(NameOf(Resources.CodeBlockStartedAnalyzerTitle), Resources.ResourceManager, GetType(Resources))
-        Friend Shared ReadOnly MessageFormat As LocalizableString = New LocalizableResourceString(NameOf(Resources.CodeBlockStartedAnalyzerMessageFormat), Resources.ResourceManager, GetType(Resources))
-        Friend Shared ReadOnly Description As LocalizableString = New LocalizableResourceString(NameOf(Resources.CodeBlockStartedAnalyzerDescription), Resources.ResourceManager, GetType(Resources))
+        Friend Shared ReadOnly Title As LocalizableString = "Remove unused parameters"
+        Friend Shared ReadOnly MessageFormat As LocalizableString = "Parameter '{0}' is unused in the method '{1}'."
+        Friend Shared ReadOnly Description As LocalizableString = "Remove unused parameters."
 
         Friend Shared Rule As New DiagnosticDescriptor(DiagnosticIds.CodeBlockStartedAnalyzerRuleId, Title, MessageFormat, DiagnosticCategories.Stateful, DiagnosticSeverity.Warning, isEnabledByDefault:=True, description:=Description)
 #End Region

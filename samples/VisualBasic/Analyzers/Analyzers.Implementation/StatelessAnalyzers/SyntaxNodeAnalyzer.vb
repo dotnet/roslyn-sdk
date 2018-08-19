@@ -1,7 +1,6 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 Imports System.Collections.Immutable
-Imports Analyzers.My.Resources
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
@@ -21,9 +20,9 @@ Namespace BasicAnalyzers
         Inherits DiagnosticAnalyzer
 
 #Region "Descriptor fields"
-        Friend Shared ReadOnly Title As LocalizableString = New LocalizableResourceString(NameOf(Resources.SyntaxNodeAnalyzerTitle), Resources.ResourceManager, GetType(Resources))
-        Friend Shared ReadOnly MessageFormat As LocalizableString = New LocalizableResourceString(NameOf(Resources.SyntaxNodeAnalyzerMessageFormat), Resources.ResourceManager, GetType(Resources))
-        Friend Shared ReadOnly Description As LocalizableString = New LocalizableResourceString(NameOf(Resources.SyntaxNodeAnalyzerDescription), Resources.ResourceManager, GetType(Resources))
+        Friend Shared ReadOnly Title As LocalizableString = "Declare explicit type for local declarations"
+        Friend Shared ReadOnly MessageFormat As LocalizableString = "Local '{0}' is implicitly typed. Consider specifying its type explicitly in the declaration."
+        Friend Shared ReadOnly Description As LocalizableString = "Declare explicit type for local declarations."
 
         Friend Shared Rule As New DiagnosticDescriptor(SyntaxNodeAnalyzerRuleId, Title, MessageFormat, Stateless, DiagnosticSeverity.Warning, isEnabledByDefault:=True, description:=Description)
 #End Region

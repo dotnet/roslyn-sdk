@@ -29,8 +29,8 @@ namespace MSBuildWorkspaceTester.Framework
             ExecutedRoutedEventHandler executed,
             CanExecuteRoutedEventHandler canExecute)
         {
-            var command = new RoutedUICommand(text, name, GetType(), new InputGestureCollection(inputGestures));
-            var binding = new CommandBinding(command, executed, canExecute);
+            RoutedUICommand command = new RoutedUICommand(text, name, GetType(), new InputGestureCollection(inputGestures));
+            CommandBinding binding = new CommandBinding(command, executed, canExecute);
 
             AddCommandBinding(binding);
 
@@ -46,7 +46,7 @@ namespace MSBuildWorkspaceTester.Framework
 
         protected ICommand RegisterCommand<T>(string text, string name, Action<T> executed, Func<T, bool> canExecute, params InputGesture[] inputGestures)
         {
-            Func<object, T> cast = x => x != null ? (T)x : default;
+            T cast(object x) => x != null ? (T)x : default;
 
             return RegisterCommand(text, name, inputGestures,
                 executed: (s, e) => executed(cast(e.Parameter)),

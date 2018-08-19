@@ -14,25 +14,25 @@ namespace MSBuildWorkspaceTester
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            var serviceCollection = new ServiceCollection();
+            ServiceCollection serviceCollection = new ServiceCollection();
 
             ConfigureServices(serviceCollection);
 
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+            ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 
-            var msbuildService = serviceProvider.GetRequiredService<MSBuildService>();
+            MSBuildService msbuildService = serviceProvider.GetRequiredService<MSBuildService>();
             msbuildService.Initialize();
 
-            var mainWindowViewModel = new MainWindowViewModel(serviceProvider);
+            MainWindowViewModel mainWindowViewModel = new MainWindowViewModel(serviceProvider);
 
-            this.MainWindow = mainWindowViewModel.CreateView();
-            this.MainWindow.Show();
+            MainWindow = mainWindowViewModel.CreateView();
+            MainWindow.Show();
         }
 
         private static void ConfigureServices(IServiceCollection serviceCollection)
         {
-            var outputService = new OutputService();
-            var loggerFactory = new LoggerFactory()
+            OutputService outputService = new OutputService();
+            ILoggerFactory loggerFactory = new LoggerFactory()
                 .AddOutput(outputService);
 
             serviceCollection.AddSingleton(loggerFactory);

@@ -14,8 +14,8 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
     internal class ApplicableActionFinder
     {
         private Document document;
-        private int position;
-        private CancellationToken cancellationToken;
+        private readonly int position;
+        private readonly CancellationToken cancellationToken;
 
         public ApplicableActionFinder(Document document, int position, CancellationToken cancellationToken)
         {

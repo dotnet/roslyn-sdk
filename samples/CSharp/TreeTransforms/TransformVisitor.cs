@@ -9,7 +9,7 @@ namespace TreeTransforms
     public class TransformVisitor : CSharpSyntaxRewriter
     {
         private readonly SyntaxTree tree;
-        private TransformKind transformKind;
+        private readonly TransformKind transformKind;
 
         public TransformVisitor(SyntaxTree tree, TransformKind transKind)
         {

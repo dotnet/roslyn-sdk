@@ -3,7 +3,6 @@
 Imports System.Collections.Immutable
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Analyzers.My.Resources
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 Namespace BasicAnalyzers
@@ -19,9 +18,9 @@ Namespace BasicAnalyzers
         Inherits DiagnosticAnalyzer
 
 #Region "Descriptor fields"
-        Friend Shared ReadOnly Title As LocalizableString = New LocalizableResourceString(NameOf(Resources.CodeBlockAnalyzerTitle), Resources.ResourceManager, GetType(Resources))
-        Friend Shared ReadOnly MessageFormat As LocalizableString = New LocalizableResourceString(NameOf(Resources.CodeBlockAnalyzerMessageFormat), Resources.ResourceManager, GetType(Resources))
-        Friend Shared ReadOnly Description As LocalizableString = New LocalizableResourceString(NameOf(Resources.CodeBlockAnalyzerDescription), Resources.ResourceManager, GetType(Resources))
+        Friend Shared ReadOnly Title As LocalizableString = "Remove unnecessary methods"
+        Friend Shared ReadOnly MessageFormat As LocalizableString = "Method '{0}' is a non-virtual method with an empty body. Consider removing this method from your assembly."
+        Friend Shared ReadOnly Description As LocalizableString = "Remove unnecessary methods."
 
         Friend Shared Rule As New DiagnosticDescriptor(DiagnosticIds.CodeBlockAnalyzerRuleId, Title, MessageFormat, DiagnosticCategories.Stateless, DiagnosticSeverity.Warning, isEnabledByDefault:=True, description:=Description)
 #End Region

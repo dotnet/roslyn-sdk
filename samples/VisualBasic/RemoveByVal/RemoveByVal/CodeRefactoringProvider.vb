@@ -66,8 +66,8 @@ Class RemoveByValCodeRefactoringProvider
     Class RemoveByValCodeAction
         Inherits CodeAction
 
-        Private createChangedDocument As Func(Of Object, Task(Of Document))
-        Private _title As String
+        Private ReadOnly createChangedDocument As Func(Of Object, Task(Of Document))
+        Private ReadOnly _title As String
 
         Public Sub New(title As String, createChangedDocument As Func(Of Object, Task(Of Document)))
             _title = title

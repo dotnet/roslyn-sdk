@@ -16,7 +16,7 @@ namespace MSBuildWorkspaceTester.Services
         public WorkspaceService(IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
-            var properties = new Dictionary<string, string>
+            Dictionary<string, string> properties = new Dictionary<string, string>
             {
                 // This property ensures that XAML files will be compiled in the current AppDomain
                 // rather than a separate one. Any tasks isolated in AppDomains or tasks that create
@@ -44,8 +44,8 @@ namespace MSBuildWorkspaceTester.Services
         {
             LogHeader();
 
-            var watch = Stopwatch.StartNew();
-            var solution = await Workspace.OpenSolutionAsync(solutionFilePath, new LoaderProgress(Logger));
+            Stopwatch watch = Stopwatch.StartNew();
+            Solution solution = await Workspace.OpenSolutionAsync(solutionFilePath, new LoaderProgress(Logger));
 
             watch.Stop();
             Logger.LogInformation($"\r\nSolution opened: {watch.Elapsed:m\\:ss\\.fffffff}");
@@ -55,8 +55,8 @@ namespace MSBuildWorkspaceTester.Services
         {
             LogHeader();
 
-            var watch = Stopwatch.StartNew();
-            var project = await Workspace.OpenProjectAsync(projectFilePath, new LoaderProgress(Logger));
+            Stopwatch watch = Stopwatch.StartNew();
+            Project project = await Workspace.OpenProjectAsync(projectFilePath, new LoaderProgress(Logger));
 
             watch.Stop();
             Logger.LogInformation($"\r\nProject opened: {watch.Elapsed:m\\:ss\\.fffffff}");
@@ -78,7 +78,7 @@ namespace MSBuildWorkspaceTester.Services
 
             public void Report(ProjectLoadProgress loadProgress)
             {
-                var projectDisplay = Path.GetFileName(loadProgress.FilePath);
+                string projectDisplay = Path.GetFileName(loadProgress.FilePath);
 
                 if (loadProgress.TargetFramework != null)
                 {

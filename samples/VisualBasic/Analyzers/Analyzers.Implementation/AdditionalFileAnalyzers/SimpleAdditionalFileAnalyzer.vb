@@ -21,7 +21,7 @@ Namespace BasicAnalyzers
         Private Const Title As String = "Type name contains invalid term"
         Private Const MessageFormat As String = "The term '{0}' is not allowed in a type name."
 
-        Private Shared Rule As DiagnosticDescriptor =
+        Private Shared ReadOnly Rule As DiagnosticDescriptor =
             New DiagnosticDescriptor(
                 DiagnosticIds.SimpleAdditionalFileAnalyzerRuleId,
                 Title,

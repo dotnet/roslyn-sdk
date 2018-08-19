@@ -10,7 +10,7 @@ namespace MSBuildWorkspaceTester.Framework
 
         protected void PropertyChanged(string propertyName)
         {
-            var eventArgs = PropertyChangedEventArgsCache.GetEventArgs(propertyName);
+            PropertyChangedEventArgs eventArgs = PropertyChangedEventArgsCache.GetEventArgs(propertyName);
             _propertyChangedHandler?.Invoke(this, eventArgs);
         }
 

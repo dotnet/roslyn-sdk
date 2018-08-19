@@ -40,16 +40,16 @@ Namespace TestHelper
         Public Property Locations As DiagnosticResultLocation()
             Get
 
-                If Me.innerlocations Is Nothing Then
-                    Me.innerlocations = {}
+                If innerlocations Is Nothing Then
+                    innerlocations = {}
                 End If
 
-                Return Me.innerlocations
+                Return innerlocations
             End Get
 
             Set
 
-                Me.innerlocations = Value
+                innerlocations = Value
             End Set
         End Property
 
@@ -61,19 +61,19 @@ Namespace TestHelper
 
         Public ReadOnly Property Path As String
             Get
-                Return If(Me.Locations.Length > 0, Me.Locations(0).Path, "")
+                Return If(Locations.Length > 0, Locations(0).Path, "")
             End Get
         End Property
 
         Public ReadOnly Property Line As Integer
             Get
-                Return If(Me.Locations.Length > 0, Me.Locations(0).Line, -1)
+                Return If(Locations.Length > 0, Locations(0).Line, -1)
             End Get
         End Property
 
         Public ReadOnly Property Column As Integer
             Get
-                Return If(Me.Locations.Length > 0, Me.Locations(0).Column, -1)
+                Return If(Locations.Length > 0, Locations(0).Column, -1)
             End Get
         End Property
 

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>ConvertToConditional.CSharp.Vsix</RootNamespace>
-    <AssemblyName>ConvertToConditional.CSharp</AssemblyName>
+    <AssemblyName>ConvertToConditional.CSharp.Vsix</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsProductComponent>false</IsProductComponent>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>

@@ -107,8 +107,8 @@ namespace ConvertToAutoProperty
 
         private class ConvertToAutoPropertyCodeAction : CodeAction
         {
-            private Func<CancellationToken, Task<Document>> generateDocument;
-            private string title;
+            private readonly Func<CancellationToken, Task<Document>> generateDocument;
+            private readonly string title;
 
             public ConvertToAutoPropertyCodeAction(string title, Func<CancellationToken, Task<Document>> generateDocument)
             {

@@ -3,7 +3,6 @@
 Imports System.Collections.Immutable
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Analyzers.My.Resources
 
 Namespace BasicAnalyzers
     ''' <summary>
@@ -20,9 +19,9 @@ Namespace BasicAnalyzers
         Inherits DiagnosticAnalyzer
 
 #Region "Descriptor fields"
-        Friend Shared ReadOnly Title As LocalizableString = New LocalizableResourceString(NameOf(Resources.CompilationStartedAnalyzerTitle), ResourceManager, GetType(Resources))
-        Friend Shared ReadOnly MessageFormat As LocalizableString = New LocalizableResourceString(NameOf(Resources.CompilationStartedAnalyzerMessageFormat), ResourceManager, GetType(Resources))
-        Friend Shared ReadOnly Description As LocalizableString = New LocalizableResourceString(NameOf(Resources.CompilationStartedAnalyzerDescription), ResourceManager, GetType(Resources))
+        Friend Shared ReadOnly Title As LocalizableString = "Do not implement unsupported interface"
+        Friend Shared ReadOnly MessageFormat As LocalizableString = "Type '{0}' implements interface '{1}', which is only meant for internal implementation and might change in future. You should avoid implementing this interface."
+        Friend Shared ReadOnly Description As LocalizableString = "Do not implement unsupported interface."
 
         Friend Shared Rule As New DiagnosticDescriptor(DiagnosticIds.CompilationStartedAnalyzerRuleId, Title, MessageFormat, DiagnosticCategories.Stateful, DiagnosticSeverity.Warning, isEnabledByDefault:=True, description:=Description)
 #End Region

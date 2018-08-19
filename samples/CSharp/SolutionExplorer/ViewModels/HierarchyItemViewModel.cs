@@ -32,13 +32,13 @@ namespace MSBuildWorkspaceTester.ViewModels
 
         public int BinarySearch(HierarchyItemViewModel value)
         {
-            var low = 0;
-            var high = _children.Count - 1;
+            int low = 0;
+            int high = _children.Count - 1;
 
             while (low <= high)
             {
-                var mid = low + ((high - low) / 2);
-                var comp = _children[mid].CompareTo(value);
+                int mid = low + ((high - low) / 2);
+                int comp = _children[mid].CompareTo(value);
 
                 if (comp == 0)
                 {
@@ -60,7 +60,7 @@ namespace MSBuildWorkspaceTester.ViewModels
 
         public void AddChild(HierarchyItemViewModel item)
         {
-            var index = BinarySearch(item);
+            int index = BinarySearch(item);
 
             if (index < 0)
             {
@@ -74,7 +74,7 @@ namespace MSBuildWorkspaceTester.ViewModels
 
         public virtual int CompareTo(HierarchyItemViewModel other)
         {
-            return StringComparer.OrdinalIgnoreCase.Compare(this.DisplayName, other.DisplayName);
+            return StringComparer.OrdinalIgnoreCase.Compare(DisplayName, other.DisplayName);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace MSBuildWorkspaceTester.Framework
 
         public TView CreateView()
         {
-            var uri = new Uri(GetViewUriString(), UriKind.Relative);
+            Uri uri = new Uri(GetViewUriString(), UriKind.Relative);
             View = (TView)Application.LoadComponent(uri);
             View.DataContext = this;
 

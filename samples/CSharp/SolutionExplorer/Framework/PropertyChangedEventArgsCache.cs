@@ -12,7 +12,7 @@ namespace MSBuildWorkspaceTester.Framework
         {
             lock (s_eventArgsCache)
             {
-                if (!s_eventArgsCache.TryGetValue(propertyName, out var eventArgs))
+                if (!s_eventArgsCache.TryGetValue(propertyName, out PropertyChangedEventArgs eventArgs))
                 {
                     eventArgs = new PropertyChangedEventArgs(propertyName);
                     s_eventArgsCache.Add(propertyName, eventArgs);

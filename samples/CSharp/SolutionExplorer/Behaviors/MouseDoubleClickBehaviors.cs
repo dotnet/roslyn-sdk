@@ -55,8 +55,8 @@ namespace MSBuildWorkspaceTester.Behaviors
 
                 void OnMouseDoubleClick(object sender, RoutedEventArgs args)
                 {
-                    var command = (ICommand)control.GetValue(CommandProperty);
-                    var commandParameter = control.GetValue(CommandParameterProperty);
+                    ICommand command = (ICommand)control.GetValue(CommandProperty);
+                    object commandParameter = control.GetValue(CommandParameterProperty);
                     command.Execute(commandParameter);
                 }
             }

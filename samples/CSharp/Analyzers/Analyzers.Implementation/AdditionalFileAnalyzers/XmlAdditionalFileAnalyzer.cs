@@ -24,7 +24,7 @@ namespace Sample.Analyzers
         private const string Title = "Type name contains invalid term";
         private const string MessageFormat = "The term '{0}' is not allowed in a type name.";
 
-        private static DiagnosticDescriptor Rule =
+        private static readonly DiagnosticDescriptor Rule =
             new DiagnosticDescriptor(
                 DiagnosticIds.XmlAdditionalFileAnalyzerRuleId,
                 Title,

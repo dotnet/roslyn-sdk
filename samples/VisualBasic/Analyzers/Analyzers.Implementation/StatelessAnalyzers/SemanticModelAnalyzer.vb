@@ -4,7 +4,6 @@ Imports System.Collections.Immutable
 Imports System.IO
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Analyzers.My.Resources
 
 Namespace BasicAnalyzers
     ''' <summary>
@@ -16,9 +15,9 @@ Namespace BasicAnalyzers
         Inherits DiagnosticAnalyzer
 
 #Region "Descriptor fields"
-        Friend Shared ReadOnly Title As LocalizableString = New LocalizableResourceString(NameOf(Resources.SemanticModelAnalyzerTitle), Resources.ResourceManager, GetType(Resources))
-        Friend Shared ReadOnly MessageFormat As LocalizableString = New LocalizableResourceString(NameOf(Resources.SemanticModelAnalyzerMessageFormat), Resources.ResourceManager, GetType(Resources))
-        Friend Shared ReadOnly Description As LocalizableString = New LocalizableResourceString(NameOf(Resources.SemanticModelAnalyzerDescription), Resources.ResourceManager, GetType(Resources))
+        Friend Shared ReadOnly Title As LocalizableString = "Source file declaration diagnostics count"
+        Friend Shared ReadOnly MessageFormat As LocalizableString = "Source file '{0}' has '{1}' declaration diagnostic(s)."
+        Friend Shared ReadOnly Description As LocalizableString = "Source file declaration diagnostic count."
 
         Friend Shared Rule As New DiagnosticDescriptor(DiagnosticIds.SemanticModelAnalyzerRuleId, Title, MessageFormat, DiagnosticCategories.Stateless, DiagnosticSeverity.Warning, isEnabledByDefault:=True, description:=Description)
 #End Region

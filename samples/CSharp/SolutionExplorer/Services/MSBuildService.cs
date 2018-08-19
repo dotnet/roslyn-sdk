@@ -14,19 +14,19 @@ namespace MSBuildWorkspaceTester.Services
 
         public void Initialize()
         {
-            var instances = GetVisualStudioInstances();
+            VisualStudioInstance[] instances = GetVisualStudioInstances();
             if (instances.Length == 0)
             {
                 return;
             }
 
-            var instance = instances[0];
+            VisualStudioInstance instance = instances[0];
             RegisterVisualStudioInstance(instance);
         }
 
         private VisualStudioInstance[] GetVisualStudioInstances()
         {
-            var instances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
+            VisualStudioInstance[] instances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
             if (instances.Length == 0)
             {
                 Logger.LogError("No MSBuild instances found.");
@@ -38,7 +38,7 @@ namespace MSBuildWorkspaceTester.Services
 
             for (int i = 0; i < instances.Length; i++)
             {
-                var instance = instances[i];
+                VisualStudioInstance instance = instances[i];
                 Logger.LogInformation($"    {i + 1}. {instance.Name} ({instance.Version})");
             }
 

@@ -9,7 +9,7 @@ Public Class TransformVisitor
     Inherits VisualBasicSyntaxRewriter
 
     Private ReadOnly tree As SyntaxTree
-    Private transformKind As TransformKind
+    Private ReadOnly transformKind As TransformKind
 
     Public Sub New(tree As SyntaxTree, transformKind As TransformKind)
         Me.tree = tree

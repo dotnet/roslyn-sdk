@@ -13,7 +13,7 @@ namespace MSBuildWorkspaceTester.Services
         {
             ServiceProvider = serviceProvider;
 
-            var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+            ILoggerFactory loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
             Logger = loggerFactory.CreateLogger(GetType());
         }
     }

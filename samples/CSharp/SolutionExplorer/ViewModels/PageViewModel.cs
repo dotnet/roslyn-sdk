@@ -48,8 +48,8 @@ namespace MSBuildWorkspaceTester.ViewModels
 
         public TContent CreateContent()
         {
-            var uri = new Uri(GetViewUriString(), UriKind.Relative);
-            var content = (TContent)Application.LoadComponent(uri);
+            Uri uri = new Uri(GetViewUriString(), UriKind.Relative);
+            TContent content = (TContent)Application.LoadComponent(uri);
             content.DataContext = this;
             Content = content;
 

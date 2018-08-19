@@ -21,7 +21,7 @@ namespace MSBuildWorkspaceTester.Services
 
         public void ActivateOrOpenDocument(DocumentViewModel documentViewModel)
         {
-            if (!_openDocumentTabs.TryGetValue(documentViewModel.DocumentId, out var pageViewModel))
+            if (!_openDocumentTabs.TryGetValue(documentViewModel.DocumentId, out PageViewModel pageViewModel))
             {
                 pageViewModel = new DocumentPageViewModel(ServiceProvider, documentViewModel);
                 _openDocumentTabs.Add(documentViewModel.DocumentId, pageViewModel);
