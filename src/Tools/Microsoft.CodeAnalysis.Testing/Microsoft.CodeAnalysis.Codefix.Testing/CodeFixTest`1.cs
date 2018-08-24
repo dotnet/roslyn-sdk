@@ -23,6 +23,12 @@ namespace Microsoft.CodeAnalysis.Testing
         private const int DefaultNumberOfIncrementalIterations = -1000;
 
         /// <summary>
+        /// Gets or sets the validation mode for code fixes. The default is
+        /// <see cref="CodeFixValidationMode.SemanticStructure"/>.
+        /// </summary>
+        public CodeFixValidationMode CodeFixValidationMode { get; set; } = CodeFixValidationMode.SemanticStructure;
+
+        /// <summary>
         /// Returns the code fixes being tested - to be implemented in non-abstract class.
         /// </summary>
         /// <returns>The <see cref="CodeFixProvider"/> to be used.</returns>
@@ -344,12 +350,24 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <param name="project">The project to update.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
         /// <returns>The updated <see cref="Project"/>.</returns>
-        private static async Task<Project> RecreateProjectDocumentsAsync(Project project, CancellationToken cancellationToken)
+        private async Task<Project> RecreateProjectDocumentsAsync(Project project, CancellationToken cancellationToken)
         {
             foreach (var documentId in project.DocumentIds)
             {
                 var document = project.GetDocument(documentId);
+                var initialTree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
                 document = await RecreateDocumentAsync(document, cancellationToken).ConfigureAwait(false);
+                var recreatedTree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+                if (CodeFixValidationMode != CodeFixValidationMode.None)
+                {
+                    // We expect the tree produced by the code fix (initialTree) to match the form of the tree produced
+                    // by the compiler for the same text (recreatedTree).
+                    TreeEqualityVisitor.AssertNodesEqual(
+                        await recreatedTree.GetRootAsync(cancellationToken).ConfigureAwait(false),
+                        await initialTree.GetRootAsync(cancellationToken).ConfigureAwait(false),
+                        checkTrivia: CodeFixValidationMode == CodeFixValidationMode.Full);
+                }
+
                 project = document.Project;
             }
 
@@ -631,6 +649,89 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 return obj.filename.GetHashCode()
                     ^ (obj.content?.ToString().GetHashCode() ?? 0);
+            }
+        }
+
+        private class TreeEqualityVisitor
+        {
+            private readonly SyntaxNode _expected;
+            private readonly bool _checkTrivia;
+
+            private TreeEqualityVisitor(SyntaxNode expected, bool checkTrivia)
+            {
+                _expected = expected ?? throw new ArgumentNullException(nameof(expected));
+                _checkTrivia = checkTrivia;
+            }
+
+            public void Visit(SyntaxNode node)
+            {
+                Verify.Equal(_expected.RawKind, node.RawKind);
+                AssertChildSyntaxListEqual(_expected.ChildNodesAndTokens(), node.ChildNodesAndTokens(), _checkTrivia);
+            }
+
+            internal static void AssertNodesEqual(SyntaxNode expected, SyntaxNode actual, bool checkTrivia)
+            {
+                new TreeEqualityVisitor(expected, checkTrivia).Visit(actual);
+            }
+
+            private static void AssertChildSyntaxListEqual(ChildSyntaxList expected, ChildSyntaxList actual, bool checkTrivia)
+            {
+                Verify.Equal(expected.Count, actual.Count);
+                foreach (var (expectedChild, actualChild) in expected.Zip(actual, (first, second) => (first, second)))
+                {
+                    if (expectedChild.IsToken)
+                    {
+                        Verify.True(actualChild.IsToken);
+                        AssertTokensEqual(expectedChild.AsToken(), actualChild.AsToken(), checkTrivia);
+                    }
+                    else
+                    {
+                        Verify.True(actualChild.IsNode);
+                        AssertNodesEqual(expectedChild.AsNode(), actualChild.AsNode(), checkTrivia);
+                    }
+                }
+            }
+
+            private static void AssertTokensEqual(SyntaxToken expected, SyntaxToken actual, bool checkTrivia)
+            {
+                AssertTriviaListEqual(expected.LeadingTrivia, actual.LeadingTrivia, checkTrivia);
+                Verify.Equal(expected.RawKind, actual.RawKind);
+                Verify.Equal(expected.Value, actual.Value);
+                Verify.Equal(expected.Text, actual.Text);
+                Verify.Equal(expected.ValueText, actual.ValueText);
+                AssertTriviaListEqual(expected.TrailingTrivia, actual.TrailingTrivia, checkTrivia);
+            }
+
+            private static void AssertTriviaListEqual(SyntaxTriviaList expected, SyntaxTriviaList actual, bool checkTrivia)
+            {
+                if (!checkTrivia)
+                {
+                    return;
+                }
+
+                for (var i = 0; i < Math.Min(expected.Count, actual.Count); i++)
+                {
+                    AssertTriviaEqual(expected[i], actual[i], checkTrivia);
+                }
+
+                Verify.Equal(expected.Count, actual.Count);
+            }
+
+            private static void AssertTriviaEqual(SyntaxTrivia expected, SyntaxTrivia actual, bool checkTrivia)
+            {
+                if (!checkTrivia)
+                {
+                    return;
+                }
+
+                Verify.Equal(expected.RawKind, actual.RawKind);
+                Verify.Equal(expected.HasStructure, actual.HasStructure);
+                Verify.Equal(expected.IsDirective, actual.IsDirective);
+                Verify.Equal(expected.GetAnnotations(), actual.GetAnnotations());
+                if (expected.HasStructure)
+                {
+                    AssertNodesEqual(expected.GetStructure(), actual.GetStructure(), checkTrivia);
+                }
             }
         }
     }
