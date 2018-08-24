@@ -1,0 +1,15 @@
+{
+  "settings": {
+    "documentationRules": {
+      "copyrightText": "Copyright (c) {companyName}.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.",
+      "companyName": "Microsoft"
+    },
+    "layoutRules": {
+      "newlineAtEndOfFile": "require"
+    },
+    "orderingRules": {
+      "systemUsingDirectivesFirst": true,
+      "usingDirectivesPlacement": "outsideNamespace"
+    }
+  }
+}
