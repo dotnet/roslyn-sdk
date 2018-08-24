@@ -19,8 +19,11 @@ namespace Microsoft.CodeAnalysis.Testing
         protected TVerifier Verify { get; }
 
         protected virtual string DefaultFilePathPrefix { get; } = "Test";
+
         protected virtual string DefaultTestProjectName { get; } = "TestProject";
+
         protected virtual string DefaultFilePath => DefaultFilePathPrefix + 0 + "." + DefaultFileExt;
+
         protected abstract string DefaultFileExt { get; }
 
         protected AnalyzerTest()

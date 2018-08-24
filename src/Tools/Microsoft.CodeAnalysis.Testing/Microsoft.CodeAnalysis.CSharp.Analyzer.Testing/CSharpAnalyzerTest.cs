@@ -11,6 +11,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing
         where TVerifier : IVerifier, new()
     {
         protected override string DefaultFileExt => "cs";
+
         public override string Language => LanguageNames.CSharp;
 
         protected override CompilationOptions CreateCompilationOptions()

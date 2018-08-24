@@ -19,6 +19,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing
             => new[] { new TAnalyzer() };
 
         protected override string DefaultFileExt => "cs";
+
         public override string Language => LanguageNames.CSharp;
 
         protected override CompilationOptions CreateCompilationOptions()
