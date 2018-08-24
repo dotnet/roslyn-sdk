@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 
-#if !NETSTANDARD1_1
+#if !NETSTANDARD1_5
 using System;
 #endif
 
@@ -23,7 +23,7 @@ namespace Microsoft.CodeAnalysis.Testing
         public static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).GetTypeInfo().Assembly.Location);
 #endif
 
-#if NETSTANDARD1_1
+#if NETSTANDARD1_5
         public static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.FullName).WithAliases(ImmutableArray.Create("global", "corlib"));
         public static readonly MetadataReference SystemReference = MetadataReference.CreateFromFile(typeof(System.Diagnostics.Debug).GetTypeInfo().Assembly.FullName).WithAliases(ImmutableArray.Create("global", "system"));
         public static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.FullName);
@@ -34,7 +34,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         static MetadataReferences()
         {
-#if NETSTANDARD1_1
+#if NETSTANDARD1_5
             if (typeof(string).GetTypeInfo().Assembly.ExportedTypes.Any(x => x.Name == "System.ValueTuple"))
             {
                 // mscorlib contains ValueTuple, so no need to add a separate reference
