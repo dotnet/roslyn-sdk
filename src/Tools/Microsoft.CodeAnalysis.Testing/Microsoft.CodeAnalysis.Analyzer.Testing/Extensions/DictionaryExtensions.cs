@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.CodeAnalysis.Analyzer.Testing
+namespace Microsoft.CodeAnalysis.Testing
 {
     internal static class DictionaryExtensions
     {

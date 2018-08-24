@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.CodeAnalysis.Analyzer.Testing
+namespace Microsoft.CodeAnalysis.Testing
 {
     public class SourceFileList : List<(string filename, string content)>
     {

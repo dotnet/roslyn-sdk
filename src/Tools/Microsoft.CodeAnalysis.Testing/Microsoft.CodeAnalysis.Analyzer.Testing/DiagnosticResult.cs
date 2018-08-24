@@ -3,7 +3,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.CodeAnalysis.Analyzer.Testing
+namespace Microsoft.CodeAnalysis.Testing
 {
     /// <summary>
     /// Structure that stores information about a <see cref="Diagnostic"/> appearing in a source.

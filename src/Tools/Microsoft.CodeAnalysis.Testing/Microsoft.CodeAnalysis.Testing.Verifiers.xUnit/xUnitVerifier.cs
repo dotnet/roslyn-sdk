@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.CodeAnalysis.Analyzer.Testing;
 using Xunit;
 
-namespace Microsoft.CodeAnalysis.Testing.Verifiers.xUnit
+namespace Microsoft.CodeAnalysis.Testing.Verifiers
 {
     public class XUnitVerifier : IVerifier
     {

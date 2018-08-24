@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.CodeAnalysis.Analyzer.Testing
+namespace Microsoft.CodeAnalysis.Testing
 {
-    public class DiagnosticVerifier<TAnalyzer, TTest, TVerifier>
+    public class AnalyzerVerifier<TAnalyzer, TTest, TVerifier>
            where TAnalyzer : DiagnosticAnalyzer, new()
            where TTest : BaseAnalyzerTest<TVerifier>, new()
            where TVerifier : IVerifier, new()

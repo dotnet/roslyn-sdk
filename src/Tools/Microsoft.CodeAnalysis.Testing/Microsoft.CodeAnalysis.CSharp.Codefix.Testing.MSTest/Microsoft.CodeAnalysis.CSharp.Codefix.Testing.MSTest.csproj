@@ -5,7 +5,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>7.3</LangVersion>
     <AssemblyName>Microsoft.CodeAnalysis.CSharp.Codefix.Testing.MSTest</AssemblyName>
-    <RootNamespace>Microsoft.CodeAnalysis.CSharp.Codefix.Testing.MSTest</RootNamespace>
+    <RootNamespace>Microsoft.CodeAnalysis.CSharp.Testing.MSTest</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.1'">

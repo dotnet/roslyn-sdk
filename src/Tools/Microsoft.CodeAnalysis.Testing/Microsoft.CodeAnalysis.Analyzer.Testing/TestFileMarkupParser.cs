@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.CodeAnalysis.Analyzer.Testing
+namespace Microsoft.CodeAnalysis.Testing
 {
     /// <summary>
     /// To aid with testing, we define a special type of text file that can encode additional

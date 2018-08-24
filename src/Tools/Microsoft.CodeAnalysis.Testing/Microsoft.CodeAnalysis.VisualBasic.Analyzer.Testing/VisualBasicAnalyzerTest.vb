@@ -1,6 +1,6 @@
 ﻿Imports Microsoft.CodeAnalysis
-Imports Microsoft.CodeAnalysis.Analyzer.Testing
 Imports Microsoft.CodeAnalysis.Diagnostics
+Imports Microsoft.CodeAnalysis.Testing
 Imports Microsoft.CodeAnalysis.VisualBasic
 
 Public Class VisualBasicAnalyzerTest(Of TAnalyzer As {DiagnosticAnalyzer, New}, TVerifier As {IVerifier, New})

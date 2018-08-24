@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.CodeAnalysis.Analyzer.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Microsoft.CodeAnalysis.Testing.Verifiers.MSTest
+namespace Microsoft.CodeAnalysis.Testing.Verifiers
 {
     public class MSTestVerifier : IVerifier
     {

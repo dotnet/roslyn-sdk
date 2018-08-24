@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.CodeAnalysis.Analyzer.Testing;
 using NUnit.Framework;
 
-namespace Microsoft.CodeAnalysis.Testing.Verifiers.NUnit
+namespace Microsoft.CodeAnalysis.Testing.Verifiers
 {
     public class NUnitVerifier : IVerifier
     {

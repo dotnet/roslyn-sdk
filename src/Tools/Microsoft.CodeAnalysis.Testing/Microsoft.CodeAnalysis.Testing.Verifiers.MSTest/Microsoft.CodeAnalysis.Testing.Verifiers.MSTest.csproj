@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;net452</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>7.3</LangVersion>
     <AssemblyName>Microsoft.CodeAnalysis.Testing.Verifiers.MSTest</AssemblyName>
-    <RootNamespace>Microsoft.CodeAnalysis.Testing.Verifiers.MSTest</RootNamespace>
+    <RootNamespace>Microsoft.CodeAnalysis.Testing.Verifiers</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.1'">

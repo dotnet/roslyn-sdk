@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeFixes;
 
-namespace Microsoft.CodeAnalysis.Codefix.Testing
+namespace Microsoft.CodeAnalysis.Testing
 {
     internal sealed class TestDiagnosticProvider : FixAllContext.DiagnosticProvider
     {

@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis;
 using System;
 #endif
 
-namespace Microsoft.CodeAnalysis.Analyzer.Testing
+namespace Microsoft.CodeAnalysis.Testing
 {
     /// <summary>
     /// Metadata references used to create test projects.

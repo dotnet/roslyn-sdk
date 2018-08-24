@@ -5,7 +5,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Microsoft.CodeAnalysis.Analyzer.Testing
+namespace Microsoft.CodeAnalysis.Testing
 {
     internal class TestXmlReferenceResolver : XmlReferenceResolver
     {

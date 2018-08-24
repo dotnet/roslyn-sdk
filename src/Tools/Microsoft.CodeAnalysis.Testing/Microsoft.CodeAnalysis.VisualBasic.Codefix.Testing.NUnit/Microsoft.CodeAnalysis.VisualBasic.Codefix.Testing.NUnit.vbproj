@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
    <TargetFrameworks>netstandard1.1;net452</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>15.5</LangVersion>
     <AssemblyName>Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.NUnit</AssemblyName>
-    <RootNamespace>Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.NUnit</RootNamespace>
+    <RootNamespace>Microsoft.CodeAnalysis.VisualBasic.Testing.NUnit</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.1'">

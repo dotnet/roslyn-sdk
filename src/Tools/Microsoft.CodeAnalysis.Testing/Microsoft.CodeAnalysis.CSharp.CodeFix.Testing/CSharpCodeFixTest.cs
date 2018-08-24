@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis.Analyzer.Testing;
-using Microsoft.CodeAnalysis.Codefix.Testing;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 
-namespace Microsoft.CodeAnalysis.CSharp.Codefix.Testing
+namespace Microsoft.CodeAnalysis.CSharp.Testing
 {
     public class CSharpCodeFixTest<TAnalyzer, TCodeFix, TVerifier> : BaseCodeFixTest<TVerifier>
         where TAnalyzer : DiagnosticAnalyzer, new()

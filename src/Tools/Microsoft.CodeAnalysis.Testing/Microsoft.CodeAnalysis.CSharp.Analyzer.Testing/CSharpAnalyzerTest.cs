@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Analyzer.Testing;
+using Microsoft.CodeAnalysis.Testing;
 
-namespace Microsoft.CodeAnalysis.CSharp.Analyzer.Testing
+namespace Microsoft.CodeAnalysis.CSharp.Testing
 {
     public class CSharpAnalyzerTest<TAnalyzer, TVerifier> : BaseAnalyzerTest<TVerifier>
         where TAnalyzer : DiagnosticAnalyzer, new()

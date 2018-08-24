@@ -5,7 +5,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>15.5</LangVersion>
     <AssemblyName>Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.xUnit</AssemblyName>
-    <RootNamespace>Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.xUnit</RootNamespace>
+    <RootNamespace>Microsoft.CodeAnalysis.VisualBasic.Testing.xUnit</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.1'">
