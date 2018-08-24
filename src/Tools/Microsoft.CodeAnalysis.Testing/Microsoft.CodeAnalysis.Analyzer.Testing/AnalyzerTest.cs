@@ -27,7 +27,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 {
                     var discovery = new AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true);
                     var parts = Task.Run(() => discovery.CreatePartsAsync(MefHostServices.DefaultAssemblies)).GetAwaiter().GetResult();
-                    var catalog = ComposableCatalog.Create(Resolver.DefaultInstance).AddParts(parts);
+                    var catalog = ComposableCatalog.Create(Resolver.DefaultInstance).AddParts(parts).WithDocumentTextDifferencingService();
 
                     var configuration = CompositionConfiguration.Create(catalog);
                     var runtimeComposition = RuntimeComposition.CreateRuntimeComposition(configuration);
