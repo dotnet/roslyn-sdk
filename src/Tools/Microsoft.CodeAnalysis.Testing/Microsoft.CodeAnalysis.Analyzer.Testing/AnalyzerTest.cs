@@ -49,8 +49,6 @@ namespace Microsoft.CodeAnalysis.Testing
         protected AnalyzerTest()
         {
             TestSources = new SourceFileList(DefaultFilePathPrefix, DefaultFileExt);
-            FixedSources = new SourceFileList(DefaultFilePathPrefix, DefaultFileExt);
-            BatchFixedSources = new SourceFileList(DefaultFilePathPrefix, DefaultFileExt);
         }
 
         /// <summary>
@@ -97,21 +95,6 @@ namespace Microsoft.CodeAnalysis.Testing
         public List<DiagnosticResult> ExpectedDiagnostics { get; } = new List<DiagnosticResult>();
 
         /// <summary>
-        /// Gets the list of diagnostics expected after a code fix is applied.
-        /// </summary>
-        public List<DiagnosticResult> RemainingDiagnostics { get; } = new List<DiagnosticResult>();
-
-        /// <summary>
-        /// Gets the list of diagnostics expected after a Fix All operation.
-        /// </summary>
-        /// <remarks>
-        /// <para>By default, Fix All operations are expected to produce the same result as incremental fix operations.
-        /// This collection is only used when <see cref="BatchFixedSources"/> differs from
-        /// <see cref="FixedSources"/>.</para>
-        /// </remarks>
-        public List<DiagnosticResult> BatchRemainingDiagnostics { get; } = new List<DiagnosticResult>();
-
-        /// <summary>
         /// Gets or sets a value indicating whether exclusions for generated code should be tested automatically. The
         /// default value is <see langword="true"/>.
         /// </summary>
@@ -121,115 +104,6 @@ namespace Microsoft.CodeAnalysis.Testing
         /// Gets a collection of diagnostics to explicitly disable in the <see cref="CompilationOptions"/> for projects.
         /// </summary>
         public List<string> DisabledDiagnostics { get; } = new List<string>();
-
-        /// <summary>
-        /// Gets or sets the index of the code fix to apply.
-        /// </summary>
-        public int? CodeFixIndex { get; set; }
-
-        /// <summary>
-        /// Sets the expected output source file for code fix testing.
-        /// </summary>
-        /// <seealso cref="FixedSources"/>
-        public string FixedCode
-        {
-            set
-            {
-                if (value != null)
-                {
-                    FixedSources.Add(value);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the set of expected output files for code fix testing. Files may be added to this list using one of the
-        /// <see cref="SourceFileList.Add(string)"/> methods.
-        /// </summary>
-        public SourceFileList FixedSources { get; }
-
-        /// <summary>
-        /// Sets the expected output source file after a Fix All operation is applied.
-        /// </summary>
-        /// <seealso cref="BatchFixedSources"/>
-        public string BatchFixedCode
-        {
-            set
-            {
-                if (value != null)
-                {
-                    BatchFixedSources.Add(value);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the set of expected output files after a Fix All operation is applied. Files may be added to this list
-        /// using one of the <see cref="SourceFileList.Add(string)"/> methods.
-        /// </summary>
-        /// <remarks>
-        /// <para>By default, Fix All operations are expected to produce the same result as incremental fix operations.
-        /// If this collection is not specified for the test, <see cref="FixedSources"/> provides the expected test
-        /// results for both incremental and Fix All scenarios.</para>
-        /// </remarks>
-        public SourceFileList BatchFixedSources { get; }
-
-        /// <summary>
-        /// Gets or sets the number of code fix iterations expected during code fix testing.
-        /// </summary>
-        /// <remarks>
-        /// <para>Code fixes are applied until one of the following conditions are met:</para>
-        ///
-        /// <list type="bullet">
-        /// <item><description>No diagnostics are reported in the input.</description></item>
-        /// <item><description>No code fixes are provided for the diagnostics reported in the input.</description></item>
-        /// <item><description>The code fix applied for the diagnostics does not produce a change in the source file(s).</description></item>
-        /// <item><description>The maximum number of allowed iterations is exceeded.</description></item>
-        /// </list>
-        ///
-        /// <para>If the number of iterations is positive, it represents an exact number of iterations: code fix tests
-        /// will fail if the code fix required more or fewer iterations to complete. If the number of iterations is
-        /// negative, the negation of the number of iterations is treated as an upper bound on the number of allowed
-        /// iterations: code fix tests will fail only if the code fix required more iterations to complete. If the
-        /// number of iterations is zero, the code fix test will validate that no code fixes are offered for the set of
-        /// diagnostics reported in the original input.</para>
-        ///
-        /// <para>When the number of iterations is not specified, the value is automatically selected according to the
-        /// current test configuration:</para>
-        ///
-        /// <list type="bullet">
-        /// <item><description>If the expected code fix output equals the input sources, the default value is treated as <c>0</c>.</description></item>
-        /// <item><description>Otherwise, the default value is treated as the negative of the number of fixable diagnostics appearing in the input source file(s).</description></item>
-        /// </list>
-        ///
-        /// <note>
-        /// <para>The default value for this property can be interpreted as "Iterative code fix operations are expected
-        /// to complete in at most one operation for each fixable diagnostic in the input source has been applied.
-        /// Completing in fewer iterations is acceptable."</para>
-        /// </note>
-        /// </remarks>
-        public int? NumberOfIncrementalIterations { get; set; }
-
-        /// <summary>
-        /// Gets or sets the number of code fix iterations expected during code fix testing for Fix All scenarios.
-        /// </summary>
-        /// <remarks>
-        /// <para>See the <see cref="NumberOfIncrementalIterations"/> property for an overview of the behavior of this
-        /// property. If the number of Fix All iterations is not specified, the value is automatically selected
-        /// according to the current test configuration:</para>
-        ///
-        /// <list type="bullet">
-        /// <item><description>If the expected Fix All output equals the input sources, the default value is treated as <c>0</c>.</description></item>
-        /// <item><description>Otherwise, the default value is treated as <c>1</c>.</description></item>
-        /// </list>
-        ///
-        /// <note>
-        /// <para>The default value for this property can be interpreted as "Fix All operations are expected to complete
-        /// in the minimum number of iterations possible unless otherwise specified."</para>
-        /// </note>
-        /// </remarks>
-        /// <seealso cref="NumberOfIncrementalIterations"/>
-        public int? NumberOfFixAllIterations { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether markup can be used to identify diagnostics within expected inputs
@@ -251,12 +125,6 @@ namespace Microsoft.CodeAnalysis.Testing
         /// </list>
         /// </remarks>
         public bool AllowMarkup { get; set; } = true;
-
-        /// <summary>
-        /// Gets or sets a value indicating whether new compiler diagnostics are allowed to appear in code fix outputs.
-        /// The default value is <see langword="false"/>.
-        /// </summary>
-        public bool AllowNewCompilerDiagnostics { get; set; } = false;
 
         /// <summary>
         /// Gets a collection of transformation functions to apply to <see cref="Workspace.Options"/> during diagnostic
