@@ -1,4 +1,4 @@
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
@@ -13,13 +13,8 @@
   </PropertyGroup>
   <!-- Setting Template Content to None -->
   <ItemGroup>
-    <None Include="ProjectTemplates\CSharp\**\*.cs" />
-    <None Include="ProjectTemplates\CSharp\**\*.csproj" />
-    <None Include="ProjectTemplates\**\*.vsixmanifest" />
-    <None Include="ProjectTemplates\**\CodeRefactoring\**\*.vstemplate" />
-    <None Include="ProjectTemplates\**\Diagnostic\**\*.vstemplate" />
-    <None Include="ProjectTemplates\**\ConsoleApplication\**\*.vstemplate" />
-    <None Include="*.vstemplate" />
+    <None Include="ItemTemplates\**" />
+    <None Include="ProjectTemplates\**" />
   </ItemGroup>
   <!-- C# Item Templates -->
   <ItemGroup>
