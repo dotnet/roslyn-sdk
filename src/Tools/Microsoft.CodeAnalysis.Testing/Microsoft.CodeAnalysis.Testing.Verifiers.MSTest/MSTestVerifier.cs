@@ -57,6 +57,16 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             }
         }
 
+        public void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer, string message = null)
+        {
+            var comparer = new SequenceEqualEnumerableEqualityComparer<T>(equalityComparer);
+            var areEqual = comparer.Equals(expected, actual);
+            if (!areEqual)
+            {
+                Assert.Fail(message);
+            }
+        }
+
         public void True(bool assert, string message = null)
         {
             if (message is null)
@@ -74,13 +84,13 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             private readonly IEqualityComparer<T> _itemEqualityComparer;
 
             public SequenceEqualEnumerableEqualityComparer()
-                : this(EqualityComparer<T>.Default)
+                : this(default)
             {
             }
 
             public SequenceEqualEnumerableEqualityComparer(IEqualityComparer<T> itemEqualityComparer)
             {
-                _itemEqualityComparer = itemEqualityComparer;
+                _itemEqualityComparer = itemEqualityComparer ?? EqualityComparer<T>.Default;
             }
 
             public bool Equals(IEnumerable<T> x, IEnumerable<T> y)
