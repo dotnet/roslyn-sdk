@@ -8,14 +8,34 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.CodeAnalysis.Testing
 {
     public abstract partial class AnalyzerTest<TVerifier>
         where TVerifier : IVerifier, new()
     {
+        private static readonly Lazy<IExportProviderFactory> ExportProviderFactory;
+
+        static AnalyzerTest()
+        {
+            ExportProviderFactory = new Lazy<IExportProviderFactory>(
+                () =>
+                {
+                    var discovery = new AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true);
+                    var parts = Task.Run(() => discovery.CreatePartsAsync(MefHostServices.DefaultAssemblies)).GetAwaiter().GetResult();
+                    var catalog = ComposableCatalog.Create(Resolver.DefaultInstance).AddParts(parts);
+
+                    var configuration = CompositionConfiguration.Create(catalog);
+                    var runtimeComposition = RuntimeComposition.CreateRuntimeComposition(configuration);
+                    return runtimeComposition.CreateExportProviderFactory();
+                },
+                LazyThreadSafetyMode.ExecutionAndPublication);
+        }
+
         protected TVerifier Verify { get; }
 
         protected virtual string DefaultFilePathPrefix { get; } = "Test";
@@ -779,7 +799,14 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public virtual AdhocWorkspace CreateWorkspace()
         {
+            var exportProvider = ExportProviderFactory.Value.CreateExportProvider();
+
+#if NETSTANDARD1_5
             return new AdhocWorkspace();
+#else
+            var host = MefV1HostServices.Create(exportProvider.AsExportProvider());
+            return new AdhocWorkspace(host);
+#endif
         }
 
         protected abstract CompilationOptions CreateCompilationOptions();
