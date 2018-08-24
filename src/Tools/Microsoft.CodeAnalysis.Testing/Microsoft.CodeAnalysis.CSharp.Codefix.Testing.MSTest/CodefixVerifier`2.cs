@@ -6,7 +6,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing.MSTest
 {
     public class CodefixVerifier<TAnalyzer, TCodefix> : CSharpCodeFixVerifier<TAnalyzer, TCodefix, MSTestVerifier>
         where TAnalyzer : DiagnosticAnalyzer, new()
-        where TCodefix  : CodeFixProvider, new()
+        where TCodefix : CodeFixProvider, new()
     {
     }
 }

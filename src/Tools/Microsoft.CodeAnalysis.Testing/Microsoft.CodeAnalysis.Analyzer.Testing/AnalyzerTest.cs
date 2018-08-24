@@ -379,7 +379,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 if (expected.Message != null)
                 {
-                    Verify.Equal(expected.Message, actual.GetMessage(), $"Expected diagnostic message to be \"{expected.Message}\" was \"{ actual.GetMessage()}\"\r\n\r\nDiagnostic:\r\n    { FormatDiagnostics(analyzers, actual)}\r\n");
+                    Verify.Equal(expected.Message, actual.GetMessage(), $"Expected diagnostic message to be \"{expected.Message}\" was \"{actual.GetMessage()}\"\r\n\r\nDiagnostic:\r\n    {FormatDiagnostics(analyzers, actual)}\r\n");
                 }
             }
         }

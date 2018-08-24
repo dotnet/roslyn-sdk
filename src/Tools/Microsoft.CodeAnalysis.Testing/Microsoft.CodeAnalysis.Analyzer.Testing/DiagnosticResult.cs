@@ -66,7 +66,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public object[] MessageArguments { get; private set; }
 
-        public bool HasLocation => (_spans != default) &&(_spans.Length > 0);
+        public bool HasLocation => (_spans != default) && (_spans.Length > 0);
 
         public DiagnosticResult WithSeverity(DiagnosticSeverity severity)
         {

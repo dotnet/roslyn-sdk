@@ -7,7 +7,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing.NUnit
     {
         public static CodefixVerifier<TAnalyzer, TCodefix> Create<TAnalyzer, TCodefix>()
             where TAnalyzer : DiagnosticAnalyzer, new()
-            where TCodefix  : CodeFixProvider, new()
+            where TCodefix : CodeFixProvider, new()
         {
             return new CodefixVerifier<TAnalyzer, TCodefix>();
         }
