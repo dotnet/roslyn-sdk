@@ -1,8 +1,8 @@
-<Project Sdk="MSBuild.Sdk.Extras/1.6.41">
+﻿<Project Sdk="MSBuild.Sdk.Extras/1.6.41">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>MSBuildWorkspaceTester</RootNamespace>
-    <AssemblyName>WorkspaceTester</AssemblyName>
+    <AssemblyName>SolutionExplorer</AssemblyName>
     <ExtrasEnableWpfProjectSetup>true</ExtrasEnableWpfProjectSetup>
     <OutputType>WinExe</OutputType>
     <AssemblyTitle>MSBuildWorkspaceTester</AssemblyTitle>
