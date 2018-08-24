@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.Testing;
 
 namespace Microsoft.CodeAnalysis.CSharp.Testing
 {
-    public class CSharpAnalyzerTest<TAnalyzer, TVerifier> : BaseAnalyzerTest<TVerifier>
+    public class CSharpAnalyzerTest<TAnalyzer, TVerifier> : AnalyzerTest<TVerifier>
         where TAnalyzer : DiagnosticAnalyzer, new()
         where TVerifier : IVerifier, new()
     {

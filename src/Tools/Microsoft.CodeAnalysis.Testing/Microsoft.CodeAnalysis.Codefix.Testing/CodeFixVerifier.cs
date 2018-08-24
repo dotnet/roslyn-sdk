@@ -8,7 +8,7 @@ namespace Microsoft.CodeAnalysis.Testing
     public class CodeFixVerifier<TAnalyzer, TCodeFix, TTest, TVerifier>
            where TAnalyzer : DiagnosticAnalyzer, new()
            where TCodeFix : CodeFixProvider, new()
-           where TTest : BaseCodeFixTest<TVerifier>, new()
+           where TTest : CodeFixTest<TVerifier>, new()
            where TVerifier : IVerifier, new()
     {
         public static DiagnosticResult[] EmptyDiagnosticResults
@@ -23,13 +23,13 @@ namespace Microsoft.CodeAnalysis.Testing
         public static DiagnosticResult CompilerError(string errorIdentifier)
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.CompilerError(errorIdentifier);
 
-        public static Task VerifyDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken = default)
-            => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyDiagnosticAsync(source, expected, cancellationToken);
+        public static Task VerifyAnalyzerAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken = default)
+            => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyAnalyzerAsync(source, expected, cancellationToken);
 
-        public static Task VerifyFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken = default)
-            => VerifyixAsync(source, new[] { expected }, fixedSource, cancellationToken);
+        public static Task VerifyFCodeFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken = default)
+            => VerifyFCodeFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
 
-        public static Task VerifyixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken = default)
+        public static Task VerifyFCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken = default)
         {
             var test = new TTest
             {

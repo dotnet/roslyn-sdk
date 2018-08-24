@@ -4,7 +4,7 @@ Imports Microsoft.CodeAnalysis.Testing
 Imports Microsoft.CodeAnalysis.VisualBasic
 
 Public Class VisualBasicAnalyzerTest(Of TAnalyzer As {DiagnosticAnalyzer, New}, TVerifier As {IVerifier, New})
-    Inherits BaseAnalyzerTest(Of TVerifier)
+    Inherits AnalyzerTest(Of TVerifier)
 
     Public Overrides ReadOnly Property Language As String
         Get

@@ -37,7 +37,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public DiagnosticSeverity Severity { get; private set; }
 
-        public string Id { get; private set; }
+        public string Id { get; }
 
         public string Message
         {
@@ -66,7 +66,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public object[] MessageArguments { get; private set; }
 
-        public bool HasLocation => (_spans != null) && (_spans.Length > 0);
+        public bool HasLocation => (_spans != default) &&(_spans.Length > 0);
 
         public DiagnosticResult WithSeverity(DiagnosticSeverity severity)
         {

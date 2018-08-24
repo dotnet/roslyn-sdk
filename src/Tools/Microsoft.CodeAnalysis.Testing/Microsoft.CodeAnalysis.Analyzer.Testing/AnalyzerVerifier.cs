@@ -7,7 +7,7 @@ namespace Microsoft.CodeAnalysis.Testing
 {
     public class AnalyzerVerifier<TAnalyzer, TTest, TVerifier>
            where TAnalyzer : DiagnosticAnalyzer, new()
-           where TTest : BaseAnalyzerTest<TVerifier>, new()
+           where TTest : AnalyzerTest<TVerifier>, new()
            where TVerifier : IVerifier, new()
     {
         public static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
@@ -30,7 +30,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public static DiagnosticResult CompilerError(string errorIdentifier) => new DiagnosticResult(errorIdentifier, DiagnosticSeverity.Error);
 
-        public static Task VerifyDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken = default)
+        public static Task VerifyAnalyzerAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken = default)
             => VerifyDiagnosticAsync(source, new[] { expected }, cancellationToken);
 
         public static Task VerifyDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken = default)

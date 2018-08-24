@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Testing
 {
-    public abstract partial class BaseAnalyzerTest<TVerifier>
+    public abstract partial class AnalyzerTest<TVerifier>
         where TVerifier : IVerifier, new()
     {
         protected TVerifier Verify { get; }
@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.Testing
         protected virtual string DefaultFilePath => DefaultFilePathPrefix + 0 + "." + DefaultFileExt;
         protected abstract string DefaultFileExt { get; }
 
-        protected BaseAnalyzerTest()
+        protected AnalyzerTest()
         {
             Verify = new TVerifier();
             TestSources = new SourceFileList(DefaultFilePathPrefix, DefaultFileExt);
@@ -353,13 +353,13 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
                 else
                 {
-                    VerifyDiagnosticLocation(analyzers, actual, actual.Location, expected.Spans.First());
+                    VerifyDiagnosticLocation(analyzers, actual, actual.Location, expected.Spans[0]);
                     var additionalLocations = actual.AdditionalLocations.ToArray();
 
                     Verify.Equal(
                         expected.Spans.Length - 1,
                         additionalLocations.Length,
-                        $"Expected {(expected.Spans.Length - 1)} additional locations but got {additionalLocations.Length} for Diagnostic:\r\n    {FormatDiagnostics(analyzers, actual)}\r\n");
+                        $"Expected {expected.Spans.Length - 1} additional locations but got {additionalLocations.Length} for Diagnostic:\r\n    {FormatDiagnostics(analyzers, actual)}\r\n");
 
                     for (var j = 0; j < additionalLocations.Length; ++j)
                     {
@@ -398,7 +398,7 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             var actualSpan = actual.GetLineSpan();
 
-            var assert = actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test."));
+            var assert = actualSpan.Path == expected.Path || (actualSpan.Path?.Contains("Test0.") == true && expected.Path.Contains("Test."));
             Verify.True(assert, $"Expected diagnostic to be in file \"{expected.Path}\" was actually in file \"{actualSpan.Path}\"\r\n\r\nDiagnostic:\r\n    {FormatDiagnostics(analyzers, diagnostic)}\r\n");
 
             var actualStartLinePosition = actualSpan.StartLinePosition;
@@ -517,9 +517,9 @@ namespace Microsoft.CodeAnalysis.Testing
             var linePositionSpan = content.Lines.GetLinePositionSpan(span);
 
             DiagnosticResult diagnosticResult;
-            if (diagnosticId == string.Empty)
+            if (diagnosticId?.Length == 0)
             {
-                diagnosticResult = new DiagnosticResult(analyzers.First().SupportedDiagnostics.Single());
+                diagnosticResult = new DiagnosticResult(analyzers[0].SupportedDiagnostics.Single());
             }
             else
             {

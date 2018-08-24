@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     // Is it starting a new match, or ending an existing match.  As a workaround, we
                     // special case these and consider it ending a match if we have something on the
                     // stack already.
-                    if ((matches[0].Item2 == SpanStartString && matches[1].Item2 == SpanEndString && spanStartStack.Peek().Item2 == string.Empty) ||
+                    if ((matches[0].Item2 == SpanStartString && matches[1].Item2 == SpanEndString && spanStartStack.Peek().Item2?.Length == 0) ||
                         (matches[0].Item2 == SpanStartString && matches[1].Item2 == NamedSpanEndString && spanStartStack.Peek().Item2 != string.Empty))
                     {
                         orderedMatches.RemoveAt(0);
@@ -95,13 +95,13 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
 
                 // Order the matches by their index
-                var firstMatch = orderedMatches.First();
+                var firstMatch = orderedMatches[0];
 
                 var matchIndexInInput = firstMatch.Item1;
                 var matchString = firstMatch.Item2;
 
                 var matchIndexInOutput = matchIndexInInput - inputOutputOffset;
-                outputBuilder.Append(input.Substring(currentIndexInInput, matchIndexInInput - currentIndexInInput));
+                outputBuilder.Append(input, currentIndexInInput, matchIndexInInput - currentIndexInInput);
 
                 currentIndexInInput = matchIndexInInput + matchString.Length;
                 inputOutputOffset += matchString.Length;
@@ -277,8 +277,8 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
 
                 AddSpanString(sb, spans.Where(kvp => kvp.Key != string.Empty), i, start: true);
-                AddSpanString(sb, spans.Where(kvp => kvp.Key == string.Empty), i, start: true);
-                AddSpanString(sb, spans.Where(kvp => kvp.Key == string.Empty), i, start: false);
+                AddSpanString(sb, spans.Where(kvp => kvp.Key?.Length == 0), i, start: true);
+                AddSpanString(sb, spans.Where(kvp => kvp.Key?.Length == 0), i, start: false);
                 AddSpanString(sb, spans.Where(kvp => kvp.Key != string.Empty), i, start: false);
 
                 if (i < code.Length)
@@ -302,7 +302,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 {
                     if (start && span.Start == position)
                     {
-                        if (kvp.Key == string.Empty)
+                        if (kvp.Key?.Length == 0)
                         {
                             sb.Append(SpanStartString);
                         }
@@ -315,7 +315,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     }
                     else if (!start && span.End == position)
                     {
-                        if (kvp.Key == string.Empty)
+                        if (kvp.Key?.Length == 0)
                         {
                             sb.Append(SpanEndString);
                         }

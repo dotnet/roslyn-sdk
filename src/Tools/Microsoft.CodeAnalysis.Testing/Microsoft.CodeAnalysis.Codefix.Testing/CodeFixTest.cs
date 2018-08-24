@@ -15,7 +15,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Testing
 {
-    public abstract class BaseCodeFixTest<TVerifier> : BaseAnalyzerTest<TVerifier>
+    public abstract class CodeFixTest<TVerifier> : AnalyzerTest<TVerifier>
         where TVerifier : IVerifier, new()
     {
         private const int DefaultNumberOfIncrementalIterations = -1000;
@@ -37,6 +37,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 (var remainingDiagnostics, var fixedSources) = FixedSources.SequenceEqual(TestSources)
                     ? (expected, testSources)
                     : ProcessMarkupSources(FixedSources, RemainingDiagnostics);
+
                 await VerifyDiagnosticsAsync(fixedSources, remainingDiagnostics, cancellationToken).ConfigureAwait(false);
                 if (BatchFixedSources.Any())
                 {
@@ -288,7 +289,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     {
                         anyActions = true;
 
-                        var fixedProject = await ApplyFixAsync(project, actions.ElementAt(codeFixIndex.GetValueOrDefault(0)), cancellationToken).ConfigureAwait(false);
+                        var fixedProject = await ApplyFixAsync(project, actions[codeFixIndex.GetValueOrDefault(0)], cancellationToken).ConfigureAwait(false);
                         if (fixedProject != project)
                         {
                             done = false;

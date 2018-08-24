@@ -34,9 +34,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
         static MetadataReferences()
         {
-
 #if NETSTANDARD1_1
-            if (typeof(string).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(x => x.Name == "System.ValueTuple") != null)
+            if (typeof(string).GetTypeInfo().Assembly.ExportedTypes.Any(x => x.Name == "System.ValueTuple"))
             {
                 // mscorlib contains ValueTuple, so no need to add a separate reference
                 SystemRuntimeReference = null;
