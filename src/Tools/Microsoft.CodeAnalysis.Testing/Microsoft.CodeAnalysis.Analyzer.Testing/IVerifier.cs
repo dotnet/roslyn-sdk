@@ -18,6 +18,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
         void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, string message = null);
 
+        void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer, string message = null);
+
         void True(bool assert, string message = null);
     }
 }

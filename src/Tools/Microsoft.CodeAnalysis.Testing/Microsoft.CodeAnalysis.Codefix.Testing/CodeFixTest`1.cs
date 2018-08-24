@@ -36,14 +36,14 @@ namespace Microsoft.CodeAnalysis.Testing
             await VerifyDiagnosticsAsync(testSources, expected, cancellationToken).ConfigureAwait(false);
             if (HasFixableDiagnostics())
             {
-                (var remainingDiagnostics, var fixedSources) = FixedSources.SequenceEqual(TestSources)
+                (var remainingDiagnostics, var fixedSources) = FixedSources.SequenceEqual(TestSources, SourceFileEqualityComparer.Instance)
                     ? (expected, testSources)
                     : ProcessMarkupSources(FixedSources, RemainingDiagnostics);
 
                 await VerifyDiagnosticsAsync(fixedSources, remainingDiagnostics, cancellationToken).ConfigureAwait(false);
                 if (BatchFixedSources.Any())
                 {
-                    (var batchRemainingDiagnostics, var batchFixedSources) = BatchFixedSources.SequenceEqual(TestSources)
+                    (var batchRemainingDiagnostics, var batchFixedSources) = BatchFixedSources.SequenceEqual(TestSources, SourceFileEqualityComparer.Instance)
                         ? (expected, testSources)
                         : ProcessMarkupSources(BatchFixedSources, BatchRemainingDiagnostics);
                     await VerifyDiagnosticsAsync(batchFixedSources, batchRemainingDiagnostics, cancellationToken).ConfigureAwait(false);
@@ -68,21 +68,26 @@ namespace Microsoft.CodeAnalysis.Testing
                 return false;
             }
 
-            Verify.True(FixedSources.Count == 0 || (FixedSources.Count == 1 && string.IsNullOrEmpty(FixedSources[0].content)), $"'{nameof(FixedSources)}' not equal to '{nameof(TestSources)}'.");
-            Verify.SequenceEqual(FixedSources, TestSources, $"'{nameof(FixedSources)}' not equal to '{nameof(TestSources)}'.");
+            Verify.True(FixedSources.Count == 0 || (FixedSources.Count == 1 && IsNullOrEmpty(FixedSources[0].content)), $"'{nameof(FixedSources)}' not equal to '{nameof(TestSources)}'.");
+            Verify.SequenceEqual(FixedSources, TestSources, SourceFileEqualityComparer.Instance, $"'{nameof(FixedSources)}' not equal to '{nameof(TestSources)}'.");
 
-            Verify.True(BatchFixedSources.Count == 0 || (BatchFixedSources.Count == 1 && string.IsNullOrEmpty(BatchFixedSources[0].content)), $"'{nameof(BatchFixedSources)}' not equal to '{nameof(TestSources)}'.");
-            Verify.SequenceEqual(FixedSources, TestSources, $"'{nameof(BatchFixedSources)}' not equal to '{nameof(TestSources)}'.");
+            Verify.True(BatchFixedSources.Count == 0 || (BatchFixedSources.Count == 1 && IsNullOrEmpty(BatchFixedSources[0].content)), $"'{nameof(BatchFixedSources)}' not equal to '{nameof(TestSources)}'.");
+            Verify.SequenceEqual(FixedSources, TestSources, SourceFileEqualityComparer.Instance, $"'{nameof(BatchFixedSources)}' not equal to '{nameof(TestSources)}'.");
 
             Verify.Empty(nameof(RemainingDiagnostics), RemainingDiagnostics);
             Verify.Empty(nameof(BatchRemainingDiagnostics), BatchRemainingDiagnostics);
 
             return false;
 
-            // Local function
+            // Local functions
             bool HasFixableDiagnosticsCore()
             {
                 return ExpectedDiagnostics.Any(diagnostic => fixers.Any(fixer => fixer.FixableDiagnosticIds.Contains(diagnostic.Id)));
+            }
+
+            bool IsNullOrEmpty(SourceText content)
+            {
+                return content is null || content.Length == 0;
             }
         }
 
@@ -179,8 +184,8 @@ namespace Microsoft.CodeAnalysis.Testing
             string language,
             ImmutableArray<DiagnosticAnalyzer> analyzers,
             ImmutableArray<CodeFixProvider> codeFixProviders,
-            (string filename, string content)[] oldSources,
-            (string filename, string content)[] newSources,
+            (string filename, SourceText content)[] oldSources,
+            (string filename, SourceText content)[] newSources,
             int numberOfIterations,
             Func<ImmutableArray<DiagnosticAnalyzer>, ImmutableArray<CodeFixProvider>, int?, Project, int, CancellationToken, Task<Project>> getFixedProject,
             CancellationToken cancellationToken)
@@ -222,22 +227,32 @@ namespace Microsoft.CodeAnalysis.Testing
 
             for (var i = 0; i < updatedDocuments.Length; i++)
             {
-                var actual = await GetStringFromDocumentAsync(updatedDocuments[i], cancellationToken).ConfigureAwait(false);
-                if (newSources[i].content != actual)
+                var actual = await GetSourceTextFromDocumentAsync(updatedDocuments[i], cancellationToken).ConfigureAwait(false);
+                if (newSources[i].content.ToString() != actual.ToString())
                 {
-                    throw new Exception($"content of '{newSources[i].filename}' was expected to be '{newSources[i].content}' but was {actual}");
+                    throw new Exception($"content of '{newSources[i].filename}' was expected to be '{newSources[i].content}' but was '{actual}'");
+                }
+
+                if (newSources[i].content.Encoding != actual.Encoding)
+                {
+                    throw new Exception($"encoding of '{newSources[i].filename}' was expected to be '{newSources[i].content.Encoding}' but was '{actual.Encoding}'");
+                }
+
+                if (newSources[i].content.ChecksumAlgorithm != actual.ChecksumAlgorithm)
+                {
+                    throw new Exception($"checksum algorithm of '{newSources[i].filename}' was expected to be '{newSources[i].content.ChecksumAlgorithm}' but was '{actual.ChecksumAlgorithm}'");
                 }
 
                 if (newSources[i].filename != updatedDocuments[i].Name)
                 {
-                    throw new Exception($"file name was expected to be '{newSources[i].filename}' but was {updatedDocuments[i].Name}");
+                    throw new Exception($"file name was expected to be '{newSources[i].filename}' but was '{updatedDocuments[i].Name}'");
                 }
             }
         }
 
-        private static bool HasAnyChange((string filename, string content)[] oldSources, (string filename, string content)[] newSources)
+        private static bool HasAnyChange((string filename, SourceText content)[] oldSources, (string filename, SourceText content)[] newSources)
         {
-            return !oldSources.SequenceEqual(newSources);
+            return !oldSources.SequenceEqual(newSources, SourceFileEqualityComparer.Instance);
         }
 
         private async Task<Project> FixEachAnalyzerDiagnosticAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, Project project, int numberOfIterations, CancellationToken cancellationToken)
@@ -523,13 +538,12 @@ namespace Microsoft.CodeAnalysis.Testing
         /// </summary>
         /// <param name="document">The <see cref="Document"/> to be converted to a string.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
-        /// <returns>A string containing the syntax of the <see cref="Document"/> after formatting.</returns>
-        private static async Task<string> GetStringFromDocumentAsync(Document document, CancellationToken cancellationToken)
+        /// <returns>A <see cref="SourceText"/> containing the syntax of the <see cref="Document"/> after formatting.</returns>
+        private static async Task<SourceText> GetSourceTextFromDocumentAsync(Document document, CancellationToken cancellationToken)
         {
             var simplifiedDoc = await Simplifier.ReduceAsync(document, Simplifier.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
             var formatted = await Formatter.FormatAsync(simplifiedDoc, Formatter.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
-            var sourceText = await formatted.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            return sourceText.ToString();
+            return await formatted.GetTextAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -586,6 +600,38 @@ namespace Microsoft.CodeAnalysis.Testing
             }
 
             return false;
+        }
+
+        private sealed class SourceFileEqualityComparer : IEqualityComparer<(string filename, SourceText content)>
+        {
+            private SourceFileEqualityComparer()
+            {
+            }
+
+            public static SourceFileEqualityComparer Instance { get; } = new SourceFileEqualityComparer();
+
+            public bool Equals((string filename, SourceText content) x, (string filename, SourceText content) y)
+            {
+                if (x.filename != y.filename)
+                {
+                    return false;
+                }
+
+                if (x.content is null || y.content is null)
+                {
+                    return ReferenceEquals(x, y);
+                }
+
+                return x.content.Encoding == y.content.Encoding
+                    && x.content.ChecksumAlgorithm == y.content.ChecksumAlgorithm
+                    && x.content.ContentEquals(y.content);
+            }
+
+            public int GetHashCode((string filename, SourceText content) obj)
+            {
+                return obj.filename.GetHashCode()
+                    ^ (obj.content?.ToString().GetHashCode() ?? 0);
+            }
         }
     }
 }
