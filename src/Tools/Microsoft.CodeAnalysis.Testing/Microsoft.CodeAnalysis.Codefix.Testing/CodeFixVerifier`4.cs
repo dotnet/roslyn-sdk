@@ -31,10 +31,10 @@ namespace Microsoft.CodeAnalysis.Testing
         public static Task VerifyAnalyzerAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken = default)
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyAnalyzerAsync(source, expected, cancellationToken);
 
-        public static Task VerifyFCodeFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken = default)
-            => VerifyFCodeFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
+        public static Task VerifyCodeFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken = default)
+            => VerifyCodeFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
 
-        public static Task VerifyFCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken = default)
+        public static Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken = default)
         {
             var test = new TTest
             {
