@@ -2,7 +2,6 @@
 <RuleSet Name="Roslyn SDK Rules" Description="Hand selected set of analyzer rules for use within the Roslyn SDK project." ToolsVersion="15.0">
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
     <Rule Id="SA1101" Action="None" />
-    <Rule Id="SA1116" Action="None" />
     <Rule Id="SA1201" Action="None" />
     <Rule Id="SA1202" Action="None" />
     <Rule Id="SA1204" Action="None" />

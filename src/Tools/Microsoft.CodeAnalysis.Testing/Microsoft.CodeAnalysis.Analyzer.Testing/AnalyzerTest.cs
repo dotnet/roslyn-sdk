@@ -256,8 +256,9 @@ namespace Microsoft.CodeAnalysis.Testing
             await VerifyDiagnosticsAsync(testSources, expected, cancellationToken).ConfigureAwait(false);
         }
 
-        protected (DiagnosticResult[], (string filename, string content)[]) ProcessMarkupSources(IEnumerable<(string filename, string content)> sources,
-                                                                                               IEnumerable<DiagnosticResult> explicitDiagnostics)
+        protected (DiagnosticResult[], (string filename, string content)[]) ProcessMarkupSources(
+            IEnumerable<(string filename, string content)> sources,
+            IEnumerable<DiagnosticResult> explicitDiagnostics)
         {
             if (!AllowMarkup)
             {
