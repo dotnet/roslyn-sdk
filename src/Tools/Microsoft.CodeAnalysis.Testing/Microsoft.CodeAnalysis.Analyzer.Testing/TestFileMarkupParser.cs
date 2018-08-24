@@ -17,17 +17,17 @@ namespace Microsoft.CodeAnalysis.Testing
     /// string with the "$" character in it.  This allows for easy creation of "FIT" tests where all
     /// that needs to be provided are strings that encode every bit of state necessary in the string
     /// itself.
-    /// 
-    /// The current set of encoded features we support are: 
-    /// 
+    ///
+    /// The current set of encoded features we support are:
+    ///
     /// $$ - The position in the file.  There can be at most one of these.
-    /// 
+    ///
     /// [| ... |] - A span of text in the file.  There can be many of these and they can be nested
     /// and/or overlap the $ position.
-    /// 
+    ///
     /// {|Name: ... |} A span of text in the file annotated with an identifier.  There can be many of
     /// these, including ones with the same name.
-    /// 
+    ///
     /// Additional encoded features can be added on a case by case basis.
     /// </summary>
     public static class TestFileMarkupParser
@@ -38,7 +38,8 @@ namespace Microsoft.CodeAnalysis.Testing
         private const string NamedSpanStartString = "{|";
         private const string NamedSpanEndString = "|}";
 
-        private static readonly Regex s_namedSpanStartRegex = new Regex(@"\{\| ([^:]+) \:",
+        private static readonly Regex s_namedSpanStartRegex = new Regex(
+            @"\{\| ([^:]+) \:",
             RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
 
         private static void Parse(string input, out string output, out int? position, out IDictionary<string, IList<TextSpan>> spans)

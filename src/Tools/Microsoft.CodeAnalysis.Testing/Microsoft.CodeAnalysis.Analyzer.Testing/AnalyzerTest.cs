@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -17,8 +19,11 @@ namespace Microsoft.CodeAnalysis.Testing
         protected TVerifier Verify { get; }
 
         protected virtual string DefaultFilePathPrefix { get; } = "Test";
+
         protected virtual string DefaultTestProjectName { get; } = "TestProject";
+
         protected virtual string DefaultFilePath => DefaultFilePathPrefix + 0 + "." + DefaultFileExt;
+
         protected abstract string DefaultFileExt { get; }
 
         protected AnalyzerTest()
@@ -254,8 +259,9 @@ namespace Microsoft.CodeAnalysis.Testing
             await VerifyDiagnosticsAsync(testSources, expected, cancellationToken).ConfigureAwait(false);
         }
 
-        protected (DiagnosticResult[], (string filename, string content)[]) ProcessMarkupSources(IEnumerable<(string filename, string content)> sources,
-                                                                                               IEnumerable<DiagnosticResult> explicitDiagnostics)
+        protected (DiagnosticResult[], (string filename, string content)[]) ProcessMarkupSources(
+            IEnumerable<(string filename, string content)> sources,
+            IEnumerable<DiagnosticResult> explicitDiagnostics)
         {
             if (!AllowMarkup)
             {
@@ -379,7 +385,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 if (expected.Message != null)
                 {
-                    Verify.Equal(expected.Message, actual.GetMessage(), $"Expected diagnostic message to be \"{expected.Message}\" was \"{ actual.GetMessage()}\"\r\n\r\nDiagnostic:\r\n    { FormatDiagnostics(analyzers, actual)}\r\n");
+                    Verify.Equal(expected.Message, actual.GetMessage(), $"Expected diagnostic message to be \"{expected.Message}\" was \"{actual.GetMessage()}\"\r\n\r\nDiagnostic:\r\n    {FormatDiagnostics(analyzers, actual)}\r\n");
                 }
             }
         }
