@@ -129,7 +129,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
             }
 
-            var t1 = VerifyFixpublicAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, newSources, numberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
+            var t1 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, newSources, numberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
 
             var fixAllProvider = GetCodeFixProviders().Select(codeFixProvider => codeFixProvider.GetFixAllProvider()).Where(codeFixProvider => codeFixProvider != null).ToImmutableArray();
 
@@ -144,19 +144,19 @@ namespace Microsoft.CodeAnalysis.Testing
                     await t1;
                 }
 
-                var t2 = VerifyFixpublicAsync(LanguageNames.CSharp, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
+                var t2 = VerifyFixAsync(LanguageNames.CSharp, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t2;
                 }
 
-                var t3 = VerifyFixpublicAsync(LanguageNames.CSharp, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
+                var t3 = VerifyFixAsync(LanguageNames.CSharp, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t3;
                 }
 
-                var t4 = VerifyFixpublicAsync(LanguageNames.CSharp, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
+                var t4 = VerifyFixAsync(LanguageNames.CSharp, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t4;
@@ -173,7 +173,7 @@ namespace Microsoft.CodeAnalysis.Testing
             }
         }
 
-        private async Task VerifyFixpublicAsync(
+        private async Task VerifyFixAsync(
             string language,
             ImmutableArray<DiagnosticAnalyzer> analyzers,
             ImmutableArray<CodeFixProvider> codeFixProviders,
