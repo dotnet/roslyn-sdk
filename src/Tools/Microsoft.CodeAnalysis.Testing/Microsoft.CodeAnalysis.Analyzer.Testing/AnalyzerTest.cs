@@ -36,7 +36,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
-        protected TVerifier Verify { get; }
+        protected static TVerifier Verify { get; } = new TVerifier();
 
         protected virtual string DefaultFilePathPrefix { get; } = "Test";
 
@@ -48,7 +48,6 @@ namespace Microsoft.CodeAnalysis.Testing
 
         protected AnalyzerTest()
         {
-            Verify = new TVerifier();
             TestSources = new SourceFileList(DefaultFilePathPrefix, DefaultFileExt);
             FixedSources = new SourceFileList(DefaultFilePathPrefix, DefaultFileExt);
             BatchFixedSources = new SourceFileList(DefaultFilePathPrefix, DefaultFileExt);
