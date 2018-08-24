@@ -39,7 +39,7 @@ namespace Microsoft.CodeAnalysis.Analyzer.Testing
         private const string NamedSpanEndString = "|}";
 
         private static readonly Regex s_namedSpanStartRegex = new Regex(@"\{\| ([^:]+) \:",
-            RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
+            RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
 
         private static void Parse(string input, out string output, out int? position, out IDictionary<string, IList<TextSpan>> spans)
         {

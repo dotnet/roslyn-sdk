@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 
-#if !NETSTANDARD1_3
+#if !NETSTANDARD1_1
 using System;
 #endif
 
@@ -16,14 +16,14 @@ namespace Microsoft.CodeAnalysis.Analyzer.Testing
     /// </summary>
     public static class MetadataReferences
     {
-#if NET461
+#if NET452
         public static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location).WithAliases(ImmutableArray.Create("global", "corlib"));
         public static readonly MetadataReference SystemReference = MetadataReference.CreateFromFile(typeof(System.Diagnostics.Debug).GetTypeInfo().Assembly.Location).WithAliases(ImmutableArray.Create("global", "system"));
         public static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.Location);
         public static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).GetTypeInfo().Assembly.Location);
 #endif
 
-#if NETSTANDARD1_3
+#if NETSTANDARD1_1
         public static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.FullName).WithAliases(ImmutableArray.Create("global", "corlib"));
         public static readonly MetadataReference SystemReference = MetadataReference.CreateFromFile(typeof(System.Diagnostics.Debug).GetTypeInfo().Assembly.FullName).WithAliases(ImmutableArray.Create("global", "system"));
         public static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.FullName);
@@ -35,7 +35,7 @@ namespace Microsoft.CodeAnalysis.Analyzer.Testing
         static MetadataReferences()
         {
 
-#if NETSTANDARD1_3
+#if NETSTANDARD1_1
             if (typeof(string).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(x => x.Name == "System.ValueTuple") != null)
             {
                 // mscorlib contains ValueTuple, so no need to add a separate reference
@@ -44,7 +44,7 @@ namespace Microsoft.CodeAnalysis.Analyzer.Testing
             }
 #endif
 
-#if NET461
+#if NET452
             var systemRuntime = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "System.Runtime");
             if (systemRuntime != null)
             {
