@@ -22,6 +22,8 @@ class C
             DiagnosticResult[] expected =
             {
                 Verify.Diagnostic().WithArguments("Test0.cs", 1),
+                DiagnosticResult.CompilerError("CS0161").WithLocation(4, 22).WithMessage("'C.M()': not all code paths return a value"),
+                DiagnosticResult.CompilerError("CS1983").WithLocation(4, 22).WithMessage("The return type of an async method must be void, Task or Task<T>"),
             };
             await Verify.VerifyAnalyzerAsync(test, expected);
         }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Xunit;
 using Verify = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<Sample.Analyzers.CompilationAnalyzer>;
@@ -30,6 +31,10 @@ class C
             await new CSharpAnalyzerTest<CompilationAnalyzer, XUnitVerifier>
             {
                 TestCode = test,
+                ExpectedDiagnostics =
+                {
+                    DiagnosticResult.CompilerError("CS5001").WithMessage("Program does not contain a static 'Main' method suitable for an entry point"),
+                },
                 SolutionTransforms =
                 {
                     (solution, projectId) =>
@@ -48,6 +53,7 @@ class C
                 TestCode = test,
                 ExpectedDiagnostics =
                 {
+                    DiagnosticResult.CompilerError("CS5001").WithMessage("Program does not contain a static 'Main' method suitable for an entry point"),
                     Verify.Diagnostic().WithArguments(DiagnosticIds.SymbolAnalyzerRuleId),
                 },
                 SolutionTransforms =

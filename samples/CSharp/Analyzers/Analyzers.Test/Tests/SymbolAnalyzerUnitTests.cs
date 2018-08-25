@@ -24,6 +24,7 @@ class GoodOne
             DiagnosticResult[] expected =
             {
                 Verify.Diagnostic().WithLocation(2, 7).WithArguments("BadOne"),
+                DiagnosticResult.CompilerError("CS0542").WithLocation(4, 17).WithMessage("'BadOne': member names cannot be the same as their enclosing type"),
             };
             await Verify.VerifyAnalyzerAsync(test, expected);
         }
