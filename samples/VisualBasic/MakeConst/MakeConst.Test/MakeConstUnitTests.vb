@@ -1,20 +1,15 @@
-﻿Imports MakeConst
-Imports Microsoft.CodeAnalysis
-Imports Microsoft.CodeAnalysis.CodeFixes
-Imports Microsoft.CodeAnalysis.Diagnostics
-Imports TestHelper
-Imports Xunit
+﻿Imports Xunit
+Imports Verify = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier(Of MakeConstAnalyzer, MakeConstCodeFixProvider)
 
 Namespace MakeConst.Test
     Public Class UnitTest
-        Inherits CodeFixVerifier
 
         'No diagnostics expected to show up
         <Fact>
-        Public Sub TestMethod1()
+        Public Async Function TestMethod1() As Task
             Dim test = ""
-            VerifyBasicDiagnostic(test)
-        End Sub
+            Await Verify.VerifyAnalyzerAsync(test)
+        End Function
 
         'Diagnostic And CodeFix both triggered And checked for
         <Fact>
@@ -22,14 +17,6 @@ Namespace MakeConst.Test
 
 
         End Sub
-
-        Protected Overrides Function GetBasicCodeFixProvider() As CodeFixProvider
-            Return New MakeConstCodeFixProvider()
-        End Function
-
-        Protected Overrides Function GetBasicDiagnosticAnalyzer() As DiagnosticAnalyzer
-            Return New MakeConstAnalyzer()
-        End Function
 
     End Class
 End Namespace
