@@ -1,17 +1,16 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using TestHelper;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using Verify = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<Sample.Analyzers.CodeBlockStartedAnalyzer>;
 
 namespace Sample.Analyzers.Test
 {
     public class CodeBlockStartedAnalyzerUnitTests
-        : DiagnosticVerifier
     {
         [Fact]
-        public void CodeBlockStartedAnalyzerTest()
+        public async Task CodeBlockStartedAnalyzerTest()
         {
             string test = @"
 class C
@@ -26,17 +25,8 @@ class C
         return p1 + p2;
     }
 }";
-            DiagnosticResult expected = new DiagnosticResult
-            {
-                Id = DiagnosticIds.CodeBlockStartedAnalyzerRuleId,
-                Message = string.Format(CodeBlockStartedAnalyzer.MessageFormat, "p2", "M1"),
-                Severity = DiagnosticSeverity.Warning,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, 31) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
+            DiagnosticResult expected = Verify.Diagnostic().WithArguments("p2", "M1").WithLocation(4, 31);
+            await Verify.VerifyAnalyzerAsync(test, expected);
         }
-
-        protected override DiagnosticAnalyzer CSharpDiagnosticAnalyzer => new CodeBlockStartedAnalyzer();
     }
 }

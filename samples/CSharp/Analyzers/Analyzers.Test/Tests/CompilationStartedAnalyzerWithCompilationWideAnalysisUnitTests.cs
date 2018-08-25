@@ -1,17 +1,16 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using TestHelper;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using Verify = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<Sample.Analyzers.CompilationStartedAnalyzerWithCompilationWideAnalysis>;
 
 namespace Sample.Analyzers.Test
 {
     public class CompilationStartedAnalyzerWithCompilationWideAnalysisUnitTests
-        : DiagnosticVerifier
     {
         [Fact]
-        public void CompilationStartedAnalyzerWithCompilationWideAnalysisTest()
+        public async Task CompilationStartedAnalyzerWithCompilationWideAnalysisTest()
         {
             string test = @"
 namespace MyNamespace
@@ -41,21 +40,8 @@ namespace MyNamespace
         public void F() {}
     }
 }";
-            DiagnosticResult expected = new DiagnosticResult
-            {
-                Id = DiagnosticIds.CompilationStartedAnalyzerWithCompilationWideAnalysisRuleId,
-                Message = string.Format(
-                    CompilationStartedAnalyzerWithCompilationWideAnalysis.MessageFormat,
-                    "MyInterfaceImpl2",
-                    CompilationStartedAnalyzerWithCompilationWideAnalysis.SecureTypeInterfaceName,
-                    "IUnsecureInterface"),
-                Severity = DiagnosticSeverity.Warning,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 19, 11) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
+            DiagnosticResult expected = Verify.Diagnostic().WithArguments("MyInterfaceImpl2", CompilationStartedAnalyzerWithCompilationWideAnalysis.SecureTypeInterfaceName, "IUnsecureInterface").WithLocation(19, 11);
+            await Verify.VerifyAnalyzerAsync(test, expected);
         }
-
-        protected override DiagnosticAnalyzer CSharpDiagnosticAnalyzer => new CompilationStartedAnalyzerWithCompilationWideAnalysis();
     }
 }
