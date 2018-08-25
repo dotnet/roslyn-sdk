@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Testing
@@ -17,6 +19,25 @@ namespace Microsoft.CodeAnalysis.Testing
         private ImmutableArray<FileLinePositionSpan> _spans;
         private bool _suppressMessage;
         private string _message;
+
+        public static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
+
+        public static DiagnosticResult Create<TAnalyzer>(string diagnosticId = null)
+            where TAnalyzer : DiagnosticAnalyzer, new()
+        {
+            var analyzer = new TAnalyzer();
+            var supportedDiagnostics = analyzer.SupportedDiagnostics;
+            if (diagnosticId is null)
+            {
+                return new DiagnosticResult(supportedDiagnostics.Single());
+            }
+            else
+            {
+                return new DiagnosticResult(supportedDiagnostics.Single(i => i.Id == diagnosticId));
+            }
+        }
+
+        public static DiagnosticResult CompilerError(string errorIdentifier) => new DiagnosticResult(errorIdentifier, DiagnosticSeverity.Error);
 
         public DiagnosticResult(string id, DiagnosticSeverity severity)
             : this()
