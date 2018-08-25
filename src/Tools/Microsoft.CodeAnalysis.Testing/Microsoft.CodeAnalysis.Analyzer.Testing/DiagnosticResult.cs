@@ -96,19 +96,25 @@ namespace Microsoft.CodeAnalysis.Testing
         }
 
         public DiagnosticResult WithLocation(int line, int column)
-            => WithLocation(path: string.Empty, line, column);
+            => WithLocation(path: string.Empty, new LinePosition(line, column));
+
+        public DiagnosticResult WithLocation(LinePosition location)
+            => WithLocation(path: string.Empty, location);
 
         public DiagnosticResult WithLocation(string path, int line, int column)
-        {
-            var linePosition = new LinePosition(line, column);
-            return AppendSpan(new FileLinePositionSpan(path, linePosition, linePosition));
-        }
+            => WithLocation(path, new LinePosition(line, column));
+
+        public DiagnosticResult WithLocation(string path, LinePosition location)
+            => AppendSpan(new FileLinePositionSpan(path, location, location));
 
         public DiagnosticResult WithSpan(int startLine, int startColumn, int endLine, int endColumn)
             => WithSpan(path: string.Empty, startLine, startColumn, endLine, endColumn);
 
         public DiagnosticResult WithSpan(string path, int startLine, int startColumn, int endLine, int endColumn)
             => AppendSpan(new FileLinePositionSpan(path, new LinePosition(startLine, startColumn), new LinePosition(endLine, endColumn)));
+
+        public DiagnosticResult WithSpan(FileLinePositionSpan span)
+            => AppendSpan(span);
 
         public DiagnosticResult WithDefaultPath(string path)
         {
