@@ -176,7 +176,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
             (var expected, var testSources) = ProcessMarkupSources(TestSources, ExpectedDiagnostics);
             await VerifyDiagnosticsAsync(testSources, expected, cancellationToken).ConfigureAwait(false);
-            if (HasFixableDiagnostics())
+            if (HasFixableDiagnostics(expected))
             {
                 (var remainingDiagnostics, var fixedSources) = FixedSources.SequenceEqual(TestSources, SourceFileEqualityComparer.Instance)
                     ? (expected, testSources)
@@ -195,12 +195,16 @@ namespace Microsoft.CodeAnalysis.Testing
             }
         }
 
-        private bool HasFixableDiagnostics()
+        private bool HasFixableDiagnostics(DiagnosticResult[] diagnostics)
         {
+            var (_, testSources) = ProcessMarkupSources(TestSources, Enumerable.Empty<DiagnosticResult>());
+            var (_, fixedSources) = ProcessMarkupSources(FixedSources, Enumerable.Empty<DiagnosticResult>());
+            var (_, batchFixedSources) = ProcessMarkupSources(BatchFixedSources, Enumerable.Empty<DiagnosticResult>());
+
             var fixers = GetCodeFixProviders().ToArray();
             if (HasFixableDiagnosticsCore())
             {
-                if (FixedSources.Count > 0)
+                if (fixedSources.Length > 0)
                 {
                     return true;
                 }
@@ -210,11 +214,8 @@ namespace Microsoft.CodeAnalysis.Testing
                 return false;
             }
 
-            Verify.True(FixedSources.Count == 0 || (FixedSources.Count == 1 && IsNullOrEmpty(FixedSources[0].content)), $"'{nameof(FixedSources)}' not equal to '{nameof(TestSources)}'.");
-            Verify.SequenceEqual(FixedSources, TestSources, SourceFileEqualityComparer.Instance, $"'{nameof(FixedSources)}' not equal to '{nameof(TestSources)}'.");
-
-            Verify.True(BatchFixedSources.Count == 0 || (BatchFixedSources.Count == 1 && IsNullOrEmpty(BatchFixedSources[0].content)), $"'{nameof(BatchFixedSources)}' not equal to '{nameof(TestSources)}'.");
-            Verify.SequenceEqual(FixedSources, TestSources, SourceFileEqualityComparer.Instance, $"'{nameof(BatchFixedSources)}' not equal to '{nameof(TestSources)}'.");
+            VerifySourcesConsistentForNoFixableDiagnostics(testSources, fixedSources, nameof(FixedSources));
+            VerifySourcesConsistentForNoFixableDiagnostics(testSources, batchFixedSources, nameof(BatchFixedSources));
 
             Verify.Empty(nameof(RemainingDiagnostics), RemainingDiagnostics);
             Verify.Empty(nameof(BatchRemainingDiagnostics), BatchRemainingDiagnostics);
@@ -224,12 +225,17 @@ namespace Microsoft.CodeAnalysis.Testing
             // Local functions
             bool HasFixableDiagnosticsCore()
             {
-                return ExpectedDiagnostics.Any(diagnostic => fixers.Any(fixer => fixer.FixableDiagnosticIds.Contains(diagnostic.Id)));
+                return diagnostics.Any(diagnostic => fixers.Any(fixer => fixer.FixableDiagnosticIds.Contains(diagnostic.Id)));
             }
 
-            bool IsNullOrEmpty(SourceText content)
+            void VerifySourcesConsistentForNoFixableDiagnostics(IEnumerable<(string filename, SourceText content)> testSourceList, IEnumerable<(string filename, SourceText content)> fixedSourceList, string fixedSourcesPropertyName)
             {
-                return content is null || content.Length == 0;
+                if (!fixedSourceList.Any())
+                {
+                    return;
+                }
+
+                Verify.SequenceEqual(testSourceList, fixedSourceList, SourceFileEqualityComparer.Instance, $"'{fixedSourcesPropertyName}' not equal to '{nameof(TestSources)}'.");
             }
         }
 
@@ -240,9 +246,9 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected async Task VerifyFixAsync(CancellationToken cancellationToken)
         {
-            var oldSources = TestSources.ToArray();
-            var newSources = FixedSources.ToArray();
-            var batchNewSources = BatchFixedSources.Any() ? BatchFixedSources.ToArray() : newSources;
+            var (_, oldSources) = ProcessMarkupSources(TestSources, Enumerable.Empty<DiagnosticResult>());
+            var (_, newSources) = ProcessMarkupSources(FixedSources, Enumerable.Empty<DiagnosticResult>());
+            var (_, batchNewSources) = BatchFixedSources.Any() ? ProcessMarkupSources(BatchFixedSources, Enumerable.Empty<DiagnosticResult>()) : (null, newSources);
 
             int numberOfIncrementalIterations;
             int numberOfFixAllIterations;
