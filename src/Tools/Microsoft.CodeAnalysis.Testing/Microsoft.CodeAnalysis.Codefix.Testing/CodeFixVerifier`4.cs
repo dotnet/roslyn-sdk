@@ -25,11 +25,17 @@ namespace Microsoft.CodeAnalysis.Testing
         public static DiagnosticResult CompilerError(string errorIdentifier)
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.CompilerError(errorIdentifier);
 
+        public static Task VerifyAnalyzerAsync(string source, CancellationToken cancellationToken = default)
+            => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyAnalyzerAsync(source, cancellationToken);
+
         public static Task VerifyAnalyzerAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken = default)
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyAnalyzerAsync(source, expected, cancellationToken);
 
         public static Task VerifyAnalyzerAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken = default)
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyAnalyzerAsync(source, expected, cancellationToken);
+
+        public static Task VerifyCodeFixAsync(string source, string fixedSource, CancellationToken cancellationToken = default)
+            => VerifyCodeFixAsync(source, EmptyDiagnosticResults, fixedSource, cancellationToken);
 
         public static Task VerifyCodeFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken = default)
             => VerifyCodeFixAsync(source, new[] { expected }, fixedSource, cancellationToken);

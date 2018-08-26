@@ -32,6 +32,9 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public static DiagnosticResult CompilerError(string errorIdentifier) => new DiagnosticResult(errorIdentifier, DiagnosticSeverity.Error);
 
+        public static Task VerifyAnalyzerAsync(string source, CancellationToken cancellationToken = default)
+            => VerifyAnalyzerAsync(source, EmptyDiagnosticResults, cancellationToken);
+
         public static Task VerifyAnalyzerAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken = default)
             => VerifyAnalyzerAsync(source, new[] { expected }, cancellationToken);
 
