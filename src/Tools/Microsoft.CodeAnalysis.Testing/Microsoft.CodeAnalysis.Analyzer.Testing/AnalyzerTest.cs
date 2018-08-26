@@ -152,12 +152,12 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             if (!AllowMarkup)
             {
-                return (explicitDiagnostics.ToOrderedArray(), sources.ToArray());
+                return (explicitDiagnostics.Select(diagnostic => diagnostic.WithDefaultPath(DefaultFilePath)).ToOrderedArray(), sources.ToArray());
             }
 
             var analyzers = GetDiagnosticAnalyzers().ToArray();
             var sourceFiles = new List<(string filename, SourceText content)>();
-            var diagnostics = new List<DiagnosticResult>(explicitDiagnostics);
+            var diagnostics = new List<DiagnosticResult>(explicitDiagnostics.Select(diagnostic => diagnostic.WithDefaultPath(DefaultFilePath)));
             foreach ((var filename, var content) in sources)
             {
                 TestFileMarkupParser.GetSpans(content.ToString(), out var output, out IDictionary<string, IList<TextSpan>> namedSpans);

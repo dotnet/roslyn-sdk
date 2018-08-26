@@ -10,8 +10,6 @@ namespace Microsoft.CodeAnalysis.Testing
     /// </summary>
     public struct DiagnosticResult
     {
-        private const string DefaultPath = "Test0.cs";
-
         private static readonly object[] EmptyArguments = new object[0];
 
         private ImmutableArray<FileLinePositionSpan> _spans;
@@ -98,9 +96,7 @@ namespace Microsoft.CodeAnalysis.Testing
         }
 
         public DiagnosticResult WithLocation(int line, int column)
-        {
-            return WithLocation(DefaultPath, line, column);
-        }
+            => WithLocation(path: string.Empty, line, column);
 
         public DiagnosticResult WithLocation(string path, int line, int column)
         {
@@ -109,10 +105,26 @@ namespace Microsoft.CodeAnalysis.Testing
         }
 
         public DiagnosticResult WithSpan(int startLine, int startColumn, int endLine, int endColumn)
-            => WithSpan(DefaultPath, startLine, startColumn, endLine, endColumn);
+            => WithSpan(path: string.Empty, startLine, startColumn, endLine, endColumn);
 
         public DiagnosticResult WithSpan(string path, int startLine, int startColumn, int endLine, int endColumn)
             => AppendSpan(new FileLinePositionSpan(path, new LinePosition(startLine, startColumn), new LinePosition(endLine, endColumn)));
+
+        public DiagnosticResult WithDefaultPath(string path)
+        {
+            var result = this;
+            var spans = _spans.ToBuilder();
+            for (var i = 0; i < spans.Count; i++)
+            {
+                if (spans[i].Path == string.Empty)
+                {
+                    spans[i] = new FileLinePositionSpan(path, spans[i].Span);
+                }
+            }
+
+            result._spans = spans.MoveToImmutable();
+            return result;
+        }
 
         public DiagnosticResult WithLineOffset(int offset)
         {
