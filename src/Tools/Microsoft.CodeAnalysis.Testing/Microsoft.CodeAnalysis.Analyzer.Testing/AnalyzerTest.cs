@@ -385,7 +385,7 @@ namespace Microsoft.CodeAnalysis.Testing
         private static bool IsSubjectToExclusion(DiagnosticResult result)
         {
             if (result.Id.StartsWith("CS", StringComparison.Ordinal)
-                || result.Id.StartsWith("VB", StringComparison.Ordinal))
+                || result.Id.StartsWith("BC", StringComparison.Ordinal))
             {
                 // This is a compiler diagnostic
                 return false;
