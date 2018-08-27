@@ -1,8 +1,10 @@
 ﻿Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Diagnostics
 
-Module CodeFixVerifier
-    Public Function Create(Of TAnalyzer As {DiagnosticAnalyzer, New}, TCodefix As {CodeFixProvider, New})() As CodeFixVerifier(Of TAnalyzer, TCodefix)
-        Return New CodeFixVerifier(Of TAnalyzer, TCodefix)
-    End Function
-End Module
+Namespace Microsoft.CodeAnalysis.VisualBasic.Testing.xUnit
+    Module CodeFixVerifier
+        Public Function Create(Of TAnalyzer As {DiagnosticAnalyzer, New}, TCodefix As {CodeFixProvider, New})() As CodefixVerifier(Of TAnalyzer, TCodefix)
+            Return New CodefixVerifier(Of TAnalyzer, TCodefix)
+        End Function
+    End Module
+End Namespace
