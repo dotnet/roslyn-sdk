@@ -5,6 +5,7 @@
 
     <!-- This repo version -->
     <VersionPrefix>2.10.0</VersionPrefix>
+    <NugetPackagePrefix>1.0.0</NugetPackagePrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 
     <!-- Opt-in repo features -->

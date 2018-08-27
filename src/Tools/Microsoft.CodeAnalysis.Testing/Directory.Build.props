@@ -14,6 +14,11 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\..\..\RoslynSDK.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  
+  <!-- Use a different versioning scheme for nuget packages -->
+  <PropertyGroup>
+    <VersionPrefix>$(NugetPackagePrefix)</VersionPrefix>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta008" PrivateAssets="all" />
