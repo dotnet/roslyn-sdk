@@ -361,11 +361,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     }
                     else
                     {
-                        if (!location.IsInSource)
-                        {
-                            throw new Exception(
-                                $"Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n{diagnostics[i]}");
-                        }
+                        Verify.True(location.IsInSource, $"Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n{diagnostics[i]}");
 
                         var resultMethodName = diagnostics[i].Location.SourceTree.FilePath.EndsWith(".cs") ? "GetCSharpResultAt" : "GetBasicResultAt";
                         var linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
