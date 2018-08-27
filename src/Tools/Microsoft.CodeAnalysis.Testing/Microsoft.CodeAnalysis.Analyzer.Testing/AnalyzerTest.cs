@@ -598,6 +598,11 @@ namespace Microsoft.CodeAnalysis.Testing
                 .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
                 .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference);
 
+            if (language == LanguageNames.VisualBasic)
+            {
+                solution = solution.AddMetadataReference(projectId, MetadataReferences.MicrosoftVisualBasicReference);
+            }
+
             if (MetadataReferences.SystemRuntimeReference != null)
             {
                 solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemRuntimeReference);
