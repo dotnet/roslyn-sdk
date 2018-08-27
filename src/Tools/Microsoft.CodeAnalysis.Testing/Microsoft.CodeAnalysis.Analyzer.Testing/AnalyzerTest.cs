@@ -596,7 +596,8 @@ namespace Microsoft.CodeAnalysis.Testing
                 .AddMetadataReference(projectId, MetadataReferences.CorlibReference)
                 .AddMetadataReference(projectId, MetadataReferences.SystemReference)
                 .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
-                .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference);
+                .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemCollectionsImmutableReference);
 
             if (language == LanguageNames.VisualBasic)
             {
