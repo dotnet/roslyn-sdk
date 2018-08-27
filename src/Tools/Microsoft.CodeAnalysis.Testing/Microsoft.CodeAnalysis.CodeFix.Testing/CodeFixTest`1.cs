@@ -175,20 +175,27 @@ namespace Microsoft.CodeAnalysis.Testing
             Verify.NotEmpty(nameof(TestSources), TestSources);
 
             (var expected, var testSources) = ProcessMarkupSources(TestSources, ExpectedDiagnostics);
-            await VerifyDiagnosticsAsync(testSources, expected, cancellationToken).ConfigureAwait(false);
-            if (HasFixableDiagnostics(expected))
+            var (additionalExpected, additionalFiles) = ProcessMarkupSources(AdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), expected);
+            await VerifyDiagnosticsAsync(testSources, additionalFiles, additionalExpected, cancellationToken).ConfigureAwait(false);
+            if (HasFixableDiagnostics(additionalExpected))
             {
                 (var remainingDiagnostics, var fixedSources) = FixedSources.SequenceEqual(TestSources, SourceFileEqualityComparer.Instance)
                     ? (expected, testSources)
                     : ProcessMarkupSources(FixedSources, RemainingDiagnostics);
+                var (additionalRemainingDiagnostics, fixedAdditionalFiles) = FixedAdditionalFiles.Count == 0
+                    ? ProcessMarkupSources(AdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), remainingDiagnostics)
+                    : ProcessMarkupSources(FixedAdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), remainingDiagnostics);
 
-                await VerifyDiagnosticsAsync(fixedSources, remainingDiagnostics, cancellationToken).ConfigureAwait(false);
+                await VerifyDiagnosticsAsync(fixedSources, fixedAdditionalFiles, additionalRemainingDiagnostics, cancellationToken).ConfigureAwait(false);
                 if (BatchFixedSources.Any())
                 {
                     (var batchRemainingDiagnostics, var batchFixedSources) = BatchFixedSources.SequenceEqual(TestSources, SourceFileEqualityComparer.Instance)
                         ? (expected, testSources)
                         : ProcessMarkupSources(BatchFixedSources, BatchRemainingDiagnostics);
-                    await VerifyDiagnosticsAsync(batchFixedSources, batchRemainingDiagnostics, cancellationToken).ConfigureAwait(false);
+                    var (additionalBatchRemainingDiagnostics, batchFixedAdditionalFiles) = FixedAdditionalFiles.Count == 0
+                        ? ProcessMarkupSources(AdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), remainingDiagnostics)
+                        : ProcessMarkupSources(FixedAdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), remainingDiagnostics);
+                    await VerifyDiagnosticsAsync(batchFixedSources, batchFixedAdditionalFiles, additionalBatchRemainingDiagnostics, cancellationToken).ConfigureAwait(false);
                 }
 
                 await VerifyFixAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -247,7 +254,9 @@ namespace Microsoft.CodeAnalysis.Testing
         protected async Task VerifyFixAsync(CancellationToken cancellationToken)
         {
             var (_, oldSources) = ProcessMarkupSources(TestSources, Enumerable.Empty<DiagnosticResult>());
+            var (_, additionalFiles) = ProcessMarkupSources(AdditionalFiles, Enumerable.Empty<DiagnosticResult>());
             var (_, newSources) = ProcessMarkupSources(FixedSources, Enumerable.Empty<DiagnosticResult>());
+            var (_, fixedAdditionalFiles) = FixedAdditionalFiles.Any() ? ProcessMarkupSources(FixedAdditionalFiles, Enumerable.Empty<DiagnosticResult>()) : (null, additionalFiles);
             var (_, batchNewSources) = BatchFixedSources.Any() ? ProcessMarkupSources(BatchFixedSources, Enumerable.Empty<DiagnosticResult>()) : (null, newSources);
 
             int numberOfIncrementalIterations;
@@ -258,7 +267,7 @@ namespace Microsoft.CodeAnalysis.Testing
             }
             else
             {
-                if (!HasAnyChange(oldSources, newSources))
+                if (!HasAnyChange(oldSources, newSources) && !HasAnyChange(additionalFiles, fixedAdditionalFiles))
                 {
                     numberOfIncrementalIterations = 0;
                 }
@@ -274,7 +283,7 @@ namespace Microsoft.CodeAnalysis.Testing
             }
             else
             {
-                if (!HasAnyChange(oldSources, batchNewSources))
+                if (!HasAnyChange(oldSources, batchNewSources) && !HasAnyChange(additionalFiles, fixedAdditionalFiles))
                 {
                     numberOfFixAllIterations = 0;
                 }
@@ -284,7 +293,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
             }
 
-            var t1 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, newSources, numberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
+            var t1 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, additionalFiles, newSources, fixedAdditionalFiles, numberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
 
             var fixAllProvider = GetCodeFixProviders().Select(codeFixProvider => codeFixProvider.GetFixAllProvider()).Where(codeFixProvider => codeFixProvider != null).ToImmutableArray();
 
@@ -299,19 +308,19 @@ namespace Microsoft.CodeAnalysis.Testing
                     await t1;
                 }
 
-                var t2 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
+                var t2 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, additionalFiles, batchNewSources ?? newSources, fixedAdditionalFiles, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t2;
                 }
 
-                var t3 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
+                var t3 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, additionalFiles, batchNewSources ?? newSources, fixedAdditionalFiles, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t3;
                 }
 
-                var t4 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
+                var t4 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, additionalFiles, batchNewSources ?? newSources, fixedAdditionalFiles, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t4;
@@ -333,12 +342,17 @@ namespace Microsoft.CodeAnalysis.Testing
             ImmutableArray<DiagnosticAnalyzer> analyzers,
             ImmutableArray<CodeFixProvider> codeFixProviders,
             (string filename, SourceText content)[] oldSources,
+            (string filename, SourceText content)[] additionalFiles,
             (string filename, SourceText content)[] newSources,
+            (string filename, SourceText content)[] fixedAdditionalFiles,
             int numberOfIterations,
             Func<ImmutableArray<DiagnosticAnalyzer>, ImmutableArray<CodeFixProvider>, int?, Project, int, CancellationToken, Task<Project>> getFixedProject,
             CancellationToken cancellationToken)
         {
-            var project = CreateProject(oldSources, language);
+            additionalFiles = additionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())).ToArray();
+            fixedAdditionalFiles = fixedAdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())).ToArray();
+
+            var project = CreateProject(oldSources, additionalFiles, language);
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(project, cancellationToken).ConfigureAwait(false);
 
             project = await getFixedProject(analyzers, codeFixProviders, CodeFixIndex, project, numberOfIterations, cancellationToken).ConfigureAwait(false);
@@ -394,6 +408,37 @@ namespace Microsoft.CodeAnalysis.Testing
                 if (newSources[i].filename != updatedDocuments[i].Name)
                 {
                     throw new Exception($"file name was expected to be '{newSources[i].filename}' but was '{updatedDocuments[i].Name}'");
+                }
+            }
+
+            var updatedAdditionalDocuments = project.AdditionalDocuments.ToArray();
+
+            if (fixedAdditionalFiles.Length != updatedAdditionalDocuments.Length)
+            {
+                throw new Exception($"expected '{nameof(fixedAdditionalFiles)}' and '{nameof(updatedAdditionalDocuments)}' to be equal but '{nameof(fixedAdditionalFiles)}' contains '{fixedAdditionalFiles.Length}' documents and '{nameof(updatedAdditionalDocuments)}' contains '{updatedAdditionalDocuments.Length}' documents");
+            }
+
+            for (var i = 0; i < updatedAdditionalDocuments.Length; i++)
+            {
+                var actual = await updatedAdditionalDocuments[i].GetTextAsync(cancellationToken).ConfigureAwait(false);
+                if (fixedAdditionalFiles[i].content.ToString() != actual.ToString())
+                {
+                    throw new Exception($"content of '{fixedAdditionalFiles[i].filename}' was expected to be '{fixedAdditionalFiles[i].content}' but was '{actual}'");
+                }
+
+                if (fixedAdditionalFiles[i].content.Encoding != actual.Encoding)
+                {
+                    throw new Exception($"encoding of '{fixedAdditionalFiles[i].filename}' was expected to be '{fixedAdditionalFiles[i].content.Encoding}' but was '{actual.Encoding}'");
+                }
+
+                if (fixedAdditionalFiles[i].content.ChecksumAlgorithm != actual.ChecksumAlgorithm)
+                {
+                    throw new Exception($"checksum algorithm of '{fixedAdditionalFiles[i].filename}' was expected to be '{fixedAdditionalFiles[i].content.ChecksumAlgorithm}' but was '{actual.ChecksumAlgorithm}'");
+                }
+
+                if (fixedAdditionalFiles[i].filename != updatedAdditionalDocuments[i].Name)
+                {
+                    throw new Exception($"file name was expected to be '{fixedAdditionalFiles[i].filename}' but was '{updatedAdditionalDocuments[i].Name}'");
                 }
             }
         }
