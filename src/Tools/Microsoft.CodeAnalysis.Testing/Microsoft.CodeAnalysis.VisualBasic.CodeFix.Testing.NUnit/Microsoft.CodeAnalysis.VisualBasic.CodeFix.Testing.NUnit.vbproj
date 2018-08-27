@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+   <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>15.5</LangVersion>
+    <AssemblyName>Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.NUnit</AssemblyName>
+    <RootNamespace>Microsoft.CodeAnalysis.VisualBasic.Testing.NUnit</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
+    <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>Roslyn Code Fix Test Framwork For NUnit.</Description>
+    <PackageReleaseNotes>Roslyn Code Fix Test Framwork For NUnit.</PackageReleaseNotes>
+    <PackageTags>Roslyn Code Fix Test Framwork NUnit</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.CodeFix.Testing\Microsoft.CodeAnalysis.CodeFix.Testing.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.vbproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Testing.Verifiers.NUnit\Microsoft.CodeAnalysis.Testing.Verifiers.NUnit.csproj" />
+  </ItemGroup>
+
+</Project>

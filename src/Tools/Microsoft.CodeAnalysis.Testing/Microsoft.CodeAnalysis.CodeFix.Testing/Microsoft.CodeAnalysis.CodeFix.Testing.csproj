@@ -4,8 +4,8 @@
     <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>7.3</LangVersion>
-    <AssemblyName>Microsoft.CodeAnalysis.CSharp.CodeFix.Testing</AssemblyName>
-    <RootNamespace>Microsoft.CodeAnalysis.CSharp.Testing</RootNamespace>
+    <AssemblyName>Microsoft.CodeAnalysis.CodeFix.Testing</AssemblyName>
+    <RootNamespace>Microsoft.CodeAnalysis.Testing</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
@@ -14,18 +14,17 @@
 
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <Description>Roslyn Code Fix Framework C# Types.</Description>
-    <PackageReleaseNotes>Roslyn Code Fix Framework C# Types.</PackageReleaseNotes>
-    <PackageTags>Roslyn Code Fix Framework C# Types</PackageTags>
+    <Description>Roslyn Code Fix Test Framework Common Types.</Description>
+    <PackageReleaseNotes>Roslyn Code Fix Test Framework Common Types</PackageReleaseNotes>
+    <PackageTags>Roslyn Code Fix Test Framework Common</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="1.0.1" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.CodeFix.Testing\Microsoft.CodeAnalysis.CodeFix.Testing.csproj" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="1.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj" />
+  </ItemGroup>
 </Project>
