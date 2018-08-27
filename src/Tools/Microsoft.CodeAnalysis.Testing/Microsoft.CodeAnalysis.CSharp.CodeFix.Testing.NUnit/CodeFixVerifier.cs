@@ -3,15 +3,15 @@
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.CodeAnalysis.CSharp.Testing.MSTest
+namespace Microsoft.CodeAnalysis.CSharp.Testing.NUnit
 {
-    public static class CodefixVerifier
+    public static class CodeFixVerifier
     {
-        public static CodefixVerifier<TAnalyzer, TCodefix> Create<TAnalyzer, TCodefix>()
+        public static CodeFixVerifier<TAnalyzer, TCodeFix> Create<TAnalyzer, TCodeFix>()
             where TAnalyzer : DiagnosticAnalyzer, new()
-            where TCodefix : CodeFixProvider, new()
+            where TCodeFix : CodeFixProvider, new()
         {
-            return new CodefixVerifier<TAnalyzer, TCodefix>();
+            return new CodeFixVerifier<TAnalyzer, TCodeFix>();
         }
     }
 }

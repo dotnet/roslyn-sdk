@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>15.5</LangVersion>
-    <AssemblyName>Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing</AssemblyName>
+    <AssemblyName>Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing</AssemblyName>
     <RootNamespace>Microsoft.CodeAnalysis.VisualBasic.Testing</RootNamespace>
   </PropertyGroup>
 
@@ -14,9 +14,9 @@
 
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <Description>Roslyn Codefix Test Framwork For Visual Basic.</Description>
-    <PackageReleaseNotes>Roslyn Codefix Test Framwork For Visual Basic.</PackageReleaseNotes>
-    <PackageTags>Roslyn Codefix Test Framwork Visual Basic</PackageTags>
+    <Description>Roslyn Code Fix Test Framwork For Visual Basic.</Description>
+    <PackageReleaseNotes>Roslyn Code Fix Test Framwork For Visual Basic.</PackageReleaseNotes>
+    <PackageTags>Roslyn Code Fix Test Framwork Visual Basic</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.Codefix.Testing\Microsoft.CodeAnalysis.Codefix.Testing.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.CodeFix.Testing\Microsoft.CodeAnalysis.CodeFix.Testing.csproj" />
   </ItemGroup>
   
 </Project>

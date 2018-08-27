@@ -4,7 +4,7 @@
    <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>15.5</LangVersion>
-    <AssemblyName>Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.NUnit</AssemblyName>
+    <AssemblyName>Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.NUnit</AssemblyName>
     <RootNamespace>Microsoft.CodeAnalysis.VisualBasic.Testing.NUnit</RootNamespace>
   </PropertyGroup>
 
@@ -14,9 +14,9 @@
 
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <Description>Roslyn Codefix Test Framwork For NUnit.</Description>
-    <PackageReleaseNotes>Roslyn Codefix Test Framwork For NUnit.</PackageReleaseNotes>
-    <PackageTags>Roslyn Codefix Test Framwork NUnit</PackageTags>
+    <Description>Roslyn Code Fix Test Framwork For NUnit.</Description>
+    <PackageReleaseNotes>Roslyn Code Fix Test Framwork For NUnit.</PackageReleaseNotes>
+    <PackageTags>Roslyn Code Fix Test Framwork NUnit</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,8 +26,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj" />
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.Codefix.Testing\Microsoft.CodeAnalysis.Codefix.Testing.csproj" />
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.vbproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.CodeFix.Testing\Microsoft.CodeAnalysis.CodeFix.Testing.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.vbproj" />
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Testing.Verifiers.NUnit\Microsoft.CodeAnalysis.Testing.Verifiers.NUnit.csproj" />
   </ItemGroup>
 

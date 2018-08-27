@@ -4,11 +4,11 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
 
-namespace Microsoft.CodeAnalysis.CSharp.Testing.XUnit
+namespace Microsoft.CodeAnalysis.CSharp.Testing.NUnit
 {
-    public class CodefixVerifier<TAnalyzer, TCodefix> : CSharpCodeFixVerifier<TAnalyzer, TCodefix, XUnitVerifier>
+    public class CodeFixVerifier<TAnalyzer, TCodeFix> : CSharpCodeFixVerifier<TAnalyzer, TCodeFix, NUnitVerifier>
         where TAnalyzer : DiagnosticAnalyzer, new()
-        where TCodefix : CodeFixProvider, new()
+        where TCodeFix : CodeFixProvider, new()
     {
     }
 }

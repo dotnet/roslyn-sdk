@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>7.3</LangVersion>
-    <AssemblyName>Microsoft.CodeAnalysis.Codefix.Testing</AssemblyName>
+    <AssemblyName>Microsoft.CodeAnalysis.CodeFix.Testing</AssemblyName>
     <RootNamespace>Microsoft.CodeAnalysis.Testing</RootNamespace>
   </PropertyGroup>
 
@@ -14,9 +14,9 @@
 
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <Description>Roslyn Codefix Test Framework Common Types.</Description>
-    <PackageReleaseNotes>Roslyn Codefix Test Framework Common Types</PackageReleaseNotes>
-    <PackageTags>Roslyn Codefix Test Framework Common</PackageTags>
+    <Description>Roslyn Code Fix Test Framework Common Types.</Description>
+    <PackageReleaseNotes>Roslyn Code Fix Test Framework Common Types</PackageReleaseNotes>
+    <PackageTags>Roslyn Code Fix Test Framework Common</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

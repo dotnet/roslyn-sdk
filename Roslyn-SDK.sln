@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Template.Wizard", "Template
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Analyzer.Testing", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj", "{C01C63B7-2195-4A7B-B86C-B7863C9DD5FA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Codefix.Testing", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.Codefix.Testing\Microsoft.CodeAnalysis.Codefix.Testing.csproj", "{0489F3AE-F866-4D36-944F-6CCA5D8F2943}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CodeFix.Testing", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CodeFix.Testing\Microsoft.CodeAnalysis.CodeFix.Testing.csproj", "{0489F3AE-F866-4D36-944F-6CCA5D8F2943}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.Analyzer.Testing", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.csproj", "{93FA5FAC-0D19-48BF-941F-3E30695702EF}"
 EndProject
@@ -35,23 +35,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSha
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.vbproj", "{0D512A3B-2A1D-4D75-B4CB-50ECC186E3A9}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.vbproj", "{D2C4711B-FB3B-4AA4-B722-6C6D84FE9BA4}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.vbproj", "{D2C4711B-FB3B-4AA4-B722-6C6D84FE9BA4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit.csproj", "{837151EA-5A61-45BA-9B1B-CD6BA6F6B64F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Testing.Verifiers.XUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.Testing.Verifiers.XUnit\Microsoft.CodeAnalysis.Testing.Verifiers.XUnit.csproj", "{2D58971E-C90A-465D-802F-B09A57F15CE2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.Codefix.Testing.XUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.Codefix.Testing.XUnit\Microsoft.CodeAnalysis.CSharp.Codefix.Testing.XUnit.csproj", "{1E40980B-3B51-48A4-8A2B-FB4729C52E32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.XUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.XUnit\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.XUnit.csproj", "{1E40980B-3B51-48A4-8A2B-FB4729C52E32}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.XUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.XUnit\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.XUnit.vbproj", "{DBA0F06B-3835-4433-947A-E9904ED48B0A}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.XUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.XUnit\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.XUnit.vbproj", "{A66A5035-72FF-43B3-A12E-A5CDEE878ABD}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.XUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.XUnit\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.XUnit.vbproj", "{A66A5035-72FF-43B3-A12E-A5CDEE878ABD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Testing.Verifiers.MSTest", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.Testing.Verifiers.MSTest\Microsoft.CodeAnalysis.Testing.Verifiers.MSTest.csproj", "{9DD18FDC-B1FA-4293-AF22-D3018FD05438}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.MSTest", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.MSTest\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.MSTest.csproj", "{2F3F5834-5D8E-479B-A321-B0895B2988C7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.Codefix.Testing.MSTest", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.Codefix.Testing.MSTest\Microsoft.CodeAnalysis.CSharp.Codefix.Testing.MSTest.csproj", "{11A91EC2-A022-4575-9AA5-A2EDB76C33CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.MSTest", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.MSTest\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.MSTest.csproj", "{11A91EC2-A022-4575-9AA5-A2EDB76C33CA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{C8CABE1E-E5D8-41BF-934F-90F829482376}"
 EndProject
@@ -73,7 +73,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VisualBasic", "VisualBasic"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.MSTest", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.MSTest\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.MSTest.vbproj", "{9594549C-3DF8-453F-A4AA-CCAD2BA0BCE8}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.MSTest", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.MSTest\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.MSTest.vbproj", "{23272590-28BB-46A0-B9D1-4E8AA91D208C}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.MSTest", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.MSTest\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.MSTest.vbproj", "{23272590-28BB-46A0-B9D1-4E8AA91D208C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NUnit", "NUnit", "{61A3341C-57E6-4C02-BDA1-13ACE585BB4A}"
 EndProject
@@ -87,11 +87,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestFrameworks", "TestFrame
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.NUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.NUnit\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.NUnit.csproj", "{DE964D07-AD59-4940-98C8-72AD4CDB4726}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.Codefix.Testing.NUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.Codefix.Testing.NUnit\Microsoft.CodeAnalysis.CSharp.Codefix.Testing.NUnit.csproj", "{7DDF1D87-2D75-4493-A6F1-9E0E66F7C350}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.NUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.NUnit\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.NUnit.csproj", "{7DDF1D87-2D75-4493-A6F1-9E0E66F7C350}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.NUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.NUnit\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.NUnit.vbproj", "{06875E62-AA7D-485D-A654-F7AC561F794A}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.NUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.NUnit\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.NUnit.vbproj", "{A09B3448-F5D5-4254-ACDD-B4BB4F2A1BBF}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.NUnit", "src\Tools\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.NUnit\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.NUnit.vbproj", "{A09B3448-F5D5-4254-ACDD-B4BB4F2A1BBF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

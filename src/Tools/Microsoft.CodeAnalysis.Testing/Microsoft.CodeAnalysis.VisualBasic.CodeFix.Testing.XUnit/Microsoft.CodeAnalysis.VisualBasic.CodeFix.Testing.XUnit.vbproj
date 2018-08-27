@@ -4,8 +4,8 @@
     <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>15.5</LangVersion>
-    <AssemblyName>Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.MSTest</AssemblyName>
-    <RootNamespace>Microsoft.CodeAnalysis.VisualBasic.Testing.MSTest</RootNamespace>
+    <AssemblyName>Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.XUnit</AssemblyName>
+    <RootNamespace>Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
@@ -14,9 +14,9 @@
 
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <Description>Roslyn Codefix Test Framwork For MSTest.</Description>
-    <PackageReleaseNotes>Roslyn Codefix Test Framwork For MSTest.</PackageReleaseNotes>
-    <PackageTags>Roslyn Codefix Test Framwork MSTest</PackageTags>
+    <Description>Roslyn Code Fix Test Framwork For xUnit.</Description>
+    <PackageReleaseNotes>Roslyn Code Fix Test Framwork For xUnit.</PackageReleaseNotes>
+    <PackageTags>Roslyn Code Fix Test Framwork xUnit</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,9 +26,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj" />
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.Codefix.Testing\Microsoft.CodeAnalysis.Codefix.Testing.csproj" />
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.vbproj" />
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.Testing.Verifiers.MSTest\Microsoft.CodeAnalysis.Testing.Verifiers.MSTest.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.CodeFix.Testing\Microsoft.CodeAnalysis.CodeFix.Testing.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.vbproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Testing.Verifiers.XUnit\Microsoft.CodeAnalysis.Testing.Verifiers.XUnit.csproj" />
   </ItemGroup>
 
 </Project>
