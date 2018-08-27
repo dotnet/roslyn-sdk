@@ -4,8 +4,8 @@
     <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>15.5</LangVersion>
-    <AssemblyName>Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.xUnit</AssemblyName>
-    <RootNamespace>Microsoft.CodeAnalysis.VisualBasic.Testing.xUnit</RootNamespace>
+    <AssemblyName>Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.XUnit</AssemblyName>
+    <RootNamespace>Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
@@ -28,7 +28,7 @@
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj" />
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Codefix.Testing\Microsoft.CodeAnalysis.Codefix.Testing.csproj" />
     <ProjectReference Include="..\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing\Microsoft.CodeAnalysis.VisualBasic.Codefix.Testing.vbproj" />
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.Testing.Verifiers.xUnit\Microsoft.CodeAnalysis.Testing.Verifiers.xUnit.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Testing.Verifiers.XUnit\Microsoft.CodeAnalysis.Testing.Verifiers.XUnit.csproj" />
   </ItemGroup>
 
 </Project>

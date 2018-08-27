@@ -3,7 +3,7 @@
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.CodeAnalysis.CSharp.Testing.xUnit
+namespace Microsoft.CodeAnalysis.CSharp.Testing.XUnit
 {
     public static class CodefixVerifier
     {

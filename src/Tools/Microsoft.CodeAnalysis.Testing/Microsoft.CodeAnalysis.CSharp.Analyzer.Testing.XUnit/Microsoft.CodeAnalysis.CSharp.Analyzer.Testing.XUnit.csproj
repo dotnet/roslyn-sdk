@@ -4,8 +4,8 @@
     <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>7.3</LangVersion>
-    <AssemblyName>Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.xUnit</AssemblyName>
-    <RootNamespace>Microsoft.CodeAnalysis.CSharp.Testing.xUnit</RootNamespace>
+    <AssemblyName>Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit</AssemblyName>
+    <RootNamespace>Microsoft.CodeAnalysis.CSharp.Testing.XUnit</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
@@ -27,7 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj" />
     <ProjectReference Include="..\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.csproj" />
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.Testing.Verifiers.xUnit\Microsoft.CodeAnalysis.Testing.Verifiers.xUnit.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Testing.Verifiers.XUnit\Microsoft.CodeAnalysis.Testing.Verifiers.XUnit.csproj" />
   </ItemGroup>
 
 </Project>
