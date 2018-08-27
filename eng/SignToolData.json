@@ -16,7 +16,6 @@
       "certificate": "VsixSHA2",
       "strongName": null,
       "values": [
-        "VSSetup/Roslyn.SDK.VS2015.vsix",
         "VSSetup/Roslyn.SDK.VS2017.vsix",
         "VSSetup/Insertion/Roslyn.SDK.VS2017.vsix",
       ]
