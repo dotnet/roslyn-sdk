@@ -37,6 +37,18 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             }
         }
 
+        public void Fail(string message = null)
+        {
+            if (message is null)
+            {
+                Assert.Fail();
+            }
+            else
+            {
+                Assert.Fail(message);
+            }
+        }
+
         public void LanguageIsSupported(string language)
         {
             Assert.IsFalse(language != LanguageNames.CSharp && language != LanguageNames.VisualBasic, $"Unsupported Language: '{language}'");

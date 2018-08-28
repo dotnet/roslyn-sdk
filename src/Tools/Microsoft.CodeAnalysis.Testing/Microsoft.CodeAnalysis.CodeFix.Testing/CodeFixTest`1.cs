@@ -376,7 +376,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     message.Append("\r\n");
                 }
 
-                Verify.True(false, message.ToString());
+                Verify.Fail(message.ToString());
             }
 
             // After applying all of the code fixes, compare the resulting string to the inputted one

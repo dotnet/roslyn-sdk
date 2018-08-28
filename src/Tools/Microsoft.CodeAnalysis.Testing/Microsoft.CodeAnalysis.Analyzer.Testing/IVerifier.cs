@@ -12,6 +12,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
         void False(bool assert, string message = null);
 
+        void Fail(string message = null);
+
         void LanguageIsSupported(string language);
 
         void NotEmpty<T>(string collectionName, IEnumerable<T> collection);
