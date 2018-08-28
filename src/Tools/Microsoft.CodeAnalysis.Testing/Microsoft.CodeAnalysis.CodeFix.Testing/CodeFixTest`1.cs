@@ -376,70 +376,34 @@ namespace Microsoft.CodeAnalysis.Testing
                     message.Append("\r\n");
                 }
 
-                throw new Exception(message.ToString());
+                Verify.Fail(message.ToString());
             }
 
             // After applying all of the code fixes, compare the resulting string to the inputted one
             var updatedDocuments = project.Documents.ToArray();
 
-            if (newSources.Length != updatedDocuments.Length)
-            {
-                throw new Exception($"expected '{nameof(newSources)}' and '{nameof(updatedDocuments)}' to be equal but '{nameof(newSources)}' contains '{newSources.Length}' documents and '{nameof(updatedDocuments)}' contains '{updatedDocuments.Length}' documents");
-            }
+            Verify.Equal(newSources.Length, updatedDocuments.Length, $"expected '{nameof(newSources)}' and '{nameof(updatedDocuments)}' to be equal but '{nameof(newSources)}' contains '{newSources.Length}' documents and '{nameof(updatedDocuments)}' contains '{updatedDocuments.Length}' documents");
 
             for (var i = 0; i < updatedDocuments.Length; i++)
             {
                 var actual = await GetSourceTextFromDocumentAsync(updatedDocuments[i], cancellationToken).ConfigureAwait(false);
-                if (newSources[i].content.ToString() != actual.ToString())
-                {
-                    throw new Exception($"content of '{newSources[i].filename}' was expected to be '{newSources[i].content}' but was '{actual}'");
-                }
-
-                if (newSources[i].content.Encoding != actual.Encoding)
-                {
-                    throw new Exception($"encoding of '{newSources[i].filename}' was expected to be '{newSources[i].content.Encoding}' but was '{actual.Encoding}'");
-                }
-
-                if (newSources[i].content.ChecksumAlgorithm != actual.ChecksumAlgorithm)
-                {
-                    throw new Exception($"checksum algorithm of '{newSources[i].filename}' was expected to be '{newSources[i].content.ChecksumAlgorithm}' but was '{actual.ChecksumAlgorithm}'");
-                }
-
-                if (newSources[i].filename != updatedDocuments[i].Name)
-                {
-                    throw new Exception($"file name was expected to be '{newSources[i].filename}' but was '{updatedDocuments[i].Name}'");
-                }
+                Verify.Equal(newSources[i].content.ToString(), actual.ToString(), $"content of '{newSources[i].filename}' was expected to be '{newSources[i].content}' but was '{actual}'");
+                Verify.Equal(newSources[i].content.Encoding, actual.Encoding, $"encoding of '{newSources[i].filename}' was expected to be '{newSources[i].content.Encoding}' but was '{actual.Encoding}'");
+                Verify.Equal(newSources[i].content.ChecksumAlgorithm, actual.ChecksumAlgorithm, $"checksum algorithm of '{newSources[i].filename}' was expected to be '{newSources[i].content.ChecksumAlgorithm}' but was '{actual.ChecksumAlgorithm}'");
+                Verify.Equal(newSources[i].filename, updatedDocuments[i].Name, $"file name was expected to be '{newSources[i].filename}' but was '{updatedDocuments[i].Name}'");
             }
 
             var updatedAdditionalDocuments = project.AdditionalDocuments.ToArray();
 
-            if (fixedAdditionalFiles.Length != updatedAdditionalDocuments.Length)
-            {
-                throw new Exception($"expected '{nameof(fixedAdditionalFiles)}' and '{nameof(updatedAdditionalDocuments)}' to be equal but '{nameof(fixedAdditionalFiles)}' contains '{fixedAdditionalFiles.Length}' documents and '{nameof(updatedAdditionalDocuments)}' contains '{updatedAdditionalDocuments.Length}' documents");
-            }
+            Verify.Equal(fixedAdditionalFiles.Length, updatedAdditionalDocuments.Length, $"expected '{nameof(fixedAdditionalFiles)}' and '{nameof(updatedAdditionalDocuments)}' to be equal but '{nameof(fixedAdditionalFiles)}' contains '{fixedAdditionalFiles.Length}' documents and '{nameof(updatedAdditionalDocuments)}' contains '{updatedAdditionalDocuments.Length}' documents");
 
             for (var i = 0; i < updatedAdditionalDocuments.Length; i++)
             {
                 var actual = await updatedAdditionalDocuments[i].GetTextAsync(cancellationToken).ConfigureAwait(false);
-                if (fixedAdditionalFiles[i].content.ToString() != actual.ToString())
-                {
-                    throw new Exception($"content of '{fixedAdditionalFiles[i].filename}' was expected to be '{fixedAdditionalFiles[i].content}' but was '{actual}'");
-                }
-
-                if (fixedAdditionalFiles[i].content.Encoding != actual.Encoding)
-                {
-                    throw new Exception($"encoding of '{fixedAdditionalFiles[i].filename}' was expected to be '{fixedAdditionalFiles[i].content.Encoding}' but was '{actual.Encoding}'");
-                }
-
-                if (fixedAdditionalFiles[i].content.ChecksumAlgorithm != actual.ChecksumAlgorithm)
-                {
-                    throw new Exception($"checksum algorithm of '{fixedAdditionalFiles[i].filename}' was expected to be '{fixedAdditionalFiles[i].content.ChecksumAlgorithm}' but was '{actual.ChecksumAlgorithm}'");
-                }
-
-                if (fixedAdditionalFiles[i].filename != updatedAdditionalDocuments[i].Name)
-                {
-                    throw new Exception($"file name was expected to be '{fixedAdditionalFiles[i].filename}' but was '{updatedAdditionalDocuments[i].Name}'");
-                }
+                Verify.Equal(fixedAdditionalFiles[i].content.ToString(), actual.ToString(), $"content of '{fixedAdditionalFiles[i].filename}' was expected to be '{fixedAdditionalFiles[i].content}' but was '{actual}'");
+                Verify.Equal(fixedAdditionalFiles[i].content.Encoding, actual.Encoding, $"encoding of '{fixedAdditionalFiles[i].filename}' was expected to be '{fixedAdditionalFiles[i].content.Encoding}' but was '{actual.Encoding}'");
+                Verify.Equal(fixedAdditionalFiles[i].content.ChecksumAlgorithm, actual.ChecksumAlgorithm, $"checksum algorithm of '{fixedAdditionalFiles[i].filename}' was expected to be '{fixedAdditionalFiles[i].content.ChecksumAlgorithm}' but was '{actual.ChecksumAlgorithm}'");
+                Verify.Equal(fixedAdditionalFiles[i].filename, updatedAdditionalDocuments[i].Name, $"file name was expected to be '{fixedAdditionalFiles[i].filename}' but was '{updatedAdditionalDocuments[i].Name}'");
             }
         }
 
@@ -474,10 +438,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     break;
                 }
 
-                if (--numberOfIterations < -1)
-                {
-                    throw new Exception("The upper limit for the number of code fix iterations was exceeded");
-                }
+                Verify.True(--numberOfIterations >= -1, "The upper limit for the number of code fix iterations was exceeded");
 
                 previousDiagnostics = analyzerDiagnostics;
 
@@ -522,10 +483,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
             if (expectedNumberOfIterations >= 0)
             {
-                if (expectedNumberOfIterations != (expectedNumberOfIterations - numberOfIterations))
-                {
-                    throw new Exception($"Expected '{expectedNumberOfIterations}' iterations but found '{expectedNumberOfIterations - numberOfIterations}' iterations.");
-                }
+                Verify.Equal(expectedNumberOfIterations, expectedNumberOfIterations - numberOfIterations, $"Expected '{expectedNumberOfIterations}' iterations but found '{expectedNumberOfIterations - numberOfIterations}' iterations.");
             }
 
             return project;
@@ -692,10 +650,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
             if (expectedNumberOfIterations >= 0)
             {
-                if (expectedNumberOfIterations != (expectedNumberOfIterations - numberOfIterations))
-                {
-                    throw new Exception($"Expected '{expectedNumberOfIterations}' iterations but found '{expectedNumberOfIterations - numberOfIterations}' iterations.");
-                }
+                Verify.Equal(expectedNumberOfIterations, expectedNumberOfIterations - numberOfIterations, $"Expected '{expectedNumberOfIterations}' iterations but found '{expectedNumberOfIterations - numberOfIterations}' iterations.");
             }
 
             return project;

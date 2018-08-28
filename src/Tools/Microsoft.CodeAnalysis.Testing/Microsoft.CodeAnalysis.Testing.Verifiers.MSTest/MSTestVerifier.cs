@@ -25,6 +25,18 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             }
         }
 
+        public void True(bool assert, string message = null)
+        {
+            if (message is null)
+            {
+                Assert.IsTrue(assert);
+            }
+            else
+            {
+                Assert.IsTrue(assert, message);
+            }
+        }
+
         public void False(bool assert, string message = null)
         {
             if (message is null)
@@ -34,6 +46,18 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             else
             {
                 Assert.IsFalse(assert, message);
+            }
+        }
+
+        public void Fail(string message = null)
+        {
+            if (message is null)
+            {
+                Assert.Fail();
+            }
+            else
+            {
+                Assert.Fail(message);
             }
         }
 
@@ -64,18 +88,6 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             if (!areEqual)
             {
                 Assert.Fail(message);
-            }
-        }
-
-        public void True(bool assert, string message = null)
-        {
-            if (message is null)
-            {
-                Assert.IsTrue(assert);
-            }
-            else
-            {
-                Assert.IsTrue(assert, message);
             }
         }
 

@@ -10,7 +10,11 @@ namespace Microsoft.CodeAnalysis.Testing
 
         void Equal<T>(T expected, T actual, string message = null);
 
+        void True(bool assert, string message = null);
+
         void False(bool assert, string message = null);
+
+        void Fail(string message = null);
 
         void LanguageIsSupported(string language);
 
@@ -19,7 +23,5 @@ namespace Microsoft.CodeAnalysis.Testing
         void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, string message = null);
 
         void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer, string message = null);
-
-        void True(bool assert, string message = null);
     }
 }

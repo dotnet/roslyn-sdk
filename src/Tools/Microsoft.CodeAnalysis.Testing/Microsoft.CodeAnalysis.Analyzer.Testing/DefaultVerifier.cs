@@ -56,6 +56,11 @@ namespace Microsoft.CodeAnalysis.Testing
             }
         }
 
+        public void Fail(string message = null)
+        {
+            throw new InvalidOperationException(message ?? "Verification failed for an unspecified reason.");
+        }
+
         public void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, string message = null)
         {
             var comparer = new SequenceEqualEnumerableEqualityComparer<T>();
