@@ -19,22 +19,18 @@
     <MicrosoftBuildEngineVersion>15.3.409</MicrosoftBuildEngineVersion>
     <MicrosoftBuildFrameworkVersion>15.3.409</MicrosoftBuildFrameworkVersion>
     <UpdateTemplateVersionVersion>1.0.4-beta1</UpdateTemplateVersionVersion>
-    <!-- Roslyn Templates for VS 2015 -->
+    <!-- Roslyn for VS 2015 -->
+    <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2015 since the Syntax Visualizer extension still
+               supports it. -->
     <MicrosoftCodeAnalysisAnalyzersVersionVS2015>1.1.0</MicrosoftCodeAnalysisAnalyzersVersionVS2015>
     <MicrosoftCodeAnalysisCommonVersionVS2015>1.0.1</MicrosoftCodeAnalysisCommonVersionVS2015>
     <MicrosoftCodeAnalysisCSharpVersionVS2015>1.0.1</MicrosoftCodeAnalysisCSharpVersionVS2015>
-    <MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015>1.0.1</MicrosoftCodeAnalysisCSharpWorkspacesVersionVS2015>
     <MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015>1.0.1</MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015>
     <MicrosoftCodeAnalysisVisualBasicVersionVS2015>1.0.1</MicrosoftCodeAnalysisVisualBasicVersionVS2015>
-    <MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015>1.0.1</MicrosoftCodeAnalysisVisualBasicWorkspacesVersionVS2015>
     <MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015>1.0.1</MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015>
-    <NuGetCommandLineVersionVS2015>2.8.5</NuGetCommandLineVersionVS2015>
-    <SystemCollectionsImmutableVersionVS2015>1.1.36</SystemCollectionsImmutableVersionVS2015>
-    <SystemCompositionVersionVS2015>1.0.31</SystemCompositionVersionVS2015>
-    <SystemReflectionMetadataVersionVS2015>1.0.21</SystemReflectionMetadataVersionVS2015>
     <!-- VS SDK -->
     <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2015
-               we need out extensions to work on both. -->
+               we need our extensions to work on both. -->
     <VSLangProjVersion>7.0.3300</VSLangProjVersion>
     <VSSDKTemplateWizardInterfaceVersion>12.0.4</VSSDKTemplateWizardInterfaceVersion>
     <EnvDTEVersion>8.0.1</EnvDTEVersion>
