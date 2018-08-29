@@ -34,6 +34,13 @@ steps:
     mergeTestResults: true
     testRunTitle: 'Unit Tests'
   condition: succeededOrFailed()
+  
+- task: NuGetPublisher@0	
+  displayName: Publish NuGet Packages to MyGet	
+  inputs:	
+    searchPattern: 'artifacts\$(BuildConfiguration)\packages\Shipping\*.nupkg'	
+    connectedServiceName: 'RoslynSdk - NuGet feed'	
+    nuGetVersion: 4.0.0.2283
 
 - task: ms-vseng.MicroBuildTasks.4305a8de-ba66-4d8b-b2d1-0dc4ecbbf5e8.MicroBuildUploadVstsDropFolder@1
   displayName: Publish VS Insertion Artifacts 
