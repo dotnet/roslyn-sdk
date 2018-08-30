@@ -25,7 +25,7 @@ namespace Microsoft.CodeAnalysis.Testing
         public static readonly MetadataReference MicrosoftVisualBasicReference = MetadataReference.CreateFromFile(typeof(Microsoft.VisualBasic.Strings).GetTypeInfo().Assembly.Location);
 #endif
 
-#if NETSTANDARD1_5
+#if NETSTANDARD1_5 || NETSTANDARD2_0
         public static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.FullName).WithAliases(ImmutableArray.Create("global", "corlib"));
         public static readonly MetadataReference SystemReference = MetadataReference.CreateFromFile(typeof(System.Diagnostics.Debug).GetTypeInfo().Assembly.FullName).WithAliases(ImmutableArray.Create("global", "system"));
         public static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.FullName);
@@ -45,9 +45,11 @@ namespace Microsoft.CodeAnalysis.Testing
                 SystemRuntimeReference = null;
                 SystemValueTupleReference = null;
             }
-#endif
-
-#if NET452
+#elif NETSTANDARD2_0
+            // mscorlib contains ValueTuple, so no need to add a separate reference
+            SystemRuntimeReference = null;
+            SystemValueTupleReference = null;
+#elif NET452
             var systemRuntime = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "System.Runtime");
             if (systemRuntime != null)
             {
@@ -59,6 +61,8 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 SystemValueTupleReference = MetadataReference.CreateFromFile(systemValueTuple.Location);
             }
+#else
+#error Unsupported target framework.
 #endif
         }
     }
