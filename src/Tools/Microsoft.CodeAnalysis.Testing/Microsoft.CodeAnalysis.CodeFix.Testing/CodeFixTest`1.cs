@@ -20,8 +20,6 @@ namespace Microsoft.CodeAnalysis.Testing
     public abstract class CodeFixTest<TVerifier> : AnalyzerTest<TVerifier>
         where TVerifier : IVerifier, new()
     {
-        private const int DefaultNumberOfIncrementalIterations = -1000;
-
         /// <summary>
         /// Gets the list of diagnostics expected after a code fix is applied.
         /// </summary>
@@ -268,7 +266,7 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected async Task VerifyFixAsync(CancellationToken cancellationToken)
         {
-            var (_, oldSources) = ProcessMarkupSources(TestSources, Enumerable.Empty<DiagnosticResult>());
+            var (markupDiagnostics, oldSources) = ProcessMarkupSources(TestSources, Enumerable.Empty<DiagnosticResult>());
             var (_, additionalFiles) = ProcessMarkupSources(AdditionalFiles, Enumerable.Empty<DiagnosticResult>());
             var (_, newSources) = ProcessMarkupSources(FixedSources, Enumerable.Empty<DiagnosticResult>());
             var (_, fixedAdditionalFiles) = FixedAdditionalFiles.Any() ? ProcessMarkupSources(FixedAdditionalFiles, Enumerable.Empty<DiagnosticResult>()) : (null, additionalFiles);
@@ -288,7 +286,11 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
                 else
                 {
-                    numberOfIncrementalIterations = DefaultNumberOfIncrementalIterations;
+                    // Expect at most one iteration per fixable diagnostic
+                    var fixers = GetCodeFixProviders().ToArray();
+                    var fixableMarkupDiagnostics = markupDiagnostics.Count(diagnostic => fixers.Any(fixer => fixer.FixableDiagnosticIds.Contains(diagnostic.Id)));
+                    var fixableExpectedDiagnostics = ExpectedDiagnostics.Count(diagnostic => fixers.Any(fixer => fixer.FixableDiagnosticIds.Contains(diagnostic.Id)));
+                    numberOfIncrementalIterations = -(fixableMarkupDiagnostics + fixableExpectedDiagnostics);
                 }
             }
 
