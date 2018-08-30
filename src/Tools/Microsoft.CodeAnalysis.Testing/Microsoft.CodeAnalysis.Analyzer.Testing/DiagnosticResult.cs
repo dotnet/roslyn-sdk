@@ -71,6 +71,9 @@ namespace Microsoft.CodeAnalysis.Testing
         public static DiagnosticResult CompilerError(string identifier)
             => new DiagnosticResult(identifier, DiagnosticSeverity.Error);
 
+        public static DiagnosticResult CompilerWarning(string identifier)
+            => new DiagnosticResult(identifier, DiagnosticSeverity.Warning);
+
         public DiagnosticResult WithSeverity(DiagnosticSeverity severity)
         {
             var result = this;
