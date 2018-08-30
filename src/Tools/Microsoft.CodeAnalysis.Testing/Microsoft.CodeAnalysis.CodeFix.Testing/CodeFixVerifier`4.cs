@@ -13,17 +13,11 @@ namespace Microsoft.CodeAnalysis.Testing
            where TTest : CodeFixTest<TVerifier>, new()
            where TVerifier : IVerifier, new()
     {
-        public static DiagnosticResult[] EmptyDiagnosticResults
-            => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.EmptyDiagnosticResults;
-
         public static DiagnosticResult Diagnostic(string diagnosticId = null)
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.Diagnostic(diagnosticId);
 
         public static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.Diagnostic(descriptor);
-
-        public static DiagnosticResult CompilerError(string errorIdentifier)
-            => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.CompilerError(errorIdentifier);
 
         public static Task VerifyAnalyzerAsync(string source, CancellationToken cancellationToken = default)
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyAnalyzerAsync(source, cancellationToken);
@@ -35,7 +29,7 @@ namespace Microsoft.CodeAnalysis.Testing
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyAnalyzerAsync(source, expected, cancellationToken);
 
         public static Task VerifyCodeFixAsync(string source, string fixedSource, CancellationToken cancellationToken = default)
-            => VerifyCodeFixAsync(source, EmptyDiagnosticResults, fixedSource, cancellationToken);
+            => VerifyCodeFixAsync(source, DiagnosticResult.EmptyDiagnosticResults, fixedSource, cancellationToken);
 
         public static Task VerifyCodeFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken = default)
             => VerifyCodeFixAsync(source, new[] { expected }, fixedSource, cancellationToken);

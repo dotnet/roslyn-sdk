@@ -10,6 +10,8 @@ namespace Microsoft.CodeAnalysis.Testing
     /// </summary>
     public struct DiagnosticResult
     {
+        public static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
+
         private static readonly object[] EmptyArguments = new object[0];
 
         private ImmutableArray<FileLinePositionSpan> _spans;
@@ -65,6 +67,12 @@ namespace Microsoft.CodeAnalysis.Testing
         public object[] MessageArguments { get; private set; }
 
         public bool HasLocation => !Spans.IsEmpty;
+
+        public static DiagnosticResult CompilerError(string identifier)
+            => new DiagnosticResult(identifier, DiagnosticSeverity.Error);
+
+        public static DiagnosticResult CompilerWarning(string identifier)
+            => new DiagnosticResult(identifier, DiagnosticSeverity.Warning);
 
         public DiagnosticResult WithSeverity(DiagnosticSeverity severity)
         {
