@@ -10,6 +10,8 @@ namespace Microsoft.CodeAnalysis.Testing
     /// </summary>
     public struct DiagnosticResult
     {
+        public static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
+
         private static readonly object[] EmptyArguments = new object[0];
 
         private ImmutableArray<FileLinePositionSpan> _spans;
