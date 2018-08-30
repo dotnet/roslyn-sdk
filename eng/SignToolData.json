@@ -10,6 +10,35 @@
         "bin/Roslyn.SyntaxVisualizer.Extension/net461/Roslyn.SyntaxVisualizer.Extension.dll",
         "bin/Roslyn.SyntaxVisualizer.Extension/net461/*/Roslyn.SyntaxVisualizer.Extension.resources.dll",
 	      "bin/Roslyn.SyntaxVisualizer.DgmlHelper/net461/*/Roslyn.SyntaxVisualizer.DgmlHelper.resources.dll",
+        "bin/Microsoft.CodeAnalysis.Analyzer.Testing/*/Microsoft.CodeAnalysis.Analyzer.Testing.dll",
+        "bin/Microsoft.CodeAnalysis.CodeFix.Testing/*/Microsoft.CodeAnalysis.CodeFix.Testing.dll",
+        "bin/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing/*/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.dll",
+        "bin/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.MSTest/*/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.MSTest.dll",
+        "bin/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.NUnit/*/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.NUnit.dll",
+        "bin/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit/*/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit.dll",
+        "bin/Microsoft.CodeAnalysis.CSharp.CodeFix.Testing/*/Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.dll",
+        "bin/Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.MSTest/*/Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.MSTest.dll",
+        "bin/Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.NUnit/*/Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.NUnit.dll",
+        "bin/Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.XUnit/*/Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.XUnit.dll",
+        "bin/Microsoft.CodeAnalysis.Testing.Verifiers.MSTest/*/Microsoft.CodeAnalysis.Testing.Verifiers.MSTest.dll",
+        "bin/Microsoft.CodeAnalysis.Testing.Verifiers.NUnit/*/Microsoft.CodeAnalysis.Testing.Verifiers.NUnit.dll",
+        "bin/Microsoft.CodeAnalysis.Testing.Verifiers.XUnit/*/Microsoft.CodeAnalysis.Testing.Verifiers.XUnit.dll",
+        "bin/Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing/*/Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.dll",
+        "bin/Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.MSTest/*/Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.MSTest.dll",
+        "bin/Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.NUnit/*/Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.NUnit.dll",
+        "bin/Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.XUnit/*/Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.XUnit.dll",
+        "bin/Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing/*/Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.dll",
+        "bin/Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.MSTest/*/Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.MSTest.dll",
+        "bin/Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.NUnit/*/Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.NUnit.dll",
+        "bin/Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.XUnit/*/Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.XUnit.dll",
+      ]
+    },
+    {
+      "certificate": "NuGet",
+      "strongName": null,
+      "values": [
+        "packages\\Shipping\\*.nupkg",
+        "packages\\*.nupkg"
       ]
     },
     {
@@ -20,18 +49,5 @@
         "VSSetup/Insertion/Roslyn.SDK.VS2017.vsix",
       ]
     }
-  ],
-  "exclude": [ 
-    "Microsoft.CodeAnalysis.Analyzers.1.1.0.nupkg",
-    "Microsoft.CodeAnalysis.Common.1.0.1.nupkg",
-    "Microsoft.CodeAnalysis.CSharp.1.0.1.nupkg",
-    "Microsoft.CodeAnalysis.CSharp.Workspaces.1.0.1.nupkg",
-    "Microsoft.CodeAnalysis.VisualBasic.1.0.1.nupkg",
-    "Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.0.1.nupkg",
-    "Microsoft.CodeAnalysis.Workspaces.Common.1.0.1.nupkg",
-    "NuGet.CommandLine.2.8.5.nupkg",
-    "System.Collections.Immutable.1.1.36.nupkg",
-    "System.Composition.1.0.31.nupkg",
-    "System.Reflection.Metadata.1.0.21.nupkg",
   ]
 }
