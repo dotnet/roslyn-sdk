@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public object[] MessageArguments { get; private set; }
 
-        public bool HasLocation => (_spans != default) && (_spans.Length > 0);
+        public bool HasLocation => !Spans.IsEmpty;
 
         public DiagnosticResult WithSeverity(DiagnosticSeverity severity)
         {
@@ -118,8 +118,13 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public DiagnosticResult WithDefaultPath(string path)
         {
+            if (Spans.IsEmpty)
+            {
+                return this;
+            }
+
             var result = this;
-            var spans = _spans.ToBuilder();
+            var spans = Spans.ToBuilder();
             for (var i = 0; i < spans.Count; i++)
             {
                 if (spans[i].Path == string.Empty)
@@ -134,8 +139,13 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public DiagnosticResult WithLineOffset(int offset)
         {
+            if (Spans.IsEmpty)
+            {
+                return this;
+            }
+
             var result = this;
-            var spansBuilder = result._spans.ToBuilder();
+            var spansBuilder = result.Spans.ToBuilder();
             for (var i = 0; i < result.Spans.Length; i++)
             {
                 var newStartLinePosition = new LinePosition(result.Spans[i].StartLinePosition.Line + offset, result.Spans[i].StartLinePosition.Character);
