@@ -68,6 +68,9 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public bool HasLocation => (_spans != default) && (_spans.Length > 0);
 
+        public static DiagnosticResult CompilerError(string identifier)
+            => new DiagnosticResult(identifier, DiagnosticSeverity.Error);
+
         public DiagnosticResult WithSeverity(DiagnosticSeverity severity)
         {
             var result = this;

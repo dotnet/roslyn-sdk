@@ -28,8 +28,6 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor) => new DiagnosticResult(descriptor);
 
-        public static DiagnosticResult CompilerError(string errorIdentifier) => new DiagnosticResult(errorIdentifier, DiagnosticSeverity.Error);
-
         public static Task VerifyAnalyzerAsync(string source, CancellationToken cancellationToken = default)
             => VerifyAnalyzerAsync(source, DiagnosticResult.EmptyDiagnosticResults, cancellationToken);
 

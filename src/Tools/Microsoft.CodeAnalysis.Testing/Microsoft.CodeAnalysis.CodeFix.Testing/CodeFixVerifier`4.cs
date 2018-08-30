@@ -19,9 +19,6 @@ namespace Microsoft.CodeAnalysis.Testing
         public static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.Diagnostic(descriptor);
 
-        public static DiagnosticResult CompilerError(string errorIdentifier)
-            => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.CompilerError(errorIdentifier);
-
         public static Task VerifyAnalyzerAsync(string source, CancellationToken cancellationToken = default)
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyAnalyzerAsync(source, cancellationToken);
 
