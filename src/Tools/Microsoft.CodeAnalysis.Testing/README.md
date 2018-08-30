@@ -80,6 +80,22 @@ which provides the helper method `CompilerError` and `CompilerWarning`.
 using static Microsoft.CodeAnalysis.Testing.DiagnosticResult;
 ```
 
+## Best practices
+
+### Use code fix testing when possible
+
+`VerifyCodeFixAsync` automatically performs several tests related to code fix scenarios:
+
+1. Verifies that the analyzer reports an expected set of diagnostics
+2. Verifies that the code fix result does not contain fixable diagnostics
+3. Verifies that the code fix applied to one diagnostic at a time produces the expected output
+4. Verifies that Fix All operations, when supported by the code fix provider, produce the expected output
+
+With this library, separation of analyzer and code fix tests increases complexity and code duplication, and tends to
+decrease the overall confidence in the test suite. For analyzers that provide a code fix, it is preferable to only test
+with the code fix verifier for test cases where diagnostics are reported in the input source. For test cases where no
+diagnostic is reported in the input source, `VerifyAnalyzerAsync` remains appropriate.
+
 ## Examples
 
 ### Basic use cases
