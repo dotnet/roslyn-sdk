@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -548,7 +549,8 @@ namespace Microsoft.CodeAnalysis.Testing
                 solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemRuntimeReference);
             }
 
-            if (MetadataReferences.SystemValueTupleReference != null)
+            if (typeof(object).GetTypeInfo().Assembly.GetType("System.ValueTuple`2", throwOnError: false) == null
+                && MetadataReferences.SystemValueTupleReference != null)
             {
                 solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemValueTupleReference);
             }
