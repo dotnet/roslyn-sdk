@@ -58,7 +58,9 @@
     <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>
     <SystemCompositionVersion>1.1.0</SystemCompositionVersion>
     <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
-    
+
+    <!-- Analyzers -->
+    <StyleCopAnalyzersVersion>1.1.0-beta008</StyleCopAnalyzersVersion>
   </PropertyGroup>
 
   <PropertyGroup>
