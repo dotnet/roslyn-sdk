@@ -180,14 +180,14 @@ namespace Microsoft.CodeAnalysis.Testing
             var fixedState = rawFixedState.WithProcessedMarkup(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, DefaultFilePath);
             var batchFixedState = rawBatchFixedState.WithProcessedMarkup(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, DefaultFilePath);
 
-            await VerifyDiagnosticsAsync(testState.Sources.ToArray(), testState.AdditionalFiles.ToArray(), testState.ExpectedDiagnostics.ToArray(), cancellationToken).ConfigureAwait(false);
+            await VerifyDiagnosticsAsync(testState.Sources.ToArray(), testState.AdditionalFiles.ToArray(), testState.AdditionalReferences.ToArray(), testState.ExpectedDiagnostics.ToArray(), cancellationToken).ConfigureAwait(false);
 
             if (CodeFixExpected())
             {
-                await VerifyDiagnosticsAsync(fixedState.Sources.ToArray(), fixedState.AdditionalFiles.ToArray(), fixedState.ExpectedDiagnostics.ToArray(), cancellationToken).ConfigureAwait(false);
+                await VerifyDiagnosticsAsync(fixedState.Sources.ToArray(), fixedState.AdditionalFiles.ToArray(), fixedState.AdditionalReferences.ToArray(), fixedState.ExpectedDiagnostics.ToArray(), cancellationToken).ConfigureAwait(false);
                 if (CodeFixExpected(BatchFixedState))
                 {
-                    await VerifyDiagnosticsAsync(batchFixedState.Sources.ToArray(), batchFixedState.AdditionalFiles.ToArray(), batchFixedState.ExpectedDiagnostics.ToArray(), cancellationToken).ConfigureAwait(false);
+                    await VerifyDiagnosticsAsync(batchFixedState.Sources.ToArray(), batchFixedState.AdditionalFiles.ToArray(), batchFixedState.AdditionalReferences.ToArray(), batchFixedState.ExpectedDiagnostics.ToArray(), cancellationToken).ConfigureAwait(false);
                 }
 
                 await VerifyFixAsync(testState, fixedState, batchFixedState, cancellationToken).ConfigureAwait(false);
@@ -319,7 +319,7 @@ namespace Microsoft.CodeAnalysis.Testing
             Func<ImmutableArray<DiagnosticAnalyzer>, ImmutableArray<CodeFixProvider>, int?, string, Project, int, CancellationToken, Task<Project>> getFixedProject,
             CancellationToken cancellationToken)
         {
-            var project = CreateProject(oldState.Sources.ToArray(), oldState.AdditionalFiles.ToArray(), language);
+            var project = CreateProject(oldState.Sources.ToArray(), oldState.AdditionalFiles.ToArray(), oldState.AdditionalReferences.ToArray(), language);
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(project, cancellationToken).ConfigureAwait(false);
 
             project = await getFixedProject(analyzers, codeFixProviders, CodeFixIndex, CodeFixEquivalenceKey, project, numberOfIterations, cancellationToken).ConfigureAwait(false);
