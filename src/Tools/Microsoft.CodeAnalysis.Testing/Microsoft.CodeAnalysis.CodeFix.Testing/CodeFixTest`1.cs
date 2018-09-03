@@ -522,9 +522,7 @@ namespace Microsoft.CodeAnalysis.Testing
         private static async Task<Document> RecreateDocumentAsync(Document document, CancellationToken cancellationToken)
         {
             var newText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            newText = newText.WithChanges(new TextChange(new TextSpan(0, 0), " "));
-            newText = newText.WithChanges(new TextChange(new TextSpan(0, 1), string.Empty));
-            return document.WithText(newText);
+            return document.WithText(SourceText.From(newText.ToString(), newText.Encoding, newText.ChecksumAlgorithm));
         }
 
         /// <summary>
