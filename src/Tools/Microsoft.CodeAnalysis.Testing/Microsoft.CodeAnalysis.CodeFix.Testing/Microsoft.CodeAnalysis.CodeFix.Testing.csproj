@@ -1,15 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard1.5;netstandard2.0;net452</TargetFrameworks> 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>7.3</LangVersion>
     <AssemblyName>Microsoft.CodeAnalysis.CodeFix.Testing</AssemblyName>
     <RootNamespace>Microsoft.CodeAnalysis.Testing</RootNamespace>
+    <NoWarn>NU1701;CS1591</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
-    <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.5' OR '$(TargetFramework)' == 'netstandard2.0'">
+    <AssetTargetFallback>portable-net45+win8</AssetTargetFallback>
   </PropertyGroup>
 
   <PropertyGroup>
