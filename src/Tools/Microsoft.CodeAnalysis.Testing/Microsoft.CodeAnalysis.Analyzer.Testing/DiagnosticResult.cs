@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Text;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Testing
@@ -171,6 +174,50 @@ namespace Microsoft.CodeAnalysis.Testing
             var result = this;
             result._spans = Spans.Add(span);
             return result;
+        }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            if (HasLocation)
+            {
+                var location = Spans[0];
+                builder.Append(location.Path == string.Empty ? "?" : location.Path);
+                builder.Append("(");
+                builder.Append(location.StartLinePosition.Line);
+                builder.Append(",");
+                builder.Append(location.StartLinePosition.Character);
+                if (location.EndLinePosition != location.StartLinePosition)
+                {
+                    builder.Append(",");
+                    builder.Append(location.EndLinePosition.Line);
+                    builder.Append(",");
+                    builder.Append(location.EndLinePosition.Character);
+                }
+
+                builder.Append("): ");
+            }
+
+            builder.Append(Severity.ToString().ToLowerInvariant());
+            builder.Append(" ");
+            builder.Append(Id);
+
+            try
+            {
+                var message = Message;
+                if (message != null)
+                {
+                    builder.Append(": ").Append(message);
+                }
+            }
+            catch (FormatException)
+            {
+                // A message format is provided without arguments, so we print the unformatted string
+                Debug.Assert(MessageFormat != null, $"Assertion failed: {nameof(MessageFormat)} != null");
+                builder.Append(": ").Append(MessageFormat);
+            }
+
+            return builder.ToString();
         }
     }
 }

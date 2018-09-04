@@ -9,28 +9,15 @@
 
   <Import Project="Sdk.props" Sdk="RoslynTools.RepoToolset" />
 
-  <!-- We always want a good debugging experience in tests -->
-  <PropertyGroup>
-    <Optimize>false</Optimize>
-    <DebugType>embedded</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <EmbedAllSources>true</EmbedAllSources>
-  </PropertyGroup>
-
   <!-- StyleCop Analyzers configuration -->
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\..\..\RoslynSDK.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\..\RoslynSDK.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   
-  <!-- Use a different versioning scheme for nuget packages -->
-  <PropertyGroup>
-    <VersionPrefix>$(NugetPackagePrefix)</VersionPrefix>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="StyleCop.Analyzers" Version="$(StyleCopAnalyzersVersion)" PrivateAssets="all" />
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\..\..\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\..\stylecop.json" Link="stylecop.json" />
     <None Include="$(CodeAnalysisRuleSet)" Condition="'$(CodeAnalysisRuleSet)' != ''" Link="%(Filename)%(Extension)" />
   </ItemGroup>
 
