@@ -9,6 +9,29 @@
 
   <Import Project="Sdk.props" Sdk="RoslynTools.RepoToolset" />
 
+  <Choose>
+    <When Condition="'$(Language)' == 'VB'">
+      <PropertyGroup>
+        <LangVersion>15.5</LangVersion>
+      </PropertyGroup>
+    </When>
+
+    <When Condition="'$(Language)' == 'C#'">
+      <PropertyGroup>
+        <LangVersion>7.3</LangVersion>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.5' OR '$(TargetFramework)' == 'netstandard2.0'">
+    <!--
+      The original Microsoft.CodeAnalysis packages targeted the PCL instead of .NET Standard. Rather than
+      drop support for the packages, we use AssetTargetFallback to configure the NuGet restore behavior to
+      work properly.
+    -->
+    <AssetTargetFallback>portable-net45+win8</AssetTargetFallback>
+  </PropertyGroup>
+
   <PropertyGroup>
     <!--
       NU1701: Package 'name' was restored using 'moniker' instead of the project target framework 'moniker'. This package may not be fully compatible with your project.
@@ -29,16 +52,16 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\..\..\RoslynSDK.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  
-  <!-- Use a different versioning scheme for nuget packages -->
-  <PropertyGroup>
-    <VersionPrefix>$(NugetPackagePrefix)</VersionPrefix>
-  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="StyleCop.Analyzers" Version="$(StyleCopAnalyzersVersion)" PrivateAssets="all" />
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\..\..\stylecop.json" Link="stylecop.json" />
     <None Include="$(CodeAnalysisRuleSet)" Condition="'$(CodeAnalysisRuleSet)' != ''" Link="%(Filename)%(Extension)" />
   </ItemGroup>
+
+  <!-- Use a different versioning scheme for nuget packages -->
+  <PropertyGroup>
+    <VersionPrefix>$(NugetPackagePrefix)</VersionPrefix>
+  </PropertyGroup>
 
 </Project>

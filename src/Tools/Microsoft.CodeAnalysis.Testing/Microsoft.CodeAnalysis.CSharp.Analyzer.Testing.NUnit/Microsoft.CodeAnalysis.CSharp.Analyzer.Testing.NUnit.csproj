@@ -2,16 +2,10 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.5;netstandard2.0;net452</TargetFrameworks>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <LangVersion>7.3</LangVersion>
     <AssemblyName>Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.NUnit</AssemblyName>
     <RootNamespace>Microsoft.CodeAnalysis.CSharp.Testing.NUnit</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.5' OR '$(TargetFramework)' == 'netstandard2.0'">
-    <AssetTargetFallback>portable-net45+win8</AssetTargetFallback>
-  </PropertyGroup>
-  
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <Description>Roslyn Analyzer NUnit Framework C# Types.</Description>
