@@ -514,11 +514,10 @@ namespace Microsoft.CodeAnalysis.Testing
                     return null;
                 }
 
-                if (actions[codeFixIndex.Value].EquivalenceKey != codeFixEquivalenceKey)
-                {
-                    // Don't use this code fix because the equivalence key doesn't match the expected one
-                    return null;
-                }
+                Verify.Equal(
+                    codeFixEquivalenceKey,
+                    actions[codeFixIndex.Value].EquivalenceKey,
+                    "The code action equivalence key and index must be consistent when both are specified.");
 
                 return actions[codeFixIndex.Value];
             }
