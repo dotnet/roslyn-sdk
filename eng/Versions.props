@@ -59,6 +59,9 @@
     <SystemCompositionVersion>1.1.0</SystemCompositionVersion>
     <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
 
+    <!-- Testing -->
+    <MicrosoftCodeAnalysisPrimaryTestVersion>2.6.1</MicrosoftCodeAnalysisPrimaryTestVersion>
+
     <!-- Analyzers -->
     <StyleCopAnalyzersVersion>1.1.0-beta008</StyleCopAnalyzersVersion>
   </PropertyGroup>

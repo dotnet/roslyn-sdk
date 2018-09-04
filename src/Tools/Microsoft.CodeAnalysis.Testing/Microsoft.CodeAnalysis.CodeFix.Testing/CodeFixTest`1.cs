@@ -40,7 +40,22 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <summary>
         /// Gets or sets the index of the code fix to apply.
         /// </summary>
+        /// <remarks>
+        /// <para>If <see cref="CodeFixIndex"/> and <see cref="CodeFixEquivalenceKey"/> are both specified, the code fix
+        /// test with further verify that the two properties refer to the same code fix.</para>
+        /// </remarks>
+        /// <seealso cref="CodeFixEquivalenceKey"/>
         public int? CodeFixIndex { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="CodeAction.EquivalenceKey"/> of the code fix to apply.
+        /// </summary>
+        /// <remarks>
+        /// <para>If <see cref="CodeFixIndex"/> and <see cref="CodeFixEquivalenceKey"/> are both specified, the code fix
+        /// test with further verify that the two properties refer to the same code fix.</para>
+        /// </remarks>
+        /// <seealso cref="CodeFixIndex"/>
+        public string CodeFixEquivalenceKey { get; set; }
 
         /// <summary>
         /// Sets the expected output source file for code fix testing.
@@ -346,7 +361,7 @@ namespace Microsoft.CodeAnalysis.Testing
             (string filename, SourceText content)[] newSources,
             (string filename, SourceText content)[] fixedAdditionalFiles,
             int numberOfIterations,
-            Func<ImmutableArray<DiagnosticAnalyzer>, ImmutableArray<CodeFixProvider>, int?, Project, int, CancellationToken, Task<Project>> getFixedProject,
+            Func<ImmutableArray<DiagnosticAnalyzer>, ImmutableArray<CodeFixProvider>, int?, string, Project, int, CancellationToken, Task<Project>> getFixedProject,
             CancellationToken cancellationToken)
         {
             additionalFiles = additionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())).ToArray();
@@ -355,7 +370,7 @@ namespace Microsoft.CodeAnalysis.Testing
             var project = CreateProject(oldSources, additionalFiles, language);
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(project, cancellationToken).ConfigureAwait(false);
 
-            project = await getFixedProject(analyzers, codeFixProviders, CodeFixIndex, project, numberOfIterations, cancellationToken).ConfigureAwait(false);
+            project = await getFixedProject(analyzers, codeFixProviders, CodeFixIndex, CodeFixEquivalenceKey, project, numberOfIterations, cancellationToken).ConfigureAwait(false);
 
             var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(project, cancellationToken).ConfigureAwait(false));
 
@@ -412,7 +427,7 @@ namespace Microsoft.CodeAnalysis.Testing
             return !oldSources.SequenceEqual(newSources, SourceFileEqualityComparer.Instance);
         }
 
-        private async Task<Project> FixEachAnalyzerDiagnosticAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, Project project, int numberOfIterations, CancellationToken cancellationToken)
+        private async Task<Project> FixEachAnalyzerDiagnosticAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, string codeFixEquivalenceKey, Project project, int numberOfIterations, CancellationToken cancellationToken)
         {
             var codeFixProvider = codeFixProviders.Single();
 
@@ -456,11 +471,12 @@ namespace Microsoft.CodeAnalysis.Testing
                     var context = new CodeFixContext(project.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => actions.Add(a), cancellationToken);
                     await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
 
-                    if (actions.Count > 0)
+                    var actionToApply = TryGetCodeActionToApply(actions, codeFixIndex, codeFixEquivalenceKey);
+                    if (actionToApply != null)
                     {
                         anyActions = true;
 
-                        var fixedProject = await ApplyFixAsync(project, actions[codeFixIndex.GetValueOrDefault(0)], cancellationToken).ConfigureAwait(false);
+                        var fixedProject = await ApplyFixAsync(project, actionToApply, cancellationToken).ConfigureAwait(false);
                         if (fixedProject != project)
                         {
                             done = false;
@@ -487,6 +503,36 @@ namespace Microsoft.CodeAnalysis.Testing
             }
 
             return project;
+        }
+
+        private static CodeAction TryGetCodeActionToApply(List<CodeAction> actions, int? codeFixIndex, string codeFixEquivalenceKey)
+        {
+            if (codeFixIndex.HasValue && codeFixEquivalenceKey != null)
+            {
+                if (actions.Count <= codeFixIndex)
+                {
+                    return null;
+                }
+
+                Verify.Equal(
+                    codeFixEquivalenceKey,
+                    actions[codeFixIndex.Value].EquivalenceKey,
+                    "The code action equivalence key and index must be consistent when both are specified.");
+
+                return actions[codeFixIndex.Value];
+            }
+            else if (codeFixEquivalenceKey != null)
+            {
+                return actions.Find(x => x.EquivalenceKey == codeFixEquivalenceKey);
+            }
+            else if (actions.Count > (codeFixIndex ?? 0))
+            {
+                return actions[codeFixIndex ?? 0];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -543,22 +589,22 @@ namespace Microsoft.CodeAnalysis.Testing
             return solution.GetProject(project.Id);
         }
 
-        private Task<Project> FixAllAnalyzerDiagnosticsInDocumentAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, Project project, int numberOfIterations, CancellationToken cancellationToken)
+        private Task<Project> FixAllAnalyzerDiagnosticsInDocumentAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, string codeFixEquivalenceKey, Project project, int numberOfIterations, CancellationToken cancellationToken)
         {
-            return FixAllAnalyerDiagnosticsInScopeAsync(FixAllScope.Document, analyzers, codeFixProviders, codeFixIndex, project, numberOfIterations, cancellationToken);
+            return FixAllAnalyerDiagnosticsInScopeAsync(FixAllScope.Document, analyzers, codeFixProviders, codeFixIndex, codeFixEquivalenceKey, project, numberOfIterations, cancellationToken);
         }
 
-        private Task<Project> FixAllAnalyzerDiagnosticsInProjectAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, Project project, int numberOfIterations, CancellationToken cancellationToken)
+        private Task<Project> FixAllAnalyzerDiagnosticsInProjectAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, string codeFixEquivalenceKey, Project project, int numberOfIterations, CancellationToken cancellationToken)
         {
-            return FixAllAnalyerDiagnosticsInScopeAsync(FixAllScope.Project, analyzers, codeFixProviders, codeFixIndex, project, numberOfIterations, cancellationToken);
+            return FixAllAnalyerDiagnosticsInScopeAsync(FixAllScope.Project, analyzers, codeFixProviders, codeFixIndex, codeFixEquivalenceKey, project, numberOfIterations, cancellationToken);
         }
 
-        private Task<Project> FixAllAnalyzerDiagnosticsInSolutionAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, Project project, int numberOfIterations, CancellationToken cancellationToken)
+        private Task<Project> FixAllAnalyzerDiagnosticsInSolutionAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, string codeFixEquivalenceKey, Project project, int numberOfIterations, CancellationToken cancellationToken)
         {
-            return FixAllAnalyerDiagnosticsInScopeAsync(FixAllScope.Solution, analyzers, codeFixProviders, codeFixIndex, project, numberOfIterations, cancellationToken);
+            return FixAllAnalyerDiagnosticsInScopeAsync(FixAllScope.Solution, analyzers, codeFixProviders, codeFixIndex, codeFixEquivalenceKey, project, numberOfIterations, cancellationToken);
         }
 
-        private async Task<Project> FixAllAnalyerDiagnosticsInScopeAsync(FixAllScope scope, ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, Project project, int numberOfIterations, CancellationToken cancellationToken)
+        private async Task<Project> FixAllAnalyerDiagnosticsInScopeAsync(FixAllScope scope, ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, string codeFixEquivalenceKey, Project project, int numberOfIterations, CancellationToken cancellationToken)
         {
             var codeFixProvider = codeFixProviders.Single();
 
@@ -606,10 +652,11 @@ namespace Microsoft.CodeAnalysis.Testing
                     var actions = new List<CodeAction>();
                     var context = new CodeFixContext(project.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => actions.Add(a), cancellationToken);
                     await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
-                    if (actions.Count > (codeFixIndex ?? 0))
+                    var actionToApply = TryGetCodeActionToApply(actions, codeFixIndex, codeFixEquivalenceKey);
+                    if (actionToApply != null)
                     {
                         firstDiagnostic = diagnostic;
-                        equivalenceKey = actions[codeFixIndex ?? 0].EquivalenceKey;
+                        equivalenceKey = actionToApply.EquivalenceKey;
                         break;
                     }
                 }
