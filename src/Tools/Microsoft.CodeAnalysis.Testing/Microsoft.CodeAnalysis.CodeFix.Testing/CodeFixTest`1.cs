@@ -503,6 +503,10 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 Verify.Equal(expectedNumberOfIterations, expectedNumberOfIterations - numberOfIterations, $"Expected '{expectedNumberOfIterations}' iterations but found '{expectedNumberOfIterations - numberOfIterations}' iterations.");
             }
+            else
+            {
+                Verify.True(numberOfIterations >= 0, "The upper limit for the number of code fix iterations was exceeded");
+            }
 
             return project;
         }
@@ -700,6 +704,10 @@ namespace Microsoft.CodeAnalysis.Testing
             if (expectedNumberOfIterations >= 0)
             {
                 Verify.Equal(expectedNumberOfIterations, expectedNumberOfIterations - numberOfIterations, $"Expected '{expectedNumberOfIterations}' iterations but found '{expectedNumberOfIterations - numberOfIterations}' iterations.");
+            }
+            else
+            {
+                Verify.True(numberOfIterations >= 0, "The upper limit for the number of code fix iterations was exceeded");
             }
 
             return project;
