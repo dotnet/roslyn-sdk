@@ -193,8 +193,8 @@ namespace Microsoft.CodeAnalysis.Testing
                         ? (expected, testSources)
                         : ProcessMarkupSources(BatchFixedSources, BatchRemainingDiagnostics);
                     var (additionalBatchRemainingDiagnostics, batchFixedAdditionalFiles) = FixedAdditionalFiles.Count == 0
-                        ? ProcessMarkupSources(AdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), remainingDiagnostics)
-                        : ProcessMarkupSources(FixedAdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), remainingDiagnostics);
+                        ? ProcessMarkupSources(AdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), batchRemainingDiagnostics)
+                        : ProcessMarkupSources(FixedAdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), batchRemainingDiagnostics);
                     await VerifyDiagnosticsAsync(batchFixedSources, batchFixedAdditionalFiles, additionalBatchRemainingDiagnostics, cancellationToken).ConfigureAwait(false);
                 }
 
