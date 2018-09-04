@@ -1,15 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <LangVersion>15.5</LangVersion>
+    <TargetFrameworks>netstandard1.5;netstandard2.0;net452</TargetFrameworks>
     <AssemblyName>Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.XUnit</AssemblyName>
     <RootNamespace>Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit</RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
-    <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
 
   <PropertyGroup>

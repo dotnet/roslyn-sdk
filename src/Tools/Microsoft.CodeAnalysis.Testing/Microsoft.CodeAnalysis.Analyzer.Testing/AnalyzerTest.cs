@@ -688,7 +688,7 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             var exportProvider = ExportProviderFactory.Value.CreateExportProvider();
 
-#if NETSTANDARD1_5
+#if NETSTANDARD1_5 || NETSTANDARD2_0
             return new AdhocWorkspace();
 #else
             var host = MefV1HostServices.Create(exportProvider.AsExportProvider());
