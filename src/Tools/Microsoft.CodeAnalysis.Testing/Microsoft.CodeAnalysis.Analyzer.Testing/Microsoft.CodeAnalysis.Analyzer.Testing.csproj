@@ -9,7 +9,7 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.5' OR '$(TargetFramework)' == 'netstandard2.0'">
-    <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+    <AssetTargetFallback>portable-net45+win8</AssetTargetFallback>
   </PropertyGroup>
   
   <PropertyGroup>

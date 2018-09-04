@@ -9,6 +9,13 @@
 
   <Import Project="Sdk.props" Sdk="RoslynTools.RepoToolset" />
 
+  <PropertyGroup>
+    <!--
+      NU1701: Package 'name' was restored using 'moniker' instead of the project target framework 'moniker'. This package may not be fully compatible with your project.
+    -->
+    <NoWarn>$(NoWarn),NU1701</NoWarn>
+  </PropertyGroup>
+
   <!-- We always want a good debugging experience in tests -->
   <PropertyGroup>
     <Optimize>false</Optimize>
