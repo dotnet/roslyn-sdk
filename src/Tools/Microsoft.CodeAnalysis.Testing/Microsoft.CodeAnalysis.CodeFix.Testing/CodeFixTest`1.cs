@@ -25,7 +25,7 @@ namespace Microsoft.CodeAnalysis.Testing
         /// </summary>
         /// <remarks>
         /// <para>If <see cref="CodeFixIndex"/> and <see cref="CodeFixEquivalenceKey"/> are both specified, the code fix
-        /// test with further verify that the two properties refer to the same code fix.</para>
+        /// test will further verify that the two properties refer to the same code fix.</para>
         /// </remarks>
         /// <seealso cref="CodeFixEquivalenceKey"/>
         public int? CodeFixIndex { get; set; }
@@ -35,7 +35,7 @@ namespace Microsoft.CodeAnalysis.Testing
         /// </summary>
         /// <remarks>
         /// <para>If <see cref="CodeFixIndex"/> and <see cref="CodeFixEquivalenceKey"/> are both specified, the code fix
-        /// test with further verify that the two properties refer to the same code fix.</para>
+        /// test will further verify that the two properties refer to the same code fix.</para>
         /// </remarks>
         /// <seealso cref="CodeFixIndex"/>
         public string CodeFixEquivalenceKey { get; set; }
@@ -388,8 +388,6 @@ namespace Microsoft.CodeAnalysis.Testing
 
         private async Task<Project> FixEachAnalyzerDiagnosticAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, string codeFixEquivalenceKey, Project project, int numberOfIterations, CancellationToken cancellationToken)
         {
-            var codeFixProvider = codeFixProviders.Single();
-
             var expectedNumberOfIterations = numberOfIterations;
             if (numberOfIterations < 0)
             {
@@ -420,15 +418,19 @@ namespace Microsoft.CodeAnalysis.Testing
                 var anyActions = false;
                 foreach (var diagnostic in analyzerDiagnostics)
                 {
-                    if (!codeFixProvider.FixableDiagnosticIds.Contains(diagnostic.Id))
-                    {
-                        // do not pass unsupported diagnostics to a code fix provider
-                        continue;
-                    }
-
                     var actions = new List<CodeAction>();
-                    var context = new CodeFixContext(project.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => actions.Add(a), cancellationToken);
-                    await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+
+                    foreach (var codeFixProvider in codeFixProviders)
+                    {
+                        if (!codeFixProvider.FixableDiagnosticIds.Contains(diagnostic.Id))
+                        {
+                            // do not pass unsupported diagnostics to a code fix provider
+                            continue;
+                        }
+
+                        var context = new CodeFixContext(project.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => actions.Add(a), cancellationToken);
+                        await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+                    }
 
                     var actionToApply = TryGetCodeActionToApply(actions, codeFixIndex, codeFixEquivalenceKey);
                     if (actionToApply != null)
@@ -567,8 +569,6 @@ namespace Microsoft.CodeAnalysis.Testing
 
         private async Task<Project> FixAllAnalyerDiagnosticsInScopeAsync(FixAllScope scope, ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, string codeFixEquivalenceKey, Project project, int numberOfIterations, CancellationToken cancellationToken)
         {
-            var codeFixProvider = codeFixProviders.Single();
-
             var expectedNumberOfIterations = numberOfIterations;
             if (numberOfIterations < 0)
             {
@@ -576,13 +576,6 @@ namespace Microsoft.CodeAnalysis.Testing
             }
 
             var previousDiagnostics = ImmutableArray.Create<Diagnostic>();
-
-            var fixAllProvider = codeFixProvider.GetFixAllProvider();
-
-            if (fixAllProvider == null)
-            {
-                return null;
-            }
 
             bool done;
             do
@@ -601,28 +594,36 @@ namespace Microsoft.CodeAnalysis.Testing
                 Verify.False(--numberOfIterations < -1, "The upper limit for the number of fix all iterations was exceeded");
 
                 Diagnostic firstDiagnostic = null;
+                CodeFixProvider effectiveCodeFixProvider = null;
                 string equivalenceKey = null;
                 foreach (var diagnostic in analyzerDiagnostics)
                 {
-                    if (!codeFixProvider.FixableDiagnosticIds.Contains(diagnostic.Id))
+                    var actions = new List<(CodeAction, CodeFixProvider)>();
+
+                    foreach (var codeFixProvider in codeFixProviders)
                     {
-                        // do not pass unsupported diagnostics to a code fix provider
-                        continue;
+                        if (!codeFixProvider.FixableDiagnosticIds.Contains(diagnostic.Id))
+                        {
+                            // do not pass unsupported diagnostics to a code fix provider
+                            continue;
+                        }
+
+                        var context = new CodeFixContext(project.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => actions.Add((a, codeFixProvider)), cancellationToken);
+                        await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
                     }
 
-                    var actions = new List<CodeAction>();
-                    var context = new CodeFixContext(project.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => actions.Add(a), cancellationToken);
-                    await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
-                    var actionToApply = TryGetCodeActionToApply(actions, codeFixIndex, codeFixEquivalenceKey);
+                    var actionToApply = TryGetCodeActionToApply(actions.Select(a => a.Item1).ToList(), codeFixIndex, codeFixEquivalenceKey);
                     if (actionToApply != null)
                     {
                         firstDiagnostic = diagnostic;
+                        effectiveCodeFixProvider = actions.SingleOrDefault(a => a.Item1 == actionToApply).Item2;
                         equivalenceKey = actionToApply.EquivalenceKey;
                         break;
                     }
                 }
 
-                if (firstDiagnostic == null)
+                var fixAllProvider = effectiveCodeFixProvider?.GetFixAllProvider();
+                if (firstDiagnostic == null || fixAllProvider == null)
                 {
                     numberOfIterations++;
                     break;
@@ -635,10 +636,10 @@ namespace Microsoft.CodeAnalysis.Testing
                 FixAllContext.DiagnosticProvider fixAllDiagnosticProvider = TestDiagnosticProvider.Create(analyzerDiagnostics);
 
                 var analyzerDiagnosticIds = analyzers.SelectMany(x => x.SupportedDiagnostics).Select(x => x.Id);
-                var compilerDiagnosticIds = codeFixProvider.FixableDiagnosticIds.Where(x => x.StartsWith("CS", StringComparison.Ordinal));
+                var compilerDiagnosticIds = codeFixProviders.SelectMany(codeFixProvider => codeFixProvider.FixableDiagnosticIds).Where(x => x.StartsWith("CS", StringComparison.Ordinal));
                 var disabledDiagnosticIds = project.CompilationOptions.SpecificDiagnosticOptions.Where(x => x.Value == ReportDiagnostic.Suppress).Select(x => x.Key);
                 var relevantIds = analyzerDiagnosticIds.Concat(compilerDiagnosticIds).Except(disabledDiagnosticIds).Distinct();
-                var fixAllContext = new FixAllContext(project.GetDocument(firstDiagnostic.Location.SourceTree), codeFixProvider, scope, equivalenceKey, relevantIds, fixAllDiagnosticProvider, cancellationToken);
+                var fixAllContext = new FixAllContext(project.GetDocument(firstDiagnostic.Location.SourceTree), effectiveCodeFixProvider, scope, equivalenceKey, relevantIds, fixAllDiagnosticProvider, cancellationToken);
 
                 var action = await fixAllProvider.GetFixAsync(fixAllContext).ConfigureAwait(false);
                 if (action == null)
