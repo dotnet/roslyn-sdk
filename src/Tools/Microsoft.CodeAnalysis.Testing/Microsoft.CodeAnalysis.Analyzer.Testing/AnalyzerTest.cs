@@ -48,7 +48,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         protected AnalyzerTest()
         {
-            TestState = new SolutionState(DefaultFilePathPrefix, DefaultFileExt, MarkupMode.Allow);
+            TestState = new SolutionState(DefaultFilePathPrefix, DefaultFileExt, MarkupMode.Allow) { InheritanceMode = StateInheritanceMode.Explicit };
         }
 
         /// <summary>
@@ -145,14 +145,14 @@ namespace Microsoft.CodeAnalysis.Testing
             if (VerifyExclusions)
             {
                 // Also check if the analyzer honors exclusions
-                if (expected.Any(IsSubjectToExclusion))
+                if (expected.Any(x => IsSubjectToExclusion(x, sources)))
                 {
                     // Diagnostics reported by the compiler and analyzer diagnostics which don't have a location will
                     // still be reported. We also insert a new line at the beginning so we have to move all diagnostic
                     // locations which have a specific position down by one line.
                     var expectedResults = expected
-                        .Where(x => !IsSubjectToExclusion(x))
-                        .Select(x => x.WithLineOffset(1))
+                        .Where(x => !IsSubjectToExclusion(x, sources))
+                        .Select(x => IsInSourceFile(x, sources) ? x.WithLineOffset(1) : x)
                         .ToArray();
 
                     var commentPrefix = Language == LanguageNames.CSharp ? "//" : "'";
@@ -297,10 +297,13 @@ namespace Microsoft.CodeAnalysis.Testing
                     {
                         builder.AppendFormat("GetGlobalResult({0}.{1})", analyzerType.Name, diagnosticsId);
                     }
+                    else if (!location.IsInSource)
+                    {
+                        var lineSpan = diagnostics[i].Location.GetLineSpan();
+                        builder.AppendFormat($"new DiagnosticResult({analyzerType.Name}.{diagnosticsId}).WithSpan(\"{lineSpan.Path}\", {lineSpan.StartLinePosition.Line + 1}, {lineSpan.StartLinePosition.Character + 1}, {lineSpan.EndLinePosition.Line + 1}, {lineSpan.EndLinePosition.Character + 1})", analyzerType.Name, diagnosticsId);
+                    }
                     else
                     {
-                        Verify.True(location.IsInSource, $"Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n{diagnostics[i]}");
-
                         var resultMethodName = diagnostics[i].Location.SourceTree.FilePath.EndsWith(".cs") ? "GetCSharpResultAt" : "GetBasicResultAt";
                         var linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
 
@@ -325,7 +328,7 @@ namespace Microsoft.CodeAnalysis.Testing
             return builder.ToString();
         }
 
-        private static bool IsSubjectToExclusion(DiagnosticResult result)
+        private static bool IsSubjectToExclusion(DiagnosticResult result, (string filename, SourceText content)[] sources)
         {
             if (result.Id.StartsWith("CS", StringComparison.Ordinal)
                 || result.Id.StartsWith("BC", StringComparison.Ordinal))
@@ -345,7 +348,18 @@ namespace Microsoft.CodeAnalysis.Testing
                 return false;
             }
 
+            if (!IsInSourceFile(result, sources))
+            {
+                // This diagnostic is not reported in a source file
+                return false;
+            }
+
             return true;
+        }
+
+        private static bool IsInSourceFile(DiagnosticResult result, (string filename, SourceText content)[] sources)
+        {
+            return sources.Any(source => source.filename.Equals(result.Spans[0].Path));
         }
 
         /// <summary>
@@ -361,28 +375,22 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <see cref="Diagnostic.Location"/>.</returns>
         private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync((string filename, SourceText content)[] sources, (string filename, SourceText content)[] additionalFiles, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
         {
-            return GetSortedDiagnosticsFromDocumentsAsync(analyzers, GetDocuments(sources, additionalFiles), cancellationToken);
+            return GetSortedDiagnosticsAsync(GetSolution(sources, additionalFiles), analyzers, cancellationToken);
         }
 
         /// <summary>
         /// Given an analyzer and a collection of documents to apply it to, run the analyzer and gather an array of
         /// diagnostics found. The returned diagnostics are then ordered by location in the source documents.
         /// </summary>
+        /// <param name="solution">The <see cref="Solution"/> that the analyzer(s) will be run on.</param>
         /// <param name="analyzers">The analyzer to run on the documents.</param>
-        /// <param name="documents">The <see cref="Document"/>s that the analyzer will be run on.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        protected static async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsFromDocumentsAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, Document[] documents, CancellationToken cancellationToken)
+        protected static async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(Solution solution, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
         {
-            var projects = new HashSet<Project>();
-            foreach (var document in documents)
-            {
-                projects.Add(document.Project);
-            }
-
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
-            foreach (var project in projects)
+            foreach (var project in solution.Projects)
             {
                 var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
                 var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, project.AnalyzerOptions, cancellationToken);
@@ -391,25 +399,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 var diags = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
                 var allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
                 var failureDiagnostics = allDiagnostics.Where(diagnostic => diagnostic.Id == "AD0001");
-                foreach (var diag in diags.Concat(compilerErrors).Concat(failureDiagnostics))
-                {
-                    if (diag.Location == Location.None || diag.Location.IsInMetadata)
-                    {
-                        diagnostics.Add(diag);
-                    }
-                    else
-                    {
-                        for (var i = 0; i < documents.Length; i++)
-                        {
-                            var document = documents[i];
-                            var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-                            if (tree == diag.Location.SourceTree)
-                            {
-                                diagnostics.Add(diag);
-                            }
-                        }
-                    }
-                }
+                diagnostics.AddRange(diags.Concat(compilerErrors).Concat(failureDiagnostics));
             }
 
             var results = SortDistinctDiagnostics(diagnostics);
@@ -418,12 +408,12 @@ namespace Microsoft.CodeAnalysis.Testing
 
         /// <summary>
         /// Given an array of strings as sources and a language, turn them into a <see cref="Project"/> and return the
-        /// documents and spans of it.
+        /// solution.
         /// </summary>
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="additionalFiles">Additional documents to include in the project.</param>
-        /// <returns>A collection of <see cref="Document"/>s representing the sources.</returns>
-        private Document[] GetDocuments((string filename, SourceText content)[] sources, (string filename, SourceText content)[] additionalFiles)
+        /// <returns>A solution containing a project with the specified sources and additional files.</returns>
+        private Solution GetSolution((string filename, SourceText content)[] sources, (string filename, SourceText content)[] additionalFiles)
         {
             Verify.LanguageIsSupported(Language);
 
@@ -432,7 +422,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
             Verify.Equal(sources.Length, documents.Length, "Amount of sources did not match amount of Documents created");
 
-            return documents;
+            return project.Solution;
         }
 
         /// <summary>
