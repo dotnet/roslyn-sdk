@@ -48,18 +48,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
         protected AnalyzerTest()
         {
-            TestSources = new SourceFileList(DefaultFilePathPrefix, DefaultFileExt);
+            TestState = new SolutionState(DefaultFilePathPrefix, DefaultFileExt, MarkupMode.Allow);
         }
-
-        /// <summary>
-        /// Gets the set of input source files for analyzer or code fix testing. Files may be added to this list using
-        /// one of the <see cref="SourceFileList.Add(string)"/> methods.
-        /// </summary>
-        public SourceFileList TestSources { get; }
-
-        public SourceFileCollection AdditionalFiles { get; } = new SourceFileCollection();
-
-        public SourceFileCollection FixedAdditionalFiles { get; } = new SourceFileCollection();
 
         /// <summary>
         /// Gets the language name used for the test.
@@ -72,17 +62,24 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <summary>
         /// Sets the input source file for analyzer or code fix testing.
         /// </summary>
-        /// <seealso cref="TestSources"/>
+        /// <seealso cref="TestState"/>
         public string TestCode
         {
             set
             {
                 if (value != null)
                 {
-                    TestSources.Add(value);
+                    TestState.Sources.Add(value);
                 }
             }
         }
+
+        /// <summary>
+        /// Gets the list of diagnostics expected in the source(s) and/or additonal files.
+        /// </summary>
+        public List<DiagnosticResult> ExpectedDiagnostics => TestState.ExpectedDiagnostics;
+
+        public SolutionState TestState { get; }
 
         /// <summary>
         /// Gets the collection of inputs to provide to the XML documentation resolver.
@@ -92,11 +89,6 @@ namespace Microsoft.CodeAnalysis.Testing
         /// comments.</para>
         /// </remarks>
         public Dictionary<string, string> XmlReferences { get; } = new Dictionary<string, string>();
-
-        /// <summary>
-        /// Gets the list of diagnostics expected in the input source(s).
-        /// </summary>
-        public List<DiagnosticResult> ExpectedDiagnostics { get; } = new List<DiagnosticResult>();
 
         /// <summary>
         /// Gets or sets a value indicating whether exclusions for generated code should be tested automatically. The
@@ -110,27 +102,6 @@ namespace Microsoft.CodeAnalysis.Testing
         public List<string> DisabledDiagnostics { get; } = new List<string>();
 
         /// <summary>
-        /// Gets or sets a value indicating whether markup can be used to identify diagnostics within expected inputs
-        /// and outputs. The default value is <see langword="true"/>.
-        /// </summary>
-        /// <remarks>
-        /// <para>Diagnostics expressed using markup are combined with explicitly-specified expected diagnostics.</para>
-        ///
-        /// <para>Supported markup syntax includes the following:</para>
-        ///
-        /// <list type="bullet">
-        /// <item><description><c>[|text|]</c>: indicates that a diagnostic is reported for <c>text</c>. The diagnostic
-        /// descriptor is located via <see cref="GetDiagnosticAnalyzers"/>. This syntax may only be used when the first
-        /// analyzer provided by <see cref="GetDiagnosticAnalyzers"/> supports a single diagnostic.</description></item>
-        /// <item><description><c>{|ID1:text|}</c>: indicates that a diagnostic with ID <c>ID1</c> is reported for
-        /// <c>text</c>. The diagnostic descriptor for <c>ID1</c> is located via <see cref="GetDiagnosticAnalyzers"/>.
-        /// If no matching descriptor is found, the diagnostic is assumed to be a compiler-reported diagnostic with the
-        /// specified ID and severity <see cref="DiagnosticSeverity.Error"/>.</description></item>
-        /// </list>
-        /// </remarks>
-        public bool AllowMarkup { get; set; } = true;
-
-        /// <summary>
         /// Gets a collection of transformation functions to apply to <see cref="Workspace.Options"/> during diagnostic
         /// or code fix test setup.
         /// </summary>
@@ -142,50 +113,17 @@ namespace Microsoft.CodeAnalysis.Testing
         /// </summary>
         public List<Func<Solution, ProjectId, Solution>> SolutionTransforms { get; } = new List<Func<Solution, ProjectId, Solution>>();
 
-        public List<Func<IEnumerable<(string filename, SourceText content)>>> AdditionalFilesFactories { get; } = new List<Func<IEnumerable<(string filename, SourceText content)>>>();
-
         public virtual async Task RunAsync(CancellationToken cancellationToken = default)
         {
-            Verify.NotEmpty(nameof(TestSources), TestSources);
-
-            (var expected, var testSources) = ProcessMarkupSources(TestSources, ExpectedDiagnostics);
-            var (additionalExpected, additionalFiles) = ProcessMarkupSources(AdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), expected);
-            await VerifyDiagnosticsAsync(testSources, additionalFiles, additionalExpected, cancellationToken).ConfigureAwait(false);
-        }
-
-        protected (DiagnosticResult[], (string filename, SourceText content)[]) ProcessMarkupSources(
-            IEnumerable<(string filename, SourceText content)> sources,
-            IEnumerable<DiagnosticResult> explicitDiagnostics)
-        {
-            if (!AllowMarkup)
-            {
-                return (explicitDiagnostics.Select(diagnostic => diagnostic.WithDefaultPath(DefaultFilePath)).ToOrderedArray(), sources.ToArray());
-            }
+            Verify.NotEmpty($"{nameof(TestState)}.{nameof(SolutionState.Sources)}", TestState.Sources);
 
             var analyzers = GetDiagnosticAnalyzers().ToArray();
-            var sourceFiles = new List<(string filename, SourceText content)>();
-            var diagnostics = new List<DiagnosticResult>(explicitDiagnostics.Select(diagnostic => diagnostic.WithDefaultPath(DefaultFilePath)));
-            foreach ((var filename, var content) in sources)
-            {
-                TestFileMarkupParser.GetSpans(content.ToString(), out var output, out IDictionary<string, IList<TextSpan>> namedSpans);
-                sourceFiles.Add((filename, content.Replace(new TextSpan(0, content.Length), output)));
-                if (namedSpans.Count == 0)
-                {
-                    // No markup notation in this input
-                    continue;
-                }
+            var defaultDiagnostic = analyzers.Length > 0 && analyzers[0].SupportedDiagnostics.Length == 1 ? analyzers[0].SupportedDiagnostics[0] : null;
+            var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics).ToImmutableArray();
+            var fixableDiagnostics = ImmutableArray<string>.Empty;
+            var testState = TestState.ApplyInheritedState(null, fixableDiagnostics).WithProcessedMarkup(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, DefaultFilePath);
 
-                var sourceText = SourceText.From(output);
-                foreach ((var name, var spans) in namedSpans)
-                {
-                    foreach (var span in spans)
-                    {
-                        diagnostics.Add(CreateDiagnosticForSpan(analyzers, name, filename, sourceText, span));
-                    }
-                }
-            }
-
-            return (diagnostics.ToOrderedArray(), sourceFiles.ToArray());
+            await VerifyDiagnosticsAsync(testState.Sources.ToArray(), testState.AdditionalFiles.ToArray(), testState.ExpectedDiagnostics.ToArray(), cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -408,39 +346,6 @@ namespace Microsoft.CodeAnalysis.Testing
             }
 
             return true;
-        }
-
-        private DiagnosticResult CreateDiagnosticForSpan(DiagnosticAnalyzer[] analyzers, string diagnosticId, string filename, SourceText content, TextSpan span)
-        {
-            var linePositionSpan = content.Lines.GetLinePositionSpan(span);
-
-            DiagnosticResult diagnosticResult;
-            if (diagnosticId?.Length == 0)
-            {
-                diagnosticResult = new DiagnosticResult(analyzers[0].SupportedDiagnostics.Single());
-            }
-            else
-            {
-                var descriptor = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics).SingleOrDefault(d => d.Id == diagnosticId);
-                if (descriptor != null)
-                {
-                    diagnosticResult = new DiagnosticResult(descriptor);
-                }
-                else
-                {
-                    // This must be a compiler error
-                    diagnosticResult = new DiagnosticResult(diagnosticId, DiagnosticSeverity.Error);
-                }
-            }
-
-            return diagnosticResult
-                .WithMessage(null)
-                .WithSpan(
-                    filename,
-                    linePositionSpan.Start.Line + 1,
-                    linePositionSpan.Start.Character + 1,
-                    linePositionSpan.End.Line + 1,
-                    linePositionSpan.End.Character + 1);
         }
 
         /// <summary>
