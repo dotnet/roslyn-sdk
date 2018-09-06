@@ -21,21 +21,6 @@ namespace Microsoft.CodeAnalysis.Testing
         where TVerifier : IVerifier, new()
     {
         /// <summary>
-        /// Gets the list of diagnostics expected after a code fix is applied.
-        /// </summary>
-        public List<DiagnosticResult> RemainingDiagnostics { get; } = new List<DiagnosticResult>();
-
-        /// <summary>
-        /// Gets the list of diagnostics expected after a Fix All operation.
-        /// </summary>
-        /// <remarks>
-        /// <para>By default, Fix All operations are expected to produce the same result as incremental fix operations.
-        /// This collection is only used when <see cref="BatchFixedSources"/> differs from
-        /// <see cref="FixedSources"/>.</para>
-        /// </remarks>
-        public List<DiagnosticResult> BatchRemainingDiagnostics { get; } = new List<DiagnosticResult>();
-
-        /// <summary>
         /// Gets or sets the index of the code fix to apply.
         /// </summary>
         /// <remarks>
@@ -58,49 +43,36 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <summary>
         /// Sets the expected output source file for code fix testing.
         /// </summary>
-        /// <seealso cref="FixedSources"/>
+        /// <seealso cref="FixedState"/>
         public string FixedCode
         {
             set
             {
                 if (value != null)
                 {
-                    FixedSources.Add(value);
+                    FixedState.Sources.Add(value);
                 }
             }
         }
 
-        /// <summary>
-        /// Gets the set of expected output files for code fix testing. Files may be added to this list using one of the
-        /// <see cref="SourceFileList.Add(string)"/> methods.
-        /// </summary>
-        public SourceFileList FixedSources { get; }
+        public SolutionState FixedState { get; }
 
         /// <summary>
         /// Sets the expected output source file after a Fix All operation is applied.
         /// </summary>
-        /// <seealso cref="BatchFixedSources"/>
+        /// <seealso cref="BatchFixedState"/>
         public string BatchFixedCode
         {
             set
             {
                 if (value != null)
                 {
-                    BatchFixedSources.Add(value);
+                    BatchFixedState.Sources.Add(value);
                 }
             }
         }
 
-        /// <summary>
-        /// Gets the set of expected output files after a Fix All operation is applied. Files may be added to this list
-        /// using one of the <see cref="SourceFileList.Add(string)"/> methods.
-        /// </summary>
-        /// <remarks>
-        /// <para>By default, Fix All operations are expected to produce the same result as incremental fix operations.
-        /// If this collection is not specified for the test, <see cref="FixedSources"/> provides the expected test
-        /// results for both incremental and Fix All scenarios.</para>
-        /// </remarks>
-        public SourceFileList BatchFixedSources { get; }
+        public SolutionState BatchFixedState { get; }
 
         /// <summary>
         /// Gets or sets the number of code fix iterations expected during code fix testing.
@@ -187,8 +159,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
         protected CodeFixTest()
         {
-            FixedSources = new SourceFileList(DefaultFilePathPrefix, DefaultFileExt);
-            BatchFixedSources = new SourceFileList(DefaultFilePathPrefix, DefaultFileExt);
+            FixedState = new SolutionState(DefaultFilePathPrefix, DefaultFileExt, MarkupMode.IgnoreFixable) { InheritanceMode = StateInheritanceMode.AutoInherit };
+            BatchFixedState = new SolutionState(DefaultFilePathPrefix, DefaultFileExt, MarkupMode.IgnoreFixable) { InheritanceMode = StateInheritanceMode.AutoInherit };
         }
 
         /// <summary>
@@ -199,93 +171,59 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public override async Task RunAsync(CancellationToken cancellationToken = default)
         {
-            Verify.NotEmpty(nameof(TestSources), TestSources);
+            Verify.NotEmpty($"{nameof(TestState)}.{nameof(SolutionState.Sources)}", TestState.Sources);
 
-            (var expected, var testSources) = ProcessMarkupSources(TestSources, ExpectedDiagnostics);
-            var (additionalExpected, additionalFiles) = ProcessMarkupSources(AdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), expected);
-            await VerifyDiagnosticsAsync(testSources, additionalFiles, additionalExpected, cancellationToken).ConfigureAwait(false);
-            if (HasFixableDiagnostics(additionalExpected))
+            var analyzers = GetDiagnosticAnalyzers().ToArray();
+            var defaultDiagnostic = analyzers.Length > 0 && analyzers[0].SupportedDiagnostics.Length == 1 ? analyzers[0].SupportedDiagnostics[0] : null;
+            var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics).ToImmutableArray();
+            var fixableDiagnostics = GetCodeFixProviders().SelectMany(provider => provider.FixableDiagnosticIds).ToImmutableArray();
+
+            var rawTestState = TestState.WithInheritedValuesApplied(null, fixableDiagnostics);
+            var rawFixedState = FixedState.WithInheritedValuesApplied(rawTestState, fixableDiagnostics);
+            var rawBatchFixedState = BatchFixedState.WithInheritedValuesApplied(rawFixedState, fixableDiagnostics);
+
+            var testState = rawTestState.WithProcessedMarkup(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, DefaultFilePath);
+            var fixedState = rawFixedState.WithProcessedMarkup(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, DefaultFilePath);
+            var batchFixedState = rawBatchFixedState.WithProcessedMarkup(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, DefaultFilePath);
+
+            await VerifyDiagnosticsAsync(testState.Sources.ToArray(), testState.AdditionalFiles.ToArray(), testState.ExpectedDiagnostics.ToArray(), cancellationToken).ConfigureAwait(false);
+
+            if (CodeFixExpected())
             {
-                (var remainingDiagnostics, var fixedSources) = FixedSources.SequenceEqual(TestSources, SourceFileEqualityComparer.Instance)
-                    ? (expected, testSources)
-                    : ProcessMarkupSources(FixedSources, RemainingDiagnostics);
-                var (additionalRemainingDiagnostics, fixedAdditionalFiles) = FixedAdditionalFiles.Count == 0
-                    ? ProcessMarkupSources(AdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), remainingDiagnostics)
-                    : ProcessMarkupSources(FixedAdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), remainingDiagnostics);
-
-                await VerifyDiagnosticsAsync(fixedSources, fixedAdditionalFiles, additionalRemainingDiagnostics, cancellationToken).ConfigureAwait(false);
-                if (BatchFixedSources.Any())
+                await VerifyDiagnosticsAsync(fixedState.Sources.ToArray(), fixedState.AdditionalFiles.ToArray(), fixedState.ExpectedDiagnostics.ToArray(), cancellationToken).ConfigureAwait(false);
+                if (CodeFixExpected(BatchFixedState))
                 {
-                    (var batchRemainingDiagnostics, var batchFixedSources) = BatchFixedSources.SequenceEqual(TestSources, SourceFileEqualityComparer.Instance)
-                        ? (expected, testSources)
-                        : ProcessMarkupSources(BatchFixedSources, BatchRemainingDiagnostics);
-                    var (additionalBatchRemainingDiagnostics, batchFixedAdditionalFiles) = FixedAdditionalFiles.Count == 0
-                        ? ProcessMarkupSources(AdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), batchRemainingDiagnostics)
-                        : ProcessMarkupSources(FixedAdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), batchRemainingDiagnostics);
-                    await VerifyDiagnosticsAsync(batchFixedSources, batchFixedAdditionalFiles, additionalBatchRemainingDiagnostics, cancellationToken).ConfigureAwait(false);
+                    await VerifyDiagnosticsAsync(batchFixedState.Sources.ToArray(), batchFixedState.AdditionalFiles.ToArray(), batchFixedState.ExpectedDiagnostics.ToArray(), cancellationToken).ConfigureAwait(false);
                 }
 
-                await VerifyFixAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+                await VerifyFixAsync(testState, fixedState, batchFixedState, cancellationToken).ConfigureAwait(false);
             }
         }
 
-        private bool HasFixableDiagnostics(DiagnosticResult[] diagnostics)
+        private bool CodeFixExpected()
         {
-            var (_, testSources) = ProcessMarkupSources(TestSources, Enumerable.Empty<DiagnosticResult>());
-            var (_, fixedSources) = ProcessMarkupSources(FixedSources, Enumerable.Empty<DiagnosticResult>());
-            var (_, batchFixedSources) = ProcessMarkupSources(BatchFixedSources, Enumerable.Empty<DiagnosticResult>());
+            return CodeFixExpected(FixedState)
+                || CodeFixExpected(BatchFixedState);
+        }
 
-            var fixers = GetCodeFixProviders().ToArray();
-            if (HasFixableDiagnosticsCore())
-            {
-                if (fixedSources.Length > 0)
-                {
-                    return true;
-                }
-
-                Verify.Empty(nameof(RemainingDiagnostics), RemainingDiagnostics);
-                Verify.Empty(nameof(BatchRemainingDiagnostics), BatchRemainingDiagnostics);
-                return false;
-            }
-
-            VerifySourcesConsistentForNoFixableDiagnostics(testSources, fixedSources, nameof(FixedSources));
-            VerifySourcesConsistentForNoFixableDiagnostics(testSources, batchFixedSources, nameof(BatchFixedSources));
-
-            Verify.Empty(nameof(RemainingDiagnostics), RemainingDiagnostics);
-            Verify.Empty(nameof(BatchRemainingDiagnostics), BatchRemainingDiagnostics);
-
-            return false;
-
-            // Local functions
-            bool HasFixableDiagnosticsCore()
-            {
-                return diagnostics.Any(diagnostic => fixers.Any(fixer => fixer.FixableDiagnosticIds.Contains(diagnostic.Id)));
-            }
-
-            void VerifySourcesConsistentForNoFixableDiagnostics(IEnumerable<(string filename, SourceText content)> testSourceList, IEnumerable<(string filename, SourceText content)> fixedSourceList, string fixedSourcesPropertyName)
-            {
-                if (!fixedSourceList.Any())
-                {
-                    return;
-                }
-
-                Verify.SequenceEqual(testSourceList, fixedSourceList, SourceFileEqualityComparer.Instance, $"'{fixedSourcesPropertyName}' not equal to '{nameof(TestSources)}'.");
-            }
+        private static bool CodeFixExpected(SolutionState state)
+        {
+            return state.InheritanceMode != StateInheritanceMode.AutoInherit
+                || state.Sources.Any()
+                || state.AdditionalFiles.Any()
+                || state.AdditionalFilesFactories.Any();
         }
 
         /// <summary>
         /// Called to test a C# code fix when applied on the input source as a string.
         /// </summary>
+        /// <param name="testState">The effective input test state.</param>
+        /// <param name="fixedState">The effective test state after incremental code fixes are applied.</param>
+        /// <param name="batchFixedState">The effective test state after batch code fixes are applied.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected async Task VerifyFixAsync(CancellationToken cancellationToken)
+        protected async Task VerifyFixAsync(SolutionState testState, SolutionState fixedState, SolutionState batchFixedState, CancellationToken cancellationToken)
         {
-            var (markupDiagnostics, oldSources) = ProcessMarkupSources(TestSources, Enumerable.Empty<DiagnosticResult>());
-            var (_, additionalFiles) = ProcessMarkupSources(AdditionalFiles, Enumerable.Empty<DiagnosticResult>());
-            var (_, newSources) = ProcessMarkupSources(FixedSources, Enumerable.Empty<DiagnosticResult>());
-            var (_, fixedAdditionalFiles) = FixedAdditionalFiles.Any() ? ProcessMarkupSources(FixedAdditionalFiles, Enumerable.Empty<DiagnosticResult>()) : (null, additionalFiles);
-            var (_, batchNewSources) = BatchFixedSources.Any() ? ProcessMarkupSources(BatchFixedSources, Enumerable.Empty<DiagnosticResult>()) : (null, newSources);
-
             int numberOfIncrementalIterations;
             int numberOfFixAllIterations;
             int numberOfFixAllInDocumentIterations;
@@ -295,7 +233,7 @@ namespace Microsoft.CodeAnalysis.Testing
             }
             else
             {
-                if (!HasAnyChange(oldSources, newSources) && !HasAnyChange(additionalFiles, fixedAdditionalFiles))
+                if (!HasAnyChange(testState, fixedState))
                 {
                     numberOfIncrementalIterations = 0;
                 }
@@ -303,9 +241,8 @@ namespace Microsoft.CodeAnalysis.Testing
                 {
                     // Expect at most one iteration per fixable diagnostic
                     var fixers = GetCodeFixProviders().ToArray();
-                    var fixableMarkupDiagnostics = markupDiagnostics.Count(diagnostic => fixers.Any(fixer => fixer.FixableDiagnosticIds.Contains(diagnostic.Id)));
-                    var fixableExpectedDiagnostics = ExpectedDiagnostics.Count(diagnostic => fixers.Any(fixer => fixer.FixableDiagnosticIds.Contains(diagnostic.Id)));
-                    numberOfIncrementalIterations = -(fixableMarkupDiagnostics + fixableExpectedDiagnostics);
+                    var fixableExpectedDiagnostics = testState.ExpectedDiagnostics.Count(diagnostic => fixers.Any(fixer => fixer.FixableDiagnosticIds.Contains(diagnostic.Id)));
+                    numberOfIncrementalIterations = -fixableExpectedDiagnostics;
                 }
             }
 
@@ -315,7 +252,7 @@ namespace Microsoft.CodeAnalysis.Testing
             }
             else
             {
-                if (!HasAnyChange(oldSources, batchNewSources) && !HasAnyChange(additionalFiles, fixedAdditionalFiles))
+                if (!HasAnyChange(testState, batchFixedState))
                 {
                     numberOfFixAllIterations = 0;
                 }
@@ -334,7 +271,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 numberOfFixAllInDocumentIterations = numberOfFixAllIterations;
             }
 
-            var t1 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, additionalFiles, newSources, fixedAdditionalFiles, numberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
+            var t1 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), testState, fixedState, numberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
 
             var fixAllProvider = GetCodeFixProviders().Select(codeFixProvider => codeFixProvider.GetFixAllProvider()).Where(codeFixProvider => codeFixProvider != null).ToImmutableArray();
 
@@ -349,19 +286,19 @@ namespace Microsoft.CodeAnalysis.Testing
                     await t1;
                 }
 
-                var t2 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, additionalFiles, batchNewSources ?? newSources, fixedAdditionalFiles, numberOfFixAllInDocumentIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
+                var t2 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), testState, batchFixedState, numberOfFixAllInDocumentIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t2;
                 }
 
-                var t3 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, additionalFiles, batchNewSources ?? newSources, fixedAdditionalFiles, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
+                var t3 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), testState, batchFixedState, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t3;
                 }
 
-                var t4 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, additionalFiles, batchNewSources ?? newSources, fixedAdditionalFiles, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
+                var t4 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), testState, batchFixedState, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t4;
@@ -382,18 +319,13 @@ namespace Microsoft.CodeAnalysis.Testing
             string language,
             ImmutableArray<DiagnosticAnalyzer> analyzers,
             ImmutableArray<CodeFixProvider> codeFixProviders,
-            (string filename, SourceText content)[] oldSources,
-            (string filename, SourceText content)[] additionalFiles,
-            (string filename, SourceText content)[] newSources,
-            (string filename, SourceText content)[] fixedAdditionalFiles,
+            SolutionState oldState,
+            SolutionState newState,
             int numberOfIterations,
             Func<ImmutableArray<DiagnosticAnalyzer>, ImmutableArray<CodeFixProvider>, int?, string, Project, int, CancellationToken, Task<Project>> getFixedProject,
             CancellationToken cancellationToken)
         {
-            additionalFiles = additionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())).ToArray();
-            fixedAdditionalFiles = fixedAdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())).ToArray();
-
-            var project = CreateProject(oldSources, additionalFiles, language);
+            var project = CreateProject(oldState.Sources.ToArray(), oldState.AdditionalFiles.ToArray(), language);
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(project, cancellationToken).ConfigureAwait(false);
 
             project = await getFixedProject(analyzers, codeFixProviders, CodeFixIndex, CodeFixEquivalenceKey, project, numberOfIterations, cancellationToken).ConfigureAwait(false);
@@ -423,34 +355,35 @@ namespace Microsoft.CodeAnalysis.Testing
             // After applying all of the code fixes, compare the resulting string to the inputted one
             var updatedDocuments = project.Documents.ToArray();
 
-            Verify.Equal(newSources.Length, updatedDocuments.Length, $"expected '{nameof(newSources)}' and '{nameof(updatedDocuments)}' to be equal but '{nameof(newSources)}' contains '{newSources.Length}' documents and '{nameof(updatedDocuments)}' contains '{updatedDocuments.Length}' documents");
+            Verify.Equal(newState.Sources.Count, updatedDocuments.Length, $"expected '{nameof(newState)}.{nameof(SolutionState.Sources)}' and '{nameof(updatedDocuments)}' to be equal but '{nameof(newState)}.{nameof(SolutionState.Sources)}' contains '{newState.Sources.Count}' documents and '{nameof(updatedDocuments)}' contains '{updatedDocuments.Length}' documents");
 
             for (var i = 0; i < updatedDocuments.Length; i++)
             {
                 var actual = await GetSourceTextFromDocumentAsync(updatedDocuments[i], cancellationToken).ConfigureAwait(false);
-                Verify.Equal(newSources[i].content.ToString(), actual.ToString(), $"content of '{newSources[i].filename}' was expected to be '{newSources[i].content}' but was '{actual}'");
-                Verify.Equal(newSources[i].content.Encoding, actual.Encoding, $"encoding of '{newSources[i].filename}' was expected to be '{newSources[i].content.Encoding}' but was '{actual.Encoding}'");
-                Verify.Equal(newSources[i].content.ChecksumAlgorithm, actual.ChecksumAlgorithm, $"checksum algorithm of '{newSources[i].filename}' was expected to be '{newSources[i].content.ChecksumAlgorithm}' but was '{actual.ChecksumAlgorithm}'");
-                Verify.Equal(newSources[i].filename, updatedDocuments[i].Name, $"file name was expected to be '{newSources[i].filename}' but was '{updatedDocuments[i].Name}'");
+                Verify.Equal(newState.Sources[i].content.ToString(), actual.ToString(), $"content of '{newState.Sources[i].filename}' was expected to be '{newState.Sources[i].content}' but was '{actual}'");
+                Verify.Equal(newState.Sources[i].content.Encoding, actual.Encoding, $"encoding of '{newState.Sources[i].filename}' was expected to be '{newState.Sources[i].content.Encoding}' but was '{actual.Encoding}'");
+                Verify.Equal(newState.Sources[i].content.ChecksumAlgorithm, actual.ChecksumAlgorithm, $"checksum algorithm of '{newState.Sources[i].filename}' was expected to be '{newState.Sources[i].content.ChecksumAlgorithm}' but was '{actual.ChecksumAlgorithm}'");
+                Verify.Equal(newState.Sources[i].filename, updatedDocuments[i].Name, $"file name was expected to be '{newState.Sources[i].filename}' but was '{updatedDocuments[i].Name}'");
             }
 
             var updatedAdditionalDocuments = project.AdditionalDocuments.ToArray();
 
-            Verify.Equal(fixedAdditionalFiles.Length, updatedAdditionalDocuments.Length, $"expected '{nameof(fixedAdditionalFiles)}' and '{nameof(updatedAdditionalDocuments)}' to be equal but '{nameof(fixedAdditionalFiles)}' contains '{fixedAdditionalFiles.Length}' documents and '{nameof(updatedAdditionalDocuments)}' contains '{updatedAdditionalDocuments.Length}' documents");
+            Verify.Equal(newState.AdditionalFiles.Count, updatedAdditionalDocuments.Length, $"expected '{nameof(newState)}.{nameof(SolutionState.AdditionalFiles)}' and '{nameof(updatedAdditionalDocuments)}' to be equal but '{nameof(newState)}.{nameof(SolutionState.AdditionalFiles)}' contains '{newState.AdditionalFiles.Count}' documents and '{nameof(updatedAdditionalDocuments)}' contains '{updatedAdditionalDocuments.Length}' documents");
 
             for (var i = 0; i < updatedAdditionalDocuments.Length; i++)
             {
                 var actual = await updatedAdditionalDocuments[i].GetTextAsync(cancellationToken).ConfigureAwait(false);
-                Verify.Equal(fixedAdditionalFiles[i].content.ToString(), actual.ToString(), $"content of '{fixedAdditionalFiles[i].filename}' was expected to be '{fixedAdditionalFiles[i].content}' but was '{actual}'");
-                Verify.Equal(fixedAdditionalFiles[i].content.Encoding, actual.Encoding, $"encoding of '{fixedAdditionalFiles[i].filename}' was expected to be '{fixedAdditionalFiles[i].content.Encoding}' but was '{actual.Encoding}'");
-                Verify.Equal(fixedAdditionalFiles[i].content.ChecksumAlgorithm, actual.ChecksumAlgorithm, $"checksum algorithm of '{fixedAdditionalFiles[i].filename}' was expected to be '{fixedAdditionalFiles[i].content.ChecksumAlgorithm}' but was '{actual.ChecksumAlgorithm}'");
-                Verify.Equal(fixedAdditionalFiles[i].filename, updatedAdditionalDocuments[i].Name, $"file name was expected to be '{fixedAdditionalFiles[i].filename}' but was '{updatedAdditionalDocuments[i].Name}'");
+                Verify.Equal(newState.AdditionalFiles[i].content.ToString(), actual.ToString(), $"content of '{newState.AdditionalFiles[i].filename}' was expected to be '{newState.AdditionalFiles[i].content}' but was '{actual}'");
+                Verify.Equal(newState.AdditionalFiles[i].content.Encoding, actual.Encoding, $"encoding of '{newState.AdditionalFiles[i].filename}' was expected to be '{newState.AdditionalFiles[i].content.Encoding}' but was '{actual.Encoding}'");
+                Verify.Equal(newState.AdditionalFiles[i].content.ChecksumAlgorithm, actual.ChecksumAlgorithm, $"checksum algorithm of '{newState.AdditionalFiles[i].filename}' was expected to be '{newState.AdditionalFiles[i].content.ChecksumAlgorithm}' but was '{actual.ChecksumAlgorithm}'");
+                Verify.Equal(newState.AdditionalFiles[i].filename, updatedAdditionalDocuments[i].Name, $"file name was expected to be '{newState.AdditionalFiles[i].filename}' but was '{updatedAdditionalDocuments[i].Name}'");
             }
         }
 
-        private static bool HasAnyChange((string filename, SourceText content)[] oldSources, (string filename, SourceText content)[] newSources)
+        private static bool HasAnyChange(SolutionState oldState, SolutionState newState)
         {
-            return !oldSources.SequenceEqual(newSources, SourceFileEqualityComparer.Instance);
+            return !oldState.Sources.SequenceEqual(newState.Sources, SourceFileEqualityComparer.Instance)
+                || !oldState.AdditionalFiles.SequenceEqual(newState.AdditionalFiles, SourceFileEqualityComparer.Instance);
         }
 
         private async Task<Project> FixEachAnalyzerDiagnosticAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, string codeFixEquivalenceKey, Project project, int numberOfIterations, CancellationToken cancellationToken)
@@ -468,7 +401,7 @@ namespace Microsoft.CodeAnalysis.Testing
             bool done;
             do
             {
-                var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, project.Documents.ToArray(), cancellationToken).ConfigureAwait(false);
+                var analyzerDiagnostics = await GetSortedDiagnosticsAsync(project.Solution, analyzers, cancellationToken).ConfigureAwait(false);
                 if (analyzerDiagnostics.Length == 0)
                 {
                     break;
@@ -654,7 +587,7 @@ namespace Microsoft.CodeAnalysis.Testing
             bool done;
             do
             {
-                var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, project.Documents.ToArray(), cancellationToken).ConfigureAwait(false);
+                var analyzerDiagnostics = await GetSortedDiagnosticsAsync(project.Solution, analyzers, cancellationToken).ConfigureAwait(false);
                 if (analyzerDiagnostics.Length == 0)
                 {
                     break;

@@ -2,8 +2,7 @@ Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.AllowNewCompilerDiagnostics.get -> bool
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.AllowNewCompilerDiagnostics.set -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.BatchFixedCode.set -> void
-Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.BatchFixedSources.get -> Microsoft.CodeAnalysis.Testing.SourceFileList
-Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.BatchRemainingDiagnostics.get -> System.Collections.Generic.List<Microsoft.CodeAnalysis.Testing.DiagnosticResult>
+Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.BatchFixedState.get -> Microsoft.CodeAnalysis.Testing.SolutionState
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.CodeFixEquivalenceKey.get -> string
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.CodeFixEquivalenceKey.set -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.CodeFixIndex.get -> int?
@@ -12,15 +11,14 @@ Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.CodeFixTest() -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.CodeFixValidationMode.get -> Microsoft.CodeAnalysis.Testing.CodeFixValidationMode
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.CodeFixValidationMode.set -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.FixedCode.set -> void
-Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.FixedSources.get -> Microsoft.CodeAnalysis.Testing.SourceFileList
+Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.FixedState.get -> Microsoft.CodeAnalysis.Testing.SolutionState
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfFixAllInDocumentIterations.get -> int?
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfFixAllInDocumentIterations.set -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfFixAllIterations.get -> int?
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfFixAllIterations.set -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfIncrementalIterations.get -> int?
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfIncrementalIterations.set -> void
-Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.RemainingDiagnostics.get -> System.Collections.Generic.List<Microsoft.CodeAnalysis.Testing.DiagnosticResult>
-Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.VerifyFixAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.VerifyFixAsync(Microsoft.CodeAnalysis.Testing.SolutionState testState, Microsoft.CodeAnalysis.Testing.SolutionState fixedState, Microsoft.CodeAnalysis.Testing.SolutionState batchFixedState, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
 Microsoft.CodeAnalysis.Testing.CodeFixValidationMode
 Microsoft.CodeAnalysis.Testing.CodeFixValidationMode.Full = 2 -> Microsoft.CodeAnalysis.Testing.CodeFixValidationMode
 Microsoft.CodeAnalysis.Testing.CodeFixValidationMode.None = 0 -> Microsoft.CodeAnalysis.Testing.CodeFixValidationMode
