@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.Testing
             _defaultExtension = defaultExtension;
 
             Sources = new SourceFileList(defaultPrefix, defaultExtension);
-            AllowMarkup = markupMode;
+            MarkupHandling = markupMode;
         }
 
         public StateInheritanceMode InheritanceMode { get; set; } = StateInheritanceMode.AutoInherit;
@@ -42,9 +42,9 @@ namespace Microsoft.CodeAnalysis.Testing
         public List<DiagnosticResult> ExpectedDiagnostics { get; } = new List<DiagnosticResult>();
 
         /// <summary>
-        /// Gets or sets a value indicating whether markup can be used to identify diagnostics within expected inputs
-        /// and outputs. The default value is <see cref="MarkupMode.Allow"/> for original sources or
-        /// <see cref="MarkupMode.IgnoreFixable"/> for fixed sources.
+        /// Gets or sets a value indicating the manner in which markup syntax is treated within test inputs and outputs.
+        /// The default value is <see cref="MarkupMode.Allow"/> for original (input) sources or
+        /// <see cref="MarkupMode.IgnoreFixable"/> for fixed (output) sources.
         /// </summary>
         /// <remarks>
         /// <para>Diagnostics expressed using markup are combined with explicitly-specified expected diagnostics.</para>
@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <see cref="DiagnosticSeverity.Error"/>.</description></item>
         /// </list>
         /// </remarks>
-        public MarkupMode AllowMarkup { get; set; }
+        public MarkupMode MarkupHandling { get; set; }
 
         /// <summary>
         /// Applies the <see cref="InheritanceMode"/> using a specified base state.
@@ -79,7 +79,7 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <returns>A new <see cref="SolutionState"/> representing the current state with inherited values applied
         /// where appropriate. The <see cref="InheritanceMode"/> of the result is
         /// <see cref="StateInheritanceMode.Explicit"/>.</returns>
-        public SolutionState ApplyInheritedState(SolutionState baseState, ImmutableArray<string> fixableDiagnostics)
+        public SolutionState WithInheritedValuesApplied(SolutionState baseState, ImmutableArray<string> fixableDiagnostics)
         {
             Debug.Assert(
                 InheritanceMode == StateInheritanceMode.AutoInherit || InheritanceMode == StateInheritanceMode.Explicit,
@@ -90,7 +90,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 throw new InvalidOperationException("The base state should already have its inheritance state evaluated prior to its use as a base state.");
             }
 
-            var result = new SolutionState(_defaultPrefix, _defaultExtension, AllowMarkup);
+            var result = new SolutionState(_defaultPrefix, _defaultExtension, MarkupHandling);
             if (InheritanceMode == StateInheritanceMode.AutoInherit && baseState != null)
             {
                 if (Sources.Count == 0)
@@ -119,17 +119,17 @@ namespace Microsoft.CodeAnalysis.Testing
 
         /// <summary>
         /// Processes the markup syntax for this <see cref="SolutionState"/> according to the current
-        /// <see cref="AllowMarkup"/>, and returns a new <see cref="SolutionState"/> with the <see cref="Sources"/>,
+        /// <see cref="MarkupHandling"/>, and returns a new <see cref="SolutionState"/> with the <see cref="Sources"/>,
         /// <see cref="AdditionalFiles"/>, and <see cref="ExpectedDiagnostics"/> updated accordingly.
         /// </summary>
         /// <param name="defaultDiagnostic">The diagnostic descriptor to use for markup spans without an explicit name,
         /// or <see langword="null"/> if no such default exists.</param>
         /// <param name="supportedDiagnostics">The diagnostics supported by analyzers used by the test.</param>
         /// <param name="fixableDiagnostics">The set of diagnostic IDs to treat as fixable. This value is only used when
-        /// <see cref="AllowMarkup"/> is <see cref="MarkupMode.IgnoreFixable"/>.</param>
+        /// <see cref="MarkupHandling"/> is <see cref="MarkupMode.IgnoreFixable"/>.</param>
         /// <param name="defaultPath">The default file path for diagnostics reported in source code.</param>
         /// <returns>A new <see cref="SolutionState"/> with all markup processing completed according to the current
-        /// <see cref="AllowMarkup"/>. The <see cref="AllowMarkup"/> of the returned instance is
+        /// <see cref="MarkupHandling"/>. The <see cref="MarkupHandling"/> of the returned instance is
         /// <see cref="MarkupMode.None"/>.</returns>
         /// <exception cref="InvalidOperationException">If <see cref="InheritanceMode"/> is not
         /// <see cref="StateInheritanceMode.Explicit"/>.</exception>
@@ -159,7 +159,7 @@ namespace Microsoft.CodeAnalysis.Testing
             ImmutableArray<string> fixableDiagnostics,
             string defaultPath)
         {
-            if (AllowMarkup == MarkupMode.None)
+            if (MarkupHandling == MarkupMode.None)
             {
                 return (explicitDiagnostics.Select(diagnostic => diagnostic.WithDefaultPath(defaultPath)).ToOrderedArray(), sources.ToArray());
             }
@@ -176,7 +176,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     continue;
                 }
 
-                if (AllowMarkup == MarkupMode.Ignore)
+                if (MarkupHandling == MarkupMode.Ignore)
                 {
                     // The source contained markup, which was removed and ignored
                     continue;
@@ -220,7 +220,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     throw new InvalidOperationException("Markup syntax can only omit the diagnostic ID if the first analyzer only supports a single diagnostic");
                 }
 
-                if (AllowMarkup == MarkupMode.IgnoreFixable && fixableDiagnostics.Contains(defaultDiagnostic.Id))
+                if (MarkupHandling == MarkupMode.IgnoreFixable && fixableDiagnostics.Contains(defaultDiagnostic.Id))
                 {
                     return null;
                 }
@@ -229,7 +229,7 @@ namespace Microsoft.CodeAnalysis.Testing
             }
             else
             {
-                if (AllowMarkup == MarkupMode.IgnoreFixable && fixableDiagnostics.Contains(diagnosticId))
+                if (MarkupHandling == MarkupMode.IgnoreFixable && fixableDiagnostics.Contains(diagnosticId))
                 {
                     return null;
                 }

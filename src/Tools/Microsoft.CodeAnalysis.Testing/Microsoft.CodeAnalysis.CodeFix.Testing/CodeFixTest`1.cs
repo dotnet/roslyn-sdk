@@ -178,9 +178,9 @@ namespace Microsoft.CodeAnalysis.Testing
             var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics).ToImmutableArray();
             var fixableDiagnostics = GetCodeFixProviders().SelectMany(provider => provider.FixableDiagnosticIds).ToImmutableArray();
 
-            var rawTestState = TestState.ApplyInheritedState(null, fixableDiagnostics);
-            var rawFixedState = FixedState.ApplyInheritedState(rawTestState, fixableDiagnostics);
-            var rawBatchFixedState = BatchFixedState.ApplyInheritedState(rawFixedState, fixableDiagnostics);
+            var rawTestState = TestState.WithInheritedValuesApplied(null, fixableDiagnostics);
+            var rawFixedState = FixedState.WithInheritedValuesApplied(rawTestState, fixableDiagnostics);
+            var rawBatchFixedState = BatchFixedState.WithInheritedValuesApplied(rawFixedState, fixableDiagnostics);
 
             var testState = rawTestState.WithProcessedMarkup(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, DefaultFilePath);
             var fixedState = rawFixedState.WithProcessedMarkup(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, DefaultFilePath);

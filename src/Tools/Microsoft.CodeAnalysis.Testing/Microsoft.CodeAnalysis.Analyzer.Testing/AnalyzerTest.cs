@@ -121,7 +121,7 @@ namespace Microsoft.CodeAnalysis.Testing
             var defaultDiagnostic = analyzers.Length > 0 && analyzers[0].SupportedDiagnostics.Length == 1 ? analyzers[0].SupportedDiagnostics[0] : null;
             var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics).ToImmutableArray();
             var fixableDiagnostics = ImmutableArray<string>.Empty;
-            var testState = TestState.ApplyInheritedState(null, fixableDiagnostics).WithProcessedMarkup(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, DefaultFilePath);
+            var testState = TestState.WithInheritedValuesApplied(null, fixableDiagnostics).WithProcessedMarkup(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, DefaultFilePath);
 
             await VerifyDiagnosticsAsync(testState.Sources.ToArray(), testState.AdditionalFiles.ToArray(), testState.ExpectedDiagnostics.ToArray(), cancellationToken).ConfigureAwait(false);
         }
