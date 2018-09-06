@@ -18,5 +18,6 @@
   </Rules>
   <Rules AnalyzerId="Roslyn.Diagnostics.Analyzers" RuleNamespace="Roslyn.Diagnostics.Analyzers">
     <Rule Id="RS0026" Action="None" /> <!-- AvoidMultipleOverloadsWithOptionalParameters -->
+    <Rule Id="RS1022" Action="None" /> <!-- AD0001: https://github.com/dotnet/roslyn-analyzers/issues/1803 -->
   </Rules>
 </RuleSet>
