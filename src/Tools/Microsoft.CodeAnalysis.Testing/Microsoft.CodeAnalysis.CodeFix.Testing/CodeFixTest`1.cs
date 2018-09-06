@@ -160,6 +160,20 @@ namespace Microsoft.CodeAnalysis.Testing
         public int? NumberOfFixAllIterations { get; set; }
 
         /// <summary>
+        /// Gets or sets the number of code fix iterations expected during code fix testing for Fix All in Document
+        /// scenarios.
+        /// </summary>
+        /// <remarks>
+        /// <para>See the <see cref="NumberOfIncrementalIterations"/> property for an overview of the behavior of this
+        /// property. If the number of Fix All in Document iterations is not specified, the value from
+        /// <see cref="NumberOfFixAllIterations"/> is used.</para>
+        /// </remarks>
+        /// <seealso cref="NumberOfIncrementalIterations"/>
+        /// <seealso cref="NumberOfFixAllIterations"/>
+        /// <seealso href="https://github.com/dotnet/roslyn-sdk/issues/147">#147: Figure out Fix All iteration counts by context</seealso>
+        public int? NumberOfFixAllInDocumentIterations { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether new compiler diagnostics are allowed to appear in code fix outputs.
         /// The default value is <see langword="false"/>.
         /// </summary>
@@ -274,6 +288,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
             int numberOfIncrementalIterations;
             int numberOfFixAllIterations;
+            int numberOfFixAllInDocumentIterations;
             if (NumberOfIncrementalIterations != null)
             {
                 numberOfIncrementalIterations = NumberOfIncrementalIterations.Value;
@@ -310,6 +325,15 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
             }
 
+            if (NumberOfFixAllInDocumentIterations != null)
+            {
+                numberOfFixAllInDocumentIterations = NumberOfFixAllInDocumentIterations.Value;
+            }
+            else
+            {
+                numberOfFixAllInDocumentIterations = numberOfFixAllIterations;
+            }
+
             var t1 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, additionalFiles, newSources, fixedAdditionalFiles, numberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
 
             var fixAllProvider = GetCodeFixProviders().Select(codeFixProvider => codeFixProvider.GetFixAllProvider()).Where(codeFixProvider => codeFixProvider != null).ToImmutableArray();
@@ -325,7 +349,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     await t1;
                 }
 
-                var t2 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, additionalFiles, batchNewSources ?? newSources, fixedAdditionalFiles, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
+                var t2 = VerifyFixAsync(Language, GetDiagnosticAnalyzers().ToImmutableArray(), GetCodeFixProviders().ToImmutableArray(), oldSources, additionalFiles, batchNewSources ?? newSources, fixedAdditionalFiles, numberOfFixAllInDocumentIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t2;

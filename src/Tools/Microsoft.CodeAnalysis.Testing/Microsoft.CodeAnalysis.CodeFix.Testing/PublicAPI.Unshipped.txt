@@ -13,6 +13,8 @@ Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.CodeFixValidationMode.get 
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.CodeFixValidationMode.set -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.FixedCode.set -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.FixedSources.get -> Microsoft.CodeAnalysis.Testing.SourceFileList
+Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfFixAllInDocumentIterations.get -> int?
+Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfFixAllInDocumentIterations.set -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfFixAllIterations.get -> int?
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfFixAllIterations.set -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfIncrementalIterations.get -> int?
