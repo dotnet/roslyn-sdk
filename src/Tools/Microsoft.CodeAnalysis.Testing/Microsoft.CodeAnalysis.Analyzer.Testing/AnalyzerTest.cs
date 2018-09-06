@@ -601,7 +601,11 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <see cref="Diagnostic.Location"/> and <see cref="Diagnostic.Id"/>.</returns>
         private static Diagnostic[] SortDistinctDiagnostics(IEnumerable<Diagnostic> diagnostics)
         {
-            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ThenBy(d => d.Location.SourceSpan.End).ThenBy(d => d.Id).ToArray();
+            return diagnostics
+                .OrderBy(d => d.Location.GetLineSpan().Path, StringComparer.Ordinal)
+                .ThenBy(d => d.Location.SourceSpan.Start)
+                .ThenBy(d => d.Location.SourceSpan.End)
+                .ThenBy(d => d.Id).ToArray();
         }
 
         /// <summary>
