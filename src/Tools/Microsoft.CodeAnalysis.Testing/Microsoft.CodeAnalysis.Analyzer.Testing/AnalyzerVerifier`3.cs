@@ -12,18 +12,16 @@ namespace Microsoft.CodeAnalysis.Testing
            where TTest : AnalyzerTest<TVerifier>, new()
            where TVerifier : IVerifier, new()
     {
-        public static DiagnosticResult Diagnostic(string diagnosticId = null)
+        public static DiagnosticResult Diagnostic()
         {
             var analyzer = new TAnalyzer();
-            var supportedDiagnostics = analyzer.SupportedDiagnostics;
-            if (diagnosticId is null)
-            {
-                return Diagnostic(supportedDiagnostics.Single());
-            }
-            else
-            {
-                return Diagnostic(supportedDiagnostics.Single(i => i.Id == diagnosticId));
-            }
+            return Diagnostic(analyzer.SupportedDiagnostics.Single());
+        }
+
+        public static DiagnosticResult Diagnostic(string diagnosticId)
+        {
+            var analyzer = new TAnalyzer();
+            return Diagnostic(analyzer.SupportedDiagnostics.Single(i => i.Id == diagnosticId));
         }
 
         public static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor) => new DiagnosticResult(descriptor);

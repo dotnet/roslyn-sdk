@@ -13,7 +13,10 @@ namespace Microsoft.CodeAnalysis.Testing
            where TTest : CodeFixTest<TVerifier>, new()
            where TVerifier : IVerifier, new()
     {
-        public static DiagnosticResult Diagnostic(string diagnosticId = null)
+        public static DiagnosticResult Diagnostic()
+            => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.Diagnostic();
+
+        public static DiagnosticResult Diagnostic(string diagnosticId)
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.Diagnostic(diagnosticId);
 
         public static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)

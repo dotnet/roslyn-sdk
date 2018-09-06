@@ -16,4 +16,7 @@
     <Rule Id="SX1101" Action="Warning" />
     <Rule Id="SX1309" Action="Warning" />
   </Rules>
+  <Rules AnalyzerId="Roslyn.Diagnostics.Analyzers" RuleNamespace="Roslyn.Diagnostics.Analyzers">
+    <Rule Id="RS0026" Action="None" /> <!-- AvoidMultipleOverloadsWithOptionalParameters -->
+  </Rules>
 </RuleSet>

@@ -59,6 +59,14 @@
     <None Include="$(CodeAnalysisRuleSet)" Condition="'$(CodeAnalysisRuleSet)' != ''" Link="%(Filename)%(Extension)" />
   </ItemGroup>
 
+  <!-- Public API Analyzer configuration -->
+  <ItemGroup>
+    <PackageReference Include="Roslyn.Diagnostics.Analyzers" Version="$(RoslynDiagnosticsAnalyzersVersion)" PrivateAssets="all" />
+
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
   <!-- Use a different versioning scheme for nuget packages -->
   <PropertyGroup>
     <VersionPrefix>$(NugetPackagePrefix)</VersionPrefix>
