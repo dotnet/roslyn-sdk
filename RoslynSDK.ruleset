@@ -16,4 +16,7 @@
     <Rule Id="SX1101" Action="Warning" />
     <Rule Id="SX1309" Action="Warning" />
   </Rules>
+  <Rules AnalyzerId="Roslyn.Diagnostics.Analyzers" RuleNamespace="Roslyn.Diagnostics.Analyzers">
+    <Rule Id="RS1019" Action="None" /> <!-- DiagnosticId must be unique across analyzers: Many tests use similar analyzer instances -->
+  </Rules>
 </RuleSet>

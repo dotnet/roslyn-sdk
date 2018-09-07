@@ -247,9 +247,6 @@ namespace Microsoft.CodeAnalysis.Testing
             var assert = actualSpan.Path == expected.Path || (actualSpan.Path?.Contains("Test0.") == true && expected.Path.Contains("Test."));
             Verify.True(assert, $"Expected diagnostic to be in file \"{expected.Path}\" was actually in file \"{actualSpan.Path}\"\r\n\r\nDiagnostic:\r\n    {FormatDiagnostics(analyzers, diagnostic)}\r\n");
 
-            var actualStartLinePosition = actualSpan.StartLinePosition;
-            var actualEndLinePosition = actualSpan.EndLinePosition;
-
             VerifyLinePosition(analyzers, diagnostic, actualSpan.StartLinePosition, expected.StartLinePosition, "start");
             if (expected.StartLinePosition < expected.EndLinePosition)
             {
@@ -264,8 +261,8 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 Verify.Equal(
                     expectedLinePosition.Line,
-                    actualLinePosition.Line + 1,
-                    $"Expected diagnostic to {positionText} on line \"{expectedLinePosition.Line}\" was actually on line \"{actualLinePosition.Line + 1}\"\r\n\r\nDiagnostic:\r\n    {FormatDiagnostics(analyzers, diagnostic)}\r\n");
+                    actualLinePosition.Line,
+                    $"Expected diagnostic to {positionText} on line \"{expectedLinePosition.Line + 1}\" was actually on line \"{actualLinePosition.Line + 1}\"\r\n\r\nDiagnostic:\r\n    {FormatDiagnostics(analyzers, diagnostic)}\r\n");
             }
 
             // Only check the column position if it matters
@@ -273,8 +270,8 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 Verify.Equal(
                     expectedLinePosition.Character,
-                    actualLinePosition.Character + 1,
-                    $"Expected diagnostic to {positionText} at column \"{expectedLinePosition.Character}\" was actually at column \"{actualLinePosition.Character + 1}\"\r\n\r\nDiagnostic:\r\n    {FormatDiagnostics(analyzers, diagnostic)}\r\n");
+                    actualLinePosition.Character,
+                    $"Expected diagnostic to {positionText} at column \"{expectedLinePosition.Character + 1}\" was actually at column \"{actualLinePosition.Character + 1}\"\r\n\r\nDiagnostic:\r\n    {FormatDiagnostics(analyzers, diagnostic)}\r\n");
             }
         }
 

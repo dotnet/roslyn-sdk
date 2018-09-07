@@ -107,13 +107,13 @@ namespace Microsoft.CodeAnalysis.Testing
         }
 
         public DiagnosticResult WithLocation(int line, int column)
-            => WithLocation(path: string.Empty, new LinePosition(line, column));
+            => WithLocation(path: string.Empty, new LinePosition(line - 1, column - 1));
 
         public DiagnosticResult WithLocation(LinePosition location)
             => WithLocation(path: string.Empty, location);
 
         public DiagnosticResult WithLocation(string path, int line, int column)
-            => WithLocation(path, new LinePosition(line, column));
+            => WithLocation(path, new LinePosition(line - 1, column - 1));
 
         public DiagnosticResult WithLocation(string path, LinePosition location)
             => AppendSpan(new FileLinePositionSpan(path, location, location));
@@ -122,7 +122,7 @@ namespace Microsoft.CodeAnalysis.Testing
             => WithSpan(path: string.Empty, startLine, startColumn, endLine, endColumn);
 
         public DiagnosticResult WithSpan(string path, int startLine, int startColumn, int endLine, int endColumn)
-            => AppendSpan(new FileLinePositionSpan(path, new LinePosition(startLine, startColumn), new LinePosition(endLine, endColumn)));
+            => AppendSpan(new FileLinePositionSpan(path, new LinePosition(startLine - 1, startColumn - 1), new LinePosition(endLine - 1, endColumn - 1)));
 
         public DiagnosticResult WithSpan(FileLinePositionSpan span)
             => AppendSpan(span);
@@ -184,15 +184,15 @@ namespace Microsoft.CodeAnalysis.Testing
                 var location = Spans[0];
                 builder.Append(location.Path == string.Empty ? "?" : location.Path);
                 builder.Append("(");
-                builder.Append(location.StartLinePosition.Line);
+                builder.Append(location.StartLinePosition.Line + 1);
                 builder.Append(",");
-                builder.Append(location.StartLinePosition.Character);
+                builder.Append(location.StartLinePosition.Character + 1);
                 if (location.EndLinePosition != location.StartLinePosition)
                 {
                     builder.Append(",");
-                    builder.Append(location.EndLinePosition.Line);
+                    builder.Append(location.EndLinePosition.Line + 1);
                     builder.Append(",");
-                    builder.Append(location.EndLinePosition.Character);
+                    builder.Append(location.EndLinePosition.Character + 1);
                 }
 
                 builder.Append("): ");
