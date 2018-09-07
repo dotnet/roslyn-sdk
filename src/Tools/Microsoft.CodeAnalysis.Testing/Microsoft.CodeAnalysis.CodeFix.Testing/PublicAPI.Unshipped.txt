@@ -1,6 +1,4 @@
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>
-Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.AllowNewCompilerDiagnostics.get -> bool
-Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.AllowNewCompilerDiagnostics.set -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.BatchFixedCode.set -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.BatchFixedState.get -> Microsoft.CodeAnalysis.Testing.SolutionState
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.CodeFixEquivalenceKey.get -> string
