@@ -21,8 +21,7 @@ Microsoft.CodeAnalysis.Testing.DefaultVerifier.Fail(string message = null) -> vo
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.False(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.LanguageIsSupported(string language) -> void
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.NotEmpty<T>(string collectionName, System.Collections.Generic.IEnumerable<T> collection) -> void
-Microsoft.CodeAnalysis.Testing.DefaultVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEqualityComparer<T> equalityComparer, string message = null) -> void
-Microsoft.CodeAnalysis.Testing.DefaultVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, string message = null) -> void
+Microsoft.CodeAnalysis.Testing.DefaultVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEqualityComparer<T> equalityComparer = null, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.True(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.DiagnosticResult
 Microsoft.CodeAnalysis.Testing.DiagnosticResult.DiagnosticResult(Microsoft.CodeAnalysis.DiagnosticDescriptor descriptor) -> void
@@ -54,8 +53,7 @@ Microsoft.CodeAnalysis.Testing.IVerifier.Fail(string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.False(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.LanguageIsSupported(string language) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.NotEmpty<T>(string collectionName, System.Collections.Generic.IEnumerable<T> collection) -> void
-Microsoft.CodeAnalysis.Testing.IVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEqualityComparer<T> equalityComparer, string message = null) -> void
-Microsoft.CodeAnalysis.Testing.IVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, string message = null) -> void
+Microsoft.CodeAnalysis.Testing.IVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEqualityComparer<T> equalityComparer = null, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.True(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.MarkupMode
 Microsoft.CodeAnalysis.Testing.MarkupMode.Allow = 3 -> Microsoft.CodeAnalysis.Testing.MarkupMode

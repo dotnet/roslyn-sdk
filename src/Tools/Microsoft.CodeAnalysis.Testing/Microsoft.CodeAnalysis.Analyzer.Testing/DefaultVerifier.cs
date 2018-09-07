@@ -61,17 +61,7 @@ namespace Microsoft.CodeAnalysis.Testing
             throw new InvalidOperationException(message ?? "Verification failed for an unspecified reason.");
         }
 
-        public void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, string message = null)
-        {
-            var comparer = new SequenceEqualEnumerableEqualityComparer<T>();
-            var areEqual = comparer.Equals(expected, actual);
-            if (!areEqual)
-            {
-                throw new InvalidOperationException(message ?? $"Sequences are not equal");
-            }
-        }
-
-        public void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer, string message = null)
+        public void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer = null, string message = null)
         {
             var comparer = new SequenceEqualEnumerableEqualityComparer<T>(equalityComparer);
             var areEqual = comparer.Equals(expected, actual);
@@ -84,11 +74,6 @@ namespace Microsoft.CodeAnalysis.Testing
         private sealed class SequenceEqualEnumerableEqualityComparer<T> : IEqualityComparer<IEnumerable<T>>
         {
             private readonly IEqualityComparer<T> _itemEqualityComparer;
-
-            public SequenceEqualEnumerableEqualityComparer()
-                : this(default)
-            {
-            }
 
             public SequenceEqualEnumerableEqualityComparer(IEqualityComparer<T> itemEqualityComparer)
             {
