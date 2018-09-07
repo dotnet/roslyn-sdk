@@ -74,28 +74,18 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             Assert.NotEmpty(collection);
         }
 
-        public void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, string message = null)
+        public void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer = null, string message = null)
         {
             if (message is null)
             {
-                Assert.Equal(expected, actual);
-            }
-            else
-            {
-                var comparer = new SequenceEqualEnumerableEqualityComparer<T>();
-                var areEqual = comparer.Equals(expected, actual);
-                if (!areEqual)
+                if (equalityComparer is null)
                 {
-                    Assert.True(false, message);
+                    Assert.Equal(expected, actual);
                 }
-            }
-        }
-
-        public void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer, string message = null)
-        {
-            if (message is null)
-            {
-                Assert.Equal(expected, actual, equalityComparer);
+                else
+                {
+                    Assert.Equal(expected, actual, equalityComparer);
+                }
             }
             else
             {
@@ -111,11 +101,6 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
         private sealed class SequenceEqualEnumerableEqualityComparer<T> : IEqualityComparer<IEnumerable<T>>
         {
             private readonly IEqualityComparer<T> _itemEqualityComparer;
-
-            public SequenceEqualEnumerableEqualityComparer()
-                : this(default)
-            {
-            }
 
             public SequenceEqualEnumerableEqualityComparer(IEqualityComparer<T> itemEqualityComparer)
             {

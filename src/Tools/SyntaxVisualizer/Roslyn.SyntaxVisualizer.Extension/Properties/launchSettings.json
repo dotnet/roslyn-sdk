@@ -3,7 +3,7 @@
     "Roslyn.SyntaxVisualizer.Extension": {
       "commandName": "Executable",
       "executablePath": "$(DevEnvDir)devenv.exe",
-      "commandLineArgs": "/rootsuffix RoslynDev /log"
+      "commandLineArgs": "/rootsuffix $(VSSDKTargetPlatformRegRootSuffix) /log"
     }
   }
 }

@@ -42,9 +42,9 @@ namespace Microsoft.CodeAnalysis.Testing
             @"\{\| ([^:|[\]{}]+) \:",
             RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
 
-        private static void Parse(string input, out string output, out int? position, out IDictionary<string, IList<TextSpan>> spans)
+        private static void Parse(string input, out string output, out IList<int> positions, out IDictionary<string, IList<TextSpan>> spans)
         {
-            position = null;
+            positions = new List<int>();
             spans = new Dictionary<string, IList<TextSpan>>();
 
             var outputBuilder = new StringBuilder();
@@ -110,12 +110,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 switch (matchString.Substring(0, 2))
                 {
                     case PositionString:
-                        if (position.HasValue)
-                        {
-                            throw new ArgumentException(string.Format("Saw multiple occurrences of {0}", PositionString));
-                        }
-
-                        position = matchIndexInOutput;
+                        positions.Add(matchIndexInOutput);
                         break;
 
                     case SpanStartString:
@@ -190,9 +185,15 @@ namespace Microsoft.CodeAnalysis.Testing
             }
         }
 
+        public static void GetPositionsAndSpans(string input, out string output, out IList<int> positions, out IDictionary<string, IList<TextSpan>> spans)
+        {
+            Parse(input, out output, out positions, out spans);
+        }
+
         public static void GetPositionAndSpans(string input, out string output, out int? cursorPositionOpt, out IDictionary<string, IList<TextSpan>> spans)
         {
-            Parse(input, out output, out cursorPositionOpt, out spans);
+            Parse(input, out output, out var positions, out spans);
+            cursorPositionOpt = positions.SingleOrDefault();
         }
 
         public static void GetPositionAndSpans(string input, out int? cursorPositionOpt, out IDictionary<string, IList<TextSpan>> spans)
@@ -214,7 +215,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public static void GetPositionAndSpans(string input, out string output, out int? cursorPositionOpt, out IList<TextSpan> spans)
         {
-            Parse(input, out output, out cursorPositionOpt, out var dictionary);
+            Parse(input, out output, out var positions, out var dictionary);
+            cursorPositionOpt = positions.SingleOrDefault();
 
             spans = dictionary.GetOrAdd(string.Empty, () => new List<TextSpan>());
         }
@@ -260,12 +262,12 @@ namespace Microsoft.CodeAnalysis.Testing
             return CreateTestFile(code, (IDictionary<string, IList<TextSpan>>)null, cursor);
         }
 
-        public static string CreateTestFile(string code, IList<TextSpan> spans, int cursor = -1)
+        public static string CreateTestFile(string code, IList<TextSpan> spans, int? cursor)
         {
             return CreateTestFile(code, new Dictionary<string, IList<TextSpan>> { { string.Empty, spans } }, cursor);
         }
 
-        public static string CreateTestFile(string code, IDictionary<string, IList<TextSpan>> spans, int cursor = -1)
+        public static string CreateTestFile(string code, IDictionary<string, IList<TextSpan>> spans, int? cursor)
         {
             var sb = new StringBuilder();
             var anonymousSpans = spans.GetOrAdd(string.Empty, () => new List<TextSpan>());
