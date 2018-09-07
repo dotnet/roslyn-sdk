@@ -260,12 +260,12 @@ namespace Microsoft.CodeAnalysis.Testing
             return CreateTestFile(code, (IDictionary<string, IList<TextSpan>>)null, cursor);
         }
 
-        public static string CreateTestFile(string code, IList<TextSpan> spans, int cursor = -1)
+        public static string CreateTestFile(string code, IList<TextSpan> spans, int? cursor)
         {
             return CreateTestFile(code, new Dictionary<string, IList<TextSpan>> { { string.Empty, spans } }, cursor);
         }
 
-        public static string CreateTestFile(string code, IDictionary<string, IList<TextSpan>> spans, int cursor = -1)
+        public static string CreateTestFile(string code, IDictionary<string, IList<TextSpan>> spans, int? cursor)
         {
             var sb = new StringBuilder();
             var anonymousSpans = spans.GetOrAdd(string.Empty, () => new List<TextSpan>());
