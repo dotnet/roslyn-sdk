@@ -79,6 +79,12 @@ namespace Microsoft.CodeAnalysis.Testing
         /// </summary>
         public List<DiagnosticResult> ExpectedDiagnostics => TestState.ExpectedDiagnostics;
 
+        /// <summary>
+        /// Gets or sets the behavior of compiler diagnostics in validation scenarios. The default value is
+        /// <see cref="CompilerDiagnostics.Errors"/>.
+        /// </summary>
+        public CompilerDiagnostics CompilerDiagnostics { get; set; } = CompilerDiagnostics.Errors;
+
         public SolutionState TestState { get; }
 
         /// <summary>
@@ -375,7 +381,7 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <see cref="Diagnostic.Location"/>.</returns>
         private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync((string filename, SourceText content)[] sources, (string filename, SourceText content)[] additionalFiles, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
         {
-            return GetSortedDiagnosticsAsync(GetSolution(sources, additionalFiles), analyzers, cancellationToken);
+            return GetSortedDiagnosticsAsync(GetSolution(sources, additionalFiles), analyzers, CompilerDiagnostics, cancellationToken);
         }
 
         /// <summary>
@@ -384,26 +390,49 @@ namespace Microsoft.CodeAnalysis.Testing
         /// </summary>
         /// <param name="solution">The <see cref="Solution"/> that the analyzer(s) will be run on.</param>
         /// <param name="analyzers">The analyzer to run on the documents.</param>
+        /// <param name="compilerDiagnostics">The behavior of compiler diagnostics in validation scenarios.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        protected static async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(Solution solution, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
+        protected static async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(Solution solution, ImmutableArray<DiagnosticAnalyzer> analyzers, CompilerDiagnostics compilerDiagnostics, CancellationToken cancellationToken)
         {
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
             foreach (var project in solution.Projects)
             {
                 var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
                 var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, project.AnalyzerOptions, cancellationToken);
-                var compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
-                var compilerErrors = compilerDiagnostics.Where(i => i.Severity == DiagnosticSeverity.Error);
+                var includedCompilerDiagnostics = compilation.GetDiagnostics(cancellationToken).Where(IsCompilerDiagnosticIncluded);
                 var diags = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
                 var allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
                 var failureDiagnostics = allDiagnostics.Where(diagnostic => diagnostic.Id == "AD0001");
-                diagnostics.AddRange(diags.Concat(compilerErrors).Concat(failureDiagnostics));
+                diagnostics.AddRange(diags.Concat(includedCompilerDiagnostics).Concat(failureDiagnostics));
             }
 
             var results = SortDistinctDiagnostics(diagnostics);
             return results.ToImmutableArray();
+
+            // Local function
+            bool IsCompilerDiagnosticIncluded(Diagnostic diagnostic)
+            {
+                switch (compilerDiagnostics)
+                {
+                case CompilerDiagnostics.None:
+                default:
+                    return false;
+
+                case CompilerDiagnostics.Errors:
+                    return diagnostic.Severity >= DiagnosticSeverity.Error;
+
+                case CompilerDiagnostics.Warnings:
+                    return diagnostic.Severity >= DiagnosticSeverity.Warning;
+
+                case CompilerDiagnostics.Suggestions:
+                    return diagnostic.Severity >= DiagnosticSeverity.Info;
+
+                case CompilerDiagnostics.All:
+                    return true;
+                }
+            }
         }
 
         /// <summary>
