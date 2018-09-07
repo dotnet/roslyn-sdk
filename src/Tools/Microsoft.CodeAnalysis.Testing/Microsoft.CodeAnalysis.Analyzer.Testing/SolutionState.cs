@@ -168,9 +168,9 @@ namespace Microsoft.CodeAnalysis.Testing
             var diagnostics = new List<DiagnosticResult>(explicitDiagnostics.Select(diagnostic => diagnostic.WithDefaultPath(defaultPath)));
             foreach ((var filename, var content) in sources)
             {
-                TestFileMarkupParser.GetSpans(content.ToString(), out var output, out IDictionary<string, IList<TextSpan>> namedSpans);
+                TestFileMarkupParser.GetPositionsAndSpans(content.ToString(), out var output, out var positions, out var namedSpans);
                 sourceFiles.Add((filename, content.Replace(new TextSpan(0, content.Length), output)));
-                if (namedSpans.Count == 0)
+                if (positions.Count == 0 && namedSpans.Count == 0)
                 {
                     // No markup notation in this input
                     continue;
@@ -183,6 +183,17 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
 
                 var sourceText = SourceText.From(output, content.Encoding, content.ChecksumAlgorithm);
+                foreach (var position in positions)
+                {
+                    var diagnostic = CreateDiagnosticForPosition(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, string.Empty, filename, sourceText, position);
+                    if (!diagnostic.HasValue)
+                    {
+                        continue;
+                    }
+
+                    diagnostics.Add(diagnostic.Value);
+                }
+
                 foreach ((var name, var spans) in namedSpans)
                 {
                     foreach (var span in spans)
@@ -201,6 +212,25 @@ namespace Microsoft.CodeAnalysis.Testing
             return (diagnostics.ToOrderedArray(), sourceFiles.ToArray());
         }
 
+        private DiagnosticResult? CreateDiagnosticForPosition(
+            DiagnosticDescriptor defaultDiagnostic,
+            ImmutableArray<DiagnosticDescriptor> supportedDiagnostics,
+            ImmutableArray<string> fixableDiagnostics,
+            string diagnosticId,
+            string filename,
+            SourceText content,
+            int position)
+        {
+            var diagnosticResult = CreateDiagnostic(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, diagnosticId);
+            if (diagnosticResult == null)
+            {
+                return null;
+            }
+
+            var linePosition = content.Lines.GetLinePosition(position);
+            return diagnosticResult.Value.WithLocation(filename, linePosition);
+        }
+
         private DiagnosticResult? CreateDiagnosticForSpan(
             DiagnosticDescriptor defaultDiagnostic,
             ImmutableArray<DiagnosticDescriptor> supportedDiagnostics,
@@ -210,8 +240,22 @@ namespace Microsoft.CodeAnalysis.Testing
             SourceText content,
             TextSpan span)
         {
-            var linePositionSpan = content.Lines.GetLinePositionSpan(span);
+            var diagnosticResult = CreateDiagnostic(defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, diagnosticId);
+            if (diagnosticResult == null)
+            {
+                return null;
+            }
 
+            var linePositionSpan = content.Lines.GetLinePositionSpan(span);
+            return diagnosticResult.Value.WithSpan(new FileLinePositionSpan(filename, linePositionSpan));
+        }
+
+        private DiagnosticResult? CreateDiagnostic(
+            DiagnosticDescriptor defaultDiagnostic,
+            ImmutableArray<DiagnosticDescriptor> supportedDiagnostics,
+            ImmutableArray<string> fixableDiagnostics,
+            string diagnosticId)
+        {
             DiagnosticResult diagnosticResult;
             if (string.IsNullOrEmpty(diagnosticId))
             {
@@ -246,14 +290,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
             }
 
-            return diagnosticResult
-                .WithMessage(null)
-                .WithSpan(
-                    filename,
-                    linePositionSpan.Start.Line + 1,
-                    linePositionSpan.Start.Character + 1,
-                    linePositionSpan.End.Line + 1,
-                    linePositionSpan.End.Character + 1);
+            return diagnosticResult.WithMessage(null);
         }
     }
 }
