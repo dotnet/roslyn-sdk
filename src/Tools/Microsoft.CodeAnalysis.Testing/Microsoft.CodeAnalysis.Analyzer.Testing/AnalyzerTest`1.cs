@@ -15,7 +15,7 @@ using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.CodeAnalysis.Testing
 {
-    public abstract partial class AnalyzerTest<TVerifier>
+    public abstract class AnalyzerTest<TVerifier>
         where TVerifier : IVerifier, new()
     {
         private static readonly Lazy<IExportProviderFactory> ExportProviderFactory;
