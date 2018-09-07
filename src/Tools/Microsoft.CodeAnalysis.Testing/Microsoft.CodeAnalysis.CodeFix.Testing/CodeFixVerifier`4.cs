@@ -22,22 +22,16 @@ namespace Microsoft.CodeAnalysis.Testing
         public static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
             => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.Diagnostic(descriptor);
 
-        public static Task VerifyAnalyzerAsync(string source, CancellationToken cancellationToken = default)
-            => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyAnalyzerAsync(source, cancellationToken);
+        public static Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
+            => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyAnalyzerAsync(source, expected);
 
-        public static Task VerifyAnalyzerAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken = default)
-            => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyAnalyzerAsync(source, expected, cancellationToken);
+        public static Task VerifyCodeFixAsync(string source, string fixedSource)
+            => VerifyCodeFixAsync(source, DiagnosticResult.EmptyDiagnosticResults, fixedSource);
 
-        public static Task VerifyAnalyzerAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken = default)
-            => AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.VerifyAnalyzerAsync(source, expected, cancellationToken);
+        public static Task VerifyCodeFixAsync(string source, DiagnosticResult expected, string fixedSource)
+            => VerifyCodeFixAsync(source, new[] { expected }, fixedSource);
 
-        public static Task VerifyCodeFixAsync(string source, string fixedSource, CancellationToken cancellationToken = default)
-            => VerifyCodeFixAsync(source, DiagnosticResult.EmptyDiagnosticResults, fixedSource, cancellationToken);
-
-        public static Task VerifyCodeFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken = default)
-            => VerifyCodeFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
-
-        public static Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken = default)
+        public static Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource)
         {
             var test = new TTest
             {
@@ -46,7 +40,7 @@ namespace Microsoft.CodeAnalysis.Testing
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync(CancellationToken.None);
         }
     }
 }

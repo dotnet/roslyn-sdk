@@ -26,13 +26,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor) => new DiagnosticResult(descriptor);
 
-        public static Task VerifyAnalyzerAsync(string source, CancellationToken cancellationToken = default)
-            => VerifyAnalyzerAsync(source, DiagnosticResult.EmptyDiagnosticResults, cancellationToken);
-
-        public static Task VerifyAnalyzerAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken = default)
-            => VerifyAnalyzerAsync(source, new[] { expected }, cancellationToken);
-
-        public static Task VerifyAnalyzerAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken = default)
+        public static Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
         {
             var test = new TTest
             {
@@ -40,7 +34,7 @@ namespace Microsoft.CodeAnalysis.Testing
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync(CancellationToken.None);
         }
     }
 }

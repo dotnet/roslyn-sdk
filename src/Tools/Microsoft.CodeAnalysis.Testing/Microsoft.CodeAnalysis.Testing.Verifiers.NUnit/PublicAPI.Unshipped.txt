@@ -6,6 +6,5 @@ Microsoft.CodeAnalysis.Testing.Verifiers.NUnitVerifier.False(bool assert, string
 Microsoft.CodeAnalysis.Testing.Verifiers.NUnitVerifier.LanguageIsSupported(string language) -> void
 Microsoft.CodeAnalysis.Testing.Verifiers.NUnitVerifier.NUnitVerifier() -> void
 Microsoft.CodeAnalysis.Testing.Verifiers.NUnitVerifier.NotEmpty<T>(string collectionName, System.Collections.Generic.IEnumerable<T> collection) -> void
-Microsoft.CodeAnalysis.Testing.Verifiers.NUnitVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEqualityComparer<T> equalityComparer, string message = null) -> void
-Microsoft.CodeAnalysis.Testing.Verifiers.NUnitVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, string message = null) -> void
+Microsoft.CodeAnalysis.Testing.Verifiers.NUnitVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEqualityComparer<T> equalityComparer = null, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.Verifiers.NUnitVerifier.True(bool assert, string message = null) -> void
