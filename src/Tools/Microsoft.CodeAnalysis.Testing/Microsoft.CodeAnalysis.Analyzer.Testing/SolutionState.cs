@@ -36,6 +36,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public List<Func<IEnumerable<(string filename, SourceText content)>>> AdditionalFilesFactories { get; } = new List<Func<IEnumerable<(string filename, SourceText content)>>>();
 
+        public MetadataReferenceCollection AdditionalReferences { get; } = new MetadataReferenceCollection();
+
         /// <summary>
         /// Gets the list of diagnostics expected in the source(s) and/or additonal files.
         /// </summary>
@@ -103,6 +105,11 @@ namespace Microsoft.CodeAnalysis.Testing
                     result.AdditionalFiles.AddRange(baseState.AdditionalFiles);
                 }
 
+                if (AdditionalReferences.Count == 0)
+                {
+                    result.AdditionalReferences.AddRange(baseState.AdditionalReferences);
+                }
+
                 if (ExpectedDiagnostics.Count == 0)
                 {
                     result.ExpectedDiagnostics.AddRange(baseState.ExpectedDiagnostics.Where(diagnostic => !fixableDiagnostics.Contains(diagnostic.Id)));
@@ -112,6 +119,7 @@ namespace Microsoft.CodeAnalysis.Testing
             result.InheritanceMode = StateInheritanceMode.Explicit;
             result.Sources.AddRange(Sources);
             result.AdditionalFiles.AddRange(AdditionalFiles);
+            result.AdditionalReferences.AddRange(AdditionalReferences);
             result.ExpectedDiagnostics.AddRange(ExpectedDiagnostics);
             result.AdditionalFiles.AddRange(AdditionalFilesFactories.SelectMany(factory => factory()));
             return result;
@@ -147,6 +155,7 @@ namespace Microsoft.CodeAnalysis.Testing
             result.InheritanceMode = StateInheritanceMode.Explicit;
             result.Sources.AddRange(testSources);
             result.AdditionalFiles.AddRange(additionalFiles);
+            result.AdditionalReferences.AddRange(AdditionalReferences);
             result.ExpectedDiagnostics.AddRange(additionalExpected);
             return result;
         }
