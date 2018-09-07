@@ -146,12 +146,6 @@ namespace Microsoft.CodeAnalysis.Testing
         public int? NumberOfFixAllInDocumentIterations { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether new compiler diagnostics are allowed to appear in code fix outputs.
-        /// The default value is <see langword="false"/>.
-        /// </summary>
-        public bool AllowNewCompilerDiagnostics { get; set; } = false;
-
-        /// <summary>
         /// Gets or sets the validation mode for code fixes. The default is
         /// <see cref="CodeFixValidationMode.SemanticStructure"/>.
         /// </summary>
@@ -329,28 +323,6 @@ namespace Microsoft.CodeAnalysis.Testing
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(project, cancellationToken).ConfigureAwait(false);
 
             project = await getFixedProject(analyzers, codeFixProviders, CodeFixIndex, CodeFixEquivalenceKey, project, numberOfIterations, cancellationToken).ConfigureAwait(false);
-
-            var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(project, cancellationToken).ConfigureAwait(false));
-
-            // Check if applying the code fix introduced any new compiler diagnostics
-            if (!AllowNewCompilerDiagnostics && newCompilerDiagnostics.Any())
-            {
-                // Format and get the compiler diagnostics again so that the locations make sense in the output
-                project = await ReformatProjectDocumentsAsync(project, cancellationToken).ConfigureAwait(false);
-                newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(project, cancellationToken).ConfigureAwait(false));
-
-                var message = new StringBuilder();
-                message.Append("Fix introduced new compiler diagnostics:\r\n");
-                newCompilerDiagnostics.Aggregate(message, (sb, d) => sb.Append(d.ToString()).Append("\r\n"));
-                foreach (var document in project.Documents)
-                {
-                    message.Append("\r\n").Append(document.Name).Append(":\r\n");
-                    message.Append((await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)).ToFullString());
-                    message.Append("\r\n");
-                }
-
-                Verify.Fail(message.ToString());
-            }
 
             // After applying all of the code fixes, compare the resulting string to the inputted one
             var updatedDocuments = project.Documents.ToArray();
@@ -689,24 +661,6 @@ namespace Microsoft.CodeAnalysis.Testing
         }
 
         /// <summary>
-        /// Formats the whitespace in all documents of the specified <see cref="Project"/>.
-        /// </summary>
-        /// <param name="project">The project to update.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-        /// <returns>The updated <see cref="Project"/>.</returns>
-        private static async Task<Project> ReformatProjectDocumentsAsync(Project project, CancellationToken cancellationToken)
-        {
-            foreach (var documentId in project.DocumentIds)
-            {
-                var document = project.GetDocument(documentId);
-                document = await Formatter.FormatAsync(document, Formatter.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
-                project = document.Project;
-            }
-
-            return project;
-        }
-
-        /// <summary>
         /// Given a document, turn it into a string based on the syntax root.
         /// </summary>
         /// <param name="document">The <see cref="Document"/> to be converted to a string.</param>
@@ -717,43 +671,6 @@ namespace Microsoft.CodeAnalysis.Testing
             var simplifiedDoc = await Simplifier.ReduceAsync(document, Simplifier.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
             var formatted = await Formatter.FormatAsync(simplifiedDoc, Formatter.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
             return await formatted.GetTextAsync(cancellationToken).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Compare two collections of <see cref="Diagnostic"/>s, and return a list of any new diagnostics that appear
-        /// only in the second collection.
-        /// <note type="note">
-        /// <para>Considers <see cref="Diagnostic"/> to be the same if they have the same <see cref="Diagnostic.Id"/>s.
-        /// In the case of multiple diagnostics with the same <see cref="Diagnostic.Id"/> in a row, this method may not
-        /// necessarily return the new one.</para>
-        /// </note>
-        /// </summary>
-        /// <param name="diagnostics">The <see cref="Diagnostic"/>s that existed in the code before the code fix was
-        /// applied.</param>
-        /// <param name="newDiagnostics">The <see cref="Diagnostic"/>s that exist in the code after the code fix was
-        /// applied.</param>
-        /// <returns>A list of <see cref="Diagnostic"/>s that only surfaced in the code after the code fix was
-        /// applied.</returns>
-        private static IEnumerable<Diagnostic> GetNewDiagnostics(IEnumerable<Diagnostic> diagnostics, IEnumerable<Diagnostic> newDiagnostics)
-        {
-            var oldArray = diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
-            var newArray = newDiagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
-
-            var oldIndex = 0;
-            var newIndex = 0;
-
-            while (newIndex < newArray.Length)
-            {
-                if (oldIndex < oldArray.Length && oldArray[oldIndex].Id == newArray[newIndex].Id)
-                {
-                    ++oldIndex;
-                    ++newIndex;
-                }
-                else
-                {
-                    yield return newArray[newIndex++];
-                }
-            }
         }
 
         private static bool AreDiagnosticsDifferent(ImmutableArray<Diagnostic> analyzerDiagnostics, ImmutableArray<Diagnostic> previousDiagnostics)
