@@ -1,0 +1,33 @@
+phases:
+- phase: Windows
+  queue:
+    name: Hosted VS2017
+    timeoutInMinutes: 90
+    parallel: 2
+    matrix:
+      Debug:
+        _command: eng\common\CIBuild.cmd
+        _args: -configuration debug -prepareMachine
+        _configuration: Debug
+      Release:
+        _command: eng\common\CIBuild.cmd
+        _args: -configuration release -prepareMachine
+        _configuration: Release
+  steps:
+    - script: $(_command) $(_args)
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\$(_configuration)\TestResults'
+        ArtifactName: '$(_configuration)'
+        publishLocation: Container
+      continueOnError: true
+      condition: failed()
+    - task: PublishTestResults@2
+      inputs:
+        testRunner: 'xUnit'
+        testResultsFiles: '**/*.xml' 
+        searchFolder: '$(Build.SourcesDirectory)\artifacts\$(_configuration)\TestResults'
+        configuration: '$(_configuration)'
+        publishRunAttachments: true
+      continueOnError: true
+      condition: failed()
