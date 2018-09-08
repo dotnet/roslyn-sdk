@@ -5,11 +5,11 @@ phases:
     timeoutInMinutes: 90
     parallel: 2
     matrix:
-      windows_debug:
+      debug:
         _command: eng\common\CIBuild.cmd
         _args: -configuration debug -prepareMachine
         _configuration: Debug
-      windows_release:
+      release:
         _command: eng\common\CIBuild.cmd
         _args: -configuration release -prepareMachine
         _configuration: Release
