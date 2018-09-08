@@ -46,4 +46,4 @@ phases:
         configuration: '$(_configuration)'
         publishRunAttachments: true
       continueOnError: true
-      condition: eq($(_args), '-test')
+      condition: always()
