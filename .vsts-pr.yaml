@@ -1,0 +1,24 @@
+phases:
+- phase: Windows
+  queue:
+    name: Hosted VS2017
+    timeoutInMinutes: 90
+    parallel: 2
+    matrix:
+      windows_debug:
+        _command: eng\common\CIBuild.cmd
+        _args: -configuration debug -prepareMachine
+        _configuration: Debug
+      windows_release:
+        _command: eng\common\CIBuild.cmd
+        _args: -configuration release -prepareMachine
+        _configuration: Release
+  steps:
+    - script: $(_command) $(_args)
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\$(_configuration)\TestResults'
+        ArtifactName: 'Windows $(_configuration)'
+        publishLocation: Container
+      continueOnError: true
+      condition: failed()
