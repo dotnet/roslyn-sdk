@@ -6,27 +6,19 @@ phases:
     parallel: 4
     matrix:
       Samples Debug:
-        _command: eng\PRBuild.cmd
-        _args: -configuration debug -prepareMachine -projects $(Build.SourcesDirectory)\Samples.sln
         _configuration: Debug
         _solution: Samples
       Samples Release:
-        _command: eng\PRBuild.cmd
-        _args: -configuration release -prepareMachine -projects $(Build.SourcesDirectory)\Samples.sln
         _configuration: Release
         _solution: Samples
       SDK Debug:
-        _command: eng\PRBuild.cmd
-        _args: -configuration debug -prepareMachine -projects $(Build.SourcesDirectory)\Roslyn-SDK.sln
         _configuration: Debug
-        _solution: SDK
+        _solution: Roslyn-SDK
       SDK Release:
-        _command: eng\PRBuild.cmd
-        _args: -configuration release -prepareMachine -projects $(Build.SourcesDirectory)\Roslyn-SDK.sln
         _configuration: Release
-        _solution: SDK
+        _solution: Roslyn-SDK
   steps:
-    - script: $(_command) $(_args)
+    - script: eng\PRBuild.cmd -configuration $(_configuration) -prepareMachine -projects $(Build.SourcesDirectory)\$(_solution).sln
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\$(_configuration)\log'
@@ -42,3 +34,4 @@ phases:
         configuration: '$(_configuration)'
         publishRunAttachments: true
       continueOnError: true
+      condition: always()
