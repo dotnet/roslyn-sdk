@@ -5,20 +5,32 @@ phases:
     timeoutInMinutes: 90
     parallel: 2
     matrix:
-      Debug:
+      Samples Debug:
         _command: eng\PRBuild.cmd
-        _args: -configuration debug -prepareMachine
+        _args: -configuration debug -prepareMachine -projects $(Build.SourcesDirectory)\Samples.sln
         _configuration: Debug
-      Release:
+        _solution: Samples
+      Samples Release:
         _command: eng\PRBuild.cmd
-        _args: -configuration release -prepareMachine
+        _args: -configuration release -prepareMachine -projects $(Build.SourcesDirectory)\Samples.sln
         _configuration: Release
+        _solution: Samples
+      SDK Debug:
+        _command: eng\PRBuild.cmd
+        _args: -configuration debug -prepareMachine -projects $(Build.SourcesDirectory)\Roslyn-SDK.sln
+        _configuration: Debug
+        _solution: SDK
+      SDK Release:
+        _command: eeng\PRBuild.cmd
+        _args: -configuration release -prepareMachine -projects $(Build.SourcesDirectory)\Roslyn-SDK.sln
+        _configuration: Release
+        _solution: SDK
   steps:
     - script: $(_command) $(_args)
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\$(_configuration)\TestResults'
-        ArtifactName: '$(_configuration)'
+        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\$(_configuration)\log'
+        ArtifactName: '$(_solution) $(_configuration) logs'
         publishLocation: Container
       continueOnError: true
       condition: failed()
