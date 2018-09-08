@@ -18,7 +18,14 @@ phases:
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\$(_configuration)\TestResults'
-        ArtifactName: 'Windows $(_configuration)'
+        ArtifactName: '$(_configuration)'
         publishLocation: Container
       continueOnError: true
       condition: failed()
+    - task: PublishTestResults@2
+      inputs:
+        testRunner: 'xUnit'
+        testResultsFiles: '**/*.xml' 
+        searchFolder: '$(Build.SourcesDirectory)\artifacts\$(_configuration)\TestResults'
+        configuration: '$(_configuration)'
+        publishRunAttachments: true
