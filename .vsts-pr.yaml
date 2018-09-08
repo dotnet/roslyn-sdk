@@ -21,7 +21,7 @@ phases:
         _configuration: Debug
         _solution: SDK
       SDK Release:
-        _command: eeng\PRBuild.cmd
+        _command: eng\PRBuild.cmd
         _args: -configuration release -prepareMachine -projects $(Build.SourcesDirectory)\Roslyn-SDK.sln
         _configuration: Release
         _solution: SDK
