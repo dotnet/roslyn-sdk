@@ -6,11 +6,11 @@ phases:
     parallel: 2
     matrix:
       Debug:
-        _command: eng\common\CIBuild.cmd
+        _command: eng\PRBuild.cmd
         _args: -configuration debug -prepareMachine
         _configuration: Debug
       Release:
-        _command: eng\common\CIBuild.cmd
+        _command: eng\PRBuild.cmd
         _args: -configuration release -prepareMachine
         _configuration: Release
   steps:
