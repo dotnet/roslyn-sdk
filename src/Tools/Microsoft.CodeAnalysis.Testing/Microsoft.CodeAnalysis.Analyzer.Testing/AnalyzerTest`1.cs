@@ -551,6 +551,11 @@ namespace Microsoft.CodeAnalysis.Testing
                 solution = solution.AddMetadataReference(projectId, MetadataReferences.MicrosoftVisualBasicReference);
             }
 
+            if (MetadataReferences.MscorlibFacadeReference != null)
+            {
+                solution = solution.AddMetadataReference(projectId, MetadataReferences.MscorlibFacadeReference);
+            }
+
             if (MetadataReferences.SystemRuntimeReference != null)
             {
                 solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemRuntimeReference);

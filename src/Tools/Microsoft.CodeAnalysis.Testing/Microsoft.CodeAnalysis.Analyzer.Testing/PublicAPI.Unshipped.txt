@@ -132,8 +132,6 @@ static readonly Microsoft.CodeAnalysis.Testing.MetadataReferences.MicrosoftVisua
 static readonly Microsoft.CodeAnalysis.Testing.MetadataReferences.SystemCollectionsImmutableReference -> Microsoft.CodeAnalysis.MetadataReference
 static readonly Microsoft.CodeAnalysis.Testing.MetadataReferences.SystemCoreReference -> Microsoft.CodeAnalysis.MetadataReference
 static readonly Microsoft.CodeAnalysis.Testing.MetadataReferences.SystemReference -> Microsoft.CodeAnalysis.MetadataReference
-static readonly Microsoft.CodeAnalysis.Testing.MetadataReferences.SystemRuntimeReference -> Microsoft.CodeAnalysis.MetadataReference
-static readonly Microsoft.CodeAnalysis.Testing.MetadataReferences.SystemValueTupleReference -> Microsoft.CodeAnalysis.MetadataReference
 virtual Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.ApplyCompilationOptions(Microsoft.CodeAnalysis.Project project) -> Microsoft.CodeAnalysis.Project
 virtual Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.CreateProjectImpl((string filename, Microsoft.CodeAnalysis.Text.SourceText content)[] sources, (string filename, Microsoft.CodeAnalysis.Text.SourceText content)[] additionalFiles, Microsoft.CodeAnalysis.MetadataReference[] additionalMetadataReferences, string language) -> Microsoft.CodeAnalysis.Project
 virtual Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.CreateSolution(Microsoft.CodeAnalysis.ProjectId projectId, string language) -> Microsoft.CodeAnalysis.Solution
