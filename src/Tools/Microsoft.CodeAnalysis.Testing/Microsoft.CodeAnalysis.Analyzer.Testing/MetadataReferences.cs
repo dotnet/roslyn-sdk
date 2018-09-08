@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 
-#if !NETSTANDARD1_5
-using System;
+#if NETSTANDARD1_5
+using System.IO;
 #endif
 
 namespace Microsoft.CodeAnalysis.Testing
@@ -23,8 +24,9 @@ namespace Microsoft.CodeAnalysis.Testing
         public static readonly MetadataReference SystemCollectionsImmutableReference = MetadataReference.CreateFromFile(typeof(ImmutableArray).GetTypeInfo().Assembly.Location);
         public static readonly MetadataReference MicrosoftVisualBasicReference = MetadataReference.CreateFromFile(typeof(Microsoft.VisualBasic.Strings).GetTypeInfo().Assembly.Location);
 
-        public static readonly MetadataReference SystemRuntimeReference;
-        public static readonly MetadataReference SystemValueTupleReference;
+        internal static readonly MetadataReference MscorlibFacadeReference;
+        internal static readonly MetadataReference SystemRuntimeReference;
+        internal static readonly MetadataReference SystemValueTupleReference;
 
         static MetadataReferences()
         {
@@ -32,14 +34,25 @@ namespace Microsoft.CodeAnalysis.Testing
             if (typeof(string).GetTypeInfo().Assembly.ExportedTypes.Any(x => x.Name == "System.ValueTuple"))
             {
                 // mscorlib contains ValueTuple, so no need to add a separate reference
+                MscorlibFacadeReference = null;
                 SystemRuntimeReference = null;
                 SystemValueTupleReference = null;
             }
+            else
+            {
+                MscorlibFacadeReference = MetadataReference.CreateFromFile(Path.Combine(Path.GetDirectoryName(typeof(Lazy<,>).GetTypeInfo().Assembly.Location), "mscorlib.dll"));
+                SystemRuntimeReference = MetadataReference.CreateFromFile(typeof(Lazy<,>).GetTypeInfo().Assembly.Location);
+                SystemValueTupleReference = MetadataReference.CreateFromFile(typeof(ValueTuple<,>).GetTypeInfo().Assembly.Location);
+            }
 #elif NETSTANDARD2_0
             // mscorlib contains ValueTuple, so no need to add a separate reference
+            MscorlibFacadeReference = null;
             SystemRuntimeReference = null;
             SystemValueTupleReference = null;
 #elif NET452
+            // System.Object is already in mscorlib
+            MscorlibFacadeReference = null;
+
             var systemRuntime = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "System.Runtime");
             if (systemRuntime != null)
             {
