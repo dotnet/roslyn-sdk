@@ -30,4 +30,3 @@ phases:
         configuration: '$(_configuration)'
         publishRunAttachments: true
       continueOnError: true
-      condition: failed()
