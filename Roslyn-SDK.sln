@@ -20,6 +20,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK.Template.Wizard", "src\Tools\Roslyn.SDK.Template.Wizard\Roslyn.SDK.Template.Wizard.csproj", "{ECFF0F53-89D5-4D7D-95D0-EAC1514D84E8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{68EC2F22-8CE0-4BA0-BA4D-20B00E30A2E0}"
+	ProjectSection(SolutionItems) = preProject
+		src\Tools\Microsoft.CodeAnalysis.Testing\README.md = src\Tools\Microsoft.CodeAnalysis.Testing\README.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Template.Wizard", "Template.Wizard", "{9375FA34-99D0-4E5C-9E21-8B2E2A4AA4CC}"
 EndProject
