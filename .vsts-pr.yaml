@@ -3,7 +3,7 @@ phases:
   queue:
     name: Hosted VS2017
     timeoutInMinutes: 90
-    parallel: 2
+    parallel: 4
     matrix:
       Samples Debug:
         _command: eng\PRBuild.cmd
