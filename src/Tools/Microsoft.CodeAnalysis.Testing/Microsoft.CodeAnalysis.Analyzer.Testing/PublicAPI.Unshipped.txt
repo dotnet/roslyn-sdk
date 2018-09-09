@@ -95,6 +95,7 @@ Microsoft.CodeAnalysis.Testing.SourceFileList.Add(string content) -> void
 Microsoft.CodeAnalysis.Testing.SourceFileList.SourceFileList(string defaultPrefix, string defaultExtension) -> void
 Microsoft.CodeAnalysis.Testing.StateInheritanceMode
 Microsoft.CodeAnalysis.Testing.StateInheritanceMode.AutoInherit = 0 -> Microsoft.CodeAnalysis.Testing.StateInheritanceMode
+Microsoft.CodeAnalysis.Testing.StateInheritanceMode.AutoInheritAll = 2 -> Microsoft.CodeAnalysis.Testing.StateInheritanceMode
 Microsoft.CodeAnalysis.Testing.StateInheritanceMode.Explicit = 1 -> Microsoft.CodeAnalysis.Testing.StateInheritanceMode
 Microsoft.CodeAnalysis.Testing.TestFileMarkupParser
 abstract Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.CreateCompilationOptions() -> Microsoft.CodeAnalysis.CompilationOptions

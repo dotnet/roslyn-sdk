@@ -6,7 +6,8 @@ namespace Microsoft.CodeAnalysis.Testing
     {
         /// <summary>
         /// The contents of the <see cref="SolutionState"/> may be explicitly specified, but unspecified elements of
-        /// partially-specified state instances are inherited from another source.
+        /// partially-specified state instances are inherited from another source. Fixable diagnostics are not
+        /// inherited.
         /// </summary>
         AutoInherit,
 
@@ -14,5 +15,12 @@ namespace Microsoft.CodeAnalysis.Testing
         /// The contents of the <see cref="SolutionState"/> are fully and explicitly specified.
         /// </summary>
         Explicit,
+
+        /// <summary>
+        /// The contents of the <see cref="SolutionState"/> may be explicitly specified, but unspecified elements of
+        /// partially-specified state instances are inherited from another source. All diagnostics, including fixable
+        /// diagnostics, are inherited.
+        /// </summary>
+        AutoInheritAll,
     }
 }

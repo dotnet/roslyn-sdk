@@ -77,14 +77,15 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <param name="baseState">The base state to inherit from, or <see langword="null"/> if the current state is
         /// the root state.</param>
         /// <param name="fixableDiagnostics">The set of diagnostic IDs to treat as fixable. Fixable diagnostics present
-        /// in the <see cref="ExpectedDiagnostics"/> collection of the base state are never inherited.</param>
+        /// in the <see cref="ExpectedDiagnostics"/> collection of the base state are only inherited for
+        /// <see cref="StateInheritanceMode.AutoInheritAll"/>.</param>
         /// <returns>A new <see cref="SolutionState"/> representing the current state with inherited values applied
         /// where appropriate. The <see cref="InheritanceMode"/> of the result is
         /// <see cref="StateInheritanceMode.Explicit"/>.</returns>
         public SolutionState WithInheritedValuesApplied(SolutionState baseState, ImmutableArray<string> fixableDiagnostics)
         {
             Debug.Assert(
-                InheritanceMode == StateInheritanceMode.AutoInherit || InheritanceMode == StateInheritanceMode.Explicit,
+                InheritanceMode == StateInheritanceMode.AutoInherit || InheritanceMode == StateInheritanceMode.Explicit || InheritanceMode == StateInheritanceMode.AutoInheritAll,
                 $"Unexpected inheritance mode: {InheritanceMode}");
 
             if (baseState?.AdditionalFilesFactories.Count > 0)
@@ -93,7 +94,7 @@ namespace Microsoft.CodeAnalysis.Testing
             }
 
             var result = new SolutionState(_defaultPrefix, _defaultExtension, MarkupHandling);
-            if (InheritanceMode == StateInheritanceMode.AutoInherit && baseState != null)
+            if (InheritanceMode != StateInheritanceMode.Explicit && baseState != null)
             {
                 if (Sources.Count == 0)
                 {
@@ -112,7 +113,14 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 if (ExpectedDiagnostics.Count == 0)
                 {
-                    result.ExpectedDiagnostics.AddRange(baseState.ExpectedDiagnostics.Where(diagnostic => !fixableDiagnostics.Contains(diagnostic.Id)));
+                    if (InheritanceMode == StateInheritanceMode.AutoInherit)
+                    {
+                        result.ExpectedDiagnostics.AddRange(baseState.ExpectedDiagnostics.Where(diagnostic => !fixableDiagnostics.Contains(diagnostic.Id)));
+                    }
+                    else
+                    {
+                        result.ExpectedDiagnostics.AddRange(baseState.ExpectedDiagnostics);
+                    }
                 }
             }
 
