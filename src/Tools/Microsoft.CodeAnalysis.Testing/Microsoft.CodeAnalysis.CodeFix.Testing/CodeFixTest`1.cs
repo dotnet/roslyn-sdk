@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -203,6 +202,7 @@ namespace Microsoft.CodeAnalysis.Testing
         private static bool CodeFixExpected(SolutionState state)
         {
             return state.InheritanceMode != StateInheritanceMode.AutoInherit
+                || state.MarkupHandling != MarkupMode.IgnoreFixable
                 || state.Sources.Any()
                 || state.AdditionalFiles.Any()
                 || state.AdditionalFilesFactories.Any();
