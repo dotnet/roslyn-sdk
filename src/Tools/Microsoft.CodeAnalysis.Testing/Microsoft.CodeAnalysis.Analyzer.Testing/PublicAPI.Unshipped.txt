@@ -1,6 +1,7 @@
 Microsoft.CodeAnalysis.Testing.AnalysisExclusions
 Microsoft.CodeAnalysis.Testing.AnalysisExclusions.GeneratedCode = 1 -> Microsoft.CodeAnalysis.Testing.AnalysisExclusions
 Microsoft.CodeAnalysis.Testing.AnalysisExclusions.None = 0 -> Microsoft.CodeAnalysis.Testing.AnalysisExclusions
+Microsoft.CodeAnalysis.Testing.AnalysisExclusions.Suppression = 2 -> Microsoft.CodeAnalysis.Testing.AnalysisExclusions
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.AnalyzerTest() -> void
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.CompilerDiagnostics.get -> Microsoft.CodeAnalysis.Testing.CompilerDiagnostics

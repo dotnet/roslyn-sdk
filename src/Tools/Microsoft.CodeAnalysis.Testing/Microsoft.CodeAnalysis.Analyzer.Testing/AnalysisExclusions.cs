@@ -19,5 +19,10 @@ namespace Microsoft.CodeAnalysis.Testing
         /// Analysis will not report diagnostics in generated code.
         /// </summary>
         GeneratedCode = 0x01,
+
+        /// <summary>
+        /// Diagnostics will not be reported if a <c>#pragma warning disable</c> appears at the beginning of the file.
+        /// </summary>
+        Suppression = 0x02,
     }
 }
