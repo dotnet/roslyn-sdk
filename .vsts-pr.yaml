@@ -46,4 +46,4 @@ phases:
         configuration: '$(_configuration)'
         publishRunAttachments: true
       continueOnError: true
-      condition: always()
+      condition: and(always(), contains(variables['_args'], '-test'))
