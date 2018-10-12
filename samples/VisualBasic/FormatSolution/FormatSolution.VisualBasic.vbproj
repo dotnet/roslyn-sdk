@@ -8,7 +8,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Locator" Version="1.0.13" />
 
-    <!-- These package versions should be updated to 2.9.0 when released on NuGet -->
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="2.9" />
     <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="2.9" />
   </ItemGroup>
