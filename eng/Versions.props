@@ -14,11 +14,8 @@
 
     <!-- Dependencies -->
     
-    <!-- MSBuild -->
-    <MicrosoftBuildVersion>15.3.409</MicrosoftBuildVersion>
-    <MicrosoftBuildEngineVersion>15.3.409</MicrosoftBuildEngineVersion>
-    <MicrosoftBuildFrameworkVersion>15.3.409</MicrosoftBuildFrameworkVersion>
     <UpdateTemplateVersionVersion>1.0.4-beta1</UpdateTemplateVersionVersion>
+    
     <!-- Roslyn for VS 2015 -->
     <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2015 since the Syntax Visualizer extension still
                supports it. -->
