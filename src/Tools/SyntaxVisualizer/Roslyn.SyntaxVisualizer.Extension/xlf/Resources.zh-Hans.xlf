@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="ToolWindowTitle">
         <source>Syntax Visualizer</source>
-        <target state="translated">语法可视化工具</target>
+        <target state="translated">Syntax Visualizer</target>
         <note />
       </trans-unit>
     </body>
