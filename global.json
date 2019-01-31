@@ -1,12 +1,10 @@
 {
-  "sdk": {
-    "version": "2.1.401"
+  "tools": {
+    "vs": {
+       "version": "15.9"
+    }
   },
   "msbuild-sdks": {
-    "RoslynTools.RepoToolset": "1.0.0-beta2-63110-06",
-    "MSBuild.Sdk.Extras": "1.6.41"
-  },
-  "vswhere": {
-    "version": "2.5.2"
+    "Microsoft.DotNet.Arcade.Sdk": "1.0.0-beta.19080.6"
   }
 }
