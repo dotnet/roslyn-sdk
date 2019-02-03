@@ -152,8 +152,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
         protected CodeFixTest()
         {
-            FixedState = new SolutionState(DefaultFilePathPrefix, DefaultFileExt, MarkupMode.IgnoreFixable) { InheritanceMode = StateInheritanceMode.AutoInherit };
-            BatchFixedState = new SolutionState(DefaultFilePathPrefix, DefaultFileExt, MarkupMode.IgnoreFixable) { InheritanceMode = StateInheritanceMode.AutoInherit };
+            FixedState = new SolutionState(DefaultFilePathPrefix, DefaultFileExt);
+            BatchFixedState = new SolutionState(DefaultFilePathPrefix, DefaultFileExt);
         }
 
         /// <summary>
@@ -201,8 +201,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
         private static bool CodeFixExpected(SolutionState state)
         {
-            return state.InheritanceMode != StateInheritanceMode.AutoInherit
-                || state.MarkupHandling != MarkupMode.IgnoreFixable
+            return state.InheritanceMode != null
+                || state.MarkupHandling != null
                 || state.Sources.Any()
                 || state.AdditionalFiles.Any()
                 || state.AdditionalFilesFactories.Any();
