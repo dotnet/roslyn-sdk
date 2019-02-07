@@ -1,4 +1,4 @@
-' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 Imports System.Collections.Generic
 Imports System.Linq
@@ -213,7 +213,7 @@ Public Module SyntaxDgmlHelper
 
 #Region "GetLabel*"
     Private Function GetLabelForNode(node As SyntaxNode) As String
-        Return String.Format(Resources.SyntaxNodeLabel, node.GetKind())
+        Return String.Format(My.Resources.Resources.SyntaxNodeLabel, node.GetKind())
     End Function
 
     Private Function GetLabelForToken(token As SyntaxToken) As String
@@ -228,7 +228,7 @@ Public Module SyntaxDgmlHelper
             End If
         End If
 
-        Return String.Format(Resources.SyntaxTokenLabel, label)
+        Return String.Format(My.Resources.Resources.SyntaxTokenLabel, label)
     End Function
 
     Private Function GetLabelForTrivia(trivia As SyntaxTrivia) As String
