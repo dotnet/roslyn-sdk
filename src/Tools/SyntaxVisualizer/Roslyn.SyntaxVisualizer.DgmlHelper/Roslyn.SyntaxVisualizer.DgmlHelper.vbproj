@@ -2,7 +2,6 @@
     <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <RootNamespace>Roslyn.SyntaxVisualizer.DgmlHelper</RootNamespace>
-    <AssemblyName>Roslyn.SyntaxVisualizer.DgmlHelper</AssemblyName>
     <IsProductComponent>false</IsProductComponent>
   </PropertyGroup>
 
