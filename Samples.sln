@@ -111,8 +111,6 @@ Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "VisualBasicToCSharpConverte
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "VisualBasicToCSharpConverter.Tests", "samples\VisualBasic\VisualBasicToCSharpConverter\VisualBasicToCSharpConverter.Test\VisualBasicToCSharpConverter.Tests.vbproj", "{5B7D7569-B5EE-4C01-9AFA-BC1958588160}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolutionExplorer", "samples\CSharp\SolutionExplorer\SolutionExplorer.csproj", "{B0474F4F-A6A9-4F10-BC49-CE2957201DBB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -271,10 +269,6 @@ Global
 		{5B7D7569-B5EE-4C01-9AFA-BC1958588160}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B7D7569-B5EE-4C01-9AFA-BC1958588160}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B7D7569-B5EE-4C01-9AFA-BC1958588160}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0474F4F-A6A9-4F10-BC49-CE2957201DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0474F4F-A6A9-4F10-BC49-CE2957201DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0474F4F-A6A9-4F10-BC49-CE2957201DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0474F4F-A6A9-4F10-BC49-CE2957201DBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -331,7 +325,6 @@ Global
 		{8E1C9AEC-6EF1-43A8-A378-52C5C0E40532} = {CDA94F62-E35A-4913-8045-D9D42416513C}
 		{ECB83742-8023-4609-B139-D7B78DD66ED9} = {8E1C9AEC-6EF1-43A8-A378-52C5C0E40532}
 		{5B7D7569-B5EE-4C01-9AFA-BC1958588160} = {8E1C9AEC-6EF1-43A8-A378-52C5C0E40532}
-		{B0474F4F-A6A9-4F10-BC49-CE2957201DBB} = {C3FB27E9-C8EE-4F76-B0AA-7CD67A7E652B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B849838B-3D7A-4B6B-BE07-285DCB1588F4}
