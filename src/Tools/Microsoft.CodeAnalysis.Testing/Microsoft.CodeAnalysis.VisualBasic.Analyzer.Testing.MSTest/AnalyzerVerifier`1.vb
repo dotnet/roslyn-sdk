@@ -1,8 +1,7 @@
 ﻿Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.Testing.Verifiers
+Imports Microsoft.CodeAnalysis.VisualBasic.Testing
 
-Namespace Microsoft.CodeAnalysis.VisualBasic.Testing.MSTest
-    Public Class AnalyzerVerifier(Of TAnalyzer As {DiagnosticAnalyzer, New})
-        Inherits VisualBasicAnalyzerVerifier(Of TAnalyzer, MSTestVerifier)
-    End Class
-End Namespace
+Public Class AnalyzerVerifier(Of TAnalyzer As {DiagnosticAnalyzer, New})
+    Inherits VisualBasicAnalyzerVerifier(Of TAnalyzer, MSTestVerifier)
+End Class
