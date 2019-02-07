@@ -3,7 +3,7 @@
   <Import Project="$(ArtifactsObjDir)$(AssemblyName)\*.props" Condition="'$(MSBuildProjectExtension)' == '.tmp_proj'" />
 
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <RootNamespace>Roslyn.SyntaxVisualizer.Extension</RootNamespace>
     <AssemblyName>Roslyn.SyntaxVisualizer.Extension</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
@@ -92,7 +92,7 @@
   </ItemGroup>
 
   <Target Name="Move_Assets" BeforeTargets="BeforeBuild">
-    <Copy SourceFiles="@(FilesToMove)" DestinationFolder="$(ArtifactsObjDir)Roslyn.SyntaxVisualizer.Extension\net461\Roslyn.SyntaxVisualizer.Extension.xlf" />
+    <Copy SourceFiles="@(FilesToMove)" DestinationFolder="$(ArtifactsObjDir)Roslyn.SyntaxVisualizer.Extension\net472\Roslyn.SyntaxVisualizer.Extension.xlf" />
   </Target>
 
   <!-- workaround for https://github.com/NuGet/Home/issues/5894 -->

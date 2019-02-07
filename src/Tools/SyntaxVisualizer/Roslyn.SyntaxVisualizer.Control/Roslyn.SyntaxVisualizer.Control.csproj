@@ -3,7 +3,7 @@
   <Import Project="$(ArtifactsObjDir)$(AssemblyName)\*.props" Condition="'$(MSBuildProjectExtension)' == '.tmp_proj'" />
 
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <RootNamespace>Roslyn.SyntaxVisualizer.Control</RootNamespace>
     <AssemblyName>Roslyn.SyntaxVisualizer.Control</AssemblyName>
     <IsProductComponent>false</IsProductComponent>
