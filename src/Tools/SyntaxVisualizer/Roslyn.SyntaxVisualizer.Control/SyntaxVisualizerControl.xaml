@@ -5,66 +5,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Roslyn.SyntaxVisualizer.Control"
              xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="300">
     <UserControl.Resources>
         <Style TargetType="{x:Type Label}">
             <Setter Property="Foreground" Value="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextBrushKey}}" />
-        </Style>
-        <Style x:Key="FocusVisual">
-            <Setter Property="Control.Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonFocusedBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
-            <Setter Property="Background" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBrushKey}}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderBrushKey}}"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonTextBrushKey}}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="1"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
-                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsDefaulted" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonDefaultBrushKey}}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderDefaultBrushKey}}"/>
-                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonDefaultTextBrushKey}}"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonHoverBrushKey}}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderHoverBrushKey}}"/>
-                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonHoverTextBrushKey}}"/>
-                            </Trigger>
-                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=local:SyntaxVisualizerControl}, Path=LegendPopup.IsOpen, Mode=OneWay}" Value="True">
-                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderPressedBrushKey}}"/>
-                            </DataTrigger>
-                            <Trigger Property="IsPressed" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonPressedBrushKey}}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderPressedBrushKey}}"/>
-                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonPressedTextBrushKey}}"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Background" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonDisabledBrushKey}}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderDisabledBrushKey}}"/>
-                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonDisabledTextBrushKey}}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
         </Style>
 
         <SolidColorBrush x:Key="SyntaxNodeText.Brush" Color="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextColorKey}}"/>
@@ -100,49 +46,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Border Grid.Row="0" BorderThickness="0" Background="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarGradientBrushKey}}" >
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" VerticalAlignment="Center" Content="Syntax Tree" FontWeight="Bold"/>
-                <StackPanel Grid.Column="2" Margin="3">
-                    <Button Name="legendButton" Click="LegendButton_Click" AutomationProperties.Name="Legend" Visibility="Hidden" Padding="2">
-                        <TextBlock>Legend</TextBlock>
-                    </Button>
-                    <Popup Name="legendPopup" StaysOpen="False">
-                        <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static vsui:EnvironmentColors.DropDownPopupBorderBrushKey}}">
-                            <Grid Background="{DynamicResource {x:Static vsui:EnvironmentColors.DropDownPopupBackgroundGradientBrushKey}}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="SyntaxNode" Foreground="{StaticResource SyntaxNodeText.Brush}" Margin="5,5,5,0"/>
-                                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="SyntaxToken" Foreground="{StaticResource SyntaxTokenText.Brush}" Margin="5,0,5,0"/>
-                                <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Leading SyntaxTrivia" Foreground="{StaticResource SyntaxTriviaText.Brush}" Margin="5,0,5,0"/>
-                                <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Trailing SyntaxTrivia" Foreground="{StaticResource SyntaxTriviaText.Brush}" Margin="5,0,5,0"/>
-                                <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,0,5,0">
-                                    <Label Name="hasDiagnosticsLegend" Content="Has Diagnostics" Foreground="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextBrushKey}}" HorizontalAlignment="Left" />
-                                    <Rectangle HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="3.0"
-                                               Style="{StaticResource SquiggleStyle}"
-                                               Width="{Binding ElementName=hasDiagnosticsLegend, Path=ActualWidth}" />
-                                </Grid>
-                                <Label Name="highlightLegendTextLabel" Visibility="Collapsed" Grid.Row="5" Grid.Column="0"  Content="Yellow" BorderThickness="1" BorderBrush="Black" Background="Yellow" Margin="10,-5,0,5" Padding="5,1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <Label Name="highlightLegendDescriptionLabel" Visibility="Collapsed" Grid.Row="5" Grid.Column="1" Content="Of Interest" Margin="0,-5,5,5"/>
-                            </Grid>
-                        </Border>
-                    </Popup>
-                </StackPanel>
-            </Grid>
+            <Label Grid.Column="0" VerticalAlignment="Center" Content="Syntax Tree" FontWeight="Bold"/>
         </Border>
         <TreeView Grid.Row="1" Name="treeView" SelectedItemChanged="TreeView_SelectedItemChanged" PreviewMouseRightButtonDown="TreeView_PreviewMouseRightButtonDown" ContextMenuOpening="TreeView_ContextMenuOpening" Padding="5"
                   BorderThickness="0,1,0,0"

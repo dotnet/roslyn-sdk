@@ -19,7 +19,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
     /// implementation of the IVsUIElementPane interface.
     /// </summary>
     [Guid("da7e21aa-da94-452d-8aa1-d1b23f73f576")]
-    public class SyntaxVisualizerToolWindow : ToolWindowPane, IOleCommandTarget
+    public class SyntaxVisualizerToolWindow : ToolWindowPane
     {
         private readonly SyntaxVisualizerContainer _container;
 
@@ -69,37 +69,6 @@ namespace Roslyn.SyntaxVisualizer.Extension
             where TService : class
         {
             return (TServiceInterface)GetService(typeof(TService));
-        }
-
-        protected override object GetService(Type serviceType)
-        {
-            if (serviceType == typeof(IOleCommandTarget))
-            {
-                return this;
-            }
-
-            return base.GetService(serviceType);
-        }
-
-        public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
-        {
-            var baseTarget = (IOleCommandTarget)base.GetService(typeof(IOleCommandTarget));
-            return baseTarget?.QueryStatus(pguidCmdGroup, cCmds, prgCmds, pCmdText) ?? (int)Constants.OLECMDERR_E_NOTSUPPORTED;
-        }
-
-        public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
-        {
-            // Triggered when Escape is pressed in the tool window. If the popup is open, we want to close
-            // the popup and return S_OK, so that focus is not set to the main text document window.
-            if (pguidCmdGroup == VSConstants.GUID_VSStandardCommandSet97 &&
-                (VSConstants.VSStd97CmdID)nCmdID == VSConstants.VSStd97CmdID.PaneActivateDocWindow &&
-                _container.TryHandleEscape())
-            {
-                return VSConstants.S_OK;
-            }
-
-            var baseTarget = (IOleCommandTarget)base.GetService(typeof(IOleCommandTarget));
-            return baseTarget?.Exec(pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut) ?? (int)Constants.OLECMDERR_E_NOTSUPPORTED;
         }
     }
 }

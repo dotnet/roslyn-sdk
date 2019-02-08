@@ -128,11 +128,6 @@ namespace Roslyn.SyntaxVisualizer.Control
             windowsFormsHost.Child = tabStopPanel;
         }
 
-        /// <summary>
-        /// Allows templates defined in XAML to bind to properties of <see cref="legendPopup"/>.
-        /// </summary>
-        public Popup LegendPopup => legendPopup;
-
         public void SetPropertyGridColors(IVsUIShell5 shell)
         {
             var backgroundColor = VsColors.GetThemedGDIColor(shell, EnvironmentColors.ToolWindowBackgroundColorKey);
@@ -222,7 +217,6 @@ namespace Roslyn.SyntaxVisualizer.Control
             kindTextLabel.Visibility = Visibility.Hidden;
             typeValueLabel.Content = string.Empty;
             kindValueLabel.Content = string.Empty;
-            legendButton.Visibility = Visibility.Hidden;
         }
 
         // If lazy is true then treeview items are populated on-demand. In other words, when lazy is true
@@ -237,7 +231,6 @@ namespace Roslyn.SyntaxVisualizer.Control
                 SyntaxTree = tree;
                 SemanticModel = model;
                 AddNode(null, SyntaxTree.GetRoot());
-                legendButton.Visibility = Visibility.Visible;
             }
         }
 
@@ -253,14 +246,13 @@ namespace Roslyn.SyntaxVisualizer.Control
                 SyntaxTree = node.SyntaxTree;
                 SemanticModel = model;
                 AddNode(null, node);
-                legendButton.Visibility = Visibility.Visible;
             }
         }
 
         // Select the SyntaxNode / SyntaxToken / SyntaxTrivia whose position best matches the supplied position.
         public bool NavigateToBestMatch(int position, string kind = null,
             SyntaxCategory category = SyntaxCategory.None,
-            bool highlightMatch = false, string highlightLegendDescription = null)
+            bool highlightMatch = false)
         {
             TreeViewItem match = null;
 
@@ -278,12 +270,6 @@ namespace Roslyn.SyntaxVisualizer.Control
                 match.Background = Brushes.Yellow;
                 match.BorderBrush = Brushes.Black;
                 match.BorderThickness = s_defaultBorderThickness;
-                highlightLegendTextLabel.Visibility = Visibility.Visible;
-                highlightLegendDescriptionLabel.Visibility = Visibility.Visible;
-                if (!string.IsNullOrWhiteSpace(highlightLegendDescription))
-                {
-                    highlightLegendDescriptionLabel.Content = highlightLegendDescription;
-                }
             }
 
             return matchFound;
@@ -292,15 +278,15 @@ namespace Roslyn.SyntaxVisualizer.Control
         // Select the SyntaxNode / SyntaxToken / SyntaxTrivia whose span best matches the supplied span.
         public bool NavigateToBestMatch(int start, int length, string kind = null,
             SyntaxCategory category = SyntaxCategory.None,
-            bool highlightMatch = false, string highlightLegendDescription = null)
+            bool highlightMatch = false)
         {
-            return NavigateToBestMatch(new TextSpan(start, length), kind, category, highlightMatch, highlightLegendDescription);
+            return NavigateToBestMatch(new TextSpan(start, length), kind, category, highlightMatch);
         }
 
         // Select the SyntaxNode / SyntaxToken / SyntaxTrivia whose span best matches the supplied span.
         public bool NavigateToBestMatch(TextSpan span, string kind = null,
             SyntaxCategory category = SyntaxCategory.None,
-            bool highlightMatch = false, string highlightLegendDescription = null)
+            bool highlightMatch = false)
         {
             TreeViewItem match = null;
 
@@ -318,29 +304,9 @@ namespace Roslyn.SyntaxVisualizer.Control
                 match.Background = Brushes.Yellow;
                 match.BorderBrush = Brushes.Black;
                 match.BorderThickness = s_defaultBorderThickness;
-                highlightLegendTextLabel.Visibility = Visibility.Visible;
-                highlightLegendDescriptionLabel.Visibility = Visibility.Visible;
-                if (!string.IsNullOrWhiteSpace(highlightLegendDescription))
-                {
-                    highlightLegendDescriptionLabel.Content = highlightLegendDescription;
-                }
             }
 
             return matchFound;
-        }
-
-        public bool TryHandleEscape()
-        {
-            if (legendPopup.IsOpen)
-            {
-                legendPopup.IsOpen = false;
-                legendButton.Focus();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
         #endregion
 
@@ -1008,11 +974,6 @@ namespace Roslyn.SyntaxVisualizer.Control
                     _propertyGrid.SelectedObject = value;
                 }
             }
-        }
-
-        private void LegendButton_Click(object sender, RoutedEventArgs e)
-        {
-            legendPopup.IsOpen = !legendPopup.IsOpen;
         }
         #endregion
     }
