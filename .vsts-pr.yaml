@@ -33,7 +33,7 @@ phases:
     - script: eng\PRBuild.cmd $(_args) -configuration $(_configuration) -prepareMachine -projects $(Build.SourcesDirectory)\$(_solution).sln /p:OfficialBuild=false
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\$(_configuration)\log'
+        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
         ArtifactName: '$(_solution) $(_configuration) logs'
         publishLocation: Container
       continueOnError: true
@@ -42,7 +42,7 @@ phases:
       inputs:
         testRunner: 'xUnit'
         testResultsFiles: '**/*.xml' 
-        searchFolder: '$(Build.SourcesDirectory)\artifacts\$(_configuration)\TestResults'
+        searchFolder: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)'
         configuration: '$(_configuration)'
         publishRunAttachments: true
       continueOnError: true
