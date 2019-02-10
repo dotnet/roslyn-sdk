@@ -83,11 +83,11 @@ Microsoft.CodeAnalysis.Testing.SolutionState.AdditionalFiles.get -> Microsoft.Co
 Microsoft.CodeAnalysis.Testing.SolutionState.AdditionalFilesFactories.get -> System.Collections.Generic.List<System.Func<System.Collections.Generic.IEnumerable<(string filename, Microsoft.CodeAnalysis.Text.SourceText content)>>>
 Microsoft.CodeAnalysis.Testing.SolutionState.AdditionalReferences.get -> Microsoft.CodeAnalysis.Testing.MetadataReferenceCollection
 Microsoft.CodeAnalysis.Testing.SolutionState.ExpectedDiagnostics.get -> System.Collections.Generic.List<Microsoft.CodeAnalysis.Testing.DiagnosticResult>
-Microsoft.CodeAnalysis.Testing.SolutionState.InheritanceMode.get -> Microsoft.CodeAnalysis.Testing.StateInheritanceMode
+Microsoft.CodeAnalysis.Testing.SolutionState.InheritanceMode.get -> Microsoft.CodeAnalysis.Testing.StateInheritanceMode?
 Microsoft.CodeAnalysis.Testing.SolutionState.InheritanceMode.set -> void
-Microsoft.CodeAnalysis.Testing.SolutionState.MarkupHandling.get -> Microsoft.CodeAnalysis.Testing.MarkupMode
+Microsoft.CodeAnalysis.Testing.SolutionState.MarkupHandling.get -> Microsoft.CodeAnalysis.Testing.MarkupMode?
 Microsoft.CodeAnalysis.Testing.SolutionState.MarkupHandling.set -> void
-Microsoft.CodeAnalysis.Testing.SolutionState.SolutionState(string defaultPrefix, string defaultExtension, Microsoft.CodeAnalysis.Testing.MarkupMode markupMode) -> void
+Microsoft.CodeAnalysis.Testing.SolutionState.SolutionState(string defaultPrefix, string defaultExtension) -> void
 Microsoft.CodeAnalysis.Testing.SolutionState.Sources.get -> Microsoft.CodeAnalysis.Testing.SourceFileList
 Microsoft.CodeAnalysis.Testing.SolutionState.WithInheritedValuesApplied(Microsoft.CodeAnalysis.Testing.SolutionState baseState, System.Collections.Immutable.ImmutableArray<string> fixableDiagnostics) -> Microsoft.CodeAnalysis.Testing.SolutionState
 Microsoft.CodeAnalysis.Testing.SolutionState.WithProcessedMarkup(Microsoft.CodeAnalysis.DiagnosticDescriptor defaultDiagnostic, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor> supportedDiagnostics, System.Collections.Immutable.ImmutableArray<string> fixableDiagnostics, string defaultPath) -> Microsoft.CodeAnalysis.Testing.SolutionState

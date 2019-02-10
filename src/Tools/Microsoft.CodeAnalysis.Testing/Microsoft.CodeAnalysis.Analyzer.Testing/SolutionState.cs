@@ -15,16 +15,24 @@ namespace Microsoft.CodeAnalysis.Testing
         private readonly string _defaultPrefix;
         private readonly string _defaultExtension;
 
-        public SolutionState(string defaultPrefix, string defaultExtension, MarkupMode markupMode)
+        public SolutionState(string defaultPrefix, string defaultExtension)
         {
             _defaultPrefix = defaultPrefix;
             _defaultExtension = defaultExtension;
 
             Sources = new SourceFileList(defaultPrefix, defaultExtension);
-            MarkupHandling = markupMode;
         }
 
-        public StateInheritanceMode InheritanceMode { get; set; } = StateInheritanceMode.AutoInherit;
+        /// <summary>
+        /// Gets or sets a value indicating the manner in which properties are inherited from base test states. When
+        /// this property is not set to a specific value, the default varies according to the type of test state:
+        /// <list type="bullet">
+        /// <item><description>For original (input) sources, the default value is <see cref="StateInheritanceMode.Explicit"/>.</description></item>
+        /// <item><description>For fixed (output) sources, the default value is <see cref="StateInheritanceMode.AutoInherit"/>.</description></item>
+        /// <item><description>For uncorrected (output) sources, the default value is <see cref="StateInheritanceMode.AutoInheritAll"/>.</description></item>
+        /// </list>
+        /// </summary>
+        public StateInheritanceMode? InheritanceMode { get; set; }
 
         /// <summary>
         /// Gets the set of source files for analyzer or code fix testing. Files may be added to this list using one of
@@ -45,8 +53,12 @@ namespace Microsoft.CodeAnalysis.Testing
 
         /// <summary>
         /// Gets or sets a value indicating the manner in which markup syntax is treated within test inputs and outputs.
-        /// The default value is <see cref="MarkupMode.Allow"/> for original (input) sources or
-        /// <see cref="MarkupMode.IgnoreFixable"/> for fixed (output) sources.
+        /// When this property is not set to a specific value, the default varies according to the type of test state:
+        /// <list type="bullet">
+        /// <item><description>For original (input) sources, the default value is <see cref="MarkupMode.Allow"/>.</description></item>
+        /// <item><description>For fixed (output) sources, the default value is <see cref="MarkupMode.IgnoreFixable"/>.</description></item>
+        /// <item><description>For uncorrected (output) sources, the default value is <see cref="MarkupMode.Allow"/>.</description></item>
+        /// </list>
         /// </summary>
         /// <remarks>
         /// <para>Diagnostics expressed using markup are combined with explicitly-specified expected diagnostics.</para>
@@ -65,7 +77,7 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <see cref="DiagnosticSeverity.Error"/>.</description></item>
         /// </list>
         /// </remarks>
-        public MarkupMode MarkupHandling { get; set; }
+        public MarkupMode? MarkupHandling { get; set; }
 
         /// <summary>
         /// Applies the <see cref="InheritanceMode"/> using a specified base state.
@@ -84,17 +96,41 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <see cref="StateInheritanceMode.Explicit"/>.</returns>
         public SolutionState WithInheritedValuesApplied(SolutionState baseState, ImmutableArray<string> fixableDiagnostics)
         {
-            Debug.Assert(
-                InheritanceMode == StateInheritanceMode.AutoInherit || InheritanceMode == StateInheritanceMode.Explicit || InheritanceMode == StateInheritanceMode.AutoInheritAll,
-                $"Unexpected inheritance mode: {InheritanceMode}");
+            var inheritanceMode = InheritanceMode;
+            var markupHandling = MarkupHandling;
+            if (inheritanceMode == null || markupHandling == null)
+            {
+                if (baseState == null)
+                {
+                    inheritanceMode = inheritanceMode ?? StateInheritanceMode.Explicit;
+                    markupHandling = markupHandling ?? MarkupMode.Allow;
+                }
+                else if (HasAnyContentChanges(willInherit: inheritanceMode != StateInheritanceMode.Explicit, this, baseState))
+                {
+                    inheritanceMode = inheritanceMode ?? StateInheritanceMode.AutoInherit;
+                    markupHandling = markupHandling ?? MarkupMode.IgnoreFixable;
+                }
+                else
+                {
+                    inheritanceMode = inheritanceMode ?? StateInheritanceMode.AutoInheritAll;
+                    markupHandling = markupHandling ?? baseState.MarkupHandling ?? MarkupMode.Allow;
+                }
+            }
+
+            if (inheritanceMode != StateInheritanceMode.AutoInherit
+                && inheritanceMode != StateInheritanceMode.Explicit
+                && inheritanceMode != StateInheritanceMode.AutoInheritAll)
+            {
+                throw new InvalidOperationException($"Unexpected inheritance mode: {inheritanceMode}");
+            }
 
             if (baseState?.AdditionalFilesFactories.Count > 0)
             {
                 throw new InvalidOperationException("The base state should already have its inheritance state evaluated prior to its use as a base state.");
             }
 
-            var result = new SolutionState(_defaultPrefix, _defaultExtension, MarkupHandling);
-            if (InheritanceMode != StateInheritanceMode.Explicit && baseState != null)
+            var result = new SolutionState(_defaultPrefix, _defaultExtension);
+            if (inheritanceMode != StateInheritanceMode.Explicit && baseState != null)
             {
                 if (Sources.Count == 0)
                 {
@@ -113,7 +149,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 if (ExpectedDiagnostics.Count == 0)
                 {
-                    if (InheritanceMode == StateInheritanceMode.AutoInherit)
+                    if (inheritanceMode == StateInheritanceMode.AutoInherit)
                     {
                         result.ExpectedDiagnostics.AddRange(baseState.ExpectedDiagnostics.Where(diagnostic => !fixableDiagnostics.Contains(diagnostic.Id)));
                     }
@@ -124,6 +160,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
             }
 
+            result.MarkupHandling = markupHandling;
             result.InheritanceMode = StateInheritanceMode.Explicit;
             result.Sources.AddRange(Sources);
             result.AdditionalFiles.AddRange(AdditionalFiles);
@@ -131,6 +168,59 @@ namespace Microsoft.CodeAnalysis.Testing
             result.ExpectedDiagnostics.AddRange(ExpectedDiagnostics);
             result.AdditionalFiles.AddRange(AdditionalFilesFactories.SelectMany(factory => factory()));
             return result;
+        }
+
+        private static bool HasAnyContentChanges(bool willInherit, SolutionState state, SolutionState baseState)
+        {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
+            if (baseState == null)
+            {
+                throw new ArgumentNullException(nameof(baseState));
+            }
+
+            if ((!willInherit || state.Sources.Any()) && !ContentEqual(state.Sources, baseState.Sources))
+            {
+                return true;
+            }
+
+            if ((!willInherit || state.AdditionalFiles.Any()) && !ContentEqual(state.AdditionalFiles, baseState.AdditionalFiles))
+            {
+                return true;
+            }
+
+            if ((!willInherit || state.AdditionalReferences.Any()) && !state.AdditionalReferences.SequenceEqual(baseState.AdditionalReferences))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool ContentEqual(SourceFileCollection x, SourceFileCollection y)
+        {
+            if (x.Count != y.Count)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < x.Count; i++)
+            {
+                if (x[i].filename != y[i].filename)
+                {
+                    return false;
+                }
+
+                if (!x[i].content.ContentEquals(y[i].content))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -159,7 +249,8 @@ namespace Microsoft.CodeAnalysis.Testing
             (var expected, var testSources) = ProcessMarkupSources(Sources, ExpectedDiagnostics, defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, defaultPath);
             var (additionalExpected, additionalFiles) = ProcessMarkupSources(AdditionalFiles.Concat(AdditionalFilesFactories.SelectMany(factory => factory())), expected, defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, defaultPath);
 
-            var result = new SolutionState(_defaultPrefix, _defaultExtension, MarkupMode.None);
+            var result = new SolutionState(_defaultPrefix, _defaultExtension);
+            result.MarkupHandling = MarkupMode.None;
             result.InheritanceMode = StateInheritanceMode.Explicit;
             result.Sources.AddRange(testSources);
             result.AdditionalFiles.AddRange(additionalFiles);
@@ -176,6 +267,11 @@ namespace Microsoft.CodeAnalysis.Testing
             ImmutableArray<string> fixableDiagnostics,
             string defaultPath)
         {
+            if (MarkupHandling is null)
+            {
+                throw new InvalidOperationException();
+            }
+
             if (MarkupHandling == MarkupMode.None)
             {
                 return (explicitDiagnostics.Select(diagnostic => diagnostic.WithDefaultPath(defaultPath)).ToOrderedArray(), sources.ToArray());
@@ -273,6 +369,11 @@ namespace Microsoft.CodeAnalysis.Testing
             ImmutableArray<string> fixableDiagnostics,
             string diagnosticId)
         {
+            if (MarkupHandling is null)
+            {
+                throw new InvalidOperationException();
+            }
+
             DiagnosticResult diagnosticResult;
             if (string.IsNullOrEmpty(diagnosticId))
             {

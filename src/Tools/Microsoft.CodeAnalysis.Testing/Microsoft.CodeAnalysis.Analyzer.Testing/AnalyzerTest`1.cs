@@ -49,7 +49,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         protected AnalyzerTest()
         {
-            TestState = new SolutionState(DefaultFilePathPrefix, DefaultFileExt, MarkupMode.Allow) { InheritanceMode = StateInheritanceMode.Explicit };
+            TestState = new SolutionState(DefaultFilePathPrefix, DefaultFileExt);
         }
 
         /// <summary>
