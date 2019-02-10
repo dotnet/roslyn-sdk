@@ -33,6 +33,7 @@ Microsoft.CodeAnalysis.Testing.DefaultVerifier.Fail(string message = null) -> vo
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.False(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.LanguageIsSupported(string language) -> void
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.NotEmpty<T>(string collectionName, System.Collections.Generic.IEnumerable<T> collection) -> void
+Microsoft.CodeAnalysis.Testing.DefaultVerifier.PushContext(string context) -> Microsoft.CodeAnalysis.Testing.IVerifier
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEqualityComparer<T> equalityComparer = null, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.True(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.DiagnosticResult
@@ -65,6 +66,7 @@ Microsoft.CodeAnalysis.Testing.IVerifier.Fail(string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.False(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.LanguageIsSupported(string language) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.NotEmpty<T>(string collectionName, System.Collections.Generic.IEnumerable<T> collection) -> void
+Microsoft.CodeAnalysis.Testing.IVerifier.PushContext(string context) -> Microsoft.CodeAnalysis.Testing.IVerifier
 Microsoft.CodeAnalysis.Testing.IVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEqualityComparer<T> equalityComparer = null, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.True(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifierExtensions
