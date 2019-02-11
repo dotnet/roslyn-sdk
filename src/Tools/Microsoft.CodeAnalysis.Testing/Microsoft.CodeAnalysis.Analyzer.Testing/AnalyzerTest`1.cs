@@ -183,7 +183,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 return;
             }
 
-            if (!expected.Any(x => IsSuppressible(analyzers, x, sources)))
+            if (!expected.Any(x => IsSubjectToExclusion(x, sources)))
             {
                 return;
             }
@@ -196,7 +196,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 .Select(x => IsInSourceFile(x, sources) ? x.WithLineOffset(1) : x)
                 .ToArray();
 
-            var suppressedDiagnostics = expected.Where(x => IsSuppressible(analyzers, x, sources)).Select(x => x.Id).Distinct();
+            var suppressedDiagnostics = expected.Where(x => IsSubjectToExclusion(x, sources)).Select(x => x.Id).Distinct();
             var prefix = Language == LanguageNames.CSharp ? "#pragma warning disable " : "#Disable Warning ";
             var suppression = prefix + string.Join(", ", suppressedDiagnostics);
             VerifyDiagnosticResults(await GetSortedDiagnosticsAsync(sources.Select(x => (x.filename, x.content.Replace(new TextSpan(0, 0), $"{suppression}\r\n"))).ToArray(), additionalFiles, additionalMetadataReferences, analyzers, cancellationToken).ConfigureAwait(false), analyzers, expectedResults);
