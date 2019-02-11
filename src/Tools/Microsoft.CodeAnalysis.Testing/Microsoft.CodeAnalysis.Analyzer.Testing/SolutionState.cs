@@ -214,6 +214,11 @@ namespace Microsoft.CodeAnalysis.Testing
                     return false;
                 }
 
+                if (!Equals(x[i].content.Encoding, y[i].content.Encoding))
+                {
+                    return false;
+                }
+
                 if (!x[i].content.ContentEquals(y[i].content))
                 {
                     return false;
