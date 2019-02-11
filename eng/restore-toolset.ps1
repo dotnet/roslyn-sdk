@@ -16,7 +16,7 @@ function InitializeCustomSDKToolset {
   $env:DOTNET_CLI_TELEMETRY_PROFILE='$env:DOTNET_CLI_TELEMETRY_PROFILE;https://github.com/dotnet/roslyn-sdk'
 
   $cli = InitializeDotnetCli -install:$true
-  InstallDotNetSharedFramework "1.1.2"
+  InstallDotNetSharedFramework "1.1.10"
 }
 
 function InstallDotNetSharedFramework([string]$version) {
