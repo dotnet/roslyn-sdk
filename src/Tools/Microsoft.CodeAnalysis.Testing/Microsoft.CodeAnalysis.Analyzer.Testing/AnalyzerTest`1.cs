@@ -183,7 +183,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 return;
             }
 
-            if (!expected.Any(x => IsSubjectToExclusion(x, sources)))
+            if (!expected.Any(x => IsSuppressible(analyzers, x, sources)))
             {
                 return;
             }
@@ -192,11 +192,11 @@ namespace Microsoft.CodeAnalysis.Testing
             // still be reported. We also insert a new line at the beginning so we have to move all diagnostic
             // locations which have a specific position down by one line.
             var expectedResults = expected
-                .Where(x => !IsSubjectToExclusion(x, sources))
+                .Where(x => !IsSuppressible(analyzers, x, sources))
                 .Select(x => IsInSourceFile(x, sources) ? x.WithLineOffset(1) : x)
                 .ToArray();
 
-            var suppressedDiagnostics = expected.Where(x => IsSubjectToExclusion(x, sources)).Select(x => x.Id).Distinct();
+            var suppressedDiagnostics = expected.Where(x => IsSuppressible(analyzers, x, sources)).Select(x => x.Id).Distinct();
             var prefix = Language == LanguageNames.CSharp ? "#pragma warning disable " : "#Disable Warning ";
             var suppression = prefix + string.Join(", ", suppressedDiagnostics);
             VerifyDiagnosticResults(await GetSortedDiagnosticsAsync(sources.Select(x => (x.filename, x.content.Replace(new TextSpan(0, 0), $"{suppression}\r\n"))).ToArray(), additionalFiles, additionalMetadataReferences, analyzers, cancellationToken).ConfigureAwait(false), analyzers, expectedResults);
@@ -390,6 +390,32 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 // This diagnostic is not reported in a source file
                 return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsSuppressible(ImmutableArray<DiagnosticAnalyzer> analyzers, DiagnosticResult result, (string filename, SourceText content)[] sources)
+        {
+            if (!IsSubjectToExclusion(result, sources))
+            {
+                return false;
+            }
+
+            foreach (var analyzer in analyzers)
+            {
+                foreach (var diagnostic in analyzer.SupportedDiagnostics)
+                {
+                    if (diagnostic.Id != result.Id)
+                    {
+                        continue;
+                    }
+
+                    if (diagnostic.CustomTags.Contains(WellKnownDiagnosticTags.NotConfigurable))
+                    {
+                        return false;
+                    }
+                }
             }
 
             return true;
