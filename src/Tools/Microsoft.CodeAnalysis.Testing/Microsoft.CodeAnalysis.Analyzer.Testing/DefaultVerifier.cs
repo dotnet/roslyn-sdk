@@ -2,17 +2,30 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Microsoft.CodeAnalysis.Testing
 {
     public class DefaultVerifier : IVerifier
     {
+        private readonly ImmutableStack<string> _context;
+
+        public DefaultVerifier()
+            : this(ImmutableStack<string>.Empty)
+        {
+        }
+
+        private DefaultVerifier(ImmutableStack<string> context)
+        {
+            _context = context;
+        }
+
         public void Empty<T>(string collectionName, IEnumerable<T> collection)
         {
             if (collection?.Any() == true)
             {
-                throw new InvalidOperationException($"'{collectionName}' is not empty");
+                throw new InvalidOperationException(CreateMessage($"'{collectionName}' is not empty"));
             }
         }
 
@@ -20,7 +33,7 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             if (collection?.Any() == false)
             {
-                throw new InvalidOperationException($"'{collectionName}' is empty");
+                throw new InvalidOperationException(CreateMessage($"'{collectionName}' is empty"));
             }
         }
 
@@ -28,7 +41,7 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             if (language != LanguageNames.CSharp && language != LanguageNames.VisualBasic)
             {
-                throw new InvalidOperationException($"Unsupported Language: '{language}'");
+                throw new InvalidOperationException(CreateMessage($"Unsupported Language: '{language}'"));
             }
         }
 
@@ -36,7 +49,7 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             if (!EqualityComparer<T>.Default.Equals(expected, actual))
             {
-                throw new InvalidOperationException(message ?? $"items not equal.  expected:'{expected}' actual:'{actual}'");
+                throw new InvalidOperationException(CreateMessage(message ?? $"items not equal.  expected:'{expected}' actual:'{actual}'"));
             }
         }
 
@@ -44,7 +57,7 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             if (!assert)
             {
-                throw new InvalidOperationException(message ?? $"Expected value to be 'true' but was 'false'");
+                throw new InvalidOperationException(CreateMessage(message ?? $"Expected value to be 'true' but was 'false'"));
             }
         }
 
@@ -52,13 +65,13 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             if (assert)
             {
-                throw new InvalidOperationException(message ?? $"Expected value to be 'false' but was 'true'");
+                throw new InvalidOperationException(CreateMessage(message ?? $"Expected value to be 'false' but was 'true'"));
             }
         }
 
         public void Fail(string message = null)
         {
-            throw new InvalidOperationException(message ?? "Verification failed for an unspecified reason.");
+            throw new InvalidOperationException(CreateMessage(message ?? "Verification failed for an unspecified reason."));
         }
 
         public void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer = null, string message = null)
@@ -67,8 +80,23 @@ namespace Microsoft.CodeAnalysis.Testing
             var areEqual = comparer.Equals(expected, actual);
             if (!areEqual)
             {
-                throw new InvalidOperationException(message ?? $"Sequences are not equal");
+                throw new InvalidOperationException(CreateMessage(message ?? $"Sequences are not equal"));
             }
+        }
+
+        public IVerifier PushContext(string context)
+        {
+            return new DefaultVerifier(_context.Push(context));
+        }
+
+        private string CreateMessage(string message)
+        {
+            foreach (var frame in _context)
+            {
+                message = "Context: " + frame + Environment.NewLine + message;
+            }
+
+            return message;
         }
 
         private sealed class SequenceEqualEnumerableEqualityComparer<T> : IEqualityComparer<IEnumerable<T>>
