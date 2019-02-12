@@ -15,7 +15,7 @@ Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.OptionsTransforms.get -> 
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.SolutionTransforms.get -> System.Collections.Generic.List<System.Func<Microsoft.CodeAnalysis.Solution, Microsoft.CodeAnalysis.ProjectId, Microsoft.CodeAnalysis.Solution>>
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.TestCode.set -> void
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.TestState.get -> Microsoft.CodeAnalysis.Testing.SolutionState
-Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.VerifyDiagnosticsAsync((string filename, Microsoft.CodeAnalysis.Text.SourceText content)[] sources, (string filename, Microsoft.CodeAnalysis.Text.SourceText content)[] additionalFiles, Microsoft.CodeAnalysis.MetadataReference[] additionalMetadataReferences, Microsoft.CodeAnalysis.Testing.DiagnosticResult[] expected, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.VerifyDiagnosticsAsync((string filename, Microsoft.CodeAnalysis.Text.SourceText content)[] sources, (string filename, Microsoft.CodeAnalysis.Text.SourceText content)[] additionalFiles, Microsoft.CodeAnalysis.MetadataReference[] additionalMetadataReferences, Microsoft.CodeAnalysis.Testing.DiagnosticResult[] expected, Microsoft.CodeAnalysis.Testing.IVerifier verifier, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.XmlReferences.get -> System.Collections.Generic.Dictionary<string, string>
 Microsoft.CodeAnalysis.Testing.AnalyzerVerifier<TAnalyzer, TTest, TVerifier>
 Microsoft.CodeAnalysis.Testing.AnalyzerVerifier<TAnalyzer, TTest, TVerifier>.AnalyzerVerifier() -> void
@@ -33,6 +33,7 @@ Microsoft.CodeAnalysis.Testing.DefaultVerifier.Fail(string message = null) -> vo
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.False(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.LanguageIsSupported(string language) -> void
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.NotEmpty<T>(string collectionName, System.Collections.Generic.IEnumerable<T> collection) -> void
+Microsoft.CodeAnalysis.Testing.DefaultVerifier.PushContext(string context) -> Microsoft.CodeAnalysis.Testing.IVerifier
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEqualityComparer<T> equalityComparer = null, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.True(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.DiagnosticResult
@@ -65,6 +66,7 @@ Microsoft.CodeAnalysis.Testing.IVerifier.Fail(string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.False(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.LanguageIsSupported(string language) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.NotEmpty<T>(string collectionName, System.Collections.Generic.IEnumerable<T> collection) -> void
+Microsoft.CodeAnalysis.Testing.IVerifier.PushContext(string context) -> Microsoft.CodeAnalysis.Testing.IVerifier
 Microsoft.CodeAnalysis.Testing.IVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEqualityComparer<T> equalityComparer = null, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.True(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifierExtensions

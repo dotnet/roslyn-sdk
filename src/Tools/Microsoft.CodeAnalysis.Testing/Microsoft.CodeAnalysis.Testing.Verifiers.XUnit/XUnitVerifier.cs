@@ -1,21 +1,42 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Xunit;
+using Xunit.Sdk;
 
 namespace Microsoft.CodeAnalysis.Testing.Verifiers
 {
     public class XUnitVerifier : IVerifier
     {
+        private readonly ImmutableStack<string> _context;
+
+        public XUnitVerifier()
+            : this(ImmutableStack<string>.Empty)
+        {
+        }
+
+        private XUnitVerifier(ImmutableStack<string> context)
+        {
+            _context = context;
+        }
+
         public void Empty<T>(string collectionName, IEnumerable<T> collection)
         {
-            Assert.Empty(collection);
+            using (var enumerator = collection.GetEnumerator())
+            {
+                if (enumerator.MoveNext())
+                {
+                    throw new XunitException(CreateMessage($"'{collectionName}' is not empty"));
+                }
+            }
         }
 
         public void Equal<T>(T expected, T actual, string message = null)
         {
-            if (message is null)
+            if (message is null && _context.IsEmpty)
             {
                 Assert.Equal(expected, actual);
             }
@@ -23,60 +44,66 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             {
                 if (!EqualityComparer<T>.Default.Equals(expected, actual))
                 {
-                    Assert.True(false, message);
+                    Assert.True(false, CreateMessage(message));
                 }
             }
         }
 
         public void True(bool assert, string message = null)
         {
-            if (message is null)
+            if (message is null && _context.IsEmpty)
             {
                 Assert.True(assert);
             }
             else
             {
-                Assert.True(assert, message);
+                Assert.True(assert, CreateMessage(message));
             }
         }
 
         public void False(bool assert, string message = null)
         {
-            if (message is null)
+            if (message is null && _context.IsEmpty)
             {
                 Assert.False(assert);
             }
             else
             {
-                Assert.False(assert, message);
+                Assert.False(assert, CreateMessage(message));
             }
         }
 
         public void Fail(string message = null)
         {
-            if (message is null)
+            if (message is null && _context.IsEmpty)
             {
                 Assert.True(false);
             }
             else
             {
-                Assert.True(false, message);
+                Assert.True(false, CreateMessage(message));
             }
         }
 
         public void LanguageIsSupported(string language)
         {
-            Assert.False(language != LanguageNames.CSharp && language != LanguageNames.VisualBasic, $"Unsupported Language: '{language}'");
+            Assert.False(language != LanguageNames.CSharp && language != LanguageNames.VisualBasic, CreateMessage($"Unsupported Language: '{language}'"));
         }
 
         public void NotEmpty<T>(string collectionName, IEnumerable<T> collection)
         {
-            Assert.NotEmpty(collection);
+            using (var enumerator = collection.GetEnumerator())
+            {
+                if (!enumerator.MoveNext())
+                {
+                    throw new XunitException(CreateMessage($"'{collectionName}' is empty"));
+                }
+            }
         }
 
         public void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer = null, string message = null)
         {
-            if (message is null)
+            if (message is null && _context.IsEmpty)
             {
                 if (equalityComparer is null)
                 {
@@ -93,9 +120,24 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
                 var areEqual = comparer.Equals(expected, actual);
                 if (!areEqual)
                 {
-                    Assert.True(false, message);
+                    Assert.True(false, CreateMessage(message));
                 }
             }
+        }
+
+        public IVerifier PushContext(string context)
+        {
+            return new XUnitVerifier(_context.Push(context));
+        }
+
+        private string CreateMessage(string message)
+        {
+            foreach (var frame in _context)
+            {
+                message = "Context: " + frame + Environment.NewLine + message;
+            }
+
+            return message;
         }
 
         private sealed class SequenceEqualEnumerableEqualityComparer<T> : IEqualityComparer<IEnumerable<T>>

@@ -21,5 +21,7 @@ namespace Microsoft.CodeAnalysis.Testing
         void NotEmpty<T>(string collectionName, IEnumerable<T> collection);
 
         void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer = null, string message = null);
+
+        IVerifier PushContext(string context);
     }
 }

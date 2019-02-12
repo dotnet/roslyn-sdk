@@ -16,7 +16,7 @@ Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfFixAllIterations.g
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfFixAllIterations.set -> void
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfIncrementalIterations.get -> int?
 Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.NumberOfIncrementalIterations.set -> void
-Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.VerifyFixAsync(Microsoft.CodeAnalysis.Testing.SolutionState testState, Microsoft.CodeAnalysis.Testing.SolutionState fixedState, Microsoft.CodeAnalysis.Testing.SolutionState batchFixedState, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+Microsoft.CodeAnalysis.Testing.CodeFixTest<TVerifier>.VerifyFixAsync(Microsoft.CodeAnalysis.Testing.SolutionState testState, Microsoft.CodeAnalysis.Testing.SolutionState fixedState, Microsoft.CodeAnalysis.Testing.SolutionState batchFixedState, Microsoft.CodeAnalysis.Testing.IVerifier verifier, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
 Microsoft.CodeAnalysis.Testing.CodeFixValidationMode
 Microsoft.CodeAnalysis.Testing.CodeFixValidationMode.Full = 2 -> Microsoft.CodeAnalysis.Testing.CodeFixValidationMode
 Microsoft.CodeAnalysis.Testing.CodeFixValidationMode.None = 0 -> Microsoft.CodeAnalysis.Testing.CodeFixValidationMode
