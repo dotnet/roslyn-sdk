@@ -30,7 +30,7 @@ steps:
   displayName: Publish Test Results
   inputs:
     testRunner: XUnit
-    testResultsFiles: 'artifacts/$(BuildConfiguration)/TestResults/*.xml'
+    testResultsFiles: 'artifacts/TestResults/$(BuildConfiguration)/*.xml'
     mergeTestResults: true
     testRunTitle: 'Unit Tests'
   condition: succeededOrFailed()
@@ -38,26 +38,26 @@ steps:
 - task: NuGetPublisher@0	
   displayName: Publish NuGet Packages to MyGet	
   inputs:	
-    searchPattern: 'artifacts\$(BuildConfiguration)\packages\Shipping\*.nupkg'	
+    searchPattern: 'artifacts\packages\$(BuildConfiguration)\Shipping\*.nupkg'	
     connectedServiceName: 'RoslynSdk - NuGet feed'	
     nuGetVersion: 4.0.0.2283
 
 - task: ms-vseng.MicroBuildTasks.4305a8de-ba66-4d8b-b2d1-0dc4ecbbf5e8.MicroBuildUploadVstsDropFolder@1
   displayName: Publish VS Insertion Artifacts 
   inputs:
-    DropFolder: 'artifacts\$(BuildConfiguration)\VSSetup\Insertion'
+    DropFolder: 'artifacts\VSSetup\$(BuildConfiguration)\Insertion'
 
 - task: CopyPublishBuildArtifacts@1
   displayName: Publish Artifacts
   inputs:
     CopyRoot: '$(Build.SourcesDirectory)'
     Contents: |
-     artifacts\$(BuildConfiguration)\bin
-     artifacts\$(BuildConfiguration)\log
-     artifacts\$(BuildConfiguration)\TestResults
-     artifacts\$(BuildConfiguration)\SymStore
-     artifacts\$(BuildConfiguration)\packages
-     artifacts\$(BuildConfiguration)\VSSetup
+     artifacts\bin
+     artifacts\log
+     artifacts\TestResults
+     artifacts\SymStore
+     artifacts\packages
+     artifacts\VSSetup
     ArtifactName: '$(Build.BuildNumber)'
     ArtifactType: FilePath
     TargetPath: '$(DropRoot)\$(TeamName)\$(Build.SourceBranchName)\$(Build.DefinitionName)'
