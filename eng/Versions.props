@@ -2,20 +2,15 @@
 <Project>
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-
     <!-- This repo version -->
     <VersionPrefix>2.10.0</VersionPrefix>
     <NugetPackagePrefix>1.0.0</NugetPackagePrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
-
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
-
     <!-- Dependencies -->
-    
     <UpdateTemplateVersionVersion>1.0.4-beta1</UpdateTemplateVersionVersion>
-    
     <!-- Roslyn for VS 2015 -->
     <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2015 since the Syntax Visualizer extension still
                supports it. -->
@@ -50,20 +45,16 @@
     <MicrosoftVisualStudioTextUIWpfVersion>14.3.25407</MicrosoftVisualStudioTextUIWpfVersion>
     <MicrosoftVisualStudioUtilitiesVersion>14.3.25407</MicrosoftVisualStudioUtilitiesVersion>
     <MicrosoftVisualStudioThreadingVersion>14.1.131 </MicrosoftVisualStudioThreadingVersion>
-
     <!-- Libs -->
     <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>
     <SystemCompositionVersion>1.1.0</SystemCompositionVersion>
     <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
-
     <!-- Testing -->
     <MicrosoftCodeAnalysisPrimaryTestVersion>2.6.1</MicrosoftCodeAnalysisPrimaryTestVersion>
-
     <!-- Analyzers -->
     <RoslynDiagnosticsAnalyzersVersion>2.6.2-beta2</RoslynDiagnosticsAnalyzersVersion>
     <StyleCopAnalyzersVersion>1.1.0-beta008</StyleCopAnalyzersVersion>
   </PropertyGroup>
-
   <PropertyGroup>
     <RestoreSources>
       $(RestoreSources);
