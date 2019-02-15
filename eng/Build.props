@@ -2,6 +2,6 @@
 <Project>
   <ItemGroup>
     <ProjectToBuild Include="$(RepoRoot)Roslyn-SDK.sln"/>
-    <ProjectToBuild Include="$(RepoRoot)Samples.sln" Condition="'$(OfficialBuild)' != 'true'" />
+    <ProjectToBuild Include="$(RepoRoot)Samples.sln" Condition="'$(OfficialBuildId)' == ''" />
   </ItemGroup>
 </Project>
