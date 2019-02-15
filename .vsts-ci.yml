@@ -58,7 +58,7 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: Publish Logs
   inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
+    PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(BuildConfiguration)'
     ArtifactName: 'Logs'
   continueOnError: true
   condition: not(succeeded())
