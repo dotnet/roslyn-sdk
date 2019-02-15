@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras/1.6.41">
+﻿<Project Sdk="MSBuild.Sdk.Extras/1.6.65">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>MSBuildWorkspaceTester</RootNamespace>

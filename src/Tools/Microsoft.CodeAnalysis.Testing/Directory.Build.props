@@ -2,12 +2,12 @@
 <Project>  
   <PropertyGroup>
     <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
-    
+
     <!-- Opt-out repo features -->
     <UsingToolXliff>false</UsingToolXliff>
   </PropertyGroup>
 
-  <Import Project="Sdk.props" Sdk="RoslynTools.RepoToolset" />
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <Choose>
     <When Condition="'$(Language)' == 'VB'">
@@ -36,7 +36,7 @@
     <!--
       NU1701: Package 'name' was restored using 'moniker' instead of the project target framework 'moniker'. This package may not be fully compatible with your project.
     -->
-    <NoWarn>$(NoWarn),NU1701</NoWarn>
+    <NoWarn>$(NoWarn);NU1701;NU3005;NU5125</NoWarn>
   </PropertyGroup>
 
   <!-- We always want a good debugging experience in tests -->

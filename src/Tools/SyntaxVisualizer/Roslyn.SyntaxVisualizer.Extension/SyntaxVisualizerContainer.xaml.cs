@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Roslyn.SyntaxVisualizer.DgmlHelper;
 
 namespace Roslyn.SyntaxVisualizer.Extension
 {
