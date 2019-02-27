@@ -82,7 +82,7 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
 
         public void NotEmpty<T>(string collectionName, IEnumerable<T> collection)
         {
-            Assert.IsTrue(collection?.Any() == false, CreateMessage($"expected '{collectionName}' to be non-empty, contains"));
+            Assert.IsTrue(collection?.Any() == true, CreateMessage($"expected '{collectionName}' to be non-empty, contains"));
         }
 
         public void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer = null, string message = null)
