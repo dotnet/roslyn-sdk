@@ -15,6 +15,7 @@
     <ExtensionInstallationFolder>Microsoft\SyntaxVisualizer</ExtensionInstallationFolder>
     <VisualStudioInsertionComponent>Roslyn.SyntaxVisualizer.Extension</VisualStudioInsertionComponent>
     <Ngen>false</Ngen>
+    <UseCodeBase>true</UseCodeBase>
   </PropertyGroup>
 
   <!-- References -->

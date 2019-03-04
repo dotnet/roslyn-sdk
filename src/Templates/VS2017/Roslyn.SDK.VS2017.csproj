@@ -11,6 +11,7 @@
     <!-- VS Insertion -->
     <VisualStudioInsertionComponent>Microsoft.CodeAnalysis.SDK</VisualStudioInsertionComponent>
     <Ngen>false</Ngen>
+    <UseCodeBase>true</UseCodeBase>
   </PropertyGroup>
   <!-- Setting Template Content to None -->
   <ItemGroup>
