@@ -1,8 +1,9 @@
 # Roslyn SDK
 
-|Branch|Unit Tests (Debug)|Unit Tests (Release)|
-|---|:--:|:--:|
-|[master](https://github.com/dotnet/roslyn-sdk/tree/master)|[![Build Status](https://ci.dot.net/job/Private/job/dotnet_roslyn-sdk/job/master/job/windows_debug//badge/icon)](https://ci.dot.net/job/Private/job/dotnet_roslyn-sdk/job/master/job/windows_debug/)|[![Build Status](https://ci.dot.net/job/Private/job/dotnet_roslyn-sdk/job/master/job/windows_release//badge/icon)](https://ci.dot.net/job/Private/job/dotnet_roslyn-sdk/job/master/job/windows_release/)|
+|Branch|  Build |
+|---|:--:|
+| [dev16.0.x](https://github.com/dotnet/roslyn-sdk/tree/dev16.0.x)  | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-sdk/public-CI?branchName=dev16.0.x&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=137&branchName=dev16.0.x) |
+| [master](https://github.com/dotnet/roslyn-sdk/tree/master)  | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-sdk/public-CI?branchName=master&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=137&branchName=master)  |
 
 # What is the Roslyn-SDK?
 
@@ -16,7 +17,3 @@ Roslyn is the compiler platform for .NET. It consists of the compiler itself and
 2. Hit **Modify**
 3. Select the **Individual components** tab
 4. Check the box for **.NET Compiler Platform SDK**
-
-## Visual Studio 2015
-
-For older versions of Visual Studio the [.NET Compiler Platform SDK](https://visualstudiogallery.msdn.microsoft.com/2ddb7240-5249-4c8c-969e-5d05823bcb89) is available as an extension in the Visual Studio gallery.
