@@ -20,7 +20,7 @@ artifacts/
 .tools/
 
 # ignore templates modified by build output
-src/Templates/VS2017/ModifiedTemplates
+src/VisualStudio.Roslyn.SDK/Roslyn.SDK/ModifiedTemplates
 
 # Visual Studio 2015 cache/options directory
 .vs/
