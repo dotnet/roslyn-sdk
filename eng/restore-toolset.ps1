@@ -17,6 +17,8 @@ function InitializeCustomSDKToolset {
 
   $cli = InitializeDotnetCli -install:$true
   InstallDotNetSharedFramework "1.1.12"
+  InstallDotNetSharedFramework "2.0.9"
+  InstallDotNetSharedFramework "2.1.10"
 }
 
 function InstallDotNetSharedFramework([string]$version) {
