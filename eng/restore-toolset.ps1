@@ -19,6 +19,7 @@ function InitializeCustomSDKToolset {
   InstallDotNetSharedFramework "1.1.12"
   InstallDotNetSharedFramework "2.0.9"
   InstallDotNetSharedFramework "2.1.10"
+  InstallDotNetSharedFramework "2.2.5"
 }
 
 function InstallDotNetSharedFramework([string]$version) {
