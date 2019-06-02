@@ -1,7 +1,7 @@
 phases:
 - phase: Windows
-  pool: dotnet-external-vs2019-preview
-  strategy:
+  queue:
+    name: Hosted VS2017
     timeoutInMinutes: 90
     parallel: 6
     matrix:
