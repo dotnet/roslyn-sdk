@@ -1,9 +1,10 @@
-phases:
-- phase: Windows
-  queue:
-    name: Hosted VS2017
-    timeoutInMinutes: 90
-    parallel: 6
+jobs:
+- job: Windows
+  pool:
+    name: NetCorePublic-Pool
+    queue: buildpool.windows.10.amd64.vs2019.pre.open
+  strategy:
+    maxParallel: 6
     matrix:
       Samples Debug Test:
         _args: -test
@@ -29,6 +30,8 @@ phases:
         _args: -sign
         _configuration: Release
         _solution: Roslyn-SDK
+  timeoutInMinutes: 90
+
   steps:
     - script: eng\PRBuild.cmd $(_args) -configuration $(_configuration) -prepareMachine -projects $(Build.SourcesDirectory)\$(_solution).sln /p:OfficialBuild=false
     - task: PublishBuildArtifacts@1
