@@ -2,7 +2,7 @@ jobs:
 - job: Windows
   pool:
     name: NetCorePublic-Pool
-    queue: buildpool.windows.10.amd64.vs2019.pre.open
+    queue: BuildPool.Windows.10.Amd64.Open
   strategy:
     maxParallel: 6
     matrix:
