@@ -8,6 +8,8 @@
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
+    <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
+    <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <!-- Dependencies -->
     <UpdateTemplateVersionVersion>1.0.4-beta1</UpdateTemplateVersionVersion>
