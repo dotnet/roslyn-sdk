@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Xunit;
@@ -54,7 +55,7 @@ class TestClass {
         {
             var testCode = @"
 class TestClass {
-  void TestMethod() { throw null {|CS1002:|}}
+  void TestMethod() { throw null {|CS1002:}|}
 }
 ";
 
@@ -214,7 +215,7 @@ End Class
         }
 
         [Fact]
-        public async Task TestCSharpValueTupleUsage()
+        public async Task TestCSharpValueTupleUsageNet46()
         {
             var testCode = @"
 class TestClass {
@@ -222,7 +223,94 @@ class TestClass {
 }
 ";
 
-            await new CSharpTest { TestCode = testCode }.RunAsync();
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                },
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net46.Default
+                    .AddPackages(ImmutableArray.Create(new PackageIdentity("System.ValueTuple", "4.5.0"))),
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestCSharpValueTupleUsageNet472()
+        {
+            var testCode = @"
+class TestClass {
+  (int x, int y) TestMethod() { return (0, 1); }
+}
+";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestRoslynCompilerUsage_1()
+        {
+            var testCode = @"
+using Microsoft.CodeAnalysis.CSharp;
+class TestClass {
+  SyntaxKind TestMethod() => SyntaxKind.CloseBraceToken;
+}
+";
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                },
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net452.Default
+                    .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "1.0.1"))),
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestRoslynCompilerUsage_2()
+        {
+            var testCode = @"
+using Microsoft.CodeAnalysis.CSharp;
+class TestClass {
+  SyntaxKind TestMethod() => SyntaxKind.TupleType;
+}
+";
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                },
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net46.Default
+                    .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "2.8.2"))),
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestRoslynCompilerUsage_3()
+        {
+            var testCode = @"
+using Microsoft.CodeAnalysis.CSharp;
+class TestClass {
+  SyntaxKind TestMethod() => SyntaxKind.DotDotToken;
+}
+";
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                },
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default
+                    .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "3.3.1"))),
+            }.RunAsync();
         }
 
         private class CSharpTest : AnalyzerTest<DefaultVerifier>

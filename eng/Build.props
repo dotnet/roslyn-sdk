@@ -1,0 +1,7 @@
+<!-- eng/Build.props -->
+<Project>
+  <ItemGroup>
+    <ProjectToBuild Include="$(RepoRoot)Roslyn-SDK.sln"/>
+    <ProjectToBuild Include="$(RepoRoot)Samples.sln" Condition="'$(OfficialBuildId)' == ''" />
+  </ItemGroup>
+</Project>

@@ -217,7 +217,7 @@ class TestClass {{
                 }.RunAsync();
             });
 
-            Assert.Equal("The code action equivalence key and index must be consistent when both are specified.", exception.Message);
+            Assert.Equal($"Context: Iterative code fix application{Environment.NewLine}The code action equivalence key and index must be consistent when both are specified.", exception.Message);
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -299,6 +299,8 @@ class TestClass {{
             }
 
             public override string Language => LanguageNames.CSharp;
+
+            public override Type SyntaxKindType => typeof(SyntaxKind);
 
             protected override string DefaultFileExt => "cs";
 

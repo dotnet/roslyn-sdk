@@ -77,7 +77,31 @@ namespace Microsoft.CodeAnalysis.Testing
                 }.RunAsync();
             });
 
-            Assert.Equal("content of 'File1.txt' was expected to be 'Wrong file text' but was 'File text'", exception.Message);
+            Assert.Equal($"Context: Iterative code fix application{Environment.NewLine}content of 'File1.txt' did not match. Diff shown with expected as baseline:{Environment.NewLine}-Wrong file text{Environment.NewLine}+File text{Environment.NewLine}", exception.Message);
+        }
+
+        [Fact]
+        public async Task TestMarkupDiagnosticFixedByAddingAdditionalFileFailsIfTextIndentedIncorrectly()
+        {
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            {
+                await new CSharpTest(SuppressDiagnosticIf.AdditionalFileExists)
+                {
+                    TestState =
+                    {
+                        Sources = { "namespace MyNamespace {|Brace:{|} }" },
+                    },
+                    FixedState =
+                    {
+                        AdditionalFiles =
+                        {
+                            ("File1.txt", "  File text"),
+                        },
+                    },
+                }.RunAsync();
+            });
+
+            Assert.Equal($"Context: Iterative code fix application{Environment.NewLine}content of 'File1.txt' did not match. Diff shown with expected as baseline:{Environment.NewLine}-  File text{Environment.NewLine}+File text{Environment.NewLine}", exception.Message);
         }
 
         [Fact]
@@ -132,6 +156,7 @@ namespace Microsoft.CodeAnalysis.Testing
             });
 
             var expected =
+                "Context: Diagnostics of fixed state" + Environment.NewLine +
                 "Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"" + Environment.NewLine +
                 Environment.NewLine +
                 "Diagnostics:" + Environment.NewLine +
@@ -345,6 +370,8 @@ namespace Microsoft.CodeAnalysis.Testing
             }
 
             public override string Language => LanguageNames.CSharp;
+
+            public override Type SyntaxKindType => typeof(SyntaxKind);
 
             protected override string DefaultFileExt => "cs";
 
