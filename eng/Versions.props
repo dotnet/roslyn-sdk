@@ -53,7 +53,7 @@
     <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
     <!-- Testing -->
     <MicrosoftCodeAnalysisPrimaryTestVersion>2.6.1</MicrosoftCodeAnalysisPrimaryTestVersion>
-    <MicrosoftCodeAnalysisTestingVersion>1.0.0-beta1-63307-04</MicrosoftCodeAnalysisTestingVersion>
+    <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.19564.1</MicrosoftCodeAnalysisTestingVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
 
     <!-- Analyzers -->
