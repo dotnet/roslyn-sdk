@@ -42,8 +42,8 @@ namespace Microsoft.CodeAnalysis.Testing
             string? message,
             DiagnosticSeverity severity,
             string id,
-            LocalizableString messageFormat,
-            object[] messageArguments)
+            LocalizableString? messageFormat,
+            object?[]? messageArguments)
         {
             _spans = spans;
             _suppressMessage = suppressMessage;
@@ -76,16 +76,23 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 if (MessageFormat != null)
                 {
-                    return string.Format(MessageFormat.ToString(), MessageArguments ?? EmptyArguments);
+                    try
+                    {
+                        return string.Format(MessageFormat.ToString(), MessageArguments ?? EmptyArguments);
+                    }
+                    catch (FormatException)
+                    {
+                        return MessageFormat.ToString();
+                    }
                 }
 
                 return null;
             }
         }
 
-        public LocalizableString MessageFormat { get; }
+        public LocalizableString? MessageFormat { get; }
 
-        public object[] MessageArguments { get; }
+        public object?[]? MessageArguments { get; }
 
         public bool HasLocation => !Spans.IsEmpty;
 
@@ -273,19 +280,10 @@ namespace Microsoft.CodeAnalysis.Testing
             builder.Append(" ");
             builder.Append(Id);
 
-            try
+            var message = Message;
+            if (message != null)
             {
-                var message = Message;
-                if (message != null)
-                {
-                    builder.Append(": ").Append(message);
-                }
-            }
-            catch (FormatException)
-            {
-                // A message format is provided without arguments, so we print the unformatted string
-                Debug.Assert(MessageFormat != null, $"Assertion failed: {nameof(MessageFormat)} != null");
-                builder.Append(": ").Append(MessageFormat);
+                builder.Append(": ").Append(message);
             }
 
             return builder.ToString();

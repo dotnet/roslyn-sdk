@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Xunit;
@@ -29,8 +30,9 @@ class TestClass {
                 Environment.NewLine +
                 "Diagnostics:" + Environment.NewLine +
                 "// Test0.cs(3,34): error CS1002: ; expected" + Environment.NewLine +
+                "DiagnosticResult.CompilerError(\"CS1002\").WithSpan(3, 34, 3, 35)" + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -78,9 +80,38 @@ class TestClass {
             await new CSharpTest
             {
                 TestCode = testCode,
-                ExpectedDiagnostics = { DiagnosticResult.CompilerWarning("CS0414").WithSpan(3, 7, 3, 12).WithMessage("The field 'TestClass.value' is assigned but its value is never used") },
+                ExpectedDiagnostics = { DiagnosticResult.CompilerWarning("CS0414").WithSpan(3, 7, 3, 12).WithArguments("TestClass.value") },
                 CompilerDiagnostics = CompilerDiagnostics.Warnings,
             }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestCSharpCompilerWarningDeclaredWithWrongArgument()
+        {
+            var testCode = @"
+class TestClass {
+  int value = 3;
+}
+";
+
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            {
+                await new CSharpTest
+                {
+                    TestCode = testCode,
+                    ExpectedDiagnostics = { DiagnosticResult.CompilerWarning("CS0414").WithSpan(3, 7, 3, 12).WithArguments("TestClass2.value") },
+                    CompilerDiagnostics = CompilerDiagnostics.Warnings,
+                }.RunAsync();
+            });
+
+            var expected =
+                "Expected diagnostic message arguments to match" + Environment.NewLine +
+                Environment.NewLine +
+                "Diagnostic:" + Environment.NewLine +
+                "    // Test0.cs(3,7): warning CS0414: The field 'TestClass.value' is assigned but its value is never used" + Environment.NewLine +
+                "DiagnosticResult.CompilerWarning(\"CS0414\").WithSpan(3, 7, 3, 12).WithArguments(\"TestClass.value\")" + Environment.NewLine +
+                Environment.NewLine;
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -102,8 +133,9 @@ class TestClass {
                 Environment.NewLine +
                 "Diagnostics:" + Environment.NewLine +
                 "// Test0.cs(3,7): warning CS0414: The field 'TestClass.value' is assigned but its value is never used" + Environment.NewLine +
+                "DiagnosticResult.CompilerWarning(\"CS0414\").WithSpan(3, 7, 3, 12).WithArguments(\"TestClass.value\")" + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -155,8 +187,9 @@ class TestClass {
                 Environment.NewLine +
                 "Diagnostics:" + Environment.NewLine +
                 "// Test0.cs(2,1): hidden CS8019: Unnecessary using directive." + Environment.NewLine +
+                "new DiagnosticResult(\"CS8019\", DiagnosticSeverity.Hidden).WithSpan(2, 1, 2, 14)" + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -179,8 +212,9 @@ End Class
                 Environment.NewLine +
                 "Diagnostics:" + Environment.NewLine +
                 "// Test0.vb(3) : error BC30205: End of statement expected." + Environment.NewLine +
+                "DiagnosticResult.CompilerError(\"BC30205\").WithSpan(3, 13, 3, 14)" + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -214,7 +248,7 @@ End Class
         }
 
         [Fact]
-        public async Task TestCSharpValueTupleUsage()
+        public async Task TestCSharpValueTupleUsageNet46()
         {
             var testCode = @"
 class TestClass {
@@ -222,7 +256,94 @@ class TestClass {
 }
 ";
 
-            await new CSharpTest { TestCode = testCode }.RunAsync();
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                },
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net46.Default
+                    .AddPackages(ImmutableArray.Create(new PackageIdentity("System.ValueTuple", "4.5.0"))),
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestCSharpValueTupleUsageNet472()
+        {
+            var testCode = @"
+class TestClass {
+  (int x, int y) TestMethod() { return (0, 1); }
+}
+";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestRoslynCompilerUsage_1()
+        {
+            var testCode = @"
+using Microsoft.CodeAnalysis.CSharp;
+class TestClass {
+  SyntaxKind TestMethod() => SyntaxKind.CloseBraceToken;
+}
+";
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                },
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net452.Default
+                    .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "1.0.1"))),
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestRoslynCompilerUsage_2()
+        {
+            var testCode = @"
+using Microsoft.CodeAnalysis.CSharp;
+class TestClass {
+  SyntaxKind TestMethod() => SyntaxKind.TupleType;
+}
+";
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                },
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net46.Default
+                    .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "2.8.2"))),
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestRoslynCompilerUsage_3()
+        {
+            var testCode = @"
+using Microsoft.CodeAnalysis.CSharp;
+class TestClass {
+  SyntaxKind TestMethod() => SyntaxKind.DotDotToken;
+}
+";
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                },
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default
+                    .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "3.3.1"))),
+            }.RunAsync();
         }
 
         private class CSharpTest : AnalyzerTest<DefaultVerifier>

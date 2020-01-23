@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -13,6 +14,7 @@ using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Composition;
+using IComparer = System.Collections.IComparer;
 
 namespace Microsoft.CodeAnalysis.Testing
 {
@@ -113,6 +115,8 @@ namespace Microsoft.CodeAnalysis.Testing
         /// Gets a collection of diagnostics to explicitly disable in the <see cref="CompilationOptions"/> for projects.
         /// </summary>
         public List<string> DisabledDiagnostics { get; } = new List<string>();
+
+        public ReferenceAssemblies ReferenceAssemblies { get; set; } = ReferenceAssemblies.Default;
 
         /// <summary>
         /// Gets a collection of transformation functions to apply to <see cref="Workspace.Options"/> during diagnostic
@@ -264,6 +268,13 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <param name="verifier">The verifier to use for test assertions.</param>
         private void VerifyDiagnosticResults(IEnumerable<Diagnostic> actualResults, ImmutableArray<DiagnosticAnalyzer> analyzers, DiagnosticResult[] expectedResults, IVerifier verifier)
         {
+            var matchedDiagnostics = MatchDiagnostics(actualResults.ToArray(), expectedResults);
+            verifier.Equal(actualResults.Count(), matchedDiagnostics.Count(x => x.actual is object), $"{nameof(MatchDiagnostics)} failed to include all actual diagnostics in the result");
+            verifier.Equal(expectedResults.Length, matchedDiagnostics.Count(x => x.expected is object), $"{nameof(MatchDiagnostics)} failed to include all expected diagnostics in the result");
+
+            actualResults = matchedDiagnostics.Select(x => x.actual).WhereNotNull();
+            expectedResults = matchedDiagnostics.Where(x => x.expected is object).Select(x => x.expected.GetValueOrDefault()).ToArray();
+
             var expectedCount = expectedResults.Length;
             var actualCount = actualResults.Count();
 
@@ -313,6 +324,240 @@ namespace Microsoft.CodeAnalysis.Testing
                 {
                     verifier.Equal(expected.Message, actual.GetMessage(), $"Expected diagnostic message to be \"{expected.Message}\" was \"{actual.GetMessage()}\"\r\n\r\nDiagnostic:\r\n    {FormatDiagnostics(analyzers, actual)}\r\n");
                 }
+                else if (expected.MessageArguments?.Length > 0)
+                {
+                    verifier.SequenceEqual(
+                        expected.MessageArguments.Select(argument => argument?.ToString() ?? string.Empty),
+                        GetArguments(actual).Select(argument => argument?.ToString() ?? string.Empty),
+                        StringComparer.Ordinal,
+                        $"Expected diagnostic message arguments to match\r\n\r\nDiagnostic:\r\n    {FormatDiagnostics(analyzers, actual)}\r\n");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Match actual diagnostics with expected diagnostics.
+        /// </summary>
+        /// <remarks>
+        /// <para>While each actual diagnostic contains complete information about the diagnostic (location, severity,
+        /// message, etc.), the expected diagnostics sometimes contain partial information. It is therefore possible for
+        /// an expected diagnostic to match more than one actual diagnostic, while another expected diagnostic with more
+        /// complete information only matches a single specific actual diagnostic.</para>
+        ///
+        /// <para>This method attempts to find a best matching of actual and expected diagnostics.</para>
+        /// </remarks>
+        /// <param name="actualResults">The actual diagnostics reported by analysis.</param>
+        /// <param name="expectedResults">The expected diagnostics.</param>
+        /// <returns>
+        /// <para>A collection of matched diagnostics, with the following characteristics:</para>
+        ///
+        /// <list type="bullet">
+        /// <item><description>Every element of <paramref name="actualResults"/> will appear exactly once as the first element of an item in the result.</description></item>
+        /// <item><description>Every element of <paramref name="expectedResults"/> will appear exactly once as the second element of an item in the result.</description></item>
+        /// <item><description>An item in the result which specifies both a <see cref="Diagnostic"/> and a <see cref="DiagnosticResult"/> indicates a matched pair, i.e. the actual and expected results are believed to refer to the same diagnostic.</description></item>
+        /// <item><description>An item in the result which specifies only a <see cref="Diagnostic"/> indicates an actual diagnostic for which no matching expected diagnostic was found.</description></item>
+        /// <item><description>An item in the result which specifies only a <see cref="DiagnosticResult"/> indicates an expected diagnostic for which no matching actual diagnostic was found.</description></item>
+        ///
+        /// <para>If no exact match is found (all actual diagnostics are matched to an expected diagnostic without
+        /// errors), this method is <em>allowed</em> to attempt fall-back matching using a strategy intended to minimize
+        /// the total number of mismatched pairs.</para>
+        /// </list>
+        /// </returns>
+        private ImmutableArray<(Diagnostic? actual, DiagnosticResult? expected)> MatchDiagnostics(Diagnostic[] actualResults, DiagnosticResult[] expectedResults)
+        {
+            expectedResults = expectedResults.ToOrderedArray();
+
+            // Initialize the best match to a trivial result where everything is unmatched. This will be updated if/when
+            // better matches are found.
+            var bestMatchCount = actualResults.Length + expectedResults.Length;
+            var bestMatch = actualResults.Select(result => ((Diagnostic?)result, default(DiagnosticResult?))).Concat(expectedResults.Select(result => (default(Diagnostic?), (DiagnosticResult?)result))).ToImmutableArray();
+
+            var builder = ImmutableArray.CreateBuilder<(Diagnostic? actual, DiagnosticResult? expected)>();
+            var usedExpected = new bool[expectedResults.Length];
+            _ = RecursiveMatch(0, 0, 0, usedExpected);
+
+            return bestMatch;
+
+            // Match items using recursive backtracking. Returns the distance the best match under this path is from an
+            // ideal result of 0 (1-1 matching of actual and expected results). Currently the distance is calculated as
+            // the number of unmatched items.
+            int RecursiveMatch(int firstActualIndex, int firstExpectedIndex, int unmatchedActualResults, bool[] usedExpected)
+            {
+                var matchedOnEntry = firstActualIndex - unmatchedActualResults;
+                var bestPossibleUnmatchedExpected = Math.Max(0, expectedResults.Length - matchedOnEntry - (actualResults.Length - unmatchedActualResults));
+                var bestPossible = unmatchedActualResults + bestPossibleUnmatchedExpected;
+
+                if (firstActualIndex == actualResults.Length)
+                {
+                    // We reached the end of the actual diagnostics. Any remaning unmatched expected diagnostics should
+                    // be added to the end. If this path produced a better result than the best known path so far,
+                    // update the best match to this one.
+                    var totalUnmatched = unmatchedActualResults + (expectedResults.Length - matchedOnEntry);
+
+                    // Avoid manipulating the builder if we know the current path is no better than the previous best.
+                    if (totalUnmatched < bestMatchCount)
+                    {
+                        var addedCount = 0;
+
+                        // Add the remaining unmatched expected diagnostics
+                        for (var i = firstExpectedIndex; i < expectedResults.Length; i++)
+                        {
+                            if (!usedExpected[i])
+                            {
+                                addedCount++;
+                                builder.Add((null, (DiagnosticResult?)expectedResults[i]));
+                            }
+                        }
+
+                        bestMatchCount = totalUnmatched;
+                        bestMatch = builder.ToImmutable();
+
+                        for (var i = 0; i < addedCount; i++)
+                        {
+                            builder.RemoveAt(builder.Count - 1);
+                        }
+                    }
+
+                    return totalUnmatched;
+                }
+
+                var currentBest = actualResults.Length + expectedResults.Length - (2 * matchedOnEntry);
+                for (var i = firstExpectedIndex; i < expectedResults.Length; i++)
+                {
+                    if (usedExpected[i])
+                    {
+                        continue;
+                    }
+
+                    if (!IsMatch(actualResults[firstActualIndex], expectedResults[i]))
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        usedExpected[i] = true;
+                        builder.Add((actualResults[firstActualIndex], expectedResults[i]));
+                        var bestResultWithCurrentMatch = RecursiveMatch(firstActualIndex + 1, i == firstExpectedIndex ? firstExpectedIndex + 1 : firstExpectedIndex, unmatchedActualResults, usedExpected);
+                        currentBest = Math.Min(bestResultWithCurrentMatch, currentBest);
+                        if (currentBest == bestPossible)
+                        {
+                            // Return immediately if we know the current actual result cannot be paired with a different
+                            // expected result to produce a better match.
+                            return bestPossible;
+                        }
+                    }
+                    finally
+                    {
+                        usedExpected[i] = false;
+                        builder.RemoveAt(builder.Count - 1);
+                    }
+                }
+
+                if (currentBest > unmatchedActualResults)
+                {
+                    // We might be able to improve the results by leaving the current actual diagnostic unmatched
+                    try
+                    {
+                        builder.Add((actualResults[firstActualIndex], null));
+                        var bestResultWithCurrentUnmatched = RecursiveMatch(firstActualIndex + 1, firstExpectedIndex, unmatchedActualResults + 1, usedExpected);
+                        return Math.Min(bestResultWithCurrentUnmatched, currentBest);
+                    }
+                    finally
+                    {
+                        builder.RemoveAt(builder.Count - 1);
+                    }
+                }
+
+                Debug.Assert(currentBest == unmatchedActualResults, $"Assertion failure: {currentBest} == {unmatchedActualResults}");
+                return currentBest;
+            }
+
+            static bool IsMatch(Diagnostic diagnostic, DiagnosticResult diagnosticResult)
+            {
+                return IsLocationMatch(diagnostic, diagnosticResult)
+                    && diagnostic.Id == diagnosticResult.Id
+                    && diagnostic.Severity == diagnosticResult.Severity
+                    && IsMessageMatch(diagnostic, diagnosticResult);
+            }
+
+            static bool IsLocationMatch(Diagnostic diagnostic, DiagnosticResult diagnosticResult)
+            {
+                if (!diagnosticResult.HasLocation)
+                {
+                    return Equals(Location.None, diagnostic.Location);
+                }
+                else
+                {
+                    if (!IsLocationMatch2(diagnostic.Location, diagnosticResult.Spans[0]))
+                    {
+                        return false;
+                    }
+
+                    if (diagnosticResult.Spans[0].Options.HasFlag(DiagnosticLocationOptions.IgnoreAdditionalLocations))
+                    {
+                        return true;
+                    }
+
+                    var additionalLocations = diagnostic.AdditionalLocations.ToArray();
+                    if (additionalLocations.Length != diagnosticResult.Spans.Length - 1)
+                    {
+                        // Number of additional locations does not match expected result
+                        return false;
+                    }
+
+                    for (var i = 0; i < additionalLocations.Length; i++)
+                    {
+                        if (!IsLocationMatch2(additionalLocations[i], diagnosticResult.Spans[i + 1]))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            }
+
+            static bool IsLocationMatch2(Location actual, DiagnosticLocation expected)
+            {
+                var actualSpan = actual.GetLineSpan();
+
+                var assert = actualSpan.Path == expected.Span.Path || (actualSpan.Path?.Contains("Test0.") == true && expected.Span.Path.Contains("Test."));
+                if (!assert)
+                {
+                    // Expected diagnostic to be in file "{expected.Span.Path}" was actually in file "{actualSpan.Path}"
+                    return false;
+                }
+
+                if (actualSpan.StartLinePosition != expected.Span.StartLinePosition)
+                {
+                    return false;
+                }
+
+                if (!expected.Options.HasFlag(DiagnosticLocationOptions.IgnoreLength)
+                    && actualSpan.EndLinePosition != expected.Span.EndLinePosition)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            static bool IsMessageMatch(Diagnostic actual, DiagnosticResult expected)
+            {
+                if (expected.Message is null)
+                {
+                    if (expected.MessageArguments?.Length > 0)
+                    {
+                        var actualArguments = GetArguments(actual).Select(argument => argument?.ToString() ?? string.Empty);
+                        var expectedArguments = expected.MessageArguments.Select(argument => argument?.ToString() ?? string.Empty);
+                        return actualArguments.SequenceEqual(expectedArguments);
+                    }
+
+                    return true;
+                }
+
+                return string.Equals(expected.Message, actual.GetMessage());
             }
         }
 
@@ -366,6 +611,7 @@ namespace Microsoft.CodeAnalysis.Testing
             for (var i = 0; i < diagnostics.Length; ++i)
             {
                 var diagnosticsId = diagnostics[i].Id;
+                var location = diagnostics[i].Location;
 
                 builder.Append("// ").AppendLine(diagnostics[i].ToString());
 
@@ -373,38 +619,60 @@ namespace Microsoft.CodeAnalysis.Testing
                 if (applicableAnalyzer != null)
                 {
                     var analyzerType = applicableAnalyzer.GetType();
+                    var rule = applicableAnalyzer.SupportedDiagnostics.Length == 1 ? string.Empty : $"{analyzerType.Name}.{diagnosticsId}";
 
-                    var location = diagnostics[i].Location;
-                    if (location == Location.None)
+                    if (location == Location.None || !location.IsInSource)
                     {
-                        builder.AppendFormat("GetGlobalResult({0}.{1})", analyzerType.Name, diagnosticsId);
-                    }
-                    else if (!location.IsInSource)
-                    {
-                        var lineSpan = diagnostics[i].Location.GetLineSpan();
-                        builder.AppendFormat($"new DiagnosticResult({analyzerType.Name}.{diagnosticsId}).WithSpan(\"{lineSpan.Path}\", {lineSpan.StartLinePosition.Line + 1}, {lineSpan.StartLinePosition.Character + 1}, {lineSpan.EndLinePosition.Line + 1}, {lineSpan.EndLinePosition.Character + 1})", analyzerType.Name, diagnosticsId);
+                        builder.Append($"new DiagnosticResult({rule})");
                     }
                     else
                     {
-                        var resultMethodName = diagnostics[i].Location.SourceTree.FilePath.EndsWith(".cs") ? "GetCSharpResultAt" : "GetBasicResultAt";
-                        var linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
-
-                        builder.AppendFormat(
-                            "{0}({1}, {2}, {3}.{4})",
-                            resultMethodName,
-                            linePosition.Line + 1,
-                            linePosition.Character + 1,
-                            analyzerType.Name,
-                            diagnosticsId);
+                        var resultMethodName = location.SourceTree.FilePath.EndsWith(".cs") ? "VerifyCS.Diagnostic" : "VerifyVB.Diagnostic";
+                        builder.Append($"{resultMethodName}({rule})");
                     }
-
-                    if (i != diagnostics.Length - 1)
-                    {
-                        builder.Append(',');
-                    }
-
-                    builder.AppendLine();
                 }
+                else
+                {
+                    builder.Append(
+                        diagnostics[i].Severity switch
+                        {
+                            DiagnosticSeverity.Error => $"{nameof(DiagnosticResult)}.{nameof(DiagnosticResult.CompilerError)}(\"{diagnostics[i].Id}\")",
+                            DiagnosticSeverity.Warning => $"{nameof(DiagnosticResult)}.{nameof(DiagnosticResult.CompilerWarning)}(\"{diagnostics[i].Id}\")",
+                            var severity => $"new {nameof(DiagnosticResult)}(\"{diagnostics[i].Id}\", {nameof(DiagnosticSeverity)}.{severity})",
+                        });
+                }
+
+                if (location == Location.None)
+                {
+                    // No additional location data needed
+                }
+                else if (!location.IsInSource)
+                {
+                    var lineSpan = diagnostics[i].Location.GetLineSpan();
+                    builder.Append($".WithSpan(\"{lineSpan.Path}\", {lineSpan.StartLinePosition.Line + 1}, {lineSpan.StartLinePosition.Character + 1}, {lineSpan.EndLinePosition.Line + 1}, {lineSpan.EndLinePosition.Character + 1})");
+                }
+                else
+                {
+                    var linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
+                    var endLinePosition = diagnostics[i].Location.GetLineSpan().EndLinePosition;
+
+                    builder.Append($".WithSpan({linePosition.Line + 1}, {linePosition.Character + 1}, {endLinePosition.Line + 1}, {endLinePosition.Character + 1})");
+                }
+
+                var arguments = GetArguments(diagnostics[i]);
+                if (arguments.Count > 0)
+                {
+                    builder.Append($".{nameof(DiagnosticResult.WithArguments)}(");
+                    builder.Append(string.Join(", ", arguments.Select(a => "\"" + a?.ToString() + "\"")));
+                    builder.Append(")");
+                }
+
+                if (i != diagnostics.Length - 1)
+                {
+                    builder.Append(',');
+                }
+
+                builder.AppendLine();
             }
 
             return builder.ToString();
@@ -467,6 +735,11 @@ namespace Microsoft.CodeAnalysis.Testing
 
         private static bool IsInSourceFile(DiagnosticResult result, (string filename, SourceText content)[] sources)
         {
+            if (!result.HasLocation)
+            {
+                return false;
+            }
+
             return sources.Any(source => source.filename.Equals(result.Spans[0].Span.Path));
         }
 
@@ -484,9 +757,10 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync((string filename, SourceText content)[] sources, (string filename, SourceText content)[] additionalFiles, ProjectState[] additionalProjects, MetadataReference[] additionalMetadataReferences, ImmutableArray<DiagnosticAnalyzer> analyzers, IVerifier verifier, CancellationToken cancellationToken)
+        private async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync((string filename, SourceText content)[] sources, (string filename, SourceText content)[] additionalFiles, ProjectState[] additionalProjects, MetadataReference[] additionalMetadataReferences, ImmutableArray<DiagnosticAnalyzer> analyzers, IVerifier verifier, CancellationToken cancellationToken)
         {
-            return GetSortedDiagnosticsAsync(GetSolution(sources, additionalFiles, additionalProjects, additionalMetadataReferences, verifier), analyzers, CompilerDiagnostics, cancellationToken);
+            var solution = await GetSolutionAsync(sources, additionalFiles, additionalProjects, additionalMetadataReferences, verifier, cancellationToken);
+            return await GetSortedDiagnosticsAsync(solution, analyzers, CompilerDiagnostics, cancellationToken);
         }
 
         /// <summary>
@@ -506,21 +780,30 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
                 var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, GetAnalyzerOptions(project), cancellationToken);
-                var includedCompilerDiagnostics = compilation.GetDiagnostics(cancellationToken).Where(IsCompilerDiagnosticIncluded);
-                var diags = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
                 var allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
-                var failureDiagnostics = allDiagnostics.Where(diagnostic => diagnostic.Id == "AD0001");
-                diagnostics.AddRange(diags.Concat(includedCompilerDiagnostics).Concat(failureDiagnostics));
+
+                diagnostics.AddRange(allDiagnostics.Where(diagnostic => !IsCompilerDiagnostic(diagnostic) || IsCompilerDiagnosticIncluded(diagnostic, compilerDiagnostics)));
             }
 
             var results = SortDistinctDiagnostics(diagnostics);
             return results.ToImmutableArray();
+        }
 
-            // Local function
-            bool IsCompilerDiagnosticIncluded(Diagnostic diagnostic)
+        private static bool IsCompilerDiagnostic(Diagnostic diagnostic)
+        {
+            return diagnostic.Descriptor.CustomTags.Contains(WellKnownDiagnosticTags.Compiler);
+        }
+
+        /// <summary>
+        /// Determines if a compiler diagnostic should be included for diagnostic validation. The default implementation includes all diagnostics at a severity level indicated by <paramref name="compilerDiagnostics"/>.
+        /// </summary>
+        /// <param name="diagnostic">The compiler diagnostic.</param>
+        /// <param name="compilerDiagnostics">The compiler diagnostic level in effect for the test.</param>
+        /// <returns><see langword="true"/> to include the diagnostic for validation; otherwise, <see langword="false"/> to exclude a diagnostic.</returns>
+        protected virtual bool IsCompilerDiagnosticIncluded(Diagnostic diagnostic, CompilerDiagnostics compilerDiagnostics)
+        {
+            switch (compilerDiagnostics)
             {
-                switch (compilerDiagnostics)
-                {
                 case CompilerDiagnostics.None:
                 default:
                     return false;
@@ -536,7 +819,6 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 case CompilerDiagnostics.All:
                     return true;
-                }
             }
         }
 
@@ -558,12 +840,13 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <param name="additionalProjects">Additional projects to include in the solution.</param>
         /// <param name="additionalMetadataReferences">Additional metadata references to include in the project.</param>
         /// <param name="verifier">The verifier to use for test assertions.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A solution containing a project with the specified sources and additional files.</returns>
-        private Solution GetSolution((string filename, SourceText content)[] sources, (string filename, SourceText content)[] additionalFiles, ProjectState[] additionalProjects, MetadataReference[] additionalMetadataReferences, IVerifier verifier)
+        private async Task<Solution> GetSolutionAsync((string filename, SourceText content)[] sources, (string filename, SourceText content)[] additionalFiles, ProjectState[] additionalProjects, MetadataReference[] additionalMetadataReferences, IVerifier verifier, CancellationToken cancellationToken)
         {
             verifier.LanguageIsSupported(Language);
 
-            var project = CreateProject(sources, additionalFiles, additionalProjects, additionalMetadataReferences, Language);
+            var project = await CreateProjectAsync(sources, additionalFiles, additionalProjects, additionalMetadataReferences, Language, cancellationToken);
             var documents = project.Documents.ToArray();
 
             verifier.Equal(sources.Length, documents.Length, "Amount of sources did not match amount of Documents created");
@@ -575,7 +858,7 @@ namespace Microsoft.CodeAnalysis.Testing
         /// Create a project using the input strings as sources.
         /// </summary>
         /// <remarks>
-        /// <para>This method first creates a <see cref="Project"/> by calling <see cref="CreateProjectImpl"/>, and then
+        /// <para>This method first creates a <see cref="Project"/> by calling <see cref="CreateProjectImplAsync"/>, and then
         /// applies compilation options to the project by calling <see cref="ApplyCompilationOptions"/>.</para>
         /// </remarks>
         /// <param name="sources">Classes in the form of strings.</param>
@@ -584,11 +867,12 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <param name="additionalMetadataReferences">Additional metadata references to include in the project.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
         /// strings.</returns>
-        protected Project CreateProject((string filename, SourceText content)[] sources, (string filename, SourceText content)[] additionalFiles, ProjectState[] additionalProjects, MetadataReference[] additionalMetadataReferences, string language)
+        protected async Task<Project> CreateProjectAsync((string filename, SourceText content)[] sources, (string filename, SourceText content)[] additionalFiles, ProjectState[] additionalProjects, MetadataReference[] additionalMetadataReferences, string language, CancellationToken cancellationToken)
         {
-            var project = CreateProjectImpl(sources, additionalFiles, additionalProjects, additionalMetadataReferences, language);
+            var project = await CreateProjectImplAsync(sources, additionalFiles, additionalProjects, additionalMetadataReferences, language, cancellationToken);
             return ApplyCompilationOptions(project);
         }
 
@@ -601,15 +885,16 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <param name="additionalMetadataReferences">Additional metadata references to include in the project.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
         /// strings.</returns>
-        protected virtual Project CreateProjectImpl((string filename, SourceText content)[] sources, (string filename, SourceText content)[] additionalFiles, ProjectState[] additionalProjects, MetadataReference[] additionalMetadataReferences, string language)
+        protected virtual async Task<Project> CreateProjectImplAsync((string filename, SourceText content)[] sources, (string filename, SourceText content)[] additionalFiles, ProjectState[] additionalProjects, MetadataReference[] additionalMetadataReferences, string language, CancellationToken cancellationToken)
         {
             var fileNamePrefix = DefaultFilePathPrefix;
             var fileExt = DefaultFileExt;
 
             var projectId = ProjectId.CreateNewId(debugName: DefaultTestProjectName);
-            var solution = CreateSolution(projectId, language);
+            var solution = await CreateSolutionAsync(projectId, language, cancellationToken);
 
             foreach (var projectState in additionalProjects)
             {
@@ -655,8 +940,9 @@ namespace Microsoft.CodeAnalysis.Testing
         /// </summary>
         /// <param name="projectId">The project identifier to use.</param>
         /// <param name="language">The language for which the solution is being created.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>The created solution.</returns>
-        protected virtual Solution CreateSolution(ProjectId projectId, string language)
+        protected virtual async Task<Solution> CreateSolutionAsync(ProjectId projectId, string language, CancellationToken cancellationToken)
         {
             var compilationOptions = CreateCompilationOptions();
 
@@ -666,43 +952,23 @@ namespace Microsoft.CodeAnalysis.Testing
                 xmlReferenceResolver.XmlReferences.Add(xmlReference.Key, xmlReference.Value);
             }
 
-            compilationOptions = compilationOptions.WithXmlReferenceResolver(xmlReferenceResolver);
+            compilationOptions = compilationOptions
+                .WithXmlReferenceResolver(xmlReferenceResolver)
+                .WithAssemblyIdentityComparer(ReferenceAssemblies.AssemblyIdentityComparer);
 
-            var solution = CreateWorkspace()
-                .CurrentSolution
-                .AddProject(projectId, DefaultTestProjectName, DefaultTestProjectName, language)
-                .WithProjectCompilationOptions(projectId, compilationOptions)
-                .AddMetadataReference(projectId, MetadataReferences.CorlibReference)
-                .AddMetadataReference(projectId, MetadataReferences.SystemReference)
-                .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
-                .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference)
-                .AddMetadataReference(projectId, MetadataReferences.SystemCollectionsImmutableReference);
-
-            if (language == LanguageNames.VisualBasic)
-            {
-                solution = solution.AddMetadataReference(projectId, MetadataReferences.MicrosoftVisualBasicReference);
-            }
-
-            if (MetadataReferences.MscorlibFacadeReference != null)
-            {
-                solution = solution.AddMetadataReference(projectId, MetadataReferences.MscorlibFacadeReference);
-            }
-
-            if (MetadataReferences.SystemRuntimeReference != null)
-            {
-                solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemRuntimeReference);
-            }
-
-            if (typeof(object).GetTypeInfo().Assembly.GetType("System.ValueTuple`2", throwOnError: false) == null
-                && MetadataReferences.SystemValueTupleReference != null)
-            {
-                solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemValueTupleReference);
-            }
-
+            var workspace = CreateWorkspace();
             foreach (var transform in OptionsTransforms)
             {
-                solution.Workspace.Options = transform(solution.Workspace.Options);
+                workspace.Options = transform(workspace.Options);
             }
+
+            var solution = workspace
+                .CurrentSolution
+                .AddProject(projectId, DefaultTestProjectName, DefaultTestProjectName, language)
+                .WithProjectCompilationOptions(projectId, compilationOptions);
+
+            var metadataReferences = await ReferenceAssemblies.ResolveAsync(language, cancellationToken);
+            solution = solution.AddMetadataReferences(projectId, metadataReferences);
 
             var parseOptions = solution.GetProject(projectId).ParseOptions;
             solution = solution.WithProjectParseOptions(projectId, parseOptions.WithDocumentationMode(DocumentationMode.Diagnose));
@@ -772,7 +1038,14 @@ namespace Microsoft.CodeAnalysis.Testing
                 .OrderBy(d => d.Location.GetLineSpan().Path, StringComparer.Ordinal)
                 .ThenBy(d => d.Location.SourceSpan.Start)
                 .ThenBy(d => d.Location.SourceSpan.End)
-                .ThenBy(d => d.Id).ToArray();
+                .ThenBy(d => d.Id)
+                .ThenBy(d => GetArguments(d), LexicographicComparer.Instance).ToArray();
+        }
+
+        private static IReadOnlyList<object?> GetArguments(Diagnostic diagnostic)
+        {
+            return (IReadOnlyList<object?>?)diagnostic.GetType().GetProperty("Arguments", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(diagnostic)
+                ?? new object[0];
         }
 
         /// <summary>
@@ -782,5 +1055,62 @@ namespace Microsoft.CodeAnalysis.Testing
         /// New instances of all the analyzers being tested.
         /// </returns>
         protected abstract IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers();
+
+        private sealed class LexicographicComparer : IComparer<IEnumerable<object?>>
+        {
+            public static LexicographicComparer Instance { get; } = new LexicographicComparer();
+
+            public int Compare(IEnumerable<object?> x, IEnumerable<object?> y)
+            {
+                using var xe = x.GetEnumerator();
+                using var ye = y.GetEnumerator();
+
+                while (xe.MoveNext())
+                {
+                    if (!ye.MoveNext())
+                    {
+                        // y has fewer elements
+                        return 1;
+                    }
+
+                    IComparer elementComparer = Comparer<object>.Default;
+                    if (xe.Current is string && ye.Current is string)
+                    {
+                        // Avoid culture-sensitive string comparisons
+                        elementComparer = StringComparer.Ordinal;
+                    }
+
+                    try
+                    {
+                        var elementComparison = elementComparer.Compare(xe.Current, ye.Current);
+                        if (elementComparison == 0)
+                        {
+                            continue;
+                        }
+
+                        return elementComparison;
+                    }
+                    catch (ArgumentException)
+                    {
+                        // The arguments are not directly comparable, so convert the values to strings and try again
+                        var elementComparison = string.CompareOrdinal(xe.Current?.ToString(), ye.Current?.ToString());
+                        if (elementComparison == 0)
+                        {
+                            continue;
+                        }
+
+                        return elementComparison;
+                    }
+                }
+
+                if (ye.MoveNext())
+                {
+                    // x has fewer elements
+                    return -1;
+                }
+
+                return 0;
+            }
+        }
     }
 }
