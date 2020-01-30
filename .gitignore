@@ -18,6 +18,7 @@
 artifacts/
 .dotnet/
 .tools/
+obj/
 
 # ignore templates modified by build output
 src/VisualStudio.Roslyn.SDK/Roslyn.SDK/ModifiedTemplates
