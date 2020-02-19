@@ -39,6 +39,9 @@ namespace Microsoft.CodeAnalysis.Testing
                 LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         protected static TVerifier Verify { get; } = new TVerifier();
 
         protected virtual string DefaultFilePathPrefix { get; } = "Test";
