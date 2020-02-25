@@ -1,6 +1,4 @@
-﻿Imports MakeConst
-Imports MakeConst.VisualBasic.Tests.TestHelper
-Imports Microsoft.CodeAnalysis
+﻿Imports MakeConst.VisualBasic.UnitTests.TestHelper
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Xunit

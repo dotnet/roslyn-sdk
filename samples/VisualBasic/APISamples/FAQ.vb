@@ -503,7 +503,7 @@ End Module</text>.Value
         End Sub
 
         <FAQAttribute(8)>
-        <Fact(Skip:="Need to load correct assembly references now that this is a .NET core app")>
+        <Fact>
         Public Sub FindAllInvocationsToMethodsFromAParticularNamespace()
             Dim tree = SyntaxFactory.ParseSyntaxTree(
 <text>
@@ -528,8 +528,9 @@ Module Program
 End Module
 </text>.Value)
 
+            Dim consoleReference = MetadataReference.CreateFromFile(GetType(Console).Assembly.Location)
             Dim vbOptions = New VisualBasicCompilationOptions(OutputKind.ConsoleApplication).WithEmbedVbCoreRuntime(True)
-            Dim comp = VisualBasicCompilation.Create("MyCompilation", syntaxTrees:={tree}, references:={Mscorlib}, options:=vbOptions)
+            Dim comp = VisualBasicCompilation.Create("MyCompilation", syntaxTrees:={tree}, references:={Mscorlib, consoleReference}, options:=vbOptions)
 
             Dim model = comp.GetSemanticModel(tree)
 
@@ -2229,8 +2230,11 @@ End Module
             Dim newRoot = CType(rewriter.Visit(oldRoot), CompilationUnitSyntax)
             newRoot = newRoot.NormalizeWhitespace() ' normalize all the whitespace to make it legible
             Dim newTree = tree.WithRootAndOptions(newRoot, tree.Options)
+            Dim systemRuntimeReference = MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies().Single(Function(assembly) assembly.GetName().Name = "System.Runtime").Location)
             Dim vbRuntime = MetadataReference.CreateFromFile(GetType(CompilerServices.StandardModuleAttribute).Assembly.Location)
-            Dim comp = VisualBasicCompilation.Create("MyCompilation", syntaxTrees:={newTree}, references:={Mscorlib, vbRuntime})
+            Dim consoleReference = MetadataReference.CreateFromFile(GetType(Console).Assembly.Location)
+            Dim comp = VisualBasicCompilation.Create("MyCompilation", syntaxTrees:={newTree}, references:={Mscorlib, systemRuntimeReference, vbRuntime, consoleReference})
+            comp = comp.WithOptions(comp.Options.WithEmbedVbCoreRuntime(True))
             Dim output As String = Execute(comp)
 
             Assert.Equal(
@@ -2299,8 +2303,9 @@ End Module
             End Using
 
             If emitResult.Success Then
-                Dim p = Process.Start(New ProcessStartInfo() With {.FileName = exeFilename, .UseShellExecute = False, .RedirectStandardOutput = True})
+                Dim p = Process.Start(New ProcessStartInfo() With {.FileName = exeFilename, .UseShellExecute = False, .RedirectStandardOutput = True, .RedirectStandardError = True})
                 output.Append(p.StandardOutput.ReadToEnd())
+                output.Append(p.StandardError.ReadToEnd())
                 p.WaitForExit()
             Else
                 output.AppendLine("Errors:")
@@ -2366,15 +2371,14 @@ End Module
             Dim _projectId = ProjectId.CreateNewId()
             Dim _documentId = DocumentId.CreateNewId(_projectId)
 
-            Dim systemReference = AppDomain.CurrentDomain.GetAssemblies().Where(Function(x) String.Equals(x.GetName().Name, "System", StringComparison.OrdinalIgnoreCase)).
-                Select(Function(a) MetadataReference.CreateFromFile(a.Location)).Single()
+            Dim systemConsoleReference = MetadataReference.CreateFromFile(GetType(Console).Assembly.Location)
 
             Dim vbOptions = New VisualBasicCompilationOptions(OutputKind.ConsoleApplication).WithEmbedVbCoreRuntime(True)
 
             Dim sln = New AdhocWorkspace().CurrentSolution.
                           AddProject(_projectId, "MyProject", "MyProject", LanguageNames.VisualBasic).WithProjectCompilationOptions(_projectId, vbOptions).
                               AddMetadataReference(_projectId, Mscorlib).
-                              AddMetadataReference(_projectId, systemReference).
+                              AddMetadataReference(_projectId, systemConsoleReference).
                               AddDocument(_documentId, "MyFile.vb", source)
 
             ' Format the document.
@@ -2424,7 +2428,7 @@ Module Program
 
     Public Sub Main()
         Dim i As Integer = 0
-        System.Console.WriteLine(i.ToString())
+        Console.WriteLine(i.ToString())
         Dim p As Process = Process.GetCurrentProcess()
         Console.WriteLine(p.Id)
     End Sub

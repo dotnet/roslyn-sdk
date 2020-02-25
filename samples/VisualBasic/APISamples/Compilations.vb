@@ -24,7 +24,7 @@ End Module
         Dim tree = SyntaxFactory.ParseSyntaxTree(code)
         Dim comp = VisualBasicCompilation.Create(
             "calc.dll",
-            options:=New VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+            options:=New VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithEmbedVbCoreRuntime(True),
             syntaxTrees:={tree},
             references:={MetadataReference.CreateFromFile(GetType(Object).Assembly.Location),
                         MetadataReference.CreateFromFile(GetType(CompilerServices.StandardModuleAttribute).Assembly.Location)})
@@ -58,6 +58,7 @@ End Module
             syntaxTrees:={tree},
             references:={MetadataReference.CreateFromFile(GetType(Object).Assembly.Location),
                         MetadataReference.CreateFromFile(GetType(CompilerServices.StandardModuleAttribute).Assembly.Location)})
+        comp = comp.WithOptions(comp.Options.WithEmbedVbCoreRuntime(True))
 
         Dim errorsAndWarnings = comp.GetDiagnostics()
         Assert.Equal(1, errorsAndWarnings.Count())
