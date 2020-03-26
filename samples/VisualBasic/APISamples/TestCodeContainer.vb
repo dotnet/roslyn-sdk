@@ -29,7 +29,7 @@ Class TestCodeContainer
         End If
 
         Text = textWithMarker
-        SyntaxTree = VisualBasic.SyntaxFactory.ParseSyntaxTree(Text)
+        SyntaxTree = SyntaxFactory.ParseSyntaxTree(Text)
         If Position <> -1 Then
             Token = SyntaxTree.GetRoot().FindToken(Position)
             SyntaxNode = Token.Parent

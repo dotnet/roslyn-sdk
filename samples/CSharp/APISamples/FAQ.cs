@@ -2324,9 +2324,6 @@ class Program
             Solution solution = new AdhocWorkspace().CurrentSolution
                 .AddProject(projectId, "MyProject", "MyProject", LanguageNames.CSharp)
                 .AddMetadataReference(projectId, Mscorlib)
-                .AddMetadataReference(projectId, AppDomain.CurrentDomain.GetAssemblies()
-                    .Where(a => string.Compare(a.GetName().Name, "System", StringComparison.OrdinalIgnoreCase) == 0)
-                    .Select(a => MetadataReference.CreateFromFile(a.Location)).Single())
                 .AddDocument(documentId, "MyFile.cs", source);
             Document document = solution.GetDocument(documentId);
 

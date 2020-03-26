@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
@@ -77,7 +79,31 @@ namespace Microsoft.CodeAnalysis.Testing
                 }.RunAsync();
             });
 
-            Assert.Equal("content of 'File1.txt' was expected to be 'Wrong file text' but was 'File text'", exception.Message);
+            new DefaultVerifier().EqualOrDiff($"Context: Iterative code fix application{Environment.NewLine}content of 'File1.txt' did not match. Diff shown with expected as baseline:{Environment.NewLine}-Wrong file text{Environment.NewLine}+File text{Environment.NewLine}", exception.Message);
+        }
+
+        [Fact]
+        public async Task TestMarkupDiagnosticFixedByAddingAdditionalFileFailsIfTextIndentedIncorrectly()
+        {
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            {
+                await new CSharpTest(SuppressDiagnosticIf.AdditionalFileExists)
+                {
+                    TestState =
+                    {
+                        Sources = { "namespace MyNamespace {|Brace:{|} }" },
+                    },
+                    FixedState =
+                    {
+                        AdditionalFiles =
+                        {
+                            ("File1.txt", "  File text"),
+                        },
+                    },
+                }.RunAsync();
+            });
+
+            new DefaultVerifier().EqualOrDiff($"Context: Iterative code fix application{Environment.NewLine}content of 'File1.txt' did not match. Diff shown with expected as baseline:{Environment.NewLine}-  File text{Environment.NewLine}+File text{Environment.NewLine}", exception.Message);
         }
 
         [Fact]
@@ -132,12 +158,14 @@ namespace Microsoft.CodeAnalysis.Testing
             });
 
             var expected =
+                "Context: Diagnostics of fixed state" + Environment.NewLine +
                 "Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"" + Environment.NewLine +
                 Environment.NewLine +
                 "Diagnostics:" + Environment.NewLine +
-                "// Test0.cs(1,24): error CS1513: } expected" + Environment.NewLine +
+                "// /0/Test0.cs(1,24): error CS1513: } expected" + Environment.NewLine +
+                "DiagnosticResult.CompilerError(\"CS1513\").WithSpan(1, 24, 1, 24)," + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -346,10 +374,15 @@ namespace Microsoft.CodeAnalysis.Testing
 
             public override string Language => LanguageNames.CSharp;
 
+            public override Type SyntaxKindType => typeof(SyntaxKind);
+
             protected override string DefaultFileExt => "cs";
 
             protected override CompilationOptions CreateCompilationOptions()
                 => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+
+            protected override ParseOptions CreateParseOptions()
+                => new CSharpParseOptions(LanguageVersion.Default, DocumentationMode.Diagnose);
 
             protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
             {

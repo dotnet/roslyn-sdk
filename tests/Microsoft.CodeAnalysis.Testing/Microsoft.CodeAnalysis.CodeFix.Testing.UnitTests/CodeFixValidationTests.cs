@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
@@ -40,11 +42,61 @@ class TestClass {
                 {
                     TestCode = ReplaceThisWithBaseTestCode,
                     FixedCode = ReplaceThisWithBaseFixedCode,
-                    CodeFixValidationMode = CodeFixValidationMode.Full,
+                    CodeActionValidationMode = CodeActionValidationMode.Full,
                 }.RunAsync();
             });
 
-            Assert.Equal("items not equal.  expected:'8747' actual:'8746'", failure.Message);
+            Assert.Equal(
+                @"Context: Iterative code fix application
+Actual and expected values differ. Expected shown in baseline of diff:
+ Node(CompilationUnit):
+   Node(ClassDeclaration):
+     Token(ClassKeyword): class
+       Leading(EndOfLineTrivia): \r\n
+       Trailing(WhitespaceTrivia):  
+     Token(IdentifierToken): TestClass
+       Trailing(WhitespaceTrivia):  
+     Token(OpenBraceToken): {
+       Trailing(EndOfLineTrivia): \r\n
+     Node(MethodDeclaration):
+       Node(PredefinedType):
+         Token(VoidKeyword): void
+           Leading(WhitespaceTrivia):   
+           Trailing(WhitespaceTrivia):  
+       Token(IdentifierToken): TestMethod
+       Node(ParameterList):
+         Token(OpenParenToken): (
+         Token(CloseParenToken): )
+           Trailing(WhitespaceTrivia):  
+       Node(Block):
+         Token(OpenBraceToken): {
+           Trailing(WhitespaceTrivia):  
+         Node(ExpressionStatement):
+           Node(InvocationExpression):
+             Node(SimpleMemberAccessExpression):
+-              Node(BaseExpression):
+-                Token(BaseKeyword): base
++              Node(ThisExpression):
++                Token(ThisKeyword): base
+               Token(DotToken): .
+               Node(IdentifierName):
+                 Token(IdentifierToken): Equals
+             Node(ArgumentList):
+               Token(OpenParenToken): (
+               Node(Argument):
+                 Node(NullLiteralExpression):
+                   Token(NullKeyword): null
+               Token(CloseParenToken): )
+           Token(SemicolonToken): ;
+             Trailing(WhitespaceTrivia):  
+         Token(CloseBraceToken): }
+           Trailing(EndOfLineTrivia): \r\n
+     Token(CloseBraceToken): }
+       Trailing(EndOfLineTrivia): \r\n
+   Token(EndOfFileToken): 
+ 
+",
+                failure.Message);
         }
 
         [Fact]
@@ -57,13 +109,60 @@ class TestClass {
                 {
                     TestCode = ReplaceThisWithBaseTestCode,
                     FixedCode = ReplaceThisWithBaseFixedCode,
-                    CodeFixValidationMode = CodeFixValidationMode.Full,
+                    CodeActionValidationMode = CodeActionValidationMode.Full,
                 }.RunAsync();
             });
 
-            // This isn't the best message - it's reporting a mismatch in the number of SyntaxTrivia in the traling
-            // trivia list of the open brace token preceding 'base'.
-            Assert.Equal("items not equal.  expected:'1' actual:'0'", failure.Message);
+            Assert.Equal(
+                @"Context: Iterative code fix application
+Actual and expected values differ. Expected shown in baseline of diff:
+ Node(CompilationUnit):
+   Node(ClassDeclaration):
+     Token(ClassKeyword): class
+       Leading(EndOfLineTrivia): \r\n
+       Trailing(WhitespaceTrivia):  
+     Token(IdentifierToken): TestClass
+       Trailing(WhitespaceTrivia):  
+     Token(OpenBraceToken): {
+       Trailing(EndOfLineTrivia): \r\n
+     Node(MethodDeclaration):
+       Node(PredefinedType):
+         Token(VoidKeyword): void
+           Leading(WhitespaceTrivia):   
+           Trailing(WhitespaceTrivia):  
+       Token(IdentifierToken): TestMethod
+       Node(ParameterList):
+         Token(OpenParenToken): (
+         Token(CloseParenToken): )
+           Trailing(WhitespaceTrivia):  
+       Node(Block):
+         Token(OpenBraceToken): {
+-          Trailing(WhitespaceTrivia):  
+         Node(ExpressionStatement):
+           Node(InvocationExpression):
+             Node(SimpleMemberAccessExpression):
+               Node(BaseExpression):
+                 Token(BaseKeyword): base
++                  Leading(WhitespaceTrivia):  
+               Token(DotToken): .
+               Node(IdentifierName):
+                 Token(IdentifierToken): Equals
+             Node(ArgumentList):
+               Token(OpenParenToken): (
+               Node(Argument):
+                 Node(NullLiteralExpression):
+                   Token(NullKeyword): null
+               Token(CloseParenToken): )
+           Token(SemicolonToken): ;
+             Trailing(WhitespaceTrivia):  
+         Token(CloseBraceToken): }
+           Trailing(EndOfLineTrivia): \r\n
+     Token(CloseBraceToken): }
+       Trailing(EndOfLineTrivia): \r\n
+   Token(EndOfFileToken): 
+ 
+",
+                failure.Message);
         }
 
         [Fact]
@@ -74,7 +173,7 @@ class TestClass {
             {
                 TestCode = ReplaceThisWithBaseTestCode,
                 FixedCode = ReplaceThisWithBaseFixedCode,
-                CodeFixValidationMode = CodeFixValidationMode.Full,
+                CodeActionValidationMode = CodeActionValidationMode.Full,
             }.RunAsync();
         }
 
@@ -88,11 +187,50 @@ class TestClass {
                 {
                     TestCode = ReplaceThisWithBaseTestCode,
                     FixedCode = ReplaceThisWithBaseFixedCode,
-                    CodeFixValidationMode = CodeFixValidationMode.SemanticStructure,
+                    CodeActionValidationMode = CodeActionValidationMode.SemanticStructure,
                 }.RunAsync();
             });
 
-            Assert.Equal("items not equal.  expected:'8747' actual:'8746'", failure.Message);
+            Assert.Equal(
+                @"Context: Iterative code fix application
+Actual and expected values differ. Expected shown in baseline of diff:
+ Node(CompilationUnit):
+   Node(ClassDeclaration):
+     Token(ClassKeyword): class
+     Token(IdentifierToken): TestClass
+     Token(OpenBraceToken): {
+     Node(MethodDeclaration):
+       Node(PredefinedType):
+         Token(VoidKeyword): void
+       Token(IdentifierToken): TestMethod
+       Node(ParameterList):
+         Token(OpenParenToken): (
+         Token(CloseParenToken): )
+       Node(Block):
+         Token(OpenBraceToken): {
+         Node(ExpressionStatement):
+           Node(InvocationExpression):
+             Node(SimpleMemberAccessExpression):
+-              Node(BaseExpression):
+-                Token(BaseKeyword): base
++              Node(ThisExpression):
++                Token(ThisKeyword): base
+               Token(DotToken): .
+               Node(IdentifierName):
+                 Token(IdentifierToken): Equals
+             Node(ArgumentList):
+               Token(OpenParenToken): (
+               Node(Argument):
+                 Node(NullLiteralExpression):
+                   Token(NullKeyword): null
+               Token(CloseParenToken): )
+           Token(SemicolonToken): ;
+         Token(CloseBraceToken): }
+     Token(CloseBraceToken): }
+   Token(EndOfFileToken): 
+ 
+",
+                failure.Message);
         }
 
         [Fact]
@@ -103,7 +241,7 @@ class TestClass {
             {
                 TestCode = ReplaceThisWithBaseTestCode,
                 FixedCode = ReplaceThisWithBaseFixedCode,
-                CodeFixValidationMode = CodeFixValidationMode.SemanticStructure,
+                CodeActionValidationMode = CodeActionValidationMode.SemanticStructure,
             }.RunAsync();
         }
 
@@ -115,7 +253,7 @@ class TestClass {
             {
                 TestCode = ReplaceThisWithBaseTestCode,
                 FixedCode = ReplaceThisWithBaseFixedCode,
-                CodeFixValidationMode = CodeFixValidationMode.SemanticStructure,
+                CodeActionValidationMode = CodeActionValidationMode.SemanticStructure,
             }.RunAsync();
         }
 
@@ -127,7 +265,7 @@ class TestClass {
             {
                 TestCode = ReplaceThisWithBaseTestCode,
                 FixedCode = ReplaceThisWithBaseFixedCode,
-                CodeFixValidationMode = CodeFixValidationMode.None,
+                CodeActionValidationMode = CodeActionValidationMode.None,
             }.RunAsync();
         }
 
@@ -139,7 +277,7 @@ class TestClass {
             {
                 TestCode = ReplaceThisWithBaseTestCode,
                 FixedCode = ReplaceThisWithBaseFixedCode,
-                CodeFixValidationMode = CodeFixValidationMode.None,
+                CodeActionValidationMode = CodeActionValidationMode.None,
             }.RunAsync();
         }
 
@@ -151,7 +289,7 @@ class TestClass {
             {
                 TestCode = ReplaceThisWithBaseTestCode,
                 FixedCode = ReplaceThisWithBaseFixedCode,
-                CodeFixValidationMode = CodeFixValidationMode.None,
+                CodeActionValidationMode = CodeActionValidationMode.None,
             }.RunAsync();
         }
 
@@ -297,11 +435,18 @@ class TestClass {
         {
             public override string Language => LanguageNames.CSharp;
 
+            public override Type SyntaxKindType => typeof(SyntaxKind);
+
             protected override string DefaultFileExt => "cs";
 
             protected override CompilationOptions CreateCompilationOptions()
             {
                 return new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+            }
+
+            protected override ParseOptions CreateParseOptions()
+            {
+                return new CSharpParseOptions(LanguageVersion.Default, DocumentationMode.Diagnose);
             }
 
             protected override IEnumerable<CodeFixProvider> GetCodeFixProviders()

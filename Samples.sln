@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27031.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28606.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "CSharp", "{C3FB27E9-C8EE-4F76-B0AA-7CD67A7E652B}"
 EndProject
@@ -25,49 +25,47 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.CSharp", "samples\CSharp\Analyzers\Analyzers.Implementation\Analyzers.CSharp.csproj", "{2DDE4D5E-9CB8-4E01-ABAA-D39DAA018A16}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.Test", "samples\CSharp\Analyzers\Analyzers.Test\Analyzers.CSharp.Tests.csproj", "{0E5363B6-DE8C-42B5-9FD3-A2F02CB67001}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.CSharp.UnitTests", "samples\CSharp\Analyzers\Analyzers.Test\Analyzers.CSharp.UnitTests.csproj", "{0E5363B6-DE8C-42B5-9FD3-A2F02CB67001}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzers.Vsix", "samples\CSharp\Analyzers\Analyzers.Vsix\Analyzers.CSharp.Vsix.csproj", "{D3C8EE30-8885-43F4-9C76-0D66A13FC4EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.CSharp.Vsix", "samples\CSharp\Analyzers\Analyzers.Vsix\Analyzers.CSharp.Vsix.csproj", "{D3C8EE30-8885-43F4-9C76-0D66A13FC4EA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToAutoProperty.CSharp", "samples\CSharp\ConvertToAutoProperty\ConvertToAutoProperty.Implementation\ConvertToAutoProperty.CSharp.csproj", "{827CDC89-B2BE-41E1-ABC2-792BA5B3A507}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertToAutoProperty.CSharp.Vsix", "samples\CSharp\ConvertToAutoProperty\ConvertToAutoProperty.Vsix\ConvertToAutoProperty.CSharp.Vsix.csproj", "{9DBD9E20-1C7D-4105-85CF-1F21660E1DE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToAutoProperty.CSharp.Vsix", "samples\CSharp\ConvertToAutoProperty\ConvertToAutoProperty.Vsix\ConvertToAutoProperty.CSharp.Vsix.csproj", "{9DBD9E20-1C7D-4105-85CF-1F21660E1DE9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToConditional.CSharp", "samples\CSharp\ConvertToConditional\ConvertToConditional.Implementation\ConvertToConditional.CSharp.csproj", "{1305FEEC-7DED-46A9-89C2-2544E8BECEA3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToConditional.CSharp.Tests", "samples\CSharp\ConvertToConditional\ConvertToConditional.Test\ConvertToConditional.CSharp.Tests.csproj", "{2B6860EC-C15D-4E56-A5A2-6399F502B4FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToConditional.CSharp.UnitTests", "samples\CSharp\ConvertToConditional\ConvertToConditional.Test\ConvertToConditional.CSharp.UnitTests.csproj", "{2B6860EC-C15D-4E56-A5A2-6399F502B4FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertToConditional.CSharp.Vsix", "samples\CSharp\ConvertToConditional\ConvertToConditional.Vsix\ConvertToConditional.CSharp.Vsix.csproj", "{D49B7CE5-5292-4EEA-AE1E-5B55C5E059D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToConditional.CSharp.Vsix", "samples\CSharp\ConvertToConditional\ConvertToConditional.Vsix\ConvertToConditional.CSharp.Vsix.csproj", "{D49B7CE5-5292-4EEA-AE1E-5B55C5E059D5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MakeConst.CSharp", "samples\CSharp\MakeConst\MakeConst.Implementation\MakeConst.CSharp.csproj", "{80612064-35D2-4FFD-ABCC-2953A84A825F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MakeConst.CSharp.Vsix", "samples\CSharp\MakeConst\MakeConst.Vsix\MakeConst.CSharp.Vsix.csproj", "{683D55F6-A035-48A5-B989-9B549DB7F53D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MakeConst.CSharp.Vsix", "samples\CSharp\MakeConst\MakeConst.Vsix\MakeConst.CSharp.Vsix.csproj", "{683D55F6-A035-48A5-B989-9B549DB7F53D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RefOutModifier.CSharp", "samples\CSharp\RefOutModifier\RefOutModifier.Implementation\RefOutModifier.CSharp.csproj", "{E2040FD9-5CF1-4500-9D55-D8994F1EF328}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RefOutModifier.CSharp.Vsix", "samples\CSharp\RefOutModifier\RefOutModifier.Vsix\RefOutModifier.CSharp.Vsix.csproj", "{DE024511-D4E4-4C3D-89DC-37C3A8AA8198}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RefOutModifier.CSharp.Vsix", "samples\CSharp\RefOutModifier\RefOutModifier.Vsix\RefOutModifier.CSharp.Vsix.csproj", "{DE024511-D4E4-4C3D-89DC-37C3A8AA8198}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APISamples.CSharp", "samples\CSharp\APISamples\APISamples.CSharp.csproj", "{2A953FCA-A243-4013-85E5-1CF6B1677BB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APISamples.CSharp.UnitTests", "samples\CSharp\APISamples\APISamples.CSharp.UnitTests.csproj", "{2A953FCA-A243-4013-85E5-1CF6B1677BB2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleClassifier.CSharp", "samples\CSharp\ConsoleClassifier\ConsoleClassifier.CSharp.csproj", "{DD8B331A-75C8-4F49-88A5-541D6FF88BFF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormatSolution.CSharp", "samples\CSharp\FormatSolution\FormatSolution.CSharp.csproj", "{AED8172B-C125-46E9-AA69-A8F18C7914A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TreeTransforms.CSharp", "samples\CSharp\TreeTransforms\TreeTransforms.CSharp.csproj", "{530E151F-3B74-4A9A-896E-79B56E10913B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TreeTransforms.CSharp.UnitTests", "samples\CSharp\TreeTransforms\TreeTransforms.CSharp.UnitTests.csproj", "{530E151F-3B74-4A9A-896E-79B56E10913B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.UnitTestFramework", "samples\Shared\UnitTestFramework\Roslyn.UnitTestFramework.csproj", "{0E033582-88DD-4BC6-A3C5-5B68519FB230}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Analyzers.VisualBasic", "samples\VisualBasic\Analyzers\Analyzers.Implementation\Analyzers.VisualBasic.vbproj", "{5AE04F72-8546-4CFD-8420-A30201B29017}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Analyzers.VisualBasic.Tests", "samples\VisualBasic\Analyzers\Analyzers.Test\Analyzers.VisualBasic.Tests.vbproj", "{81D803E8-0E44-4A1A-B494-F7DFAFD7B575}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Analyzers.VisualBasic.Vsix", "samples\VisualBasic\Analyzers\Analyzers.Vsix\Analyzers.VisualBasic.Vsix.vbproj", "{7F1EE22F-ABE3-46A7-BA81-DE9E778D9BE4}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Analyzers.VisualBasic.Vsix", "samples\VisualBasic\Analyzers\Analyzers.Vsix\Analyzers.VisualBasic.Vsix.vbproj", "{7F1EE22F-ABE3-46A7-BA81-DE9E778D9BE4}"
-EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "APISamples.VisualBasic", "samples\VisualBasic\APISamples\APISamples.VisualBasic.vbproj", "{EF7EAD2E-6B2A-46AB-B788-47D3E868E553}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "APISamples.VisualBasic.UnitTests", "samples\VisualBasic\APISamples\APISamples.VisualBasic.UnitTests.vbproj", "{EF7EAD2E-6B2A-46AB-B788-47D3E868E553}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpToVisualBasicConverter", "samples\CSharp\CSharpToVisualBasicConverter\CSharpToVisualBasicConverter.Lib\CSharpToVisualBasicConverter.csproj", "{404161BB-90BF-4DE0-916E-6AC37F45B4E1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpToVisualBasicConverter.Test", "samples\CSharp\CSharpToVisualBasicConverter\CSharpToVisualBasicConverter.Test\CSharpToVisualBasicConverter.Tests.csproj", "{91FCE068-24D9-4452-9629-40420206620C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpToVisualBasicConverter.UnitTests", "samples\CSharp\CSharpToVisualBasicConverter\CSharpToVisualBasicConverter.Test\CSharpToVisualBasicConverter.UnitTests.csproj", "{91FCE068-24D9-4452-9629-40420206620C}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "ConsoleClassifier.VisualBasic", "samples\VisualBasic\ConsoleClassifier\ConsoleClassifier.VisualBasic.vbproj", "{AE1C0659-7CBF-4DD1-BBFE-D7A2273822E1}"
 EndProject
@@ -75,7 +73,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ConvertToAutoProperty", "Co
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "ConvertToAutoProperty.VisualBasic", "samples\VisualBasic\ConvertToAutoProperty\ConvertToAutoProperty\ConvertToAutoProperty.VisualBasic.vbproj", "{C7811972-6954-4E90-83AC-6365DDA519B4}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ConvertToAutoProperty.VisualBasic.Vsix", "samples\VisualBasic\ConvertToAutoProperty\ConvertToAutoProperty.Vsix\ConvertToAutoProperty.VisualBasic.Vsix.vbproj", "{B090C3E7-7DA0-4CDB-AC9E-903BDCB20DB8}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "ConvertToAutoProperty.VisualBasic.Vsix", "samples\VisualBasic\ConvertToAutoProperty\ConvertToAutoProperty.Vsix\ConvertToAutoProperty.VisualBasic.Vsix.vbproj", "{B090C3E7-7DA0-4CDB-AC9E-903BDCB20DB8}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "FormatSolution.VisualBasic", "samples\VisualBasic\FormatSolution\FormatSolution.VisualBasic.vbproj", "{AE4D8D13-B58C-4B0F-B326-13D002505E58}"
 EndProject
@@ -83,37 +81,35 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ImplementNotifyPropertyChan
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "ImplementNotifyPropertyChanged.VisualBasic", "samples\VisualBasic\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged.VisualBasic.vbproj", "{22D1F704-48D2-495B-8ECD-43DA4F615211}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ImplementNotifyPropertyChanged.VisualBasic.Vsix", "samples\VisualBasic\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged.Vsix\ImplementNotifyPropertyChanged.VisualBasic.Vsix.vbproj", "{4C700A07-C81B-44D5-8C9F-BD874775C57B}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "ImplementNotifyPropertyChanged.VisualBasic.Vsix", "samples\VisualBasic\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged.Vsix\ImplementNotifyPropertyChanged.VisualBasic.Vsix.vbproj", "{4C700A07-C81B-44D5-8C9F-BD874775C57B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ImplementNotifyPropertyChanged", "ImplementNotifyPropertyChanged", "{01998C95-7806-4BED-811D-70D4F8B1E112}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImplementNotifyPropertyChanged.CSharp", "samples\CSharp\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged.CSharp.csproj", "{7F30B89A-FFC5-4645-8273-FF12BCC2BD04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImplementNotifyPropertyChanged.CSharp.Vsix", "samples\CSharp\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged.Vsix\ImplementNotifyPropertyChanged.CSharp.Vsix.csproj", "{1396AC51-E385-4894-A354-9D566189DDEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImplementNotifyPropertyChanged.CSharp.Vsix", "samples\CSharp\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged.Vsix\ImplementNotifyPropertyChanged.CSharp.Vsix.csproj", "{1396AC51-E385-4894-A354-9D566189DDEB}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "TreeTransforms.VisualBasic", "samples\VisualBasic\TreeTransforms\TreeTransforms.VisualBasic.vbproj", "{996E8EDA-D925-45BB-B64A-079381A2BC7A}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "TreeTransforms.VisualBasic.UnitTests", "samples\VisualBasic\TreeTransforms\TreeTransforms.VisualBasic.UnitTests.vbproj", "{996E8EDA-D925-45BB-B64A-079381A2BC7A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RemoveByVal", "RemoveByVal", "{64885FF2-EE63-4433-A890-7903B9E8AFBC}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "RemoveByVal.VisualBasic", "samples\VisualBasic\RemoveByVal\RemoveByVal\RemoveByVal.VisualBasic.vbproj", "{54FEC454-DC25-4700-B315-E576F1860C41}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "RemoveByVal.VisualBasic.Vsix", "samples\VisualBasic\RemoveByVal\RemoveByVal.Vsix\RemoveByVal.VisualBasic.Vsix.vbproj", "{BD5C5824-470E-4451-BC21-5E50892905E9}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "RemoveByVal.VisualBasic.Vsix", "samples\VisualBasic\RemoveByVal\RemoveByVal.Vsix\RemoveByVal.VisualBasic.Vsix.vbproj", "{BD5C5824-470E-4451-BC21-5E50892905E9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MakeConst", "MakeConst", "{8E328BEA-C8D7-4F4B-A357-4A84CAF76EDE}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "MakeConst.VisualBasic", "samples\VisualBasic\MakeConst\MakeConst\MakeConst.VisualBasic.vbproj", "{AB0EC03A-DC42-448D-BECA-C764DC6461EE}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "MakeConst.VisualBasic.Tests", "samples\VisualBasic\MakeConst\MakeConst.Test\MakeConst.VisualBasic.Tests.vbproj", "{20E6E463-CC7E-4A74-98BF-DF956D651360}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "MakeConst.VisualBasic.UnitTests", "samples\VisualBasic\MakeConst\MakeConst.Test\MakeConst.VisualBasic.UnitTests.vbproj", "{20E6E463-CC7E-4A74-98BF-DF956D651360}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "MakeConst.VisualBasic.Vsix", "samples\VisualBasic\MakeConst\MakeConst.Vsix\MakeConst.VisualBasic.Vsix.vbproj", "{9C74F8EA-E6C7-448C-BC04-29F4CE9DC994}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "MakeConst.VisualBasic.Vsix", "samples\VisualBasic\MakeConst\MakeConst.Vsix\MakeConst.VisualBasic.Vsix.vbproj", "{9C74F8EA-E6C7-448C-BC04-29F4CE9DC994}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VisualBasicToCSharpConverter", "VisualBasicToCSharpConverter", "{8E1C9AEC-6EF1-43A8-A378-52C5C0E40532}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "VisualBasicToCSharpConverter.Lib", "samples\VisualBasic\VisualBasicToCSharpConverter\VisualBasicToCSharpConverter.Lib\VisualBasicToCSharpConverter.Lib.vbproj", "{ECB83742-8023-4609-B139-D7B78DD66ED9}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "VisualBasicToCSharpConverter.Test", "samples\VisualBasic\VisualBasicToCSharpConverter\VisualBasicToCSharpConverter.Test\VisualBasicToCSharpConverter.Tests.vbproj", "{5B7D7569-B5EE-4C01-9AFA-BC1958588160}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolutionExplorer", "samples\CSharp\SolutionExplorer\SolutionExplorer.csproj", "{B0474F4F-A6A9-4F10-BC49-CE2957201DBB}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "VisualBasicToCSharpConverter.UnitTests", "samples\VisualBasic\VisualBasicToCSharpConverter\VisualBasicToCSharpConverter.Test\VisualBasicToCSharpConverter.UnitTests.vbproj", "{5B7D7569-B5EE-4C01-9AFA-BC1958588160}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -193,10 +189,6 @@ Global
 		{5AE04F72-8546-4CFD-8420-A30201B29017}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AE04F72-8546-4CFD-8420-A30201B29017}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AE04F72-8546-4CFD-8420-A30201B29017}.Release|Any CPU.Build.0 = Release|Any CPU
-		{81D803E8-0E44-4A1A-B494-F7DFAFD7B575}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{81D803E8-0E44-4A1A-B494-F7DFAFD7B575}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{81D803E8-0E44-4A1A-B494-F7DFAFD7B575}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{81D803E8-0E44-4A1A-B494-F7DFAFD7B575}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7F1EE22F-ABE3-46A7-BA81-DE9E778D9BE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7F1EE22F-ABE3-46A7-BA81-DE9E778D9BE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F1EE22F-ABE3-46A7-BA81-DE9E778D9BE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -277,10 +269,6 @@ Global
 		{5B7D7569-B5EE-4C01-9AFA-BC1958588160}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B7D7569-B5EE-4C01-9AFA-BC1958588160}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B7D7569-B5EE-4C01-9AFA-BC1958588160}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0474F4F-A6A9-4F10-BC49-CE2957201DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0474F4F-A6A9-4F10-BC49-CE2957201DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0474F4F-A6A9-4F10-BC49-CE2957201DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0474F4F-A6A9-4F10-BC49-CE2957201DBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -311,7 +299,6 @@ Global
 		{530E151F-3B74-4A9A-896E-79B56E10913B} = {C3FB27E9-C8EE-4F76-B0AA-7CD67A7E652B}
 		{0E033582-88DD-4BC6-A3C5-5B68519FB230} = {A54A1AB7-DBD6-4C31-A22E-C53674137C53}
 		{5AE04F72-8546-4CFD-8420-A30201B29017} = {FDCF8D27-D24F-41BB-8A21-22D83D062E9F}
-		{81D803E8-0E44-4A1A-B494-F7DFAFD7B575} = {FDCF8D27-D24F-41BB-8A21-22D83D062E9F}
 		{7F1EE22F-ABE3-46A7-BA81-DE9E778D9BE4} = {FDCF8D27-D24F-41BB-8A21-22D83D062E9F}
 		{EF7EAD2E-6B2A-46AB-B788-47D3E868E553} = {CDA94F62-E35A-4913-8045-D9D42416513C}
 		{404161BB-90BF-4DE0-916E-6AC37F45B4E1} = {D7541FAE-D6D7-41AD-B0D6-A83A1B8A628D}
@@ -338,7 +325,6 @@ Global
 		{8E1C9AEC-6EF1-43A8-A378-52C5C0E40532} = {CDA94F62-E35A-4913-8045-D9D42416513C}
 		{ECB83742-8023-4609-B139-D7B78DD66ED9} = {8E1C9AEC-6EF1-43A8-A378-52C5C0E40532}
 		{5B7D7569-B5EE-4C01-9AFA-BC1958588160} = {8E1C9AEC-6EF1-43A8-A378-52C5C0E40532}
-		{B0474F4F-A6A9-4F10-BC49-CE2957201DBB} = {C3FB27E9-C8EE-4F76-B0AA-7CD67A7E652B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B849838B-3D7A-4B6B-BE07-285DCB1588F4}

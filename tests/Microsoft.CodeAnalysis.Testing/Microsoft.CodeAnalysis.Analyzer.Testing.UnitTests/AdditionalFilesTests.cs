@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
@@ -54,8 +56,8 @@ namespace Microsoft.CodeAnalysis.Testing
                 "Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"" + Environment.NewLine +
                 Environment.NewLine +
                 "Diagnostics:" + Environment.NewLine +
-                "// Test0.cs(1,23): warning Brace: message" + Environment.NewLine +
-                "GetCSharpResultAt(1, 23, HighlightBracesAnalyzer.Brace)" + Environment.NewLine +
+                "// /0/Test0.cs(1,23): warning Brace: message" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithSpan(1, 23, 1, 24)," + Environment.NewLine +
                 Environment.NewLine;
             Assert.Equal(expected, exception.Message);
         }
@@ -100,7 +102,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 Environment.NewLine +
                 "Diagnostics:" + Environment.NewLine +
                 "// File1.txt(1,14): warning Brace: message" + Environment.NewLine +
-                "new DiagnosticResult(HighlightBracesAnalyzer.Brace).WithSpan(\"File1.txt\", 1, 14, 1, 15)" + Environment.NewLine +
+                "new DiagnosticResult(HighlightBracesAnalyzer.Brace).WithSpan(\"File1.txt\", 1, 14, 1, 15)," + Environment.NewLine +
                 Environment.NewLine;
             Assert.Equal(expected, exception.Message);
         }
@@ -192,6 +194,9 @@ namespace Microsoft.CodeAnalysis.Testing
 
             protected override CompilationOptions CreateCompilationOptions()
                 => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+
+            protected override ParseOptions CreateParseOptions()
+                => new CSharpParseOptions(LanguageVersion.Default, DocumentationMode.Diagnose);
 
             protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
             {

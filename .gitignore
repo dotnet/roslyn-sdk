@@ -15,27 +15,12 @@
 *.userprefs
 
 # Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-bld/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
 artifacts/
-Debug/
-Release/
-bin/
-obj/
 .dotnet/
 .tools/
 
 # ignore templates modified by build output
-src/Templates/VS2015/ModifiedTemplates
-src/Templates/VS2017/ModifiedTemplates
+src/VisualStudio.Roslyn.SDK/Roslyn.SDK/ModifiedTemplates
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -63,7 +48,6 @@ dlldata.c
 # .NET Core
 project.lock.json
 project.fragment.lock.json
-artifacts/
 **/Properties/launchSettings.json
 
 *_i.c

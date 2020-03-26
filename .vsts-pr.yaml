@@ -1,0 +1,52 @@
+jobs:
+- job: Windows
+  pool:
+    name: NetCorePublic-Pool
+    queue: BuildPool.Windows.10.Amd64.Open
+  strategy:
+    maxParallel: 6
+    matrix:
+      Samples Debug Test:
+        _args: -test
+        _configuration: Debug
+        _solution: Samples
+      Samples Release Test:
+        _args: -test
+        _configuration: Release
+        _solution: Samples
+      SDK Debug Test:
+        _args: -test
+        _configuration: Debug
+        _solution: Roslyn-SDK
+      SDK Release Test:
+        _args: -test
+        _configuration: Release
+        _solution: Roslyn-SDK
+      SDK Pack:
+        _args: -pack
+        _configuration: Release
+        _solution: Roslyn-SDK
+      SDK Sign:
+        _args: -sign
+        _configuration: Release
+        _solution: Roslyn-SDK
+  timeoutInMinutes: 90
+
+  steps:
+    - script: eng\PRBuild.cmd $(_args) -configuration $(_configuration) -prepareMachine -projects $(Build.SourcesDirectory)\$(_solution).sln /p:OfficialBuild=false
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
+        ArtifactName: '$(_solution) $(_configuration) logs'
+        publishLocation: Container
+      continueOnError: true
+      condition: failed()
+    - task: PublishTestResults@2
+      inputs:
+        testRunner: 'xUnit'
+        testResultsFiles: '**/*.xml' 
+        searchFolder: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)'
+        configuration: '$(_configuration)'
+        publishRunAttachments: true
+      continueOnError: true
+      condition: and(always(), contains(variables['_args'], '-test'))

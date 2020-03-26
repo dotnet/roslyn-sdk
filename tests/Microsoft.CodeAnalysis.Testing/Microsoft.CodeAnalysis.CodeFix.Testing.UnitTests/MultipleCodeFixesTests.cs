@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
@@ -97,7 +99,7 @@ class TestClass {{
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                CodeFixIndex = index,
+                CodeActionIndex = index,
             }.RunAsync();
         }
 
@@ -125,7 +127,7 @@ class TestClass {{
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                CodeFixEquivalenceKey = equivalenceKey,
+                CodeActionEquivalenceKey = equivalenceKey,
             }.RunAsync();
         }
 
@@ -153,8 +155,8 @@ class TestClass {{
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                CodeFixIndex = index,
-                CodeFixEquivalenceKey = equivalenceKey,
+                CodeActionIndex = index,
+                CodeActionEquivalenceKey = equivalenceKey,
             }.RunAsync();
         }
 
@@ -184,8 +186,8 @@ class TestClass {{
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                CodeFixIndex = index,
-                CodeFixEquivalenceKey = equivalenceKey,
+                CodeActionIndex = index,
+                CodeActionEquivalenceKey = equivalenceKey,
             }.RunAsync();
         }
 
@@ -212,12 +214,12 @@ class TestClass {{
                 {
                     TestCode = testCode,
                     FixedCode = fixedCode,
-                    CodeFixIndex = 1,
-                    CodeFixEquivalenceKey = "ReplaceZeroFix_1",
+                    CodeActionIndex = 1,
+                    CodeActionEquivalenceKey = "ReplaceZeroFix_1",
                 }.RunAsync();
             });
 
-            Assert.Equal("The code action equivalence key and index must be consistent when both are specified.", exception.Message);
+            Assert.Equal($"Context: Iterative code fix application{Environment.NewLine}The code action equivalence key and index must be consistent when both are specified.", exception.Message);
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -300,11 +302,18 @@ class TestClass {{
 
             public override string Language => LanguageNames.CSharp;
 
+            public override Type SyntaxKindType => typeof(SyntaxKind);
+
             protected override string DefaultFileExt => "cs";
 
             protected override CompilationOptions CreateCompilationOptions()
             {
                 return new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+            }
+
+            protected override ParseOptions CreateParseOptions()
+            {
+                return new CSharpParseOptions(LanguageVersion.Default, DocumentationMode.Diagnose);
             }
 
             protected override IEnumerable<CodeFixProvider> GetCodeFixProviders()

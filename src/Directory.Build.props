@@ -1,9 +1,19 @@
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
 <Project>  
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  
   <PropertyGroup>
-    <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
+    <!-- 
+        When markup compilation is involved, WPF generates .g.cs files via the GenerateTemporaryTargetAssembly task. 
+        These do not always have the correct full-paths to their respective .xaml files annotated in them in the #line
+        directives. This can cause compile errors if these files are included in Source Link. 
+        https://github.com/dotnet/wpf/issues/1718
+    -->
+    <EmbedUntrackedSources>false</EmbedUntrackedSources>
   </PropertyGroup>
 
-  <Import Project="Sdk.props" Sdk="RoslynTools.RepoToolset" />
-
+  <PropertyGroup Condition="'$(CopyrightMicrosoft)' != ''">
+    <Copyright>$(CopyrightMicrosoft)</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
 </Project>
