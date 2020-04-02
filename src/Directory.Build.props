@@ -1,7 +1,30 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
 <Project>  
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
-  
+
+  <PropertyGroup>
+    <Features>strict</Features>
+  </PropertyGroup>
+
+  <!--
+    Language specific settings
+  -->
+  <Choose>
+    <!-- VB specific settings -->
+    <When Condition="'$(Language)' == 'VB'">
+      <PropertyGroup>
+        <LangVersion>15.5</LangVersion>
+      </PropertyGroup>
+    </When>
+
+    <!-- C# specific settings -->
+    <When Condition="'$(Language)' == 'C#'">
+      <PropertyGroup>
+        <LangVersion>8.0</LangVersion>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
   <PropertyGroup>
     <!-- 
         When markup compilation is involved, WPF generates .g.cs files via the GenerateTemporaryTargetAssembly task. 
