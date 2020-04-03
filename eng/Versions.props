@@ -51,7 +51,8 @@
     <SystemCompositionVersion>1.1.0</SystemCompositionVersion>
     <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
     <!-- Testing -->
-    <MicrosoftCodeAnalysisPrimaryTestVersion>2.6.1</MicrosoftCodeAnalysisPrimaryTestVersion>
+    <MicrosoftCodeAnalysis2PrimaryTestVersion>2.6.1</MicrosoftCodeAnalysis2PrimaryTestVersion>
+    <MicrosoftCodeAnalysis3PrimaryTestVersion>3.3.1</MicrosoftCodeAnalysis3PrimaryTestVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <!-- Analyzers -->
     <RoslynDiagnosticsAnalyzersVersion>2.9.8</RoslynDiagnosticsAnalyzersVersion>
