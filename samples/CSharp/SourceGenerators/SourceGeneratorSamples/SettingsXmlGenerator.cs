@@ -21,11 +21,9 @@ namespace XmlSettings
     }
 }
 ";
-
-        public object PathxmlFile { get; private set; }
-
         public void Execute(SourceGeneratorContext context)
         {
+            // Using the context, get any additional files that end in .xmlsettings
             IEnumerable<AdditionalText> settingsFiles = context.AdditionalFiles.Where(at => at.Path.EndsWith(".xmlsettings"));
             foreach (AdditionalText settingsFile in settingsFiles)
             {
@@ -35,6 +33,7 @@ namespace XmlSettings
         
         private void ProcessSettingsFile(AdditionalText xmlFile, SourceGeneratorContext context)
         {
+            // try and load the settings file
             XmlDocument xmlDoc = new XmlDocument();
             string text = xmlFile.GetText(context.CancellationToken).ToString();
             try
@@ -47,6 +46,8 @@ namespace XmlSettings
                 return;
             }
 
+            
+            // create a class in the XmlSetting class that represnts this entry, and a static field that contains a singleton instance.
             string fileName = Path.GetFileName(xmlFile.Path);
             string name = xmlDoc.DocumentElement.GetAttribute("name");
 
@@ -98,18 +99,6 @@ public {settingType} {settingName}
      
         public void Initialize(InitializationContext context)
         {
-        }
-
-        public partial class XmlSettings
-        {
-            private XmlDocument xmlDoc = new XmlDocument();
-
-            private XmlSettings(string fileName)
-            {
-                xmlDoc.Load(fileName);
-            }
-
-
         }
     }
 }

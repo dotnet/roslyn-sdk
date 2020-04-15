@@ -29,6 +29,7 @@ namespace AutoNotify
 
         public void Initialize(InitializationContext context)
         {
+            // Register a syntax receiver that will be created for each generation pass
             context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
         }
 
@@ -37,6 +38,7 @@ namespace AutoNotify
             // add the attribute text
             context.AddSource("AutoNotifyAttribute", SourceText.From(attributeText, Encoding.UTF8));
 
+            // retreive the populated receiver 
             if (!(context.SyntaxReceiver is SyntaxReceiver receiver))
                 return;
 
@@ -96,6 +98,7 @@ namespace {namespaceName}
                 source.Append("public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;");
             }
 
+            // create properties for each field 
             foreach (IFieldSymbol fieldSymbol in fields)
             {
                 ProcessField(source, fieldSymbol, attributeSymbol);
@@ -107,9 +110,11 @@ namespace {namespaceName}
 
         private void ProcessField(StringBuilder source, IFieldSymbol fieldSymbol, ISymbol attributeSymbol)
         {
+            // get the name and type of the field
             string fieldName = fieldSymbol.Name;
             ITypeSymbol fieldType = fieldSymbol.Type;
 
+            // get the AutoNotify attribute from the field, and any associated data
             AttributeData attributeData = fieldSymbol.GetAttributes().Single(ad => ad.AttributeClass.Equals(attributeSymbol, SymbolEqualityComparer.Default));
             TypedConstant overridenNameOpt = attributeData.NamedArguments.SingleOrDefault(kvp => kvp.Key == "PropertyName").Value;
 
@@ -156,13 +161,19 @@ public {fieldType} {propertyName}
 
         }
 
+        /// <summary>
+        /// Created on demand before each generation pass
+        /// </summary>
         class SyntaxReceiver : ISyntaxReceiver
         {
             public List<FieldDeclarationSyntax> CandidateFields { get; } = new List<FieldDeclarationSyntax>();
 
+            /// <summary>
+            /// Called for every syntax node in the compilation, we can inspect the nodes and save any information useful for generation
+            /// </summary>
             public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
             {
-                // any field with at least one attribute is a candidate
+                // any field with at least one attribute is a candidate for property generation
                 if (syntaxNode is FieldDeclarationSyntax fieldDeclarationSyntax
                     && fieldDeclarationSyntax.AttributeLists.Count > 0)
                 {
