@@ -66,9 +66,14 @@ namespace AutoSettings
         {{
             
             XmlDocument xmlDoc = new XmlDocument();
+
+            private string fileName;
+
+            public string GetLocation() => fileName;
                 
             internal {name}Settings(string fileName)
             {{
+                this.fileName = fileName;
                 xmlDoc.Load(fileName);
             }}
 ");
@@ -78,7 +83,6 @@ namespace AutoSettings
                 XmlElement setting = (XmlElement)xmlDoc.DocumentElement.ChildNodes[i];
                 string settingName = setting.GetAttribute("name");
                 string settingType = setting.GetAttribute("type");
-                string defaultValue = setting.GetAttribute("defaultValue");
 
                 sb.Append($@"
 

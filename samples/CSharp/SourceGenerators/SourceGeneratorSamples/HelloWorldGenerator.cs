@@ -14,7 +14,7 @@ namespace SourceGeneratorSamples
             // begin creating the source we'll inject into the users compilation
             StringBuilder sourceBuilder = new StringBuilder(@"
 using System;
-namespace HelloWorldGenerator
+namespace HelloWorldGenerated
 {
     public static class HelloWorld
     {
@@ -40,7 +40,7 @@ namespace HelloWorldGenerator
 }");
 
             // inject the created source into the users compilation
-            context.AddSource("helloWorldGenerator", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
+            context.AddSource("helloWorldGenerated", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
         }
 
         public void Initialize(InitializationContext context)

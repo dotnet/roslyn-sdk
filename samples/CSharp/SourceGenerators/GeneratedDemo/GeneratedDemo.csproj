@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="MainSettings.xmlsettings" />
+    <None Include="MainSettings.xmlsettings">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Analyzer Include="$(OutDir)\..\..\..\SourceGeneratorSamples\Debug\netstandard2.0\SourceGeneratorSamples.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SourceGeneratorSamples\SourceGeneratorSamples.csproj" />
+  </ItemGroup>
+
+
+</Project>

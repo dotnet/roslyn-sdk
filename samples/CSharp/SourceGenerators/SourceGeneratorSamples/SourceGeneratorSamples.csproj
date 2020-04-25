@@ -2,9 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
