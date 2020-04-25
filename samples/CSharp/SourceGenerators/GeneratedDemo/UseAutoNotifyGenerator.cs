@@ -35,8 +35,5 @@ namespace GeneratedDemo
             // Try adding fields to the ExampleViewModel class above and tagging them with the [AutoNotify] attribute
             // You'll see the matching generated properties visibile in IntelliSense in realtime
         }
-
     }
-
-
 }
