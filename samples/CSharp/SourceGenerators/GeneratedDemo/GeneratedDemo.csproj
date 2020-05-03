@@ -14,11 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Analyzer Include="$(OutDir)\..\..\..\SourceGeneratorSamples\$(Configuration)\netstandard2.0\SourceGeneratorSamples.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SourceGeneratorSamples\SourceGeneratorSamples.csproj" />
+    <ProjectReference Include="..\SourceGeneratorSamples\SourceGeneratorSamples.csproj" 
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>
