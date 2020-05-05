@@ -8,15 +8,19 @@
 
   <ItemGroup>
     <AdditionalFiles Include="MainSettings.xmlsettings" />
+    <AdditionalFiles Include="Foos.csv" />
     <None Include="MainSettings.xmlsettings">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <PackageReference Include="CsvHelper" Version="15.0.5" />
+    <PackageReference Include="Pluralize.NET" Version="1.0.2" />
+    <None Include="Foos.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SourceGeneratorSamples\SourceGeneratorSamples.csproj" 
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\SourceGeneratorSamples\SourceGeneratorSamples.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>
