@@ -8,9 +8,9 @@ using System.IO;
 using System.Linq;
 using CsvHelper;
 using CsvHelper.Configuration.Attributes;
-using Pluralize.NET;
 using static System.Console;
 using System.Text;
+using System.Diagnostics;
 
 namespace CsvGenerator
 {
@@ -63,10 +63,9 @@ namespace CsvGenerator
 
         public static string GenerateCSVClass(string fileName, string csvText)
         {
-            IPluralize pluralizer = new Pluralizer();
-            string className = pluralizer.IsSingular(fileName)
-                               ? fileName
-                               : pluralizer.Singularize(fileName);
+            string className = $"{fileName}Item";
+            string classNames = fileName;
+
             string startFile = @"
 namespace CSV {
 using System.Collections.Generic;
@@ -76,7 +75,6 @@ using System.Linq;
 using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration.Attributes;
-using Pluralize.NET;
 using static System.Console;
 
 ";
@@ -88,11 +86,11 @@ using static System.Console;
                 props.Append($"    public {type} {UppercaseFirst(name)} {{ get; set;}}\n");
             }
             props.Append("\n");
-            props.Append($"    public static IEnumerable<{className}> Read{pluralizer.Pluralize(className)}() {{\n");
+            props.Append($"    public static IEnumerable<{className}> Read{classNames}() {{\n");
             props.Append($@"
         using TextReader reader = new StringReader(@""{csvText}"");
         using CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-        while(csv.Read()) yield return csv.GetRecord<Foo>();
+        while(csv.Read()) yield return csv.GetRecord<{className}>();
     }}
 ");
             return $"{startFile}{startClass}{props.ToString()}\n}}\n}}"; 
@@ -101,6 +99,7 @@ using static System.Console;
 
         private void ProcessCsvFile(AdditionalText csvFile, SourceGeneratorContext context)
         {
+            Debugger.Launch();
             string csvText = csvFile.GetText(context.CancellationToken).ToString();
 
             // Simplified in case csvFile.Path is null

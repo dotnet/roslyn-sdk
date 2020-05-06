@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="15.0.5" />
-    <PackageReference Include="Pluralize.NET" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
