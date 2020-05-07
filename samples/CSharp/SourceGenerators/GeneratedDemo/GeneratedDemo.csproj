@@ -12,7 +12,6 @@
     <None Include="MainSettings.xmlsettings">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <PackageReference Include="CsvHelper" Version="15.0.5" />
     <None Include="Foos.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
