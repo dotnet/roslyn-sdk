@@ -19,6 +19,7 @@ namespace CsvGenerator
     {
         public void Execute(SourceGeneratorContext context)
         {
+
             IEnumerable<AdditionalText> csvFiles = context.AdditionalFiles.Where(at => at.Path.EndsWith(".csv"));
             foreach (AdditionalText csvFile in csvFiles)
             {
@@ -99,7 +100,6 @@ using static System.Console;
 
         private void ProcessCsvFile(AdditionalText csvFile, SourceGeneratorContext context)
         {
-            Debugger.Launch();
             string csvText = csvFile.GetText(context.CancellationToken).ToString();
 
             // Simplified in case csvFile.Path is null
