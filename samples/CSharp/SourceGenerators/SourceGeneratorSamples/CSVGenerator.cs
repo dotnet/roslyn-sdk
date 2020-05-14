@@ -10,11 +10,15 @@ using static System.Console;
 using System.Text;
 using System.Diagnostics;
 using NotVisualBasic.FileIO;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections.Immutable;
 
 #nullable enable
 
 // CsvTextFileParser from https://github.com/22222/CsvTextFieldParser adding suppression rules for default VS config
 
+#pragma warning disable IDE0008 // Use explicit type
 namespace CsvGenerator
 {
     [Generator]
@@ -45,7 +49,7 @@ namespace CsvGenerator
                 return (Enumerable.Repeat("string", headerFields.Length).ToArray(), headerFields, firstLineFields);
             } else
             {
-                return (firstLineFields.Select(GetCsvFieldType).ToArray(), headerFields.Select(UppercaseFirst).ToArray(), firstLineFields);
+                return (firstLineFields.Select(GetCsvFieldType).ToArray(), headerFields.Select(StringToValidPropertyName).ToArray(), firstLineFields);
             }
         }
 
@@ -53,7 +57,7 @@ namespace CsvGenerator
         // named `All` that returns the list of strongly typed objects generated on demand at first access.
         // There is the slight chance of a race condition in a multi-thread program, but the result is relatively benign
         // , loading the collection multiple times instead of once. Measures could be taken to avoid that.
-        public static string GenerateClassFile(string className, string csvText)
+        public static string GenerateClassFile(string className, string csvText, string loadTime, bool cacheObjects)
         {
             StringBuilder sb = new StringBuilder();
             using CsvTextFieldParser parser = new CsvTextFieldParser(new StringReader(csvText));
@@ -69,12 +73,18 @@ namespace CSV {
             sb.Append($"    public class {className} {{\n");
 
 
+            if(loadTime == "LoadTime.Startup")
+            {
+                sb.Append(@$"
+        static {className}() {{ var x = All; }}
+");
+            }
             (string[] types, string[] names, string[]? fields)  = ExtractProperties(parser);
             int minLen = Math.Min(types.Length, names.Length);
 
             for (int i = 0; i < minLen; i++)
             {
-                sb.AppendLine($"        public {types[i]} {UppercaseFirst(names[i])} {{ get; set;}} = default!;");
+                sb.AppendLine($"        public {types[i]} {StringToValidPropertyName(names[i])} {{ get; set;}} = default!;");
             }
             sb.Append("\n");
 
@@ -82,12 +92,16 @@ namespace CSV {
             sb.AppendLine($"        static IEnumerable<{className}>? _all = null;");
             sb.Append($@"
         public static IEnumerable<{className}> All {{
-            get {{
-            if(_all != null)
-                return _all;
+            get {{");
 
-            List<{className}> l = new List<{className}>();
-            {className} c;
+            if(cacheObjects) sb.Append(@"
+                if(_all != null)
+                    return _all;
+");
+            sb.Append(@$"
+
+                List<{className}> l = new List<{className}>();
+                {className} c;
 ");
 
             // This awkwardness comes from having to pre-read one row to figure out the types of props.
@@ -96,21 +110,21 @@ namespace CSV {
                 if(fields == null) continue;
                 if(fields.Length < minLen) throw new Exception("Not enough fields in CSV file.");
 
-                sb.AppendLine($"            c = new {className}();");
+                sb.AppendLine($"                c = new {className}();");
                 string value = "";
                 for (int i = 0; i < minLen; i++)
                 {
                     // Wrap strings in quotes.
-                    value = GetCsvFieldType(fields[i]) == "string" ? $"\"{fields[i]}\"" : fields[i];
-                    sb.AppendLine($"            c.{names[i]} = {value};");
+                    value = GetCsvFieldType(fields[i]) == "string" ? $"\"{fields[i].Trim().Trim(new char[] {'"'})}\"" : fields[i];
+                    sb.AppendLine($"                c.{names[i]} = {value};");
                 }
-                sb.AppendLine("            l.Add(c);");
+                sb.AppendLine("                l.Add(c);");
 
                 fields = parser.ReadFields();
             } while (! (fields == null));
 
-            sb.AppendLine("           _all = l;");
-            sb.AppendLine("           return l;");
+            sb.AppendLine("                _all = l;");
+            sb.AppendLine("                return l;");
             
             // Close things (property, class, namespace)
             sb.Append("            }\n        }\n    }\n}\n");
@@ -119,43 +133,98 @@ namespace CSV {
         }
         
 
-        // from: https://www.dotnetperls.com/uppercase-first-letter
-        static string UppercaseFirst(string s)
+        static string StringToValidPropertyName(string s)
         {
-            if (string.IsNullOrEmpty(s))
+            s = s.Trim();
+            s = Char.IsLetter(s[0]) ? Char.ToUpper(s[0]) + s.Substring(1) : s;
+            s = Char.IsDigit(s.Trim()[0]) ? "_" + s : s;
+            s = new string(s.Select(ch => Char.IsDigit(ch) || Char.IsLetter(ch) ? ch : '_').ToArray());
+            return s;
+        }
+
+        static IEnumerable<(string,string)> SourceFilesFromPath(string loadTime, bool cacheObjects, string path)
+        {
+            if(Directory.Exists(path))
             {
-                return string.Empty;
+               return Directory.GetFiles(path, "*.csv").SelectMany(f => SourceFilesFromPath(loadTime, cacheObjects, path)); 
             }
-            char[] a = s.ToCharArray();
-            a[0] = char.ToUpper(a[0]);
-            return new string(a);
+
+            string className = Path.GetFileNameWithoutExtension(path);
+            string csvText = File.ReadAllText(path);
+            return new (string,string)[] { (Path.GetFileNameWithoutExtension(path), GenerateClassFile(className, csvText, loadTime, cacheObjects)) };
+        }
+
+        static IEnumerable<(string, string)> SourceFileFromPaths(IEnumerable<(string, bool, string[])> pathsData) =>
+            pathsData.SelectMany(d => d.Item3.SelectMany(p => SourceFilesFromPath(d.Item1, d.Item2, p)));
+
+
+        static IEnumerable<(string, bool, string[])> GetLoadOptions(Compilation compilation)
+        {
+            // Get all CSV attributes
+            IEnumerable<SyntaxNode>? allNodes = compilation.SyntaxTrees.SelectMany(s => s.GetRoot().DescendantNodes());
+            var allAttributes = allNodes.Where((d) => d.IsKind(SyntaxKind.Attribute)).OfType<AttributeSyntax>();
+            var attributes = allAttributes.Where(d => d.Name.ToString() == "CsvFileLoadOptions")
+                .ToImmutableArray();
+
+            foreach (var att in attributes)
+            {
+                string loadTime = "";
+                bool cacheObjects = true;
+                List<string> paths = new List<string>();
+                if(att.ArgumentList == null) throw new Exception("Constructor of attribute must have arguments");
+
+                var m = compilation.GetSemanticModel(att.SyntaxTree);
+                foreach (var arg in att.ArgumentList.Arguments)
+                {
+                    var expr = arg.Expression;
+
+                    var t = m.GetTypeInfo(expr);
+                    var v = m.GetConstantValue(expr);
+                    if(v.HasValue) {
+                        if(t.Type!.Name == "Boolean") cacheObjects = (bool)v.Value;
+                        if(t.Type.Name == "String") paths.Add((string)v.Value);
+                    } else
+                    {
+                        string s = expr.ToString();
+                        if(s.StartsWith("LoadTime."))
+                        {
+                            loadTime = s;
+                        }
+                    }
+                }
+                yield return (loadTime, cacheObjects, paths.ToArray());
+            }
         }
 
         public void Execute(SourceGeneratorContext context)
         {
+            string attributeSource = @"
+namespace CSV {
+    public enum LoadTime { Compilation, Startup, OnDemand }
 
-            IEnumerable<AdditionalText> csvFiles = context.AdditionalFiles.Where(at => at.Path.EndsWith(".csv"));
-            foreach (AdditionalText csvFile in csvFiles)
-            {
-                ProcessCsvFile(csvFile, context);
-            }
+    [System.AttributeUsage(System.AttributeTargets.Assembly, AllowMultiple=true)]
+    public class CsvFileLoadOptionsAttribute: System.Attribute
+    {
+        public LoadTime LoadTime { get; }
+        public bool CacheObjects { get; }
+        public string[] Paths { get; }
+        public CsvFileLoadOptionsAttribute(LoadTime loadTime = LoadTime.Compilation, bool cacheObjects = true, params string[] paths)
+            => (LoadTime, CacheObjects, Paths) = (loadTime, cacheObjects, paths);
+    }
+}
+";
+
+            context.AddSource("Cvs_MainAttributes__", SourceText.From(attributeSource, Encoding.UTF8));
+
+            var options = GetLoadOptions(context.Compilation);
+            var nameCodeSequence = SourceFileFromPaths(options);
+            foreach (var (name, code) in nameCodeSequence)
+                context.AddSource($"Csv_{name}", SourceText.From(code, Encoding.UTF8));
         }
 
-        // Generates a new class for each `csv` file. Names the class as the file made uppercase.
-        // We could use a pluralizer to create a better name.
-        private void ProcessCsvFile(AdditionalText csvFile, SourceGeneratorContext context)
-        {
-            SourceText? sourceText = csvFile.GetText(context.CancellationToken);
-            if(sourceText == null) throw new Exception("SourceText cannot be null!");
-            string csvText = sourceText.ToString();
-
-            string className = Path.GetFileNameWithoutExtension(csvFile.Path);
-            string csvClassText = GenerateClassFile(className, csvText);
-            context.AddSource($"Csv_{className}", SourceText.From(csvClassText, Encoding.UTF8));
-        }
-     
         public void Initialize(InitializationContext context)
         {
         }
     }
 }
+#pragma warning restore IDE0008 // Use explicit type

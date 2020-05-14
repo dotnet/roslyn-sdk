@@ -7,12 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="People.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AdditionalFiles Include="MainSettings.xmlsettings" />
-    <AdditionalFiles Include="Foos.csv" />
+    <Content Include="People.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Cars.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="MainSettings.xmlsettings">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Foos.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
