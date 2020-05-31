@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
@@ -52,10 +54,10 @@ End Class
                 "Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"" + Environment.NewLine +
                 Environment.NewLine +
                 "Diagnostics:" + Environment.NewLine +
-                "// Test0.cs(4,23): warning ThisToBase: message" + Environment.NewLine +
-                "GetCSharpResultAt(4, 23, ReplaceThisWithBaseAnalyzer.ThisToBase)" + Environment.NewLine +
+                "// /0/Test0.cs(4,23): warning ThisToBase: message" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithSpan(4, 23, 4, 27)," + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -74,10 +76,10 @@ End Class
                 "Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"" + Environment.NewLine +
                 Environment.NewLine +
                 "Diagnostics:" + Environment.NewLine +
-                "// Test0.cs(1,1): warning FirstLine: message" + Environment.NewLine +
-                "GetCSharpResultAt(1, 1, FirstLineDiagnosticAnalyzer.FirstLine)" + Environment.NewLine +
+                "// /0/Test0.cs(1,1): warning FirstLine: message" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithSpan(1, 1, 1, 1)," + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -137,10 +139,10 @@ End Class
                 "Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"" + Environment.NewLine +
                 Environment.NewLine +
                 "Diagnostics:" + Environment.NewLine +
-                "// Test0.vb(5,5): warning ThisToBase: message" + Environment.NewLine +
-                "GetBasicResultAt(5, 5, ReplaceThisWithBaseAnalyzer.ThisToBase)" + Environment.NewLine +
+                "// /0/Test0.vb(5,5): warning ThisToBase: message" + Environment.NewLine +
+                "VerifyVB.Diagnostic().WithSpan(5, 5, 5, 12)," + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -159,10 +161,10 @@ End Class
                 "Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"" + Environment.NewLine +
                 Environment.NewLine +
                 "Diagnostics:" + Environment.NewLine +
-                "// Test0.vb(1,1): warning FirstLine: message" + Environment.NewLine +
-                "GetBasicResultAt(1, 1, FirstLineDiagnosticAnalyzer.FirstLine)" + Environment.NewLine +
+                "// /0/Test0.vb(1,1): warning FirstLine: message" + Environment.NewLine +
+                "VerifyVB.Diagnostic().WithSpan(1, 1, 1, 1)," + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Theory]
@@ -215,6 +217,7 @@ End Class
 
             public override void Initialize(AnalysisContext context)
             {
+                context.EnableConcurrentExecution();
                 context.ConfigureGeneratedCodeAnalysis(_generatedCodeAnalysisFlags);
 
                 context.RegisterSyntaxNodeAction(HandleThisExpression, CSharp.SyntaxKind.ThisExpression);
@@ -244,6 +247,7 @@ End Class
 
             public override void Initialize(AnalysisContext context)
             {
+                context.EnableConcurrentExecution();
                 context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
                 context.RegisterSyntaxNodeAction(HandleThisExpression, CSharp.SyntaxKind.ThisExpression);
@@ -273,7 +277,9 @@ End Class
 
             public override void Initialize(AnalysisContext context)
             {
+                context.EnableConcurrentExecution();
                 context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
                 context.RegisterSyntaxTreeAction(HandleSyntaxTree);
             }
 
@@ -303,6 +309,11 @@ End Class
                 return new CSharp.CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
             }
 
+            protected override ParseOptions CreateParseOptions()
+            {
+                return new CSharp.CSharpParseOptions(CSharp.LanguageVersion.Default, DocumentationMode.Diagnose);
+            }
+
             protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
             {
                 yield return new ReplaceThisWithBaseAnalyzer(_generatedCodeAnalysisFlags);
@@ -325,6 +336,11 @@ End Class
             protected override CompilationOptions CreateCompilationOptions()
             {
                 return new VisualBasic.VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+            }
+
+            protected override ParseOptions CreateParseOptions()
+            {
+                return new VisualBasic.VisualBasicParseOptions(VisualBasic.LanguageVersion.Default, DocumentationMode.Diagnose);
             }
 
             protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()

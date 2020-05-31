@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Immutable;
@@ -65,11 +67,15 @@ namespace Microsoft.CodeAnalysis.Testing
             var expected =
                 "Expected diagnostic to end at column \"17\" was actually at column \"18\"" + Environment.NewLine +
                 Environment.NewLine +
-                "Diagnostic:" + Environment.NewLine +
-                "    // Test0.cs(1,17): warning Brace: message" + Environment.NewLine +
-                "GetCSharpResultAt(1, 17, HighlightBraceSpanAnalyzer.Brace)" + Environment.NewLine +
+                "Expected diagnostic:" + Environment.NewLine +
+                "    // /0/Test0.cs(1,17,1,17): warning Brace" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithSpan(1, 17, 1, 17)," + Environment.NewLine +
+                Environment.NewLine +
+                "Actual diagnostic:" + Environment.NewLine +
+                "    // /0/Test0.cs(1,17): warning Brace: message" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithSpan(1, 17, 1, 18)," + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -86,11 +92,15 @@ namespace Microsoft.CodeAnalysis.Testing
             var expected =
                 "Expected diagnostic to start at column \"18\" was actually at column \"17\"" + Environment.NewLine +
                 Environment.NewLine +
-                "Diagnostic:" + Environment.NewLine +
-                "    // Test0.cs(1,17): warning Brace: message" + Environment.NewLine +
-                "GetCSharpResultAt(1, 17, HighlightBraceSpanAnalyzer.Brace)" + Environment.NewLine +
+                "Expected diagnostic:" + Environment.NewLine +
+                "    // /0/Test0.cs(1,18): warning Brace" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithLocation(1, 18)," + Environment.NewLine +
+                Environment.NewLine +
+                "Actual diagnostic:" + Environment.NewLine +
+                "    // /0/Test0.cs(1,17): warning Brace: message" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithSpan(1, 17, 1, 18)," + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -106,12 +116,17 @@ namespace Microsoft.CodeAnalysis.Testing
             });
 
             var expected =
-                "Expected:" + Environment.NewLine +
-                "A project diagnostic with No location" + Environment.NewLine +
-                "Actual:" + Environment.NewLine +
-                "// Test0.cs(1,17): warning Brace: message" + Environment.NewLine +
-                "GetCSharpResultAt(1, 17, HighlightBraceSpanAnalyzer.Brace)" + Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+                "Expected a project diagnostic with no location:" + Environment.NewLine +
+                Environment.NewLine +
+                "Expected diagnostic:" + Environment.NewLine +
+                "    // warning Brace: message" + Environment.NewLine +
+                "new DiagnosticResult(HighlightBraceSpanAnalyzer.Brace)," + Environment.NewLine +
+                Environment.NewLine +
+                "Actual diagnostic:" + Environment.NewLine +
+                "    // /0/Test0.cs(1,17): warning Brace: message" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithSpan(1, 17, 1, 18)," + Environment.NewLine +
+                Environment.NewLine;
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -127,12 +142,17 @@ namespace Microsoft.CodeAnalysis.Testing
             });
 
             var expected =
-                "Expected:" + Environment.NewLine +
-                "A project diagnostic with No location" + Environment.NewLine +
-                "Actual:" + Environment.NewLine +
-                "// Test0.cs(1,17): warning Brace: message" + Environment.NewLine +
-                "GetCSharpResultAt(1, 17, HighlightBraceSpanAnalyzer.Brace)" + Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+                "Expected a project diagnostic with no location:" + Environment.NewLine +
+                Environment.NewLine +
+                "Expected diagnostic:" + Environment.NewLine +
+                "    // warning Brace: message" + Environment.NewLine +
+                "new DiagnosticResult(HighlightBraceSpanAnalyzer.Brace)," + Environment.NewLine +
+                Environment.NewLine +
+                "Actual diagnostic:" + Environment.NewLine +
+                "    // /0/Test0.cs(1,17): warning Brace: message" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithSpan(1, 17, 1, 18)," + Environment.NewLine +
+                Environment.NewLine;
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -167,11 +187,15 @@ namespace Microsoft.CodeAnalysis.Testing
             var expected =
                 "Expected diagnostic to end at column \"18\" was actually at column \"17\"" + Environment.NewLine +
                 Environment.NewLine +
-                "Diagnostic:" + Environment.NewLine +
-                "    // Test0.cs(1,17): warning Brace: message" + Environment.NewLine +
-                "GetCSharpResultAt(1, 17, HighlightBracePositionAnalyzer.Brace)" + Environment.NewLine +
+                "Expected diagnostic:" + Environment.NewLine +
+                "    // /0/Test0.cs(1,17,1,18): warning Brace" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithSpan(1, 17, 1, 18)," + Environment.NewLine +
+                Environment.NewLine +
+                "Actual diagnostic:" + Environment.NewLine +
+                "    // /0/Test0.cs(1,17): warning Brace: message" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithSpan(1, 17, 1, 17)," + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         [Fact]
@@ -188,11 +212,15 @@ namespace Microsoft.CodeAnalysis.Testing
             var expected =
                 "Expected diagnostic to start at column \"18\" was actually at column \"17\"" + Environment.NewLine +
                 Environment.NewLine +
-                "Diagnostic:" + Environment.NewLine +
-                "    // Test0.cs(1,17): warning Brace: message" + Environment.NewLine +
-                "GetCSharpResultAt(1, 17, HighlightBracePositionAnalyzer.Brace)" + Environment.NewLine +
+                "Expected diagnostic:" + Environment.NewLine +
+                "    // /0/Test0.cs(1,18): warning Brace" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithLocation(1, 18)," + Environment.NewLine +
+                Environment.NewLine +
+                "Actual diagnostic:" + Environment.NewLine +
+                "    // /0/Test0.cs(1,17): warning Brace: message" + Environment.NewLine +
+                "VerifyCS.Diagnostic().WithSpan(1, 17, 1, 17)," + Environment.NewLine +
                 Environment.NewLine;
-            Assert.Equal(expected, exception.Message);
+            new DefaultVerifier().EqualOrDiff(expected, exception.Message);
         }
 
         private abstract class HighlightBraceAnalyzer : DiagnosticAnalyzer
@@ -204,6 +232,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
             public override void Initialize(AnalysisContext context)
             {
+                context.EnableConcurrentExecution();
                 context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
                 context.RegisterSyntaxTreeAction(HandleSyntaxTree);
@@ -254,6 +283,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
             public override void Initialize(AnalysisContext context)
             {
+                context.EnableConcurrentExecution();
                 context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
                 context.RegisterCompilationAction(HandleCompilation);

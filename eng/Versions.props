@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <!-- This repo version -->
     <VersionPrefix>3.2.0</VersionPrefix>
     <NugetPackagePrefix>1.0.1</NugetPackagePrefix>
@@ -12,25 +11,24 @@
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <!-- Dependencies -->
-    <UpdateTemplateVersionVersion>1.0.4-beta1</UpdateTemplateVersionVersion>
-    <!-- Roslyn for VS 2015 -->
-    <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2015 since the Syntax Visualizer extension still
+    <!-- Roslyn for VS 2019 -->
+    <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2019 since the Syntax Visualizer extension still
                supports it. -->
-    <MicrosoftCodeAnalysisAnalyzersVersionVS2015>1.1.0</MicrosoftCodeAnalysisAnalyzersVersionVS2015>
-    <MicrosoftCodeAnalysisCommonVersionVS2015>1.0.1</MicrosoftCodeAnalysisCommonVersionVS2015>
-    <MicrosoftCodeAnalysisCSharpVersionVS2015>1.0.1</MicrosoftCodeAnalysisCSharpVersionVS2015>
-    <MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015>1.0.1</MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015>
-    <MicrosoftCodeAnalysisVisualBasicVersionVS2015>1.0.1</MicrosoftCodeAnalysisVisualBasicVersionVS2015>
-    <MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015>1.0.1</MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015>
+    <MicrosoftCodeAnalysisAnalyzersVersionVS2019>3.0.0</MicrosoftCodeAnalysisAnalyzersVersionVS2019>
+    <MicrosoftCodeAnalysisCommonVersionVS2019>3.3.1</MicrosoftCodeAnalysisCommonVersionVS2019>
+    <MicrosoftCodeAnalysisCSharpVersionVS2019>3.3.1</MicrosoftCodeAnalysisCSharpVersionVS2019>
+    <MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2019>3.3.1</MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2019>
+    <MicrosoftCodeAnalysisVisualBasicVersionVS2019>3.3.1</MicrosoftCodeAnalysisVisualBasicVersionVS2019>
+    <MicrosoftCodeAnalysisWorkspacesCommonVersionVS2019>3.3.1</MicrosoftCodeAnalysisWorkspacesCommonVersionVS2019>
     <!-- VS SDK -->
-    <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2015
+    <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2019
                we need our extensions to work on both. -->
     <VSLangProjVersion>7.0.3300</VSLangProjVersion>
     <VSSDKTemplateWizardInterfaceVersion>12.0.4</VSSDKTemplateWizardInterfaceVersion>
     <EnvDTEVersion>8.0.1</EnvDTEVersion>
     <EnvDTE80Version>8.0.0</EnvDTE80Version>
     <MicrosoftVisualStudioComponentModelHostVersion>14.0.25424</MicrosoftVisualStudioComponentModelHostVersion>
-    <MicrosoftVisualStudioCoreUtilityVersion>14.3.25407</MicrosoftVisualStudioCoreUtilityVersion>
+    <MicrosoftVisualStudioCoreUtilityVersion>16.2.45</MicrosoftVisualStudioCoreUtilityVersion>
     <MicrosoftVisualStudioEditorVersion>14.3.25407</MicrosoftVisualStudioEditorVersion>
     <MicrosoftVisualStudioLanguageStandardClassificationVersion>14.3.25407</MicrosoftVisualStudioLanguageStandardClassificationVersion>
     <MicrosoftVisualStudioOLEInteropVersion>7.10.6070</MicrosoftVisualStudioOLEInteropVersion>
@@ -40,33 +38,24 @@
     <MicrosoftVisualStudioShellInterop90Version>9.0.30729</MicrosoftVisualStudioShellInterop90Version>
     <MicrosoftVisualStudioShellInterop100Version>10.0.30319</MicrosoftVisualStudioShellInterop100Version>
     <MicrosoftVisualStudioShellInterop110Version>11.0.61030</MicrosoftVisualStudioShellInterop110Version>
-    <MicrosoftVisualStudioTextDataVersion>14.3.25407</MicrosoftVisualStudioTextDataVersion>
-    <MicrosoftVisualStudioTextLogicVersion>14.3.25407</MicrosoftVisualStudioTextLogicVersion>
+    <MicrosoftVisualStudioTextDataVersion>16.2.45</MicrosoftVisualStudioTextDataVersion>
+    <MicrosoftVisualStudioTextLogicVersion>16.2.45</MicrosoftVisualStudioTextLogicVersion>
     <MicrosoftVisualStudioTextManagerInteropVersion>7.10.6070</MicrosoftVisualStudioTextManagerInteropVersion>
-    <MicrosoftVisualStudioTextUIVersion>14.3.25407</MicrosoftVisualStudioTextUIVersion>
-    <MicrosoftVisualStudioTextUIWpfVersion>14.3.25407</MicrosoftVisualStudioTextUIWpfVersion>
+    <MicrosoftVisualStudioTextUIVersion>16.2.45</MicrosoftVisualStudioTextUIVersion>
+    <MicrosoftVisualStudioTextUIWpfVersion>16.2.45</MicrosoftVisualStudioTextUIWpfVersion>
     <MicrosoftVisualStudioUtilitiesVersion>14.3.25407</MicrosoftVisualStudioUtilitiesVersion>
-    <MicrosoftVisualStudioThreadingVersion>14.1.131 </MicrosoftVisualStudioThreadingVersion>
+    <MicrosoftVisualStudioThreadingVersion>16.3.13</MicrosoftVisualStudioThreadingVersion>
     <!-- Libs -->
     <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>
     <SystemCompositionVersion>1.1.0</SystemCompositionVersion>
     <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
     <!-- Testing -->
-    <MicrosoftCodeAnalysisPrimaryTestVersion>2.6.1</MicrosoftCodeAnalysisPrimaryTestVersion>
+    <MicrosoftCodeAnalysis2PrimaryTestVersion>2.6.1</MicrosoftCodeAnalysis2PrimaryTestVersion>
+    <MicrosoftCodeAnalysis3PrimaryTestVersion>3.3.1</MicrosoftCodeAnalysis3PrimaryTestVersion>
     <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.19564.1</MicrosoftCodeAnalysisTestingVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
-
     <!-- Analyzers -->
-    <RoslynDiagnosticsAnalyzersVersion>2.6.2-beta2</RoslynDiagnosticsAnalyzersVersion>
-    <StyleCopAnalyzersVersion>1.2.0-beta.66</StyleCopAnalyzersVersion>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RestoreSources>
-      $(RestoreSources);
-      https://dotnet.myget.org/F/roslyn/api/v3/index.json;
-      https://dotnet.myget.org/F/roslyn-tools/api/v3/index.json;
-      https://dotnet.myget.org/F/roslyn-analyzers/api/v3/index.json;
-      https://api.nuget.org/v3/index.json
-    </RestoreSources>
+    <RoslynDiagnosticsAnalyzersVersion>2.9.8</RoslynDiagnosticsAnalyzersVersion>
+    <StyleCopAnalyzersVersion>1.2.0-beta.164</StyleCopAnalyzersVersion>
   </PropertyGroup>
 </Project>

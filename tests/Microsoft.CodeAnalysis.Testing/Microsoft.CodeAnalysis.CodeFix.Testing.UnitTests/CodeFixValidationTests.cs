@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
@@ -40,7 +42,7 @@ class TestClass {
                 {
                     TestCode = ReplaceThisWithBaseTestCode,
                     FixedCode = ReplaceThisWithBaseFixedCode,
-                    CodeFixValidationMode = CodeFixValidationMode.Full,
+                    CodeActionValidationMode = CodeActionValidationMode.Full,
                 }.RunAsync();
             });
 
@@ -107,7 +109,7 @@ Actual and expected values differ. Expected shown in baseline of diff:
                 {
                     TestCode = ReplaceThisWithBaseTestCode,
                     FixedCode = ReplaceThisWithBaseFixedCode,
-                    CodeFixValidationMode = CodeFixValidationMode.Full,
+                    CodeActionValidationMode = CodeActionValidationMode.Full,
                 }.RunAsync();
             });
 
@@ -171,7 +173,7 @@ Actual and expected values differ. Expected shown in baseline of diff:
             {
                 TestCode = ReplaceThisWithBaseTestCode,
                 FixedCode = ReplaceThisWithBaseFixedCode,
-                CodeFixValidationMode = CodeFixValidationMode.Full,
+                CodeActionValidationMode = CodeActionValidationMode.Full,
             }.RunAsync();
         }
 
@@ -185,7 +187,7 @@ Actual and expected values differ. Expected shown in baseline of diff:
                 {
                     TestCode = ReplaceThisWithBaseTestCode,
                     FixedCode = ReplaceThisWithBaseFixedCode,
-                    CodeFixValidationMode = CodeFixValidationMode.SemanticStructure,
+                    CodeActionValidationMode = CodeActionValidationMode.SemanticStructure,
                 }.RunAsync();
             });
 
@@ -239,7 +241,7 @@ Actual and expected values differ. Expected shown in baseline of diff:
             {
                 TestCode = ReplaceThisWithBaseTestCode,
                 FixedCode = ReplaceThisWithBaseFixedCode,
-                CodeFixValidationMode = CodeFixValidationMode.SemanticStructure,
+                CodeActionValidationMode = CodeActionValidationMode.SemanticStructure,
             }.RunAsync();
         }
 
@@ -251,7 +253,7 @@ Actual and expected values differ. Expected shown in baseline of diff:
             {
                 TestCode = ReplaceThisWithBaseTestCode,
                 FixedCode = ReplaceThisWithBaseFixedCode,
-                CodeFixValidationMode = CodeFixValidationMode.SemanticStructure,
+                CodeActionValidationMode = CodeActionValidationMode.SemanticStructure,
             }.RunAsync();
         }
 
@@ -263,7 +265,7 @@ Actual and expected values differ. Expected shown in baseline of diff:
             {
                 TestCode = ReplaceThisWithBaseTestCode,
                 FixedCode = ReplaceThisWithBaseFixedCode,
-                CodeFixValidationMode = CodeFixValidationMode.None,
+                CodeActionValidationMode = CodeActionValidationMode.None,
             }.RunAsync();
         }
 
@@ -275,7 +277,7 @@ Actual and expected values differ. Expected shown in baseline of diff:
             {
                 TestCode = ReplaceThisWithBaseTestCode,
                 FixedCode = ReplaceThisWithBaseFixedCode,
-                CodeFixValidationMode = CodeFixValidationMode.None,
+                CodeActionValidationMode = CodeActionValidationMode.None,
             }.RunAsync();
         }
 
@@ -287,7 +289,7 @@ Actual and expected values differ. Expected shown in baseline of diff:
             {
                 TestCode = ReplaceThisWithBaseTestCode,
                 FixedCode = ReplaceThisWithBaseFixedCode,
-                CodeFixValidationMode = CodeFixValidationMode.None,
+                CodeActionValidationMode = CodeActionValidationMode.None,
             }.RunAsync();
         }
 
@@ -301,6 +303,7 @@ Actual and expected values differ. Expected shown in baseline of diff:
 
             public override void Initialize(AnalysisContext context)
             {
+                context.EnableConcurrentExecution();
                 context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
                 context.RegisterSyntaxNodeAction(HandleThisExpression, SyntaxKind.ThisExpression);
@@ -440,6 +443,11 @@ Actual and expected values differ. Expected shown in baseline of diff:
             protected override CompilationOptions CreateCompilationOptions()
             {
                 return new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+            }
+
+            protected override ParseOptions CreateParseOptions()
+            {
+                return new CSharpParseOptions(LanguageVersion.Default, DocumentationMode.Diagnose);
             }
 
             protected override IEnumerable<CodeFixProvider> GetCodeFixProviders()

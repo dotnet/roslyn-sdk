@@ -1,21 +1,47 @@
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
 <Project>  
   <PropertyGroup>
-    <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
     <NoWarn>$(NoWarn);NU5125;NU3005</NoWarn>
 
     <!-- Opt-out repo features -->
     <UsingToolXliff>false</UsingToolXliff>
   </PropertyGroup>
 
+  <!-- Recognize MSTest projects -->
+  <PropertyGroup Condition="'$(IsUnitTestProject)' == '' and ($(MSBuildProjectName.EndsWith('.MSTest.UnitTests')) or $(MSBuildProjectName.EndsWith('.MSTest.Tests')))">
+    <IsUnitTestProject>true</IsUnitTestProject>
+    <UsingToolXUnit>false</UsingToolXUnit>
+    <TestRunnerName>MSTest</TestRunnerName>
+  </PropertyGroup>
+
+  <!-- Recognize NUnit projects -->
+  <PropertyGroup Condition="'$(IsUnitTestProject)' == '' and ($(MSBuildProjectName.EndsWith('.NUnit.UnitTests')) or $(MSBuildProjectName.EndsWith('.NUnit.Tests')))">
+    <IsUnitTestProject>true</IsUnitTestProject>
+    <UsingToolXUnit>false</UsingToolXUnit>
+    <TestRunnerName>NUnit</TestRunnerName>
+  </PropertyGroup>
+
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <!-- Provide default versions for MSTest -->
+  <PropertyGroup>
+    <MicrosoftTestPlatformVersion>16.5.0</MicrosoftTestPlatformVersion>
+    <MSTestVersion Condition="'$(MSTestVersion)' == ''">2.0.0</MSTestVersion>
+    <MSTestTestAdapterVersion Condition="'$(MSTestTestAdapterVersion)' == ''">$(MSTestVersion)</MSTestTestAdapterVersion>
+    <MSTestTestFrameworkVersion Condition="'$(MSTestTestFrameworkVersion)' == ''">$(MSTestVersion)</MSTestTestFrameworkVersion>
+  </PropertyGroup>
+
+  <!-- Provide default versions for NUnit -->
+  <PropertyGroup>
+    <NUnitVersion Condition="'$(NUnitVersion)' == ''">3.12.0</NUnitVersion>
+    <NUnit3TestAdapterVersion Condition="'$(NUnit3TestAdapterVersion)' == ''">3.15.1</NUnit3TestAdapterVersion>
+  </PropertyGroup>
+
+  <!-- Import specialized props files of supported test runners -->
+  <Import Project="$(MSBuildThisFileDirectory)tools\$(TestRunnerName)\$(TestRunnerName).props" Condition="'$(TestRunnerName)' != '' and Exists('$(MSBuildThisFileDirectory)tools\$(TestRunnerName)\$(TestRunnerName).props')"/>
 
   <PropertyGroup>
     <TestTargetFrameworks>net472;net46;netcoreapp1.1;netcoreapp2.0</TestTargetFrameworks>
-    <!-- Uncomment the following line to test on .NET Core 1.1 -->
-    <!--<TestTargetFrameworks>netcoreapp1.1;$(TestTargetFrameworks)</TestTargetFrameworks>-->
-    <!-- Uncomment the following line to test on .NET Core 2.0 -->
-    <!--<TestTargetFrameworks>netcoreapp2.0;$(TestTargetFrameworks)</TestTargetFrameworks>-->
 
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
