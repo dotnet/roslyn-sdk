@@ -19,9 +19,6 @@ artifacts/
 .dotnet/
 .tools/
 
-# ignore templates modified by build output
-src/VisualStudio.Roslyn.SDK/Roslyn.SDK/ModifiedTemplates
-
 # Visual Studio 2015 cache/options directory
 .vs/
 
