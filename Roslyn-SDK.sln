@@ -151,6 +151,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VisualStudio.Roslyn.SDK", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK.IntegrationTests", "tests\VisualStudio.Roslyn.SDK\Roslyn.SDK.IntegrationTests\Roslyn.SDK.IntegrationTests.csproj", "{6DBBFF7B-2C28-47D7-8618-B6085044E38D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK.UnitTests", "tests\VisualStudio.Roslyn.SDK\Roslyn.SDK.UnitTests\Roslyn.SDK.UnitTests.csproj", "{11B1F856-9025-4A4C-B90D-B1237743B672}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -425,6 +427,10 @@ Global
 		{6DBBFF7B-2C28-47D7-8618-B6085044E38D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DBBFF7B-2C28-47D7-8618-B6085044E38D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DBBFF7B-2C28-47D7-8618-B6085044E38D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11B1F856-9025-4A4C-B90D-B1237743B672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11B1F856-9025-4A4C-B90D-B1237743B672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11B1F856-9025-4A4C-B90D-B1237743B672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11B1F856-9025-4A4C-B90D-B1237743B672}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -502,6 +508,7 @@ Global
 		{023B21F8-09EC-4A67-8AAA-3D110231E7EB} = {9905147E-CC1F-42A0-BD27-05586C583DF7}
 		{A3AF556C-276C-49BA-A9ED-E7D42FECAA46} = {8C343846-5F9F-4033-9B52-B44C61962449}
 		{6DBBFF7B-2C28-47D7-8618-B6085044E38D} = {A3AF556C-276C-49BA-A9ED-E7D42FECAA46}
+		{11B1F856-9025-4A4C-B90D-B1237743B672} = {A3AF556C-276C-49BA-A9ED-E7D42FECAA46}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {56695AA9-EA80-47A7-8562-E51285906C54}
