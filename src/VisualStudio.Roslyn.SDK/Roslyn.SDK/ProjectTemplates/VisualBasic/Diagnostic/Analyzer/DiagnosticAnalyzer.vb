@@ -1,14 +1,8 @@
-﻿Imports System
-Imports System.Collections.Generic
-Imports System.Collections.Immutable
-Imports System.Linq
-Imports System.Threading
+﻿Imports System.Collections.Immutable
 Imports Microsoft.CodeAnalysis
-Imports Microsoft.CodeAnalysis.VisualBasic
-Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.CodeAnalysis.Diagnostics
 
-<DiagnosticAnalyzer(LanguageNames.VisualBasic)>
+<DiagnosticAnalyzer(LanguageNames.VisualBasic, LanguageNames.CSharp)>
 Public Class $saferootidentifiername$Analyzer
     Inherits DiagnosticAnalyzer
 
@@ -30,6 +24,9 @@ Public Class $saferootidentifiername$Analyzer
     End Property
 
     Public Overrides Sub Initialize(context As AnalysisContext)
+        context.EnableConcurrentExecution()
+        context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None)
+
         ' TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
         ' See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
         context.RegisterSymbolAction(AddressOf AnalyzeSymbol, SymbolKind.NamedType)

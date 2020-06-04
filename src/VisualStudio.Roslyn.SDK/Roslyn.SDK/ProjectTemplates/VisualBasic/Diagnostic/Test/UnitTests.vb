@@ -1,50 +1,89 @@
-﻿Imports $saferootprojectname$
-Imports Microsoft.CodeAnalysis
-Imports Microsoft.CodeAnalysis.CodeFixes
-Imports Microsoft.CodeAnalysis.Diagnostics
-Imports Microsoft.VisualStudio.TestTools.UnitTesting
-Imports System.Threading
-Imports System.Threading.Tasks
-Imports Verify = Microsoft.CodeAnalysis.VisualBasic.Testing.MSTest.CodeFixVerifier(
+﻿Imports Microsoft.VisualStudio.TestTools.UnitTesting
+Imports VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier(
     Of $saferootprojectname$.$saferootidentifiername$Analyzer,
-    $saferootprojectname$.$saferootidentifiername$CodeFixProvider)
+    $saferootprojectname$.CSharp.CSharp$saferootidentifiername$CodeFixProvider)
+Imports VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.MSTest.CodeFixVerifier(
+    Of $saferootprojectname$.$saferootidentifiername$Analyzer,
+    $saferootprojectname$.VisualBasic.VisualBasic$saferootidentifiername$CodeFixProvider)
 
 Namespace $safeprojectname$
     <TestClass>
-    Public Class UnitTest
+    Public Class $saferootidentifiername$UnitTest
 
         'No diagnostics expected to show up
         <TestMethod>
-        Public Async Function TestMethod1() As Task
+        Public Async Function TestMethod1_CSharp() As Task
             Dim test = ""
-            Await Verify.VerifyAnalyzerAsync(test)
+            Await VerifyCS.VerifyAnalyzerAsync(test)
+        End Function
+
+        <TestMethod>
+        Public Async Function TestMethod1_VisualBasic() As Task
+            Dim test = ""
+            Await VerifyVB.VerifyAnalyzerAsync(test)
         End Function
 
         'Diagnostic And CodeFix both triggered And checked for
         <TestMethod>
-        Public Async Function TestMethod2() As Task
+        Public Async Function TestMethod2_CSharp() As Task
 
             Dim test = "
-Module Module1
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Diagnostics;
 
-    Sub Main()
-
-    End Sub
-
-End Module"
+    namespace ConsoleApplication1
+    {
+        class {|#0:TypeName|}
+        {   
+        }
+    }"
 
             Dim fixtest = "
-Module MODULE1
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Diagnostics;
+
+    namespace ConsoleApplication1
+    {
+        class TYPENAME
+        {   
+        }
+    }"
+
+            Dim expected = VerifyCS.Diagnostic("$saferootidentifiername$").WithLocation(0).WithArguments("TypeName")
+            Await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest)
+        End Function
+
+        <TestMethod>
+        Public Async Function TestMethod2_VisualBasic() As Task
+
+            Dim test = "
+Class {|#0:TypeName|}
 
     Sub Main()
 
     End Sub
 
-End Module"
+End Class"
 
-            Dim expected = Verify.Diagnostic("$saferootidentifiername$").WithLocation(2, 8).WithArguments("Module1")
-            Await Verify.VerifyCodeFixAsync(test, expected, fixtest)
+            Dim fixtest = "
+Class TYPENAME
+
+    Sub Main()
+
+    End Sub
+
+End Class"
+
+            Dim expected = VerifyVB.Diagnostic("$saferootidentifiername$").WithLocation(0).WithArguments("TypeName")
+            Await VerifyVB.VerifyCodeFixAsync(test, expected, fixtest)
         End Function
-
     End Class
 End Namespace

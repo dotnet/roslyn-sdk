@@ -32,7 +32,14 @@
   <Target Name="_AddAnalyzersToOutput">
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(OutputPath)\$saferootprojectname$.dll" PackagePath="analyzers/dotnet/cs" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\$saferootprojectname$.CSharp.dll" PackagePath="analyzers/dotnet/cs" />
       <TfmSpecificPackageFile Include="$(OutputPath)\$saferootprojectname$.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\$saferootprojectname$.CodeFixes.CSharp.dll" PackagePath="analyzers/dotnet/cs" />
+
+      <TfmSpecificPackageFile Include="$(OutputPath)\$saferootprojectname$.dll" PackagePath="analyzers/dotnet/vb" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\$saferootprojectname$.VisualBasic.dll" PackagePath="analyzers/dotnet/vb" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\$saferootprojectname$.CodeFixes.dll" PackagePath="analyzers/dotnet/vb" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\$saferootprojectname$.CodeFixes.VisualBasic.dll" PackagePath="analyzers/dotnet/vb" />
     </ItemGroup>
   </Target>
 

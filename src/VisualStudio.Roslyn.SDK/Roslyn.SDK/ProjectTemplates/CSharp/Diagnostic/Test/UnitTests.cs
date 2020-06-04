@@ -1,32 +1,37 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
-using $saferootprojectname$;
-using Verify = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<
     $saferootprojectname$.$saferootidentifiername$Analyzer,
-    $saferootprojectname$.$saferootidentifiername$CodeFixProvider>;
+    $saferootprojectname$.CSharp$saferootidentifiername$CodeFixProvider>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.MSTest.CodeFixVerifier<
+    $saferootprojectname$.$saferootidentifiername$Analyzer,
+    $saferootprojectname$.VisualBasic$saferootidentifiername$CodeFixProvider>;
 
 namespace $safeprojectname$
 {
     [TestClass]
-    public class UnitTest
+    public class $saferootidentifiername$UnitTest
     {
         //No diagnostics expected to show up
         [TestMethod]
-        public async Task TestMethod1()
+        public async Task TestMethod1_CSharp()
         {
             var test = @"";
 
-            await Verify.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyAnalyzerAsync(test);
+        }
+
+        [TestMethod]
+        public async Task TestMethod1_VisualBasic()
+        {
+            var test = @"";
+
+            await VerifyVB.VerifyAnalyzerAsync(test);
         }
 
         //Diagnostic and CodeFix both triggered and checked for
         [TestMethod]
-        public async Task TestMethod2()
+        public async Task TestMethod2_CSharp()
         {
             var test = @"
     using System;
@@ -38,7 +43,7 @@ namespace $safeprojectname$
 
     namespace ConsoleApplication1
     {
-        class TypeName
+        class {|#0:TypeName|}
         {   
         }
     }";
@@ -58,8 +63,33 @@ namespace $safeprojectname$
         }
     }";
 
-            var expected = Verify.Diagnostic("$saferootidentifiername$").WithLocation(11, 15).WithArguments("TypeName");
-            await Verify.VerifyCodeFixAsync(test, expected, fixtest);
+            var expected = VerifyCS.Diagnostic("$saferootidentifiername$").WithLocation(0).WithArguments("TypeName");
+            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        }
+
+        [TestMethod]
+        public async Task TestMethod2_VisualBasic()
+        {
+            var test = @"
+Class {|#0:TypeName|}
+
+    Sub Main()
+
+    End Sub
+
+End Class";
+
+            var fixtest = @"
+Class TYPENAME
+
+    Sub Main()
+
+    End Sub
+
+End Class";
+
+            var expected = VerifyVB.Diagnostic("$saferootidentifiername$").WithLocation(0).WithArguments("TypeName");
+            await VerifyVB.VerifyCodeFixAsync(test, expected, fixtest);
         }
     }
 }

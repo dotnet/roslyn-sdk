@@ -17,14 +17,12 @@
     <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
   </TemplateData>
   <TemplateContent>
-    <Project TargetFileName="$projectname$.vbproj" File="CodeFixProvider.vbproj" ReplaceParameters="true">
-      <ProjectItem ReplaceParameters="true" TargetFileName="Abstract$saferootidentifiername$CodeFixProvider`1.vb">AbstractCodeFixProvider.vb</ProjectItem>
-      <ProjectItem ReplaceParameters="true" TargetFileName="My Project\CodeFixResources.resx">CodeFixResources.resx</ProjectItem>
-      <ProjectItem ReplaceParameters="true" TargetFileName="My Project\CodeFixResources.Designer.vb">CodeFixResources.Designer.vb</ProjectItem>
+    <Project TargetFileName="$projectname$.vbproj" File="VBCodeFix.vbproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="VisualBasic$saferootidentifiername$CodeFixProvider.vb">VBCodeFixProvider.vb</ProjectItem>
     </Project>
   </TemplateContent>
   <WizardExtension>
     <Assembly>Roslyn.SDK.Template.Wizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Assembly>
-    <FullClassName>RoslynSDKCodeFixTemplateWizard</FullClassName>
+    <FullClassName>RoslynSDKCodeFixVisualBasicTemplateWizard</FullClassName>
   </WizardExtension>
 </VSTemplate>

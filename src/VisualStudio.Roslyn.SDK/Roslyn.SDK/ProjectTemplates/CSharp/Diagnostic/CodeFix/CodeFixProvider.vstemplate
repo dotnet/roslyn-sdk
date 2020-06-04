@@ -18,7 +18,7 @@
   </TemplateData>
   <TemplateContent>
     <Project TargetFileName="$projectname$.csproj" File="CodeFixProvider.csproj" ReplaceParameters="true">
-      <ProjectItem ReplaceParameters="true" TargetFileName="$saferootidentifiername$CodeFixProvider.cs" OpenInEditor="true" OpenOrder="3" >CodeFixProvider.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="Abstract$saferootidentifiername$CodeFixProvider`1.cs" OpenInEditor="true" OpenOrder="3" >AbstractCodeFixProvider.cs</ProjectItem>
       <ProjectItem ReplaceParameters="true" TargetFileName="CodeFixResources.resx">CodeFixResources.resx</ProjectItem>
       <ProjectItem ReplaceParameters="true" TargetFileName="CodeFixResources.Designer.cs">CodeFixResources.Designer.cs</ProjectItem>
     </Project>
