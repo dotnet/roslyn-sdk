@@ -7,10 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <CompilerVisibleProperty Include="RootNamespace" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="GenerateSource" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="RelativeDir" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="OmitGetResourceString" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="AsConstants" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="IncludeDefaultValues" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="EmitFormatMethods" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AdditionalFiles Include="People.csv" CsvLoadType="Startup" />
     <AdditionalFiles Include="Cars.csv" CsvLoadType="OnDemand" CacheObjects="true" />
-
     <AdditionalFiles Include="MainSettings.xmlsettings" CopyToOutputDirectory="PreserveNewest" />
+    <AdditionalFiles Include="**\*.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="MainSettings.xmlsettings" CopyToOutputDirectory="PreserveNewest" /> <!-- TODO: remove this when AdditionalFiles supports CopyToOutputDirectory -->
   </ItemGroup>
 
