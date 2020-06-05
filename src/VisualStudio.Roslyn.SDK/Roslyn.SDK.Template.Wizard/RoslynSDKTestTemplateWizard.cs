@@ -13,7 +13,11 @@ public class RoslynSDKTestTemplateWizard : RoslynSDKChildTemplateWizard
 #pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
         {
             _ = vsProject.References.AddProject(RoslynSDKAnalyzerTemplateWizard.Project);
+            _ = vsProject.References.AddProject(RoslynSDKAnalyzerCSharpTemplateWizard.Project);
+            _ = vsProject.References.AddProject(RoslynSDKAnalyzerVisualBasicTemplateWizard.Project);
             _ = vsProject.References.AddProject(RoslynSDKCodeFixTemplateWizard.Project);
+            _ = vsProject.References.AddProject(RoslynSDKCodeFixCSharpTemplateWizard.Project);
+            _ = vsProject.References.AddProject(RoslynSDKCodeFixVisualBasicTemplateWizard.Project);
         }
     }
 }

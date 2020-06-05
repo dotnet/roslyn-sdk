@@ -51,7 +51,7 @@ namespace Microsoft.CodeAnalysis.Testing
             await TestServices.SolutionExplorer.RestoreNuGetPackagesAsync(HangMitigatingCancellationToken);
 
             var buildSummary = await TestServices.SolutionExplorer.BuildSolutionAsync(waitForBuildToFinish: true);
-            Assert.Equal("========== Build: 5 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========", buildSummary);
+            Assert.Equal("========== Build: 9 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========", buildSummary);
 
             await TestServices.ErrorList.ShowBuildErrorsAsync();
 
@@ -61,10 +61,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
             // Currently have two analyzer warnings in the template.
             var warnings = await TestServices.ErrorList.GetBuildErrorsAsync(__VSERRORCATEGORY.EC_WARNING);
-            var expected = @"(Compiler) TestProjAnalyzer.cs(29, 57): warning RS1025: Configure generated code analysis
-(Compiler) TestProjAnalyzer.cs(29, 57): warning RS1026: Enable concurrent execution";
-            new XUnitVerifier().EqualOrDiff(expected, string.Join(Environment.NewLine, warnings));
-            Assert.Equal(2, await TestServices.ErrorList.GetErrorCountAsync(__VSERRORCATEGORY.EC_WARNING));
+            new XUnitVerifier().EqualOrDiff(string.Empty, string.Join(Environment.NewLine, warnings));
+            Assert.Equal(0, await TestServices.ErrorList.GetErrorCountAsync(__VSERRORCATEGORY.EC_WARNING));
         }
 
         [VsFact]
@@ -107,7 +105,7 @@ namespace Microsoft.CodeAnalysis.Testing
             await TestServices.SolutionExplorer.RestoreNuGetPackagesAsync(HangMitigatingCancellationToken);
 
             var buildSummary = await TestServices.SolutionExplorer.BuildSolutionAsync(waitForBuildToFinish: true);
-            Assert.Equal("========== Build: 5 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========", buildSummary);
+            Assert.Equal("========== Build: 9 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========", buildSummary);
 
             await TestServices.ErrorList.ShowBuildErrorsAsync();
 
@@ -117,10 +115,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
             // Currently have two analyzer warnings in the template.
             var warnings = await TestServices.ErrorList.GetBuildErrorsAsync(__VSERRORCATEGORY.EC_WARNING);
-            var expected = @"(Compiler) TestProjAnalyzer.vb(32, 37): warning RS1025: Configure generated code analysis
-(Compiler) TestProjAnalyzer.vb(32, 37): warning RS1026: Enable concurrent execution";
-            new XUnitVerifier().EqualOrDiff(expected, string.Join(Environment.NewLine, warnings));
-            Assert.Equal(2, await TestServices.ErrorList.GetErrorCountAsync(__VSERRORCATEGORY.EC_WARNING));
+            new XUnitVerifier().EqualOrDiff(string.Empty, string.Join(Environment.NewLine, warnings));
+            Assert.Equal(0, await TestServices.ErrorList.GetErrorCountAsync(__VSERRORCATEGORY.EC_WARNING));
         }
 
         [VsFact]

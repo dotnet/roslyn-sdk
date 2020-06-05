@@ -3,28 +3,26 @@
             Type="Project"
             xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
   <TemplateData>
-    <Name>CodeFixProvider</Name>
+    <Name>CodeFixProvider.VisualBasic</Name>
     <Description>&lt;No description available&gt;</Description>
     <Icon></Icon>
-    <ProjectType>VisualBasic</ProjectType>
+    <ProjectType>CSharp</ProjectType>
     <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
-    <SortOrder>1000</SortOrder>
+    <SortOrder>952</SortOrder>
     <TemplateID>bb967cab-2ca5-4dac-8809-65b2b28a6350</TemplateID>
     <CreateNewFolder>true</CreateNewFolder>
     <CreateInPlace>true</CreateInPlace>
-    <DefaultName>CodeFixProvider</DefaultName>
+    <DefaultName>CodeFixProvider.VisualBasic</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
   </TemplateData>
   <TemplateContent>
-    <Project TargetFileName="$projectname$.vbproj" File="CodeFixProvider.vbproj" ReplaceParameters="true">
-      <ProjectItem ReplaceParameters="true" TargetFileName="Abstract$saferootidentifiername$CodeFixProvider`1.vb">AbstractCodeFixProvider.vb</ProjectItem>
-      <ProjectItem ReplaceParameters="true" TargetFileName="My Project\CodeFixResources.resx">CodeFixResources.resx</ProjectItem>
-      <ProjectItem ReplaceParameters="true" TargetFileName="My Project\CodeFixResources.Designer.vb">CodeFixResources.Designer.vb</ProjectItem>
+    <Project TargetFileName="$projectname$.csproj" File="VBCodeFix.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="VisualBasicCodeFixProvider.cs">VBCodeFixProvider.cs</ProjectItem>
     </Project>
   </TemplateContent>
   <WizardExtension>
     <Assembly>Roslyn.SDK.Template.Wizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Assembly>
-    <FullClassName>RoslynSDKCodeFixTemplateWizard</FullClassName>
+    <FullClassName>RoslynSDKCodeFixVisualBasicTemplateWizard</FullClassName>
   </WizardExtension>
 </VSTemplate>
