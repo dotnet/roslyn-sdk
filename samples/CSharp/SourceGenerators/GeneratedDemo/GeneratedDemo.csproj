@@ -20,11 +20,8 @@
 
   <!-- Manually reference the generator dependencies and props because we locally reference the generator. When added via NuGet this happens automatically -->
   <Target AfterTargets="ResolveProjectReferences" Name="GetGeneratorDependencies">
-    <PropertyGroup>
-      <GeneratorOutputPath>@(Analyzer->'%(RootDir)%(Directory)')</GeneratorOutputPath>
-    </PropertyGroup>
     <ItemGroup>
-      <Analyzer Include="$(GeneratorOutputPath)\*.dll" Exclude="@(Analyzer)" />
+      <Analyzer Include="%(RootDir)%(Directory)\*.dll" Exclude="@(Analyzer)" />
     </ItemGroup>
   </Target>
   <Import Project="..\SourceGeneratorSamples\*.props" />
