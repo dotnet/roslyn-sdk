@@ -10,14 +10,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvTextFieldParser" Version="1.2.2-preview" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.7.0-4.20318.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(PKGCsvTextFieldParser)\lib\netstandard2.0\*.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <!-- Generator dependencies -->
+    <PackageReference Include="CsvTextFieldParser" Version="1.2.2-preview" GeneratePathProperty="true" PrivateAssets="all" />
+    <None Include="$(PKGCsvTextFieldParser)\lib\netstandard2.0\*.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+
+    <PackageReference Include="Handlebars.Net" Version="1.10.1" GeneratePathProperty="true" PrivateAssets="all" />
+    <None Include="$(PKGHandlebars_Net)\lib\netstandard2.0\*.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" GeneratePathProperty="true" PrivateAssets="all" />
+    <None Include="$(PKGNewtonsoft_Json)\lib\netstandard2.0\*.dll"  CopyToOutputDirectory="PreserveNewest" Visible="false" />
   </ItemGroup>
-  
 </Project>

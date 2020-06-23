@@ -83,9 +83,9 @@ namespace Mustache
         }
         static string SourceFileFromMustachePath(string name, string template, string hash)
         {
-            var tokens = Mustache.Parser.Tokenize(template);
-            var tree = Mustache.Parser.Parse(tokens);
-            var mustacheText = Mustache.Parser.Render(tree, hash);
+            var tree = HandlebarsDotNet.Handlebars.Compile(template);
+            var @object = Newtonsoft.Json.JsonConvert.DeserializeObject(hash);
+            var mustacheText = tree(@object);
 
             return GenerateMustacheClass(name, mustacheText) ;
         }
@@ -114,8 +114,6 @@ namespace Mustache {{
             return sb.ToString();
 
         }
-
-
 
         public void Initialize(InitializationContext context)
         {
