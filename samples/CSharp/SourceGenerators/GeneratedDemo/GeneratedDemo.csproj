@@ -5,29 +5,28 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CsvLoadType" />
-    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CacheObject" />
-  </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="People.csv" CsvLoadType="Startup" />
     <AdditionalFiles Include="Cars.csv" CsvLoadType="OnDemand" CacheObjects="true" />
 
-    <AdditionalFiles Include="MainSettings.xmlsettings" />
-    <None Include="MainSettings.xmlsettings">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <AdditionalFiles Include="MainSettings.xmlsettings" CopyToOutputDirectory="Always" />
+    <None Include="MainSettings.xmlsettings" CopyToOutputDirectory="Always" /> <!-- TODO: remove this when AdditionalFiles supports CopyToOutputDirectory -->
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Manually reference the generator dependencies because we locally reference the generator. When added via NuGet this happens automatically -->
-    <Analyzer Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\artifacts\bin\SourceGeneratorSamples\Debug\netstandard2.0\CsvTextFieldParser.dll'))" />
     <ProjectReference Include="..\SourceGeneratorSamples\SourceGeneratorSamples.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
-  
-  <!-- Manually reference the generator props because we locally reference the generator. When added via NuGet this happens automatically -->
-  <Import Project="..\SourceGeneratorSamples\CSVGenerator.props" />
-  
+
+  <!-- Manually reference the generator dependencies and props because we locally reference the generator. When added via NuGet this happens automatically -->
+  <Target AfterTargets="ResolveProjectReferences" Name="GetGeneratorDependencies">
+    <PropertyGroup>
+      <GeneratorOutputPath>@(Analyzer->'%(RootDir)%(Directory)')</GeneratorOutputPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <Analyzer Include="$(GeneratorOutputPath)\*.dll" Exclude="@(Analyzer)" />
+    </ItemGroup>
+  </Target>
+  <Import Project="..\SourceGeneratorSamples\*.props" />
+
 </Project>
