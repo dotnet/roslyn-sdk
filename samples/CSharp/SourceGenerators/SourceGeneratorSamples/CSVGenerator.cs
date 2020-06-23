@@ -24,6 +24,12 @@ namespace CsvGenerator
     [Generator]
     public class CSVGenerator : ISourceGenerator
     {
+        public enum CsvLoadType
+        {
+            Startup,
+            OnDemand
+        }
+
         // Guesses type of property for the object from the value of a csv field
         public static string GetCsvFieldType(string exemplar) => exemplar switch
         {
@@ -57,7 +63,7 @@ namespace CsvGenerator
         // named `All` that returns the list of strongly typed objects generated on demand at first access.
         // There is the slight chance of a race condition in a multi-thread program, but the result is relatively benign
         // , loading the collection multiple times instead of once. Measures could be taken to avoid that.
-        public static string GenerateClassFile(string className, string csvText, string loadTime, bool cacheObjects)
+        public static string GenerateClassFile(string className, string csvText, CsvLoadType loadTime, bool cacheObjects)
         {
             StringBuilder sb = new StringBuilder();
             using CsvTextFieldParser parser = new CsvTextFieldParser(new StringReader(csvText));
@@ -73,7 +79,7 @@ namespace CSV {
             sb.Append($"    public class {className} {{\n");
 
 
-            if(loadTime == "LoadTime.Startup")
+            if(loadTime == CsvLoadType.Startup)
             {
                 sb.Append(@$"
         static {className}() {{ var x = All; }}
@@ -142,82 +148,38 @@ namespace CSV {
             return s;
         }
 
-        static IEnumerable<(string,string)> SourceFilesFromPath(string loadTime, bool cacheObjects, string path)
+        static IEnumerable<(string,string)> SourceFilesFromAdditionalFile(CsvLoadType loadTime, bool cacheObjects, AdditionalText file)
         {
-            if(Directory.Exists(path))
-            {
-               return Directory.GetFiles(path, "*.csv").SelectMany(f => SourceFilesFromPath(loadTime, cacheObjects, path)); 
-            }
-
-            string className = Path.GetFileNameWithoutExtension(path);
-            string csvText = File.ReadAllText(path);
-            return new (string,string)[] { (Path.GetFileNameWithoutExtension(path), GenerateClassFile(className, csvText, loadTime, cacheObjects)) };
+            string className = Path.GetFileNameWithoutExtension(file.Path);
+            string csvText = file.GetText()!.ToString();
+            return new (string,string)[] { ( className, GenerateClassFile(className, csvText, loadTime, cacheObjects)) };
         }
 
-        static IEnumerable<(string, string)> SourceFileFromPaths(IEnumerable<(string, bool, string[])> pathsData) =>
-            pathsData.SelectMany(d => d.Item3.SelectMany(p => SourceFilesFromPath(d.Item1, d.Item2, p)));
+        static IEnumerable<(string, string)> SourceFilesFromAdditionalFiles(IEnumerable<(CsvLoadType loadTime, bool cacheObjects, AdditionalText file)> pathsData)
+            => pathsData.SelectMany(d => SourceFilesFromAdditionalFile(d.loadTime, d.cacheObjects, d.file));
 
-
-        static IEnumerable<(string, bool, string[])> GetLoadOptions(Compilation compilation)
+        static IEnumerable<(CsvLoadType, bool, AdditionalText)> GetLoadOptions(SourceGeneratorContext context)
         {
-            // Get all CSV attributes
-            IEnumerable<SyntaxNode>? allNodes = compilation.SyntaxTrees.SelectMany(s => s.GetRoot().DescendantNodes());
-            var allAttributes = allNodes.Where((d) => d.IsKind(SyntaxKind.Attribute)).OfType<AttributeSyntax>();
-            var attributes = allAttributes.Where(d => d.Name.ToString() == "CsvFileLoadOptions")
-                .ToImmutableArray();
-
-            foreach (var att in attributes)
+            foreach (var file in context.AdditionalFiles)
             {
-                string loadTime = "";
-                bool cacheObjects = true;
-                List<string> paths = new List<string>();
-                if(att.ArgumentList == null) throw new Exception("Constructor of attribute must have arguments");
-
-                var m = compilation.GetSemanticModel(att.SyntaxTree);
-                foreach (var arg in att.ArgumentList.Arguments)
+                if (Path.GetExtension(file.Path).Equals(".csv", StringComparison.OrdinalIgnoreCase))
                 {
-                    var expr = arg.Expression;
+                    // are there any options for it?
+                    context.AnalyzerConfigOptions.GetOptions(file).TryGetValue("build_metadata.additionalfiles.CsvLoadType", out var loadTimeString);
+                    Enum.TryParse<CsvLoadType>(loadTimeString, ignoreCase: true, out var loadType);
 
-                    var t = m.GetTypeInfo(expr);
-                    var v = m.GetConstantValue(expr);
-                    if(v.HasValue) {
-                        if(t.Type!.Name == "Boolean") cacheObjects = (bool)v.Value;
-                        if(t.Type.Name == "String") paths.Add((string)v.Value);
-                    } else
-                    {
-                        string s = expr.ToString();
-                        if(s.StartsWith("LoadTime."))
-                        {
-                            loadTime = s;
-                        }
-                    }
+                    context.AnalyzerConfigOptions.GetOptions(file).TryGetValue("build_metadata.additionalfiles.CacheObjects", out var cacheObjectsString);
+                    bool.TryParse(cacheObjectsString, out var cacheObjects);
+
+                    yield return (loadType, cacheObjects, file);
                 }
-                yield return (loadTime, cacheObjects, paths.ToArray());
             }
         }
 
         public void Execute(SourceGeneratorContext context)
         {
-            string attributeSource = @"
-namespace CSV {
-    public enum LoadTime { Compilation, Startup, OnDemand }
-
-    [System.AttributeUsage(System.AttributeTargets.Assembly, AllowMultiple=true)]
-    public class CsvFileLoadOptionsAttribute: System.Attribute
-    {
-        public LoadTime LoadTime { get; }
-        public bool CacheObjects { get; }
-        public string[] Paths { get; }
-        public CsvFileLoadOptionsAttribute(LoadTime loadTime = LoadTime.Compilation, bool cacheObjects = true, params string[] paths)
-            => (LoadTime, CacheObjects, Paths) = (loadTime, cacheObjects, paths);
-    }
-}
-";
-
-            context.AddSource("Cvs_MainAttributes__", SourceText.From(attributeSource, Encoding.UTF8));
-
-            var options = GetLoadOptions(context.Compilation);
-            var nameCodeSequence = SourceFileFromPaths(options);
+            var options = GetLoadOptions(context);
+            var nameCodeSequence = SourceFilesFromAdditionalFiles(options);
             foreach (var (name, code) in nameCodeSequence)
                 context.AddSource($"Csv_{name}", SourceText.From(code, Encoding.UTF8));
         }

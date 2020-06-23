@@ -5,9 +5,6 @@ using System.Text;
 using static System.Console;
 using CSV;
 
-[assembly: CsvFileLoadOptions(LoadTime.Startup, true, @"C:\dev\roslyn-sdk\samples\CSharp\SourceGenerators\GeneratedDemo\Cars.csv")]
-[assembly: CsvFileLoadOptions(LoadTime.OnDemand, true, @"C:\dev\roslyn-sdk\samples\CSharp\SourceGenerators\GeneratedDemo\People.csv")]
-
 namespace GeneratedDemo
 {
     class UseCsvGenerator
