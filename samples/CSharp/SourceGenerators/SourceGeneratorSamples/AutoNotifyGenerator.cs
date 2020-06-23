@@ -7,26 +7,11 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Analyzer1
+namespace SourceGeneratorSamples
 {
     [Generator]
     public class AutoNotifyGenerator : ISourceGenerator
     {
-        private const string attributeText = @"
-using System;
-namespace AutoNotify
-{
-    [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class AutoNotifyAttribute : Attribute
-    {
-        public AutoNotifyAttribute()
-        {
-        }
-        public string PropertyName { get; set; }
-    }
-}
-";
-
         public void Initialize(InitializationContext context)
         {
             // Register a syntax receiver that will be created for each generation pass
@@ -35,27 +20,19 @@ namespace AutoNotify
 
         public void Execute(SourceGeneratorContext context)
         {
-            // add the attribute text
-            context.AddSource("AutoNotifyAttribute", SourceText.From(attributeText, Encoding.UTF8));
-
             // retreive the populated receiver 
             if (!(context.SyntaxReceiver is SyntaxReceiver receiver))
                 return;
 
-            // we're going to create a new compilation that contains the attribute.
-            // TODO: we should allow source generators to provide source during initialize, so that this step isn't required.
-            CSharpParseOptions options = (context.Compilation as CSharpCompilation).SyntaxTrees[0].Options as CSharpParseOptions;
-            Compilation compilation = context.Compilation.AddSyntaxTrees(CSharpSyntaxTree.ParseText(SourceText.From(attributeText, Encoding.UTF8), options));
-
             // get the newly bound attribute, and INotifyPropertyChanged
-            INamedTypeSymbol attributeSymbol = compilation.GetTypeByMetadataName("AutoNotify.AutoNotifyAttribute");
-            INamedTypeSymbol notifySymbol = compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
+            INamedTypeSymbol attributeSymbol = context.Compilation.GetTypeByMetadataName("AutoNotify.AutoNotifyAttribute");
+            INamedTypeSymbol notifySymbol = context.Compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
             // loop over the candidate fields, and keep the ones that are actually annotated
             List<IFieldSymbol> fieldSymbols = new List<IFieldSymbol>();
             foreach (FieldDeclarationSyntax field in receiver.CandidateFields)
             {
-                SemanticModel model = compilation.GetSemanticModel(field.SyntaxTree);
+                SemanticModel model = context.Compilation.GetSemanticModel(field.SyntaxTree);
                 foreach (VariableDeclaratorSyntax variable in field.Declaration.Variables)
                 {
                     // Get the symbol being decleared by the field, and keep it if its annotated
@@ -71,7 +48,7 @@ namespace AutoNotify
             foreach (IGrouping<INamedTypeSymbol, IFieldSymbol> group in fieldSymbols.GroupBy(f => f.ContainingType))
             {
                 string classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
-               context.AddSource($"{group.Key.Name}_autoNotify.cs", SourceText.From(classSource, Encoding.UTF8));
+                context.AddSource($"{group.Key.Name}_autoNotify.cs", SourceText.From(classSource, Encoding.UTF8));
             }
         }
 
@@ -181,5 +158,14 @@ public {fieldType} {propertyName}
                 }
             }
         }
+    }
+}
+
+namespace AutoNotify
+{
+    [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    public sealed class AutoNotifyAttribute : Attribute
+    {
+        public string PropertyName { get; set; }
     }
 }

@@ -20,19 +20,6 @@ namespace Mustache
     {
         public void Execute(SourceGeneratorContext context)
         {
-            string attributeSource = @"
-    [System.AttributeUsage(System.AttributeTargets.Assembly, AllowMultiple=true)]
-    public class MustacheAttribute: System.Attribute
-    {
-        public string Name { get; }
-        public string Template { get; }
-        public string Hash { get; }
-        public MustacheAttribute(string name, string template, string hash)
-            => (Name, Template, Hash) = (name, template, hash);
-    }
-";
-            context.AddSource("Mustache_MainAttributes__", SourceText.From(attributeSource, Encoding.UTF8));
-
             var compilation = context.Compilation;
 
             var options = GetMustacheOptions(compilation);
@@ -46,7 +33,7 @@ namespace Mustache
 
         static IEnumerable<(string, string, string)> GetMustacheOptions(Compilation compilation)
         {
-            // Get all CSV attributes
+            // Get all Mustache attributes
             IEnumerable<SyntaxNode>? allNodes = compilation.SyntaxTrees.SelectMany(s => s.GetRoot().DescendantNodes());
             var allAttributes = allNodes.Where((d) => d.IsKind(SyntaxKind.Attribute)).OfType<AttributeSyntax>();
             var attributes = allAttributes.Where(d => d.Name.ToString() == "Mustache")
@@ -119,5 +106,15 @@ namespace Mustache {{
         {
             // No initialization required
         }
+    }
+
+    [System.AttributeUsage(System.AttributeTargets.Assembly, AllowMultiple = true)]
+    public class MustacheAttribute : System.Attribute
+    {
+        public string Name { get; }
+        public string Template { get; }
+        public string Hash { get; }
+        public MustacheAttribute(string name, string template, string hash)
+            => (Name, Template, Hash) = (name, template, hash);
     }
 }
