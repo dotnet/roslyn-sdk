@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using SourceGeneratorSamples;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,15 +24,17 @@ namespace XmlSettings
 ";
         public void Execute(SourceGeneratorContext context)
         {
+            string generatedSourceOutputPath = context.TryCreateGeneratedSourceOutputPath();
+
             // Using the context, get any additional files that end in .xmlsettings
             IEnumerable<AdditionalText> settingsFiles = context.AdditionalFiles.Where(at => at.Path.EndsWith(".xmlsettings"));
             foreach (AdditionalText settingsFile in settingsFiles)
             {
-                ProcessSettingsFile(settingsFile, context);
+                ProcessSettingsFile(settingsFile, context, generatedSourceOutputPath);
             }
         }
         
-        private void ProcessSettingsFile(AdditionalText xmlFile, SourceGeneratorContext context)
+        private void ProcessSettingsFile(AdditionalText xmlFile, SourceGeneratorContext context, string generatedSourceOutputPath)
         {
             // try and load the settings file
             XmlDocument xmlDoc = new XmlDocument();
@@ -98,7 +101,7 @@ public {settingType} {settingName}
 
             sb.Append("} } }");
 
-            context.AddSource($"Settings_{name}", SourceText.From(sb.ToString(), Encoding.UTF8));
+            context.AddSource(generatedSourceOutputPath, $"Settings_{name}", SourceText.From(sb.ToString(), Encoding.UTF8));
         }
      
         public void Initialize(InitializationContext context)

@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using SourceGeneratorSamples;
 
 namespace Analyzer1
 {
@@ -35,8 +36,10 @@ namespace AutoNotify
 
         public void Execute(SourceGeneratorContext context)
         {
+            string generatedSourceOutputPath = context.TryCreateGeneratedSourceOutputPath();
+
             // add the attribute text
-            context.AddSource("AutoNotifyAttribute", SourceText.From(attributeText, Encoding.UTF8));
+            context.AddSource(generatedSourceOutputPath, "AutoNotifyAttribute", SourceText.From(attributeText, Encoding.UTF8));
 
             // retreive the populated receiver 
             if (!(context.SyntaxReceiver is SyntaxReceiver receiver))
@@ -71,7 +74,7 @@ namespace AutoNotify
             foreach (IGrouping<INamedTypeSymbol, IFieldSymbol> group in fieldSymbols.GroupBy(f => f.ContainingType))
             {
                 string classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
-               context.AddSource($"{group.Key.Name}_autoNotify.cs", SourceText.From(classSource, Encoding.UTF8));
+                context.AddSource(generatedSourceOutputPath, $"{group.Key.Name}_autoNotify.cs", SourceText.From(classSource, Encoding.UTF8));
             }
         }
 

@@ -10,6 +10,7 @@
     <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
+    <MicrosoftNetCompilersToolsetVersion>3.7.0-4.20324.3</MicrosoftNetCompilersToolsetVersion>
     <!-- Dependencies -->
     <!-- Roslyn for VS 2019 -->
     <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2019 since the Syntax Visualizer extension still

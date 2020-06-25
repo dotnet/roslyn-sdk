@@ -4,7 +4,13 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>preview</LangVersion>
+    <SaveSourceGeneratorOutput>true</SaveSourceGeneratorOutput>
   </PropertyGroup>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="IntermediateOutputPath" />
+    <CompilerVisibleProperty Include="SaveSourceGeneratorOutput" />
+  </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="MainSettings.xmlsettings" />

@@ -11,6 +11,8 @@ namespace SourceGeneratorSamples
     {
         public void Execute(SourceGeneratorContext context)
         {
+            string generatedSourceOutputPath = context.TryCreateGeneratedSourceOutputPath();
+
             // begin creating the source we'll inject into the users compilation
             StringBuilder sourceBuilder = new StringBuilder(@"
 using System;
@@ -40,7 +42,7 @@ namespace HelloWorldGenerated
 }");
 
             // inject the created source into the users compilation
-            context.AddSource("helloWorldGenerated", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
+            context.AddSource(generatedSourceOutputPath, "helloWorldGenerated", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
         }
 
         public void Initialize(InitializationContext context)
