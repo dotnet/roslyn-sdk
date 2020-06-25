@@ -101,7 +101,7 @@ public {settingType} {settingName}
 
             sb.Append("} } }");
 
-            context.AddSource(generatedSourceOutputPath, $"Settings_{name}", SourceText.From(sb.ToString(), Encoding.UTF8));
+            context.AddSource(generatedSourceOutputPath, $"Settings_{name}.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
         }
      
         public void Initialize(InitializationContext context)

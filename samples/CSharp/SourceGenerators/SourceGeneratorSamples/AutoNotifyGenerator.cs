@@ -39,7 +39,7 @@ namespace AutoNotify
             string generatedSourceOutputPath = context.TryCreateGeneratedSourceOutputPath();
 
             // add the attribute text
-            context.AddSource(generatedSourceOutputPath, "AutoNotifyAttribute", SourceText.From(attributeText, Encoding.UTF8));
+            context.AddSource(generatedSourceOutputPath, "AutoNotifyAttribute.cs", SourceText.From(attributeText, Encoding.UTF8));
 
             // retreive the populated receiver 
             if (!(context.SyntaxReceiver is SyntaxReceiver receiver))
