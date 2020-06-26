@@ -3,7 +3,7 @@
     "Templates.VisualStudio.2019": {
       "commandName": "Executable",
       "executablePath": "$(DevEnvDir)devenv.exe",
-      "commandLineArgs": "/rootsuffix Roslyn /log"
+      "commandLineArgs": "/rootsuffix $(VSSDKTargetPlatformRegRootSuffix) /log"
     }
   }
 }
