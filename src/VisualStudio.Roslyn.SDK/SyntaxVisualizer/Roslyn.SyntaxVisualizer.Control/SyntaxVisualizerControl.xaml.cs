@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Language.StandardClassification;
@@ -19,6 +20,9 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Classification;
+
+using Roslyn.SyntaxVisualizer.Control.SymbolDisplay;
+
 using SystemInformation = System.Windows.Forms.SystemInformation;
 
 namespace Roslyn.SyntaxVisualizer.Control
@@ -904,7 +908,7 @@ namespace Roslyn.SyntaxVisualizer.Control
                 kindValueLabel.Content = symbol.Kind.ToString();
             }
 
-            _propertyGrid.SelectedObject = symbol;
+            _propertyGrid.SelectedObject = new SymbolPropertyGridAdapter(symbol);
         }
 
         private static TreeViewItem FindTreeViewItem(DependencyObject source)
