@@ -43,7 +43,8 @@ namespace Microsoft.CodeAnalysis.Testing.InProcess
             var serviceProvider = (IAsyncServiceProvider2?)await AsyncServiceProvider.GlobalProvider.GetServiceAsync(typeof(SAsyncServiceProvider));
             Assumes.Present(serviceProvider);
             var result = (TInterface?)await serviceProvider.GetServiceAsync(typeof(TService));
-            return result is null ? throw new Exception($"Unable to get service {typeof(TInterface).FullName}") : result;
+            Assumes.Present(result);
+            return result;
         }
 
         protected async Task<TService> GetComponentModelServiceAsync<TService>()
