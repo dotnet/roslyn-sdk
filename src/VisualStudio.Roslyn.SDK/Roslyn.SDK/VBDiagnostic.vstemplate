@@ -40,9 +40,6 @@
       <ProjectTemplateLink ProjectName="$safeprojectname$.Test">
         ProjectTemplates\VisualBasic\Diagnostic\Test\Test.vstemplate
       </ProjectTemplateLink>
-      <ProjectTemplateLink ProjectName="$safeprojectname$.Vsix">
-        ProjectTemplates\VisualBasic\Diagnostic\Vsix\Deployment.vstemplate
-      </ProjectTemplateLink>
     </ProjectCollection>
   </TemplateContent>
   <WizardExtension>
