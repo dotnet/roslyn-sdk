@@ -29,7 +29,13 @@
          Modifying it requires changes to the wizard code.-->
     <ProjectCollection>
       <ProjectTemplateLink ProjectName="$safeprojectname$">
-       ProjectTemplates\CSharp\Diagnostic\Analyzer\DiagnosticAnalyzer.vstemplate
+        ProjectTemplates\CSharp\Diagnostic\Analyzer\DiagnosticAnalyzer.vstemplate
+      </ProjectTemplateLink>
+      <ProjectTemplateLink ProjectName="$safeprojectname$.CodeFixes">
+        ProjectTemplates\CSharp\Diagnostic\CodeFix\CodeFixProvider.vstemplate
+      </ProjectTemplateLink>
+      <ProjectTemplateLink ProjectName="$safeprojectname$.Package">
+        ProjectTemplates\CSharp\Diagnostic\Package\Package.vstemplate
       </ProjectTemplateLink>
       <ProjectTemplateLink ProjectName="$safeprojectname$.Test">
         ProjectTemplates\CSharp\Diagnostic\Test\Test.vstemplate
@@ -40,7 +46,7 @@
     </ProjectCollection>
   </TemplateContent>
   <WizardExtension>
-    <Assembly>Roslyn.SDK.Template.Wizard, Version=$(AssemblyVersion), Culture=neutral, PublicKeyToken=31bf3856ad364e35</Assembly>
+    <Assembly>Roslyn.SDK.Template.Wizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Assembly>
     <FullClassName>RoslynSDKRootTemplateWizard</FullClassName>
   </WizardExtension>
 </VSTemplate>

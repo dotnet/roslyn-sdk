@@ -19,15 +19,12 @@
   <TemplateContent>
     <Project TargetFileName="$projectname$.csproj" File="DiagnosticAnalyzer.csproj" ReplaceParameters="true">
       <ProjectItem ReplaceParameters="true" TargetFileName="$saferootidentifiername$Analyzer.cs" OpenInEditor="true" OpenOrder="2">DiagnosticAnalyzer.cs</ProjectItem>
-      <ProjectItem ReplaceParameters="true" TargetFileName="$saferootidentifiername$CodeFixProvider.cs" OpenInEditor="true" OpenOrder="3" >CodeFixProvider.cs</ProjectItem>
       <ProjectItem ReplaceParameters="true" TargetFileName="Resources.resx">Resources.resx</ProjectItem>
       <ProjectItem ReplaceParameters="true" TargetFileName="Resources.Designer.cs">Resources.Designer.cs</ProjectItem>
-      <ProjectItem ReplaceParameters="true" TargetFileName="tools\install.ps1">install.ps1</ProjectItem>
-      <ProjectItem ReplaceParameters="true" TargetFileName="tools\uninstall.ps1">uninstall.ps1</ProjectItem>
     </Project>
   </TemplateContent>
   <WizardExtension>
-    <Assembly>Roslyn.SDK.Template.Wizard, Version=$(AssemblyVersion), Culture=neutral, PublicKeyToken=31bf3856ad364e35</Assembly>
+    <Assembly>Roslyn.SDK.Template.Wizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Assembly>
     <FullClassName>RoslynSDKAnalyzerTemplateWizard</FullClassName>
   </WizardExtension>
 </VSTemplate>
