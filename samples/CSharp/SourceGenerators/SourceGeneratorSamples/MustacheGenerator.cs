@@ -46,7 +46,7 @@ namespace Mustache
 
         static IEnumerable<(string, string, string)> GetMustacheOptions(Compilation compilation)
         {
-            // Get all CSV attributes
+            // Get all Mustache attributes
             IEnumerable<SyntaxNode>? allNodes = compilation.SyntaxTrees.SelectMany(s => s.GetRoot().DescendantNodes());
             var allAttributes = allNodes.Where((d) => d.IsKind(SyntaxKind.Attribute)).OfType<AttributeSyntax>();
             var attributes = allAttributes.Where(d => d.Name.ToString() == "Mustache")
