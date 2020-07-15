@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-#pragma warning disable IDE0008 // Use explicit type
 #nullable enable
 
 namespace Mustache
@@ -33,12 +30,12 @@ namespace Mustache
 ";
             context.AddSource("Mustache_MainAttributes__", SourceText.From(attributeSource, Encoding.UTF8));
 
-            var compilation = context.Compilation;
+            Compilation compilation = context.Compilation;
 
-            var options = GetMustacheOptions(compilation);
-            var namesSources = SourceFilesFromMustachePaths(options);
+            IEnumerable<(string, string, string)> options = GetMustacheOptions(compilation);
+            IEnumerable<(string, string)> namesSources = SourceFilesFromMustachePaths(options);
 
-            foreach (var (name, source) in namesSources)
+            foreach ((string name, string source) in namesSources)
             {
                 context.AddSource($"Mustache{name}", SourceText.From(source, Encoding.UTF8));
             }
@@ -48,26 +45,26 @@ namespace Mustache
         {
             // Get all Mustache attributes
             IEnumerable<SyntaxNode>? allNodes = compilation.SyntaxTrees.SelectMany(s => s.GetRoot().DescendantNodes());
-            var allAttributes = allNodes.Where((d) => d.IsKind(SyntaxKind.Attribute)).OfType<AttributeSyntax>();
-            var attributes = allAttributes.Where(d => d.Name.ToString() == "Mustache")
+            IEnumerable<AttributeSyntax> allAttributes = allNodes.Where((d) => d.IsKind(SyntaxKind.Attribute)).OfType<AttributeSyntax>();
+            ImmutableArray<AttributeSyntax> attributes = allAttributes.Where(d => d.Name.ToString() == "Mustache")
                 .ToImmutableArray();
 
-            var models = compilation.SyntaxTrees.Select(st => compilation.GetSemanticModel(st));
-            foreach (var att in attributes)
+            IEnumerable<SemanticModel> models = compilation.SyntaxTrees.Select(st => compilation.GetSemanticModel(st));
+            foreach (AttributeSyntax att in attributes)
             {
                 string mustacheName = "", template = "", hash = "";
                 int index = 0;
 
                 if(att.ArgumentList is null) throw new Exception("Can't be null here");
 
-                var m = compilation.GetSemanticModel(att.SyntaxTree);
+                SemanticModel m = compilation.GetSemanticModel(att.SyntaxTree);
 
-                foreach (var arg in att.ArgumentList.Arguments)
+                foreach (AttributeArgumentSyntax arg in att.ArgumentList.Arguments)
                 {
-                    var expr = arg.Expression;
+                    ExpressionSyntax expr = arg.Expression;
 
-                    var t = m.GetTypeInfo(expr);
-                    var v = m.GetConstantValue(expr);
+                    TypeInfo t = m.GetTypeInfo(expr);
+                    Optional<object> v = m.GetConstantValue(expr);
                     if(index == 0) {
                         mustacheName = v.ToString();
                     }
@@ -83,16 +80,16 @@ namespace Mustache
         }
         static string SourceFileFromMustachePath(string name, string template, string hash)
         {
-            var tree = HandlebarsDotNet.Handlebars.Compile(template);
-            var @object = Newtonsoft.Json.JsonConvert.DeserializeObject(hash);
-            var mustacheText = tree(@object);
+            Func<object, string> tree = HandlebarsDotNet.Handlebars.Compile(template);
+            object @object = Newtonsoft.Json.JsonConvert.DeserializeObject(hash);
+            string mustacheText = tree(@object);
 
             return GenerateMustacheClass(name, mustacheText) ;
         }
 
         static IEnumerable<(string, string)> SourceFilesFromMustachePaths(IEnumerable<(string, string, string)> pathsData) {
 
-            foreach (var (name, template, hash) in pathsData)
+            foreach ((string name, string template, string hash) in pathsData)
             {
                 yield return (name, SourceFileFromMustachePath(name, template, hash));
             }
@@ -100,8 +97,7 @@ namespace Mustache
 
         private static string GenerateMustacheClass(string className, string mustacheText)
         {
-
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.Append($@"
 namespace Mustache {{
 
