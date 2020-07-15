@@ -55,7 +55,7 @@ namespace Mustache
                 string mustacheName = "", template = "", hash = "";
                 int index = 0;
 
-                if(att.ArgumentList is null) throw new Exception("Can't be null here");
+                if (att.ArgumentList is null) throw new Exception("Can't be null here");
 
                 SemanticModel m = compilation.GetSemanticModel(att.SyntaxTree);
 
@@ -65,12 +65,16 @@ namespace Mustache
 
                     TypeInfo t = m.GetTypeInfo(expr);
                     Optional<object> v = m.GetConstantValue(expr);
-                    if(index == 0) {
+                    if (index == 0)
+                    {
                         mustacheName = v.ToString();
                     }
-                    else if(index == 1) {
+                    else if (index == 1)
+                    {
                         template = v.ToString();
-                    } else { 
+                    }
+                    else
+                    {
                         hash = v.ToString();
                     }
                     index += 1;
@@ -84,10 +88,11 @@ namespace Mustache
             object @object = Newtonsoft.Json.JsonConvert.DeserializeObject(hash);
             string mustacheText = tree(@object);
 
-            return GenerateMustacheClass(name, mustacheText) ;
+            return GenerateMustacheClass(name, mustacheText);
         }
 
-        static IEnumerable<(string, string)> SourceFilesFromMustachePaths(IEnumerable<(string, string, string)> pathsData) {
+        static IEnumerable<(string, string)> SourceFilesFromMustachePaths(IEnumerable<(string, string, string)> pathsData)
+        {
 
             foreach ((string name, string template, string hash) in pathsData)
             {
