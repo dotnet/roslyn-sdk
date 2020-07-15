@@ -18,7 +18,12 @@
     <ProjectReference Include="..\SourceGeneratorSamples\SourceGeneratorSamples.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
-  <!-- Manually reference the generator props because we locally reference the generator. When added via NuGet this happens automatically -->
+  <!-- Manually reference the generator dependencies and props because we locally reference the generator. When added via NuGet this happens automatically -->
+  <Target AfterTargets="ResolveProjectReferences" Name="GetGeneratorDependencies">
+    <ItemGroup>
+      <Analyzer Include="%(RootDir)%(Directory)\*.dll" Exclude="@(Analyzer)" />
+    </ItemGroup>
+  </Target>
   <Import Project="..\SourceGeneratorSamples\CsvGenerator.props" />
 
 </Project>
