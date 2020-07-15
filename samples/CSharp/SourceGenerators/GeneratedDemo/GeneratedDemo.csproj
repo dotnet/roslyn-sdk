@@ -24,6 +24,6 @@
       <Analyzer Include="%(RootDir)%(Directory)\*.dll" Exclude="@(Analyzer)" />
     </ItemGroup>
   </Target>
-  <Import Project="..\SourceGeneratorSamples\CSVGenerator.props" />
+  <Import Project="..\SourceGeneratorSamples\CsvGenerator.props" />
 
 </Project>
