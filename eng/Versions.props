@@ -21,7 +21,6 @@
     <MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2019>3.3.1</MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2019>
     <MicrosoftCodeAnalysisVisualBasicVersionVS2019>3.3.1</MicrosoftCodeAnalysisVisualBasicVersionVS2019>
     <MicrosoftCodeAnalysisWorkspacesCommonVersionVS2019>3.3.1</MicrosoftCodeAnalysisWorkspacesCommonVersionVS2019>
-    <MicrosoftNetCompilersToolsetVersion>3.7.0-4.20324.3</MicrosoftNetCompilersToolsetVersion>
     <!-- VS SDK -->
     <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2019
                we need our extensions to work on both. -->
