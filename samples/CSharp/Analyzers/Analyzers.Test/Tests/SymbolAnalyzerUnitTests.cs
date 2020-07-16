@@ -1,16 +1,16 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using TestHelper;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using Verify = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<Sample.Analyzers.SymbolAnalyzer>;
 
 namespace Sample.Analyzers.Test
 {
-    public class SymbolAnalyzerUnitTests : DiagnosticVerifier
+    public class SymbolAnalyzerUnitTests
     {
         [Fact]
-        public void SymbolAnalyzerTest()
+        public async Task SymbolAnalyzerTest()
         {
             string test = @"
 class BadOne
@@ -21,17 +21,12 @@ class BadOne
 class GoodOne
 {
 }";
-            DiagnosticResult expected = new DiagnosticResult
+            DiagnosticResult[] expected =
             {
-                Id = DiagnosticIds.SymbolAnalyzerRuleId,
-                Message = string.Format(SymbolAnalyzer.MessageFormat, "BadOne"),
-                Severity = DiagnosticSeverity.Warning,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 2, 7) }
+                Verify.Diagnostic().WithLocation(2, 7).WithArguments("BadOne"),
+                DiagnosticResult.CompilerError("CS0542").WithLocation(4, 17).WithMessage("'BadOne': member names cannot be the same as their enclosing type"),
             };
-
-            VerifyCSharpDiagnostic(test, expected);
+            await Verify.VerifyAnalyzerAsync(test, expected);
         }
-
-        protected override DiagnosticAnalyzer CSharpDiagnosticAnalyzer => new SymbolAnalyzer();
     }
 }

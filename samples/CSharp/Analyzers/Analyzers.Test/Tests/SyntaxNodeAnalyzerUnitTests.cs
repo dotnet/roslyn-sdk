@@ -1,16 +1,16 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using TestHelper;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using Verify = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<Sample.Analyzers.SyntaxNodeAnalyzer>;
 
 namespace Sample.Analyzers.Test
 {
-    public class SyntaxNodeAnalyzerUnitTests : DiagnosticVerifier
+    public class SyntaxNodeAnalyzerUnitTests
     {
         [Fact]
-        public void SyntaxNodeAnalyzerTest()
+        public async Task SyntaxNodeAnalyzerTest()
         {
             string test = @"
 class C
@@ -21,17 +21,8 @@ class C
         int explicitTypedLocal = 1;
     }
 }";
-            DiagnosticResult expected = new DiagnosticResult
-            {
-                Id = DiagnosticIds.SyntaxNodeAnalyzerRuleId,
-                Message = string.Format(SyntaxNodeAnalyzer.MessageFormat, "implicitTypedLocal"),
-                Severity = DiagnosticSeverity.Warning,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 13) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
+            DiagnosticResult expected = Verify.Diagnostic().WithArguments("implicitTypedLocal").WithLocation(6, 13);
+            await Verify.VerifyAnalyzerAsync(test, expected);
         }
-
-        protected override DiagnosticAnalyzer CSharpDiagnosticAnalyzer => new SyntaxNodeAnalyzer();
     }
 }

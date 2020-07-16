@@ -1,19 +1,21 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using TestHelper;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Testing;
+using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Xunit;
+using Verify = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<Sample.Analyzers.CompilationAnalyzer>;
 
 namespace Sample.Analyzers.Test
 {
     public class CompilationAnalyzerUnitTests
-        : DiagnosticVerifier
     {
         [Fact]
-        public void CompilationAnalyzerTest()
+        public async Task CompilationAnalyzerTest()
         {
             string test = @"
 class C
@@ -22,26 +24,49 @@ class C
     {
     }
 }";
-            DiagnosticResult expected = new DiagnosticResult
-            {
-                Id = DiagnosticIds.CompilationAnalyzerRuleId,
-                Message = string.Format(CompilationAnalyzer.MessageFormat, DiagnosticIds.SymbolAnalyzerRuleId),
-                Severity = DiagnosticSeverity.Warning
-            };
 
             KeyValuePair<string, ReportDiagnostic> specificOption =
                 new KeyValuePair<string, ReportDiagnostic>(DiagnosticIds.SymbolAnalyzerRuleId, ReportDiagnostic.Error);
 
-            CSharpCompilationOptions compilationOptions =
-                new CSharpCompilationOptions(OutputKind.ConsoleApplication,
-                                             specificDiagnosticOptions: new[] { specificOption });
-            VerifyCSharpDiagnostic(test, parseOptions: null, compilationOptions: compilationOptions);
+            await new CSharpAnalyzerTest<CompilationAnalyzer, XUnitVerifier>
+            {
+                TestCode = test,
+                ExpectedDiagnostics =
+                {
+                    DiagnosticResult.CompilerError("CS5001").WithMessage("Program does not contain a static 'Main' method suitable for an entry point"),
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        CSharpCompilationOptions options = (CSharpCompilationOptions)solution.GetProject(projectId).CompilationOptions
+                            .WithOutputKind(OutputKind.ConsoleApplication)
+                            .WithSpecificDiagnosticOptions(new[] { specificOption });
+                        return solution.WithProjectCompilationOptions(projectId, options);
+                    },
+                }
+            }.RunAsync();
 
             specificOption = new KeyValuePair<string, ReportDiagnostic>(DiagnosticIds.SymbolAnalyzerRuleId, ReportDiagnostic.Suppress);
-            compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(new[] { specificOption });
-            VerifyCSharpDiagnostic(test, parseOptions: null, compilationOptions: compilationOptions, expected: expected);
+            await new CSharpAnalyzerTest<CompilationAnalyzer, XUnitVerifier>
+            {
+                TestCode = test,
+                ExpectedDiagnostics =
+                {
+                    DiagnosticResult.CompilerError("CS5001").WithMessage("Program does not contain a static 'Main' method suitable for an entry point"),
+                    Verify.Diagnostic().WithArguments(DiagnosticIds.SymbolAnalyzerRuleId),
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        CSharpCompilationOptions options = (CSharpCompilationOptions)solution.GetProject(projectId).CompilationOptions
+                            .WithOutputKind(OutputKind.ConsoleApplication)
+                            .WithSpecificDiagnosticOptions(new[] { specificOption });
+                        return solution.WithProjectCompilationOptions(projectId, options);
+                    },
+                }
+            }.RunAsync();
         }
-
-        protected override DiagnosticAnalyzer CSharpDiagnosticAnalyzer => new CompilationAnalyzer();
     }
 }

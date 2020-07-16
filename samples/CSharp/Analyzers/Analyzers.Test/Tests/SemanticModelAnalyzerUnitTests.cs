@@ -1,17 +1,16 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using TestHelper;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using Verify = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<Sample.Analyzers.SemanticModelAnalyzer>;
 
 namespace Sample.Analyzers.Test
 {
     public class SemanticModelAnalyzerUnitTests
-        : DiagnosticVerifier
     {
         [Fact]
-        public void SemanticModelAnalyzerTest()
+        public async Task SemanticModelAnalyzerTest()
         {
             string test = @"
 class C
@@ -20,16 +19,13 @@ class C
     {
     }
 }";
-            DiagnosticResult expected = new DiagnosticResult
+            DiagnosticResult[] expected =
             {
-                Id = DiagnosticIds.SemanticModelAnalyzerRuleId,
-                Message = string.Format(SemanticModelAnalyzer.MessageFormat, "Test0.cs", 1),
-                Severity = DiagnosticSeverity.Warning
+                Verify.Diagnostic().WithArguments("Test0.cs", 1),
+                DiagnosticResult.CompilerError("CS0161").WithLocation(4, 22).WithMessage("'C.M()': not all code paths return a value"),
+                DiagnosticResult.CompilerError("CS1983").WithLocation(4, 22).WithMessage("The return type of an async method must be void, Task or Task<T>"),
             };
-
-            VerifyCSharpDiagnostic(test, expected);
+            await Verify.VerifyAnalyzerAsync(test, expected);
         }
-
-        protected override DiagnosticAnalyzer CSharpDiagnosticAnalyzer => new SemanticModelAnalyzer();
     }
 }
