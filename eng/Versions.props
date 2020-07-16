@@ -60,7 +60,7 @@
     <!-- Testing -->
     <MicrosoftCodeAnalysis2PrimaryTestVersion>2.6.1</MicrosoftCodeAnalysis2PrimaryTestVersion>
     <MicrosoftCodeAnalysis3PrimaryTestVersion>3.3.1</MicrosoftCodeAnalysis3PrimaryTestVersion>
-    <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.19564.1</MicrosoftCodeAnalysisTestingVersion>
+    <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.20365.2</MicrosoftCodeAnalysisTestingVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <VsixTestingXunitVersion>0.1.49-beta</VsixTestingXunitVersion>
     <!-- Analyzers -->
