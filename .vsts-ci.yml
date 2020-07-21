@@ -86,12 +86,13 @@ stages:
         ArtifactName: 'VSSetup'
       condition: succeeded()
         
-    # Archive NuGet packages to DevOps.
+    # Publish our NuPkgs as an artifact. The name of this artifact must be PackageArtifacts as the 
+    # arcade templates depend on the name.
     - task: PublishBuildArtifacts@1
       displayName: Publish Artifact Packages
       inputs:
         PathtoPublish: 'artifacts\packages\$(BuildConfiguration)'
-        ArtifactName: 'Packages'
+        ArtifactName: 'PackageArtifacts'
       condition: succeeded()
     
     - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
