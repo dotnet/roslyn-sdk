@@ -16,13 +16,14 @@ trigger:
 stages:
 - stage: build
   displayName: Build and Test
-  pool:
-    name: VSEng-MicroBuildVS2017
-    demands: 
-    - cmd
 
   jobs:
-  - job:
+  - job: OfficialBuild
+    displayName: Official Build
+    pool:
+      name: VSEng-MicroBuildVS2017
+      demands: 
+      - cmd
 
     steps:
     - task: ms-vseng.MicroBuildTasks.30666190-6959-11e5-9f96-f56098202fef.MicroBuildSigningPlugin@1
@@ -36,14 +37,25 @@ stages:
       displayName: Install Swix Plugin
     
     - script: eng\common\CIBuild.cmd 
-              -configuration $(BuildConfiguration)
-              /p:OfficialBuildId=$(Build.BuildNumber)
-              /p:VisualStudioDropName=$(VisualStudioDropName)
-              /p:DotNetSignType=$(SignType)
-              /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-              /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+                -configuration $(BuildConfiguration)
+                /p:OfficialBuildId=$(Build.BuildNumber)
+                /p:VisualStudioDropName=$(VisualStudioDropName)
+                /p:DotNetSignType=$(SignType)
+                /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+                /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+                /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory)
+                /p:DotnetPublishUsingPipelines=true
       displayName: Build
-    
+
+    - task: PublishTestResults@1
+      displayName: Publish Test Results
+      inputs:
+        testRunner: XUnit
+        testResultsFiles: 'artifacts/TestResults/$(BuildConfiguration)/*.xml'
+        mergeTestResults: true
+        testRunTitle: 'Unit Tests'
+      condition: always()
+
     - task: NuGetPublisher@0
       displayName: Publish NuGet Packages to MyGet
       inputs:
@@ -69,15 +81,6 @@ stages:
       continueOnError: true
       condition: not(succeeded())
     
-    - task: PublishTestResults@1
-      displayName: Publish Test Results
-      inputs:
-        testRunner: XUnit
-        testResultsFiles: 'artifacts/TestResults/$(BuildConfiguration)/*.xml'
-        mergeTestResults: true
-        testRunTitle: 'Unit Tests'
-      condition: always()
-    
     # Publish an artifact that the RoslynInsertionTool is able to find by its name.
     - task: PublishBuildArtifacts@1
       displayName: Publish Artifact VSSetup
@@ -85,7 +88,7 @@ stages:
         PathtoPublish: 'artifacts\VSSetup\$(BuildConfiguration)'
         ArtifactName: 'VSSetup'
       condition: succeeded()
-        
+      
     # Publish our NuPkgs as an artifact. The name of this artifact must be PackageArtifacts as the 
     # arcade templates depend on the name.
     - task: PublishBuildArtifacts@1
@@ -94,10 +97,27 @@ stages:
         PathtoPublish: 'artifacts\packages\$(BuildConfiguration)'
         ArtifactName: 'PackageArtifacts'
       condition: succeeded()
+      
+    # Publish Asset Manifests for Build Asset Registry job
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Asset Manifests
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)/artifacts/log/$(BuildConfiguration)/AssetManifest'
+        ArtifactName: AssetManifests
+      condition: succeeded()
     
     - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
       displayName: Cleanup
       condition: always()
+
+  # Publish to Build Asset Registry
+  - template: /eng/common/templates/job/publish-build-assets.yml
+    parameters:
+      publishUsingPipelines: true
+      dependsOn:	
+        - OfficialBuild
+      queue:
+        name: Hosted VS2017
 
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - template: eng\common\templates\post-build\post-build.yml
