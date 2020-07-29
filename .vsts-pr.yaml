@@ -1,3 +1,7 @@
+variables:
+  - name: DOTNET_ROOT
+    value: $(Build.SourcesDirectory)\.dotnet
+
 jobs:
 - job: Windows
   pool:
@@ -44,7 +48,7 @@ jobs:
     - task: PublishTestResults@2
       inputs:
         testRunner: 'xUnit'
-        testResultsFiles: '**/*.xml' 
+        testResultsFiles: '**/*.xml'
         searchFolder: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)'
         configuration: '$(_configuration)'
         publishRunAttachments: true
