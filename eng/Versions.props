@@ -11,10 +11,8 @@
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <MicrosoftNetCompilersToolsetVersion>3.7.0-4.20351.2</MicrosoftNetCompilersToolsetVersion>
-
     <!-- Force prior version due to https://github.com/microsoft/vstest/pull/2192 and https://github.com/microsoft/vstest/pull/2067 -->
     <MicrosoftNETTestSdkVersion>16.1.1</MicrosoftNETTestSdkVersion>
-
     <!-- Dependencies -->
     <!-- Roslyn for VS 2019 -->
     <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2019 since the Syntax Visualizer extension still
