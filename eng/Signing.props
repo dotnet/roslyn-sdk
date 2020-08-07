@@ -1,5 +1,5 @@
 <Project>
-
+  <!-- Signing.props is a required file for the signing validation step. -->
   <ItemGroup>
 
   </ItemGroup>
