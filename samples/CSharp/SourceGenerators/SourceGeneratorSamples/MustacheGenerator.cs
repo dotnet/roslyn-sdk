@@ -8,7 +8,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-#nullable enable
+#nullable disable warnings
+#nullable enable annotations
 
 namespace Mustache
 {
@@ -19,7 +20,7 @@ namespace Mustache
         {
             string attributeSource = @"
     [System.AttributeUsage(System.AttributeTargets.Assembly, AllowMultiple=true)]
-    public class MustacheAttribute: System.Attribute
+    internal class MustacheAttribute: System.Attribute
     {
         public string Name { get; }
         public string Template { get; }

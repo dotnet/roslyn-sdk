@@ -7,7 +7,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using NotVisualBasic.FileIO;
 
-#nullable enable
+#nullable disable warnings
+#nullable enable annotations
 
 // CsvTextFileParser from https://github.com/22222/CsvTextFieldParser adding suppression rules for default VS config
 
