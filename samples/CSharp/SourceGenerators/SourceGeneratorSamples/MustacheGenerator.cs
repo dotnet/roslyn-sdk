@@ -19,7 +19,7 @@ namespace Mustache
         {
             string attributeSource = @"
     [System.AttributeUsage(System.AttributeTargets.Assembly, AllowMultiple=true)]
-    public class MustacheAttribute: System.Attribute
+    internal sealed class MustacheAttribute: System.Attribute
     {
         public string Name { get; }
         public string Template { get; }
