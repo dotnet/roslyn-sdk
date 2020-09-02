@@ -1,0 +1,31 @@
+
+
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "???",
+    "classifications": [ "CSharp", "Analyzer" ], 
+    "name": "C# Analyzer",
+    "identity": "Microsoft.CodeAnalysis.Templates.Analyzer.CSharp",         
+    "groupIdentity":"Microsoft.CodeAnalysis.Templates",
+    "shortName": "analyzer",
+    "tags": {
+      "language": "C#",
+      "type":"project"
+    },
+    "sourceName": "MyProject.Analyzer",
+    "preferNameDirectory": true,
+    "symbols":{
+      "includecodefix": {
+          "type": "parameter",
+          "datatype": "bool",
+          "defaultValue": "true"
+      }
+    },
+    "sources":[{
+      "modifiers": [{
+        "condition": "(!includecodefix)",
+        "exclude": [ "MyProject.Analyzer.CodeFixes/**/*"]
+        }
+      ]
+    }]
+  }
