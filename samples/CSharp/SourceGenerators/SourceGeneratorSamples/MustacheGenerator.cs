@@ -15,7 +15,7 @@ namespace Mustache
     [Generator]
     public class MustacheGenerator : ISourceGenerator
     {
-        public void Execute(SourceGeneratorContext context)
+        public void Execute(GeneratorExecutionContext context)
         {
             string attributeSource = @"
     [System.AttributeUsage(System.AttributeTargets.Assembly, AllowMultiple=true)]
@@ -64,7 +64,7 @@ namespace Mustache
                     ExpressionSyntax expr = arg.Expression;
 
                     TypeInfo t = m.GetTypeInfo(expr);
-                    Optional<object> v = m.GetConstantValue(expr);
+                    Optional<object?> v = m.GetConstantValue(expr);
                     if (index == 0)
                     {
                         mustacheName = v.ToString();
@@ -116,7 +116,7 @@ namespace Mustache {{
 
         }
 
-        public void Initialize(InitializationContext context)
+        public void Initialize(GeneratorInitializationContext context)
         {
             // No initialization required
         }
