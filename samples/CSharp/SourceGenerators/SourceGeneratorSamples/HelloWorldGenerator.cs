@@ -9,7 +9,7 @@ namespace SourceGeneratorSamples
     [Generator]
     public class HelloWorldGenerator : ISourceGenerator
     {
-        public void Execute(SourceGeneratorContext context)
+        public void Execute(GeneratorExecutionContext context)
         {
             // begin creating the source we'll inject into the users compilation
             StringBuilder sourceBuilder = new StringBuilder(@"
@@ -43,7 +43,7 @@ namespace HelloWorldGenerated
             context.AddSource("helloWorldGenerated", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
         }
 
-        public void Initialize(InitializationContext context)
+        public void Initialize(GeneratorInitializationContext context)
         {
             // No initialization required
         }

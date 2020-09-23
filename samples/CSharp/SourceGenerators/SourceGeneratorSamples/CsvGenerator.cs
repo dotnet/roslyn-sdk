@@ -151,7 +151,7 @@ namespace CSV {
         static IEnumerable<(string, string)> SourceFilesFromAdditionalFiles(IEnumerable<(CsvLoadType loadTime, bool cacheObjects, AdditionalText file)> pathsData)
             => pathsData.SelectMany(d => SourceFilesFromAdditionalFile(d.loadTime, d.cacheObjects, d.file));
 
-        static IEnumerable<(CsvLoadType, bool, AdditionalText)> GetLoadOptions(SourceGeneratorContext context)
+        static IEnumerable<(CsvLoadType, bool, AdditionalText)> GetLoadOptions(GeneratorExecutionContext context)
         {
             foreach (AdditionalText file in context.AdditionalFiles)
             {
@@ -169,7 +169,7 @@ namespace CSV {
             }
         }
 
-        public void Execute(SourceGeneratorContext context)
+        public void Execute(GeneratorExecutionContext context)
         {
             IEnumerable<(CsvLoadType, bool, AdditionalText)> options = GetLoadOptions(context);
             IEnumerable<(string, string)> nameCodeSequence = SourceFilesFromAdditionalFiles(options);
@@ -177,7 +177,7 @@ namespace CSV {
                 context.AddSource($"Csv_{name}", SourceText.From(code, Encoding.UTF8));
         }
 
-        public void Initialize(InitializationContext context)
+        public void Initialize(GeneratorInitializationContext context)
         {
         }
     }
