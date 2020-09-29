@@ -1,6 +1,6 @@
 resources:
 - repo: self
-  clean: true 
+  clean: true
 
 # The variables `_DotNetArtifactsCategory` and `_DotNetValidationArtifactsCategory` are required for proper publishing of build artifacts. See https://github.com/dotnet/roslyn/pull/38259
 variables:
@@ -22,7 +22,7 @@ stages:
     displayName: Official Build
     pool:
       name: VSEng-MicroBuildVS2017
-      demands: 
+      demands:
       - cmd
 
     steps:
@@ -32,11 +32,11 @@ stages:
         signType: $(SignType)
         esrpSigning: true
       condition: and(succeeded(), ne(variables['SignType'], ''))
-    
+
     - task: ms-vseng.MicroBuildTasks.32f78468-e895-4f47-962c-58a699361df8.MicroBuildSwixPlugin@1
       displayName: Install Swix Plugin
-    
-    - script: eng\common\CIBuild.cmd 
+
+    - script: eng\common\CIBuild.cmd
                 -configuration $(BuildConfiguration)
                 /p:OfficialBuildId=$(Build.BuildNumber)
                 /p:VisualStudioDropName=$(VisualStudioDropName)
@@ -56,14 +56,6 @@ stages:
         testRunTitle: 'Unit Tests'
       condition: always()
 
-    - task: NuGetPublisher@0
-      displayName: Publish NuGet Packages to MyGet
-      inputs:
-        searchPattern: 'artifacts\packages\$(BuildConfiguration)\Shipping\*.nupkg'
-        connectedServiceName: 'RoslynSdk - NuGet feed'
-        nuGetVersion: 4.0.0.2283
-      condition: succeeded()
-    
     # Publishes setup VSIXes to a drop.
     # Note: The insertion tool looks for the display name of this task in the logs.
     - task: ms-vseng.MicroBuildTasks.4305a8de-ba66-4d8b-b2d1-0dc4ecbbf5e8.MicroBuildUploadVstsDropFolder@1
@@ -72,7 +64,7 @@ stages:
         DropName: $(VisualStudioDropName)
         DropFolder: 'artifacts\VSSetup\$(BuildConfiguration)\Insertion'
         condition: succeeded()
-    
+
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs
       inputs:
@@ -80,7 +72,7 @@ stages:
         ArtifactName: 'Logs'
       continueOnError: true
       condition: not(succeeded())
-    
+
     # Publish an artifact that the RoslynInsertionTool is able to find by its name.
     - task: PublishBuildArtifacts@1
       displayName: Publish Artifact VSSetup
@@ -88,8 +80,8 @@ stages:
         PathtoPublish: 'artifacts\VSSetup\$(BuildConfiguration)'
         ArtifactName: 'VSSetup'
       condition: succeeded()
-      
-    # Publish our NuPkgs as an artifact. The name of this artifact must be PackageArtifacts as the 
+
+    # Publish our NuPkgs as an artifact. The name of this artifact must be PackageArtifacts as the
     # arcade templates depend on the name.
     - task: PublishBuildArtifacts@1
       displayName: Publish Artifact Packages
@@ -97,7 +89,7 @@ stages:
         PathtoPublish: 'artifacts\packages\$(BuildConfiguration)'
         ArtifactName: 'PackageArtifacts'
       condition: succeeded()
-      
+
     # Publish Asset Manifests for Build Asset Registry job
     - task: PublishBuildArtifacts@1
       displayName: Publish Asset Manifests
@@ -105,7 +97,7 @@ stages:
         PathtoPublish: '$(Build.SourcesDirectory)/artifacts/log/$(BuildConfiguration)/AssetManifest'
         ArtifactName: AssetManifests
       condition: succeeded()
-    
+
     - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
       displayName: Cleanup
       condition: always()
@@ -114,7 +106,7 @@ stages:
   - template: /eng/common/templates/job/publish-build-assets.yml
     parameters:
       publishUsingPipelines: true
-      dependsOn:	
+      dependsOn:
         - OfficialBuild
       queue:
         name: Hosted VS2017
