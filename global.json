@@ -1,4 +1,9 @@
 {
+  "sdk": {
+    "version": "5.0.100-rc.1.20452.10",
+    "allowPrerelease": true,
+    "rollForward": "major"
+  },
   "tools": {
     "dotnet": "5.0.100-rc.1.20452.10",
     "runtimes": {
@@ -7,9 +12,9 @@
       ]
     },
     "vs": {
-      "version": "16.6"
+      "version": "16.8"
     },
-    "xcopy-msbuild": "16.6.5-alpha1"
+    "xcopy-msbuild": "16.8.0-preview2.1"
   },
   "msbuild-sdks": {
     "Microsoft.DotNet.Arcade.Sdk": "5.0.0-beta.20478.3"
