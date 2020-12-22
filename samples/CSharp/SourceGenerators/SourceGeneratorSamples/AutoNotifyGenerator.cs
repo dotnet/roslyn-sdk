@@ -4,15 +4,17 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.VisualBasic;
+using CSharpSyntax = Microsoft.CodeAnalysis.CSharp.Syntax;
+using VisualBasicSyntax = Microsoft.CodeAnalysis.VisualBasic.Syntax;
 
 namespace SourceGeneratorSamples
 {
-    [Generator]
+    [Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class AutoNotifyGenerator : ISourceGenerator
     {
-        private const string attributeText = @"
+        private const string attributeTextCSharp = @"
 using System;
 namespace AutoNotify
 {
@@ -26,6 +28,21 @@ namespace AutoNotify
     }
 }
 ";
+        private const string attributeTextVisualBasic = @"
+Imports System
+
+Namespace Global.AutoNotify
+    <AttributeUsage(AttributeTargets.Field, Inherited:=False, AllowMultiple:=False)>
+    Friend NotInheritable Class AutoNotifyAttribute
+        Inherits Attribute
+
+        Public Sub New()
+        End Sub
+
+        Public Property PropertyName As String
+    End Class
+End Namespace
+";
 
         public void Initialize(GeneratorInitializationContext context)
         {
@@ -36,7 +53,7 @@ namespace AutoNotify
         public void Execute(GeneratorExecutionContext context)
         {
             // add the attribute text
-            context.AddSource("AutoNotifyAttribute", SourceText.From(attributeText, Encoding.UTF8));
+            context.AddSource("AutoNotifyAttribute", SourceText.From(context.Compilation.Language == LanguageNames.CSharp ? attributeTextCSharp : attributeTextVisualBasic, Encoding.UTF8));
 
             // retreive the populated receiver 
             if (!(context.SyntaxReceiver is SyntaxReceiver receiver))
@@ -44,8 +61,11 @@ namespace AutoNotify
 
             // we're going to create a new compilation that contains the attribute.
             // TODO: we should allow source generators to provide source during initialize, so that this step isn't required.
-            CSharpParseOptions options = (context.Compilation as CSharpCompilation).SyntaxTrees[0].Options as CSharpParseOptions;
-            Compilation compilation = context.Compilation.AddSyntaxTrees(CSharpSyntaxTree.ParseText(SourceText.From(attributeText, Encoding.UTF8), options));
+            ParseOptions options = context.Compilation.SyntaxTrees.First().Options;
+            Compilation compilation = context.Compilation.AddSyntaxTrees(
+                context.Compilation.Language == LanguageNames.CSharp
+                ? CSharpSyntaxTree.ParseText(SourceText.From(attributeTextCSharp, Encoding.UTF8), (CSharpParseOptions)options)
+                : VisualBasicSyntaxTree.ParseText(SourceText.From(attributeTextVisualBasic, Encoding.UTF8), (VisualBasicParseOptions)options));
 
             // get the newly bound attribute, and INotifyPropertyChanged
             INamedTypeSymbol attributeSymbol = compilation.GetTypeByMetadataName("AutoNotify.AutoNotifyAttribute");
@@ -53,10 +73,10 @@ namespace AutoNotify
 
             // loop over the candidate fields, and keep the ones that are actually annotated
             List<IFieldSymbol> fieldSymbols = new List<IFieldSymbol>();
-            foreach (FieldDeclarationSyntax field in receiver.CandidateFields)
+            foreach (CSharpSyntax.FieldDeclarationSyntax field in receiver.CSharpCandidateFields)
             {
                 SemanticModel model = compilation.GetSemanticModel(field.SyntaxTree);
-                foreach (VariableDeclaratorSyntax variable in field.Declaration.Variables)
+                foreach (CSharpSyntax.VariableDeclaratorSyntax variable in field.Declaration.Variables)
                 {
                     // Get the symbol being decleared by the field, and keep it if its annotated
                     IFieldSymbol fieldSymbol = model.GetDeclaredSymbol(variable) as IFieldSymbol;
@@ -67,11 +87,29 @@ namespace AutoNotify
                 }
             }
 
+            foreach (VisualBasicSyntax.FieldDeclarationSyntax field in receiver.VisualBasicCandidateFields)
+            {
+                SemanticModel model = compilation.GetSemanticModel(field.SyntaxTree);
+                foreach (VisualBasicSyntax.VariableDeclaratorSyntax variable in field.Declarators)
+                {
+                    foreach (VisualBasicSyntax.ModifiedIdentifierSyntax name in variable.Names)
+                    {
+                        // Get the symbol being decleared by the field, and keep it if its annotated
+                        IFieldSymbol fieldSymbol = model.GetDeclaredSymbol(name) as IFieldSymbol;
+                        if (fieldSymbol.GetAttributes().Any(ad => ad.AttributeClass.Equals(attributeSymbol, SymbolEqualityComparer.Default)))
+                        {
+                            fieldSymbols.Add(fieldSymbol);
+                        }
+                    }
+                }
+            }
+
             // group the fields by class, and generate the source
             foreach (IGrouping<INamedTypeSymbol, IFieldSymbol> group in fieldSymbols.GroupBy(f => f.ContainingType))
             {
                 string classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
-               context.AddSource($"{group.Key.Name}_autoNotify.cs", SourceText.From(classSource, Encoding.UTF8));
+                string extension = compilation.Language == LanguageNames.CSharp ? "cs" : "vb";
+                context.AddSource($"{group.Key.Name}_autoNotify.{extension}", SourceText.From(classSource, Encoding.UTF8));
             }
         }
 
@@ -85,30 +123,60 @@ namespace AutoNotify
             string namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
 
             // begin building the generated source
-            StringBuilder source = new StringBuilder($@"
+            StringBuilder source;
+            if (context.Compilation.Language == LanguageNames.CSharp)
+            {
+                source = new StringBuilder($@"
 namespace {namespaceName}
 {{
     public partial class {classSymbol.Name} : {notifySymbol.ToDisplayString()}
     {{
 ");
+            }
+            else
+            {
+                source = new StringBuilder($@"
+Namespace Global.{namespaceName}
+    Partial Public Class {classSymbol.Name}
+        Implements {notifySymbol.ToDisplayString()}
+");
+            }
 
             // if the class doesn't implement INotifyPropertyChanged already, add it
             if (!classSymbol.Interfaces.Contains(notifySymbol))
             {
-                source.Append("public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;");
+                if (context.Compilation.Language == LanguageNames.CSharp)
+                {
+                    source.Append("public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;");
+                }
+                else
+                {
+                    source.Append("Public Event PropertyChanged As System.ComponentModel.PropertyChangedEventHandler Implements System.ComponentModel.INotifyPropertyChanged.PropertyChanged");
+                }
             }
 
             // create properties for each field 
             foreach (IFieldSymbol fieldSymbol in fields)
             {
-                ProcessField(source, fieldSymbol, attributeSymbol);
+                ProcessField(source, context.Compilation.Language, fieldSymbol, attributeSymbol);
             }
 
-            source.Append("} }");
+            if (context.Compilation.Language == LanguageNames.CSharp)
+            {
+                source.Append("} }");
+            }
+            else
+            {
+                source.Append(@"
+    End Class
+End Namespace
+");
+            }
+
             return source.ToString();
         }
 
-        private void ProcessField(StringBuilder source, IFieldSymbol fieldSymbol, ISymbol attributeSymbol)
+        private void ProcessField(StringBuilder source, string language, IFieldSymbol fieldSymbol, ISymbol attributeSymbol)
         {
             // get the name and type of the field
             string fieldName = fieldSymbol.Name;
@@ -125,10 +193,12 @@ namespace {namespaceName}
                 return;
             }
 
-            source.Append($@"
-public {fieldType} {propertyName} 
+            if (language == LanguageNames.CSharp)
+            {
+                source.Append($@"
+public {fieldType} {propertyName}
 {{
-    get 
+    get
     {{
         return this.{fieldName};
     }}
@@ -141,6 +211,23 @@ public {fieldType} {propertyName}
 }}
 
 ");
+            }
+            else
+            {
+                source.Append($@"
+Public Property {propertyName} As {fieldType}
+    Get
+        Return Me.{fieldName}
+    End Get
+
+    Set(value As {fieldType})
+        Me.{fieldName} = value
+        RaiseEvent PropertyChanged(Me, New System.ComponentModel.PropertyChangedEventArgs(NameOf({propertyName})))
+    End Set
+End Property
+
+");
+            }
 
             string chooseName(string fieldName, TypedConstant overridenNameOpt)
             {
@@ -166,7 +253,9 @@ public {fieldType} {propertyName}
         /// </summary>
         class SyntaxReceiver : ISyntaxReceiver
         {
-            public List<FieldDeclarationSyntax> CandidateFields { get; } = new List<FieldDeclarationSyntax>();
+            public List<CSharpSyntax.FieldDeclarationSyntax> CSharpCandidateFields { get; } = new List<CSharpSyntax.FieldDeclarationSyntax>();
+
+            public List<VisualBasicSyntax.FieldDeclarationSyntax> VisualBasicCandidateFields { get; } = new List<VisualBasicSyntax.FieldDeclarationSyntax>();
 
             /// <summary>
             /// Called for every syntax node in the compilation, we can inspect the nodes and save any information useful for generation
@@ -174,10 +263,15 @@ public {fieldType} {propertyName}
             public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
             {
                 // any field with at least one attribute is a candidate for property generation
-                if (syntaxNode is FieldDeclarationSyntax fieldDeclarationSyntax
-                    && fieldDeclarationSyntax.AttributeLists.Count > 0)
+                if (syntaxNode is CSharpSyntax.FieldDeclarationSyntax csharpFieldDeclarationSyntax
+                    && csharpFieldDeclarationSyntax.AttributeLists.Count > 0)
                 {
-                    CandidateFields.Add(fieldDeclarationSyntax);
+                    CSharpCandidateFields.Add(csharpFieldDeclarationSyntax);
+                }
+                else if (syntaxNode is VisualBasicSyntax.FieldDeclarationSyntax visualBasicFieldDeclarationSyntax
+                    && visualBasicFieldDeclarationSyntax.AttributeLists.Count > 0)
+                {
+                    VisualBasicCandidateFields.Add(visualBasicFieldDeclarationSyntax);
                 }
             }
         }

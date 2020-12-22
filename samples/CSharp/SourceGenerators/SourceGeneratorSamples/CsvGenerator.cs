@@ -13,7 +13,7 @@ using NotVisualBasic.FileIO;
 
 namespace CsvGenerator
 {
-    [Generator]
+    [Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class CSVGenerator : ISourceGenerator
     {
         public enum CsvLoadType
@@ -23,12 +23,17 @@ namespace CsvGenerator
         }
 
         // Guesses type of property for the object from the value of a csv field
-        public static string GetCsvFieldType(string exemplar) => exemplar switch
+        public static string GetCsvFieldType(string exemplar, string languageName) => (exemplar, languageName) switch
         {
-            _ when bool.TryParse(exemplar, out _) => "bool",
-            _ when int.TryParse(exemplar, out _) => "int",
-            _ when double.TryParse(exemplar, out _) => "double",
-            _ => "string"
+            (_, LanguageNames.CSharp) when bool.TryParse(exemplar, out _) => "bool",
+            (_, LanguageNames.CSharp) when int.TryParse(exemplar, out _) => "int",
+            (_, LanguageNames.CSharp) when double.TryParse(exemplar, out _) => "double",
+            (_, LanguageNames.CSharp) => "string",
+            (_, LanguageNames.VisualBasic) when bool.TryParse(exemplar, out _) => "Boolean",
+            (_, LanguageNames.VisualBasic) when int.TryParse(exemplar, out _) => "Integer",
+            (_, LanguageNames.VisualBasic) when double.TryParse(exemplar, out _) => "Double",
+            (_, LanguageNames.VisualBasic) => "String",
+            _ => throw new NotSupportedException(),
         };
 
         // Examines the header row and the first row in the csv file to gather all header types and names
@@ -36,7 +41,7 @@ namespace CsvGenerator
         // As the CsvTextFieldParser cannot 'Peek' ahead of one line. If there is no first line,
         // it consider all properties as strings. The generator returns an empty list of properly
         // typed objects in such cas. If the file is completely empty, an error is generated.
-        public static (string[], string[], string[]?) ExtractProperties(CsvTextFieldParser parser)
+        public static (string[], string[], string[]?) ExtractProperties(CsvTextFieldParser parser, string languageName)
         {
             string[]? headerFields = parser.ReadFields();
             if (headerFields == null) throw new Exception("Empty csv file!");
@@ -44,11 +49,12 @@ namespace CsvGenerator
             string[]? firstLineFields = parser.ReadFields();
             if (firstLineFields == null)
             {
-                return (Enumerable.Repeat("string", headerFields.Length).ToArray(), headerFields, firstLineFields);
+                string fieldType = languageName == LanguageNames.CSharp ? "string" : "String";
+                return (Enumerable.Repeat(fieldType, headerFields.Length).ToArray(), headerFields, firstLineFields);
             }
             else
             {
-                return (firstLineFields.Select(GetCsvFieldType).ToArray(), headerFields.Select(StringToValidPropertyName).ToArray(), firstLineFields);
+                return (firstLineFields.Select(field => GetCsvFieldType(field, languageName)).ToArray(), headerFields.Select(StringToValidPropertyName).ToArray(), firstLineFields);
             }
         }
 
@@ -56,52 +62,118 @@ namespace CsvGenerator
         // named `All` that returns the list of strongly typed objects generated on demand at first access.
         // There is the slight chance of a race condition in a multi-thread program, but the result is relatively benign
         // , loading the collection multiple times instead of once. Measures could be taken to avoid that.
-        public static string GenerateClassFile(string className, string csvText, CsvLoadType loadTime, bool cacheObjects)
+        public static string GenerateClassFile(string languageName, string className, string csvText, CsvLoadType loadTime, bool cacheObjects)
         {
             StringBuilder sb = new StringBuilder();
             using CsvTextFieldParser parser = new CsvTextFieldParser(new StringReader(csvText));
 
             //// Usings
-            sb.Append(@"
+            if (languageName == LanguageNames.CSharp)
+            {
+                sb.Append(@"
 #nullable enable
 namespace CSV {
     using System.Collections.Generic;
 
 ");
+            }
+            else
+            {
+                sb.Append(@"
+Imports System.Collections.Generic
+Namespace Global.CSV
+");
+            }
+
             //// Class Definition
-            sb.Append($"    public class {className} {{\n");
+            if (languageName == LanguageNames.CSharp)
+            {
+                sb.Append($"    public class {className} {{\n");
+            }
+            else
+            {
+                sb.Append($@"    Public Class {className}
+");
+            }
 
 
             if (loadTime == CsvLoadType.Startup)
             {
-                sb.Append(@$"
+                if (languageName == LanguageNames.CSharp)
+                {
+                    sb.Append(@$"
         static {className}() {{ var x = All; }}
 ");
+                }
+                else
+                {
+                    sb.Append(@$"
+        Shared Sub New()
+            Dim x = All
+        End Sub
+");
+                }
             }
-            (string[] types, string[] names, string[]? fields) = ExtractProperties(parser);
+
+            (string[] types, string[] names, string[]? fields) = ExtractProperties(parser, languageName);
             int minLen = Math.Min(types.Length, names.Length);
 
             for (int i = 0; i < minLen; i++)
             {
-                sb.AppendLine($"        public {types[i]} {StringToValidPropertyName(names[i])} {{ get; set;}} = default!;");
+                if (languageName == LanguageNames.CSharp)
+                {
+                    sb.AppendLine($@"        public {types[i]} {StringToValidPropertyName(names[i])} {{ get; set;}} = default!;
+");
+                }
+                else
+                {
+                    sb.AppendLine($@"        Public Property {StringToValidPropertyName(names[i])} As {types[i]}
+");
+                }
             }
-            sb.Append("\n");
 
             //// Loading data
-            sb.AppendLine($"        static IEnumerable<{className}>? _all = null;");
-            sb.Append($@"
+            if (languageName == LanguageNames.CSharp)
+            {
+                sb.Append($@"        static IEnumerable<{className}>? _all = null;
+
         public static IEnumerable<{className}> All {{
             get {{");
 
-            if (cacheObjects) sb.Append(@"
+                if (cacheObjects)
+                {
+                    sb.Append(@"
                 if(_all != null)
                     return _all;
 ");
-            sb.Append(@$"
+                }
 
+                sb.Append(@$"
                 List<{className}> l = new List<{className}>();
                 {className} c;
 ");
+            }
+            else
+            {
+                sb.Append($@"        Private Shared _all As IEnumerable(Of {className})
+
+        Public Shared ReadOnly Property All As IEnumerable(Of {className})
+            Get");
+
+                if (cacheObjects)
+                {
+                    sb.Append(@"
+                If _all IsNot Nothing Then
+                    Return _all
+                End If
+");
+                }
+
+                sb.Append(@$"
+                Dim l As New List(Of {className})()
+                Dim c As {className}
+");
+            }
 
             // This awkwardness comes from having to pre-read one row to figure out the types of props.
             do
@@ -109,24 +181,75 @@ namespace CSV {
                 if (fields == null) continue;
                 if (fields.Length < minLen) throw new Exception("Not enough fields in CSV file.");
 
-                sb.AppendLine($"                c = new {className}();");
+                if (languageName == LanguageNames.CSharp)
+                {
+                    sb.AppendLine($"                c = new {className}();");
+                }
+                else
+                {
+                    sb.AppendLine($"                c = New {className}()");
+                }
+
                 string value = "";
                 for (int i = 0; i < minLen; i++)
                 {
-                    // Wrap strings in quotes.
-                    value = GetCsvFieldType(fields[i]) == "string" ? $"\"{fields[i].Trim().Trim(new char[] { '"' })}\"" : fields[i];
-                    sb.AppendLine($"                c.{names[i]} = {value};");
+                    if (languageName == LanguageNames.CSharp)
+                    {
+                        // Wrap strings in quotes.
+                        value = GetCsvFieldType(fields[i], languageName) == "string" ? $"\"{fields[i].Trim().Trim(new char[] { '"' })}\"" : fields[i];
+                        sb.AppendLine($"                c.{names[i]} = {value};");
+                    }
+                    else
+                    {
+                        // Wrap strings in quotes.
+                        value = GetCsvFieldType(fields[i], languageName) == "String" ? $"\"{fields[i].Trim().Trim(new char[] { '"' })}\"" : fields[i];
+                        sb.AppendLine($"                c.{names[i]} = {value}");
+                    }
                 }
-                sb.AppendLine("                l.Add(c);");
+
+                if (languageName == LanguageNames.CSharp)
+                {
+                    sb.AppendLine("                l.Add(c);");
+                }
+                else
+                {
+                    sb.AppendLine("                l.Add(c)");
+                }
 
                 fields = parser.ReadFields();
             } while (!(fields == null));
 
-            sb.AppendLine("                _all = l;");
-            sb.AppendLine("                return l;");
+            if (languageName == LanguageNames.CSharp)
+            {
+                sb.Append($@"                _all = l;
+                return l;
+");
+            }
+            else
+            {
+                sb.Append($@"                _all = l
+                Return l
+");
+            }
 
             // Close things (property, class, namespace)
-            sb.Append("            }\n        }\n    }\n}\n");
+            if (languageName == LanguageNames.CSharp)
+            {
+                sb.Append(@"            }
+        }
+    }
+}
+");
+            }
+            else
+            {
+                sb.Append(@"            End Get
+        End Property
+    End Class
+End Namespace
+");
+            }
+
             return sb.ToString();
 
         }
@@ -141,15 +264,15 @@ namespace CSV {
             return s;
         }
 
-        static IEnumerable<(string, string)> SourceFilesFromAdditionalFile(CsvLoadType loadTime, bool cacheObjects, AdditionalText file)
+        static IEnumerable<(string, string)> SourceFilesFromAdditionalFile(string languageName, CsvLoadType loadTime, bool cacheObjects, AdditionalText file)
         {
             string className = Path.GetFileNameWithoutExtension(file.Path);
             string csvText = file.GetText()!.ToString();
-            return new (string, string)[] { (className, GenerateClassFile(className, csvText, loadTime, cacheObjects)) };
+            return new (string, string)[] { (className, GenerateClassFile(languageName, className, csvText, loadTime, cacheObjects)) };
         }
 
-        static IEnumerable<(string, string)> SourceFilesFromAdditionalFiles(IEnumerable<(CsvLoadType loadTime, bool cacheObjects, AdditionalText file)> pathsData)
-            => pathsData.SelectMany(d => SourceFilesFromAdditionalFile(d.loadTime, d.cacheObjects, d.file));
+        static IEnumerable<(string, string)> SourceFilesFromAdditionalFiles(string languageName, IEnumerable<(CsvLoadType loadTime, bool cacheObjects, AdditionalText file)> pathsData)
+            => pathsData.SelectMany(d => SourceFilesFromAdditionalFile(languageName, d.loadTime, d.cacheObjects, d.file));
 
         static IEnumerable<(CsvLoadType, bool, AdditionalText)> GetLoadOptions(GeneratorExecutionContext context)
         {
@@ -172,7 +295,7 @@ namespace CSV {
         public void Execute(GeneratorExecutionContext context)
         {
             IEnumerable<(CsvLoadType, bool, AdditionalText)> options = GetLoadOptions(context);
-            IEnumerable<(string, string)> nameCodeSequence = SourceFilesFromAdditionalFiles(options);
+            IEnumerable<(string, string)> nameCodeSequence = SourceFilesFromAdditionalFiles(context.Compilation.Language, options);
             foreach ((string name, string code) in nameCodeSequence)
                 context.AddSource($"Csv_{name}", SourceText.From(code, Encoding.UTF8));
         }

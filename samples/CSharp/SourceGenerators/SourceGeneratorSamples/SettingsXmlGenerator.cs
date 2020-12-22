@@ -9,18 +9,9 @@ using System.Xml;
 
 namespace Analyzer1
 {
-    [Generator]
+    [Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class SettingsXmlGenerator : ISourceGenerator
     {
-        private const string SettingsFileString = @"
-namespace XmlSettings
-{
-    public partial class XmlSettings
-    {
-        
-    }
-}
-";
         public void Execute(GeneratorExecutionContext context)
         {
             // Using the context, get any additional files that end in .xmlsettings
@@ -51,7 +42,10 @@ namespace XmlSettings
             string fileName = Path.GetFileName(xmlFile.Path);
             string name = xmlDoc.DocumentElement.GetAttribute("name");
 
-            StringBuilder sb = new StringBuilder($@"
+            StringBuilder sb;
+            if (context.Compilation.Language == LanguageNames.CSharp)
+            {
+                sb = new StringBuilder($@"
 namespace AutoSettings
 {{
     using System;
@@ -59,24 +53,51 @@ namespace AutoSettings
 
     public partial class XmlSettings
     {{
-        
+
         public static {name}Settings {name} {{ get; }} = new {name}Settings(""{fileName}"");
 
-        public class {name}Settings 
+        public class {name}Settings
         {{
-            
+
             XmlDocument xmlDoc = new XmlDocument();
 
             private string fileName;
 
             public string GetLocation() => fileName;
-                
+
             internal {name}Settings(string fileName)
             {{
                 this.fileName = fileName;
                 xmlDoc.Load(fileName);
             }}
 ");
+            }
+            else
+            {
+                sb = new StringBuilder($@"
+Imports System
+Imports System.Xml
+
+Namespace Global.AutoSettings
+    Partial Public Class XmlSettings
+
+        Public Shared ReadOnly Property {name} As {name}Settings = New {name}Settings(""{fileName}"")
+
+        Public Class {name}Settings
+            Private xmlDoc As New XmlDocument()
+
+            Private fileName As String
+
+            Public Function GetLocation() As String
+                Return fileName
+            End Function
+
+            Friend Sub New(fileName As String)
+                Me.fileName = fileName
+                xmlDoc.Load(fileName)
+            End Sub
+");
+            }
 
             for(int i = 0; i < xmlDoc.DocumentElement.ChildNodes.Count; i++)
             {
@@ -84,7 +105,9 @@ namespace AutoSettings
                 string settingName = setting.GetAttribute("name");
                 string settingType = setting.GetAttribute("type");
 
-                sb.Append($@"
+                if (context.Compilation.Language == LanguageNames.CSharp)
+                {
+                    sb.Append($@"
 
 public {settingType} {settingName}
 {{
@@ -94,9 +117,36 @@ public {settingType} {settingName}
     }}
 }}
 ");
+                }
+                else
+                {
+                    sb.Append($@"
+
+Public ReadOnly Property {settingName} As {settingType}
+    Get
+        Return DirectCast(Convert.ChangeType(DirectCast(xmlDoc.DocumentElement.ChildNodes({i}), XmlElement).InnerText, GetType({settingType})), {settingType})
+    End Get
+End Property
+");
+                }
             }
 
-            sb.Append("} } }");
+            if (context.Compilation.Language == LanguageNames.CSharp)
+            {
+                sb.Append(@"
+        }
+    }
+}
+");
+            }
+            else
+            {
+                sb.Append(@"
+        End Class
+    End Class
+End Namespace
+");
+            }
 
             context.AddSource($"Settings_{name}", SourceText.From(sb.ToString(), Encoding.UTF8));
         }

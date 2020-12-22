@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using static System.Console;
-using Mustache;
+﻿using static System.Console;
 using static GeneratedDemo.UseMustacheGenerator;
 
 [assembly: Mustache("Lottery", t1, h1)]
