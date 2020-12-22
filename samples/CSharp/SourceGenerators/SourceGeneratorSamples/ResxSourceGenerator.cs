@@ -16,12 +16,12 @@ namespace SourceGeneratorSamples
     [Generator]
     public class ResxSourceGenerator : ISourceGenerator
     {
-        public void Initialize(InitializationContext context)
+        public void Initialize(GeneratorInitializationContext context)
         {
             //Debugger.Launch();
         }
 
-        public void Execute(SourceGeneratorContext context)
+        public void Execute(GeneratorExecutionContext context)
         {
             IEnumerable<AdditionalText> resourceFiles = context.AdditionalFiles.Where(file => file.Path.EndsWith(".resx", StringComparison.OrdinalIgnoreCase));
             foreach (AdditionalText resourceFile in resourceFiles)
@@ -40,7 +40,7 @@ namespace SourceGeneratorSamples
             }
         }
 
-        private void ProcessResourceFile(SourceGeneratorContext context, AdditionalText resourceFile)
+        private void ProcessResourceFile(GeneratorExecutionContext context, AdditionalText resourceFile)
         {
             AnalyzerConfigOptions options = context.AnalyzerConfigOptions.GetOptions(resourceFile);
 
@@ -186,7 +186,7 @@ namespace SourceGeneratorSamples
                 OutputText = SourceText.From(result, Encoding.UTF8, SourceHashAlgorithm.Sha256);
             }
 
-            public bool Execute(SourceGeneratorContext context)
+            public bool Execute(GeneratorExecutionContext context)
             {
                 Lang language;
                 switch (Language)
