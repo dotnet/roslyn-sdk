@@ -1,0 +1,6 @@
+﻿AreaRectangle(w, h) = w * h
+AreaSquare(l)       = AreaRectangle(l,l)
+AreaCircle(r)       = pi * r * r
+Quadratic(a, b, c)  = {-b + sqrt(pow(b,2) - 4 * a * c)} / (2 * a)
+
+PointDist(x', x'', y', y'')     = sqrt(pow([x'-x''],2) + pow([y'-y''], 2))

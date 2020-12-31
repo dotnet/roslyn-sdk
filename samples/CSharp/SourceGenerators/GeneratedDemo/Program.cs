@@ -21,6 +21,9 @@ namespace GeneratedDemo
 
             Console.WriteLine("\n\nRunning MustacheGenerator:\n");
             UseMustacheGenerator.Run();
+
+            Console.WriteLine("\n\nRunning MathsGenerator:\n");
+            UseMathsGenerator.Run();
         }
     }
 }
