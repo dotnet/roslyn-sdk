@@ -25,6 +25,7 @@ namespace MathsGenerator {
         EOF,
         Spaces,
         Comma,
+        Sum,
         None
     }
 
@@ -52,7 +53,8 @@ namespace MathsGenerator {
             (TokenType.OpenParens,  @"[([{]"),
             (TokenType.CloseParens, @"[)\]}]"),
             (TokenType.Equal,       @"="),
-            (TokenType.Comma,       @",")
+            (TokenType.Comma,       @","),
+            (TokenType.Sum,         @"∑")
         };
 
         static IEnumerable<(TokenType, Regex)> tokenExpressions =
@@ -118,9 +120,10 @@ namespace MathsGenerator {
         args    = identifier {comma identifier}
         expr    = [plus|minus] term { (plus|minus) term }
         term    = factor { (times|divide) factor };
-        factor  = number | var | func | matrix | lround expr rround;
+        factor  = number | var | func | sum | matrix | lround expr rround;
         var     = identifier;
         func    = identifier lround expr {comma expr} rround;
+        sum     = ∑ lround identifier comma expr comma expr comma expr rround;
     */
     public static class Parser {
 
@@ -145,6 +148,7 @@ namespace MathsGenerator {
 
         private readonly static string Preamble = @"
 using static System.Math;
+using static ___MathLibrary___.Formulas;
 
 namespace Maths {
 
@@ -192,7 +196,7 @@ namespace Maths {
                 }
                 return ctx.buffer.Append(id);
             } else {
-                throw new Exception($"{token.Value} not a known function.");
+                throw new Exception($"{token.Value} not a known identifier or function.");
             }
         }
 
@@ -208,6 +212,7 @@ namespace Maths {
             TokenType.Identifier    => EmitIdentifier(ctx, token),
             TokenType.Number        => ctx.buffer.Append(token.Value),
             TokenType.Operation     => ctx.buffer.Append(token.Value),
+            TokenType.Sum           => ctx.buffer.Append("___MySum___"),
             _                       => Error(token, TokenType.None)
         };
 
@@ -217,11 +222,15 @@ namespace Maths {
             return (token.Type == type && value == "") ||
                (token.Type == type && value == token.Value);
         }
-        private static void Consume(Context ctx, TokenType type, string value = "") {
+        private static Token NextToken(Context ctx) {
 
             var token = ctx.tokens.Current;
+            ctx.tokens.MoveNext();
+            return token;
+        }
+        private static void Consume(Context ctx, TokenType type, string value = "") {
 
-            var moreTokens = ctx.tokens.MoveNext();
+            var token = NextToken(ctx);
 
             if((token.Type == type && value == "") ||
                (token.Type == type && value == token.Value)) {
@@ -351,10 +360,38 @@ namespace Maths {
                 }
                 return;
             }
+            if(Peek(ctx, TokenType.Sum)) {
+                Sum(ctx);
+                return;
+            }
             // Must be a parenthesized expression
             Consume(ctx, TokenType.OpenParens);
             Expr(ctx);
             Consume(ctx, TokenType.CloseParens);
+        }
+        private static void Sum(Context ctx) {
+            // sum     = ∑ lround identifier comma expr1 comma expr2 comma expr3 rround;
+            // TODO: differentiate in the language between integer and double, but complicated for a sample.
+            Consume(ctx, TokenType.Sum);
+            Consume(ctx, TokenType.OpenParens, "(");
+
+            AddSymbol(ctx);
+            var varName = NextToken(ctx).Value;
+            NextToken(ctx); // consume the first comma without emitting it
+
+            ctx.buffer.Append("(int)");
+            Expr(ctx); // Start index
+            Consume(ctx, TokenType.Comma);
+
+            ctx.buffer.Append("(int)");
+            Expr(ctx); // End index
+            Consume(ctx, TokenType.Comma);
+
+            ctx.buffer.Append($"{varName} => "); // It needs to be a lambda
+            
+            Expr(ctx); // expr to evaluate at each iteration
+
+            Consume(ctx, TokenType.CloseParens, ")");
         }
         private static void Funct(Context ctx) {
             // func    = identifier lround expr {comma expr} rround;
@@ -371,6 +408,28 @@ namespace Maths {
     [Generator]
     public class MathsGenerator : ISourceGenerator
     {
+        private bool libraryIsAdded = false;
+
+        private const string libraryCode = @"
+using System.Linq;
+using System;
+using System.Collections.Generic;
+
+namespace ___MathLibrary___ {
+ public static partial class Formulas {
+
+        public static IEnumerable<double> ConvertToDouble(IEnumerable<int> col)
+        {
+            foreach (var s in col)
+                yield return (double)Convert.ChangeType(s, typeof(double));
+        }
+
+        public static double ___MySum___(int start, int end, Func<double, double> f) =>
+            Enumerable.Sum<double>(ConvertToDouble(Enumerable.Range(start, end - start)), f);
+    }
+}
+";
+
         public void Execute(SourceGeneratorContext context)
         {
             
@@ -378,6 +437,11 @@ namespace Maths {
             {
                 if (Path.GetExtension(file.Path).Equals(".math", StringComparison.OrdinalIgnoreCase))
                 {
+                    if(!libraryIsAdded)
+                    {
+                        context.AddSource("___MathLibrary___.cs", SourceText.From(libraryCode, Encoding.UTF8));
+                        libraryIsAdded = true;
+                    }
                     // Load formulas from .math files
                     var mathText = file.GetText();
                     var mathString = "";
@@ -404,9 +468,7 @@ namespace Maths {
             }
         }
 
-        public void Initialize(InitializationContext context)
-        {
-        }
+        public void Initialize(InitializationContext context) { }
     }
 }
 
