@@ -421,7 +421,7 @@ namespace ___MathLibrary___ {
         public static IEnumerable<double> ConvertToDouble(IEnumerable<int> col)
         {
             foreach (var s in col)
-                yield return (double)Convert.ChangeType(s, typeof(double));
+                yield return (double) s;
         }
 
         public static double ___MySum___(int start, int end, Func<double, double> f) =>
