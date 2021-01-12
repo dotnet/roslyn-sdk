@@ -148,7 +148,7 @@ namespace MathsGenerator {
 
         private readonly static string Preamble = @"
 using static System.Math;
-using static ___MathLibrary___.Formulas;
+using static Maths.FormulaHelpers;
 
 namespace Maths {
 
@@ -212,7 +212,7 @@ namespace Maths {
             TokenType.Identifier    => EmitIdentifier(ctx, token),
             TokenType.Number        => ctx.buffer.Append(token.Value),
             TokenType.Operation     => ctx.buffer.Append(token.Value),
-            TokenType.Sum           => ctx.buffer.Append("___MySum___"),
+            TokenType.Sum           => ctx.buffer.Append("MySum"),
             _                       => Error(token, TokenType.None)
         };
 
@@ -415,8 +415,8 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 
-namespace ___MathLibrary___ {
- public static partial class Formulas {
+namespace Maths {
+ public static class FormulaHelpers {
 
         public static IEnumerable<double> ConvertToDouble(IEnumerable<int> col)
         {
@@ -424,7 +424,7 @@ namespace ___MathLibrary___ {
                 yield return (double) s;
         }
 
-        public static double ___MySum___(int start, int end, Func<double, double> f) =>
+        public static double MySum(int start, int end, Func<double, double> f) =>
             Enumerable.Sum<double>(ConvertToDouble(Enumerable.Range(start, end - start)), f);
     }
 }
