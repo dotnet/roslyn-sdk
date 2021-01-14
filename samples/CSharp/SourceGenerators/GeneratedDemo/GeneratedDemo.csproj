@@ -9,6 +9,7 @@
   <ItemGroup>
     <AdditionalFiles Include="People.csv" CsvLoadType="Startup" />
     <AdditionalFiles Include="Cars.csv" CsvLoadType="OnDemand" CacheObjects="true" />
+    <AdditionalFiles Include="Geometry.math" />
 
     <AdditionalFiles Include="MainSettings.xmlsettings" CopyToOutputDirectory="PreserveNewest" />
     <None Include="MainSettings.xmlsettings" CopyToOutputDirectory="PreserveNewest" /> <!-- TODO: remove this when AdditionalFiles supports CopyToOutputDirectory -->
