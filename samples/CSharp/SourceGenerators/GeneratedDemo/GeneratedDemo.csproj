@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SourceGeneratorSamples\SourceGeneratorSamples.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\SourceGeneratorSamples.CSharp\SourceGeneratorSamples.CSharp.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <!-- Manually reference the generator props because we locally reference the generator. When added via NuGet this happens automatically -->
