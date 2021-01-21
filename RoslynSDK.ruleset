@@ -18,6 +18,6 @@
   </Rules>
   <Rules AnalyzerId="Roslyn.Diagnostics.Analyzers" RuleNamespace="Roslyn.Diagnostics.Analyzers">
     <Rule Id="RS1019" Action="None" /> <!-- DiagnosticId must be unique across analyzers: Many tests use similar analyzer instances -->
-    <Rule Id="RS1022" Action="None" /> <!-- AD0001: https://github.com/dotnet/roslyn-analyzers/issues/1803 -->
+    <Rule Id="RS2008" Action="None" /> <!-- Enable analyzer release tracking: only used in this repository for testing -->
   </Rules>
 </RuleSet>
