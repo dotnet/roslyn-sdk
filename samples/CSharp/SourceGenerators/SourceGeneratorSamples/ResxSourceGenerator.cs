@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace SourceGeneratorSamples
 {
-    [Generator]
+    [Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class ResxSourceGenerator : ISourceGenerator
     {
         public void Initialize(GeneratorInitializationContext context)
@@ -386,7 +386,7 @@ namespace SourceGeneratorSamples
                             break;
 
                         case Lang.VisualBasic:
-                            namespaceStart = $"Namespace {namespaceName}";
+                            namespaceStart = $"Namespace Global.{namespaceName}";
                             namespaceEnd = "End Namespace";
                             break;
 

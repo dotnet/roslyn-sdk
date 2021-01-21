@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="RootNamespace" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="GenerateSource" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="RelativeDir" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="OmitGetResourceString" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="AsConstants" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="IncludeDefaultValues" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="EmitFormatMethods" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="**\*.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SourceGeneratorSamples\SourceGeneratorSamples.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>
