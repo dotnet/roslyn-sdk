@@ -13,58 +13,49 @@
     <MicrosoftNetCompilersToolsetVersion>3.8.0-4.20464.1</MicrosoftNetCompilersToolsetVersion>
     <!-- Force prior version due to https://github.com/microsoft/vstest/pull/2192 and https://github.com/microsoft/vstest/pull/2067 -->
     <MicrosoftNETTestSdkVersion>16.1.1</MicrosoftNETTestSdkVersion>
-    <!-- Dependencies -->
-    <!-- Roslyn for VS 2019 -->
-    <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2019 since the Syntax Visualizer extension still
-               supports it. -->
-    <MicrosoftCodeAnalysisAnalyzersVersionVS2019>3.0.0</MicrosoftCodeAnalysisAnalyzersVersionVS2019>
-    <MicrosoftCodeAnalysisCommonVersionVS2019>3.3.1</MicrosoftCodeAnalysisCommonVersionVS2019>
-    <MicrosoftCodeAnalysisCSharpVersionVS2019>3.3.1</MicrosoftCodeAnalysisCSharpVersionVS2019>
-    <MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2019>3.3.1</MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2019>
-    <MicrosoftCodeAnalysisVisualBasicVersionVS2019>3.3.1</MicrosoftCodeAnalysisVisualBasicVersionVS2019>
-    <MicrosoftCodeAnalysisWorkspacesCommonVersionVS2019>3.3.1</MicrosoftCodeAnalysisWorkspacesCommonVersionVS2019>
+  </PropertyGroup>
+
+  <!-- Dependencies -->
+  <PropertyGroup>
+    <!-- Roslyn -->
+    <MicrosoftCodeAnalysisAnalyzersVersion>3.3.2</MicrosoftCodeAnalysisAnalyzersVersion>
+    <MicrosoftCodeAnalysisCommonVersion>3.8.0</MicrosoftCodeAnalysisCommonVersion>
+    <MicrosoftCodeAnalysisCSharpVersion>3.8.0</MicrosoftCodeAnalysisCSharpVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesTextVersion>3.8.0</MicrosoftCodeAnalysisEditorFeaturesTextVersion>
+    <MicrosoftCodeAnalysisVisualBasicVersion>3.8.0</MicrosoftCodeAnalysisVisualBasicVersion>
+    <MicrosoftCodeAnalysisWorkspacesCommonVersion>3.8.0</MicrosoftCodeAnalysisWorkspacesCommonVersion>
+
     <!-- VS SDK -->
-    <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2019
-               we need our extensions to work on both. -->
-    <VSLangProjVersion>7.0.3300</VSLangProjVersion>
-    <VSSDKTemplateWizardInterfaceVersion>12.0.4</VSSDKTemplateWizardInterfaceVersion>
-    <EnvDTEVersion>8.0.1</EnvDTEVersion>
-    <EnvDTE80Version>8.0.0</EnvDTE80Version>
-    <MicrosoftVisualStudioComponentModelHostVersion>16.4.280</MicrosoftVisualStudioComponentModelHostVersion>
-    <MicrosoftVisualStudioCoreUtilityVersion>16.4.280</MicrosoftVisualStudioCoreUtilityVersion>
-    <MicrosoftVisualStudioEditorVersion>16.4.280</MicrosoftVisualStudioEditorVersion>
-    <MicrosoftVisualStudioLanguageStandardClassificationVersion>16.4.280</MicrosoftVisualStudioLanguageStandardClassificationVersion>
-    <MicrosoftVisualStudioOLEInteropVersion>7.10.6071</MicrosoftVisualStudioOLEInteropVersion>
-    <MicrosoftVisualStudioShell150Version>16.5.29911.84</MicrosoftVisualStudioShell150Version>
-    <MicrosoftVisualStudioShellFrameworkVersion>16.5.29911.84</MicrosoftVisualStudioShellFrameworkVersion>
-    <MicrosoftVisualStudioShellInteropVersion>7.10.6072</MicrosoftVisualStudioShellInteropVersion>
-    <MicrosoftVisualStudioShellInterop80Version>8.0.50728</MicrosoftVisualStudioShellInterop80Version>
-    <MicrosoftVisualStudioShellInterop90Version>9.0.30730</MicrosoftVisualStudioShellInterop90Version>
-    <MicrosoftVisualStudioShellInterop100Version>10.0.30320</MicrosoftVisualStudioShellInterop100Version>
-    <MicrosoftVisualStudioShellInterop110Version>11.0.61031</MicrosoftVisualStudioShellInterop110Version>
-    <MicrosoftVisualStudioShellInterop121DesignTimeVersion>12.1.30329</MicrosoftVisualStudioShellInterop121DesignTimeVersion>
-    <MicrosoftVisualStudioShellInterop140DesignTimeVersion>14.3.26929</MicrosoftVisualStudioShellInterop140DesignTimeVersion>
-    <MicrosoftVisualStudioShellInterop157DesignTimeVersion>15.7.1</MicrosoftVisualStudioShellInterop157DesignTimeVersion>
-    <MicrosoftVisualStudioTextDataVersion>16.4.280</MicrosoftVisualStudioTextDataVersion>
-    <MicrosoftVisualStudioTextLogicVersion>16.4.280</MicrosoftVisualStudioTextLogicVersion>
-    <MicrosoftVisualStudioTextManagerInteropVersion>7.10.6071</MicrosoftVisualStudioTextManagerInteropVersion>
-    <MicrosoftVisualStudioTextUIVersion>16.4.280</MicrosoftVisualStudioTextUIVersion>
-    <MicrosoftVisualStudioTextUIWpfVersion>16.4.280</MicrosoftVisualStudioTextUIWpfVersion>
-    <MicrosoftVisualStudioUtilitiesVersion>16.5.29903.186</MicrosoftVisualStudioUtilitiesVersion>
-    <MicrosoftVisualStudioThreadingVersion>16.5.132</MicrosoftVisualStudioThreadingVersion>
+    <MicrosoftVisualStudioCoreUtilityVersion>16.8.239</MicrosoftVisualStudioCoreUtilityVersion>
+    <MicrosoftVisualStudioImagingInterop140DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioImagingInterop140DesignTimeVersion>
+    <MicrosoftVisualStudioSDKAnalyzersVersion>16.7.9</MicrosoftVisualStudioSDKAnalyzersVersion>
+    <MicrosoftVisualStudioSDKVersion>16.0.206</MicrosoftVisualStudioSDKVersion>
+    <MicrosoftVisualStudioShell150Version>16.7.30329.88</MicrosoftVisualStudioShell150Version>
+    <MicrosoftVisualStudioShellFrameworkVersion>16.7.30329.88</MicrosoftVisualStudioShellFrameworkVersion>
+    <MicrosoftVisualStudioShellInterop121DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioShellInterop121DesignTimeVersion>
+    <MicrosoftVisualStudioShellInterop140DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioShellInterop140DesignTimeVersion>
+    <MicrosoftVisualStudioShellInterop156DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioShellInterop156DesignTimeVersion>
+    <MicrosoftVisualStudioShellInterop157DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioShellInterop157DesignTimeVersion>
+    <MicrosoftVisualStudioShellInterop80Version>16.7.30328.74</MicrosoftVisualStudioShellInterop80Version>
+    <MicrosoftVisualStudioTextDataVersion>16.8.239</MicrosoftVisualStudioTextDataVersion>
+    <MicrosoftVisualStudioTextLogicVersion>16.8.239</MicrosoftVisualStudioTextLogicVersion>
+    <MicrosoftVisualStudioTextManagerInterop80Version>16.7.30328.74</MicrosoftVisualStudioTextManagerInterop80Version>
+    <MicrosoftVisualStudioThreadingVersion>16.8.55</MicrosoftVisualStudioThreadingVersion>
+    <MicrosoftVisualStudioUtilitiesInternalVersion>16.3.23</MicrosoftVisualStudioUtilitiesInternalVersion>
     <NuGetSolutionRestoreManagerInteropVersion>5.6.0</NuGetSolutionRestoreManagerInteropVersion>
-    <StreamJsonRpcVersion>2.3.99</StreamJsonRpcVersion>
+    <StreamJsonRpcVersion>2.5.44</StreamJsonRpcVersion>
+    <VSSDKTemplateWizardInterfaceVersion>12.0.4</VSSDKTemplateWizardInterfaceVersion>
+
     <!-- Libs -->
-    <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>
-    <SystemCompositionVersion>1.1.0</SystemCompositionVersion>
-    <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
     <DiffPlexVersion>1.4.4</DiffPlexVersion>
+
     <!-- Testing -->
     <MicrosoftCodeAnalysis2PrimaryTestVersion>2.6.1</MicrosoftCodeAnalysis2PrimaryTestVersion>
     <MicrosoftCodeAnalysis3PrimaryTestVersion>3.8.0</MicrosoftCodeAnalysis3PrimaryTestVersion>
     <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.20374.2</MicrosoftCodeAnalysisTestingVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <VsixTestingXunitVersion>0.1.49-beta</VsixTestingXunitVersion>
+
     <!-- Analyzers -->
     <RoslynDiagnosticsAnalyzersVersion>2.9.8</RoslynDiagnosticsAnalyzersVersion>
     <StyleCopAnalyzersVersion>1.2.0-beta.164</StyleCopAnalyzersVersion>
