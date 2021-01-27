@@ -20,7 +20,7 @@
     <!-- C# specific settings -->
     <When Condition="'$(Language)' == 'C#'">
       <PropertyGroup>
-        <LangVersion>preview</LangVersion>
+        <LangVersion>9</LangVersion>
         <WarningLevel>9999</WarningLevel>
         <Nullable>enable</Nullable>
       </PropertyGroup>
