@@ -34,9 +34,11 @@
     <MicrosoftVisualStudioShellFrameworkVersion>16.7.30329.88</MicrosoftVisualStudioShellFrameworkVersion>
     <MicrosoftVisualStudioShellInterop121DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioShellInterop121DesignTimeVersion>
     <MicrosoftVisualStudioShellInterop140DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioShellInterop140DesignTimeVersion>
+    <MicrosoftVisualStudioShellInterop153DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioShellInterop153DesignTimeVersion>
     <MicrosoftVisualStudioShellInterop156DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioShellInterop156DesignTimeVersion>
     <MicrosoftVisualStudioShellInterop157DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioShellInterop157DesignTimeVersion>
     <MicrosoftVisualStudioShellInterop80Version>16.7.30328.74</MicrosoftVisualStudioShellInterop80Version>
+    <MicrosoftVisualStudioShellInterop90Version>16.7.30328.74</MicrosoftVisualStudioShellInterop90Version>
     <MicrosoftVisualStudioTextDataVersion>16.8.239</MicrosoftVisualStudioTextDataVersion>
     <MicrosoftVisualStudioTextLogicVersion>16.8.239</MicrosoftVisualStudioTextLogicVersion>
     <MicrosoftVisualStudioTextManagerInterop80Version>16.7.30328.74</MicrosoftVisualStudioTextManagerInterop80Version>
