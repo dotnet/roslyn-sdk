@@ -26,12 +26,21 @@
     <MicrosoftCodeAnalysisWorkspacesCommonVersion>3.8.0</MicrosoftCodeAnalysisWorkspacesCommonVersion>
 
     <!-- VS SDK -->
+    <EnvDTE80Version>8.0.0</EnvDTE80Version>
+    <EnvDTEVersion>8.0.1</EnvDTEVersion>
+    <MicrosoftServiceHubFrameworkVersion>2.7.100</MicrosoftServiceHubFrameworkVersion>
+    <MicrosoftVisualStudioComponentModelHostVersion>16.8.239</MicrosoftVisualStudioComponentModelHostVersion>
     <MicrosoftVisualStudioCoreUtilityVersion>16.8.239</MicrosoftVisualStudioCoreUtilityVersion>
+    <MicrosoftVisualStudioEditorVersion>16.8.239</MicrosoftVisualStudioEditorVersion>
+    <MicrosoftVisualStudioImageCatalogVersion>16.7.30328.74</MicrosoftVisualStudioImageCatalogVersion>
     <MicrosoftVisualStudioImagingInterop140DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioImagingInterop140DesignTimeVersion>
+    <MicrosoftVisualStudioImagingVersion>16.7.30329.63</MicrosoftVisualStudioImagingVersion>
+    <MicrosoftVisualStudioLanguageStandardClassificationVersion>16.8.239</MicrosoftVisualStudioLanguageStandardClassificationVersion>
     <MicrosoftVisualStudioSDKAnalyzersVersion>16.7.9</MicrosoftVisualStudioSDKAnalyzersVersion>
-    <MicrosoftVisualStudioSDKVersion>16.0.206</MicrosoftVisualStudioSDKVersion>
     <MicrosoftVisualStudioShell150Version>16.7.30329.88</MicrosoftVisualStudioShell150Version>
     <MicrosoftVisualStudioShellFrameworkVersion>16.7.30329.88</MicrosoftVisualStudioShellFrameworkVersion>
+    <MicrosoftVisualStudioShellInterop100Version>16.7.30328.74</MicrosoftVisualStudioShellInterop100Version>
+    <MicrosoftVisualStudioShellInterop110Version>16.7.30328.74</MicrosoftVisualStudioShellInterop110Version>
     <MicrosoftVisualStudioShellInterop121DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioShellInterop121DesignTimeVersion>
     <MicrosoftVisualStudioShellInterop140DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioShellInterop140DesignTimeVersion>
     <MicrosoftVisualStudioShellInterop153DesignTimeVersion>16.7.30328.74</MicrosoftVisualStudioShellInterop153DesignTimeVersion>
@@ -42,10 +51,12 @@
     <MicrosoftVisualStudioTextDataVersion>16.8.239</MicrosoftVisualStudioTextDataVersion>
     <MicrosoftVisualStudioTextLogicVersion>16.8.239</MicrosoftVisualStudioTextLogicVersion>
     <MicrosoftVisualStudioTextManagerInterop80Version>16.7.30328.74</MicrosoftVisualStudioTextManagerInterop80Version>
+    <MicrosoftVisualStudioTextUIWpfVersion>16.8.239</MicrosoftVisualStudioTextUIWpfVersion>
     <MicrosoftVisualStudioThreadingVersion>16.8.55</MicrosoftVisualStudioThreadingVersion>
     <MicrosoftVisualStudioUtilitiesInternalVersion>16.3.23</MicrosoftVisualStudioUtilitiesInternalVersion>
     <NuGetSolutionRestoreManagerInteropVersion>5.6.0</NuGetSolutionRestoreManagerInteropVersion>
-    <StreamJsonRpcVersion>2.5.44</StreamJsonRpcVersion>
+    <StreamJsonRpcVersion>2.6.121</StreamJsonRpcVersion>
+    <VSLangProjVersion>16.7.30508.193</VSLangProjVersion>
     <VSSDKTemplateWizardInterfaceVersion>12.0.4</VSSDKTemplateWizardInterfaceVersion>
 
     <!-- Libs -->
