@@ -14,7 +14,6 @@
     <!-- Force prior version due to https://github.com/microsoft/vstest/pull/2192 and https://github.com/microsoft/vstest/pull/2067 -->
     <MicrosoftNETTestSdkVersion>16.1.1</MicrosoftNETTestSdkVersion>
   </PropertyGroup>
-
   <!-- Dependencies -->
   <PropertyGroup>
     <!-- Roslyn -->
@@ -24,7 +23,6 @@
     <MicrosoftCodeAnalysisEditorFeaturesTextVersion>3.8.0</MicrosoftCodeAnalysisEditorFeaturesTextVersion>
     <MicrosoftCodeAnalysisVisualBasicVersion>3.8.0</MicrosoftCodeAnalysisVisualBasicVersion>
     <MicrosoftCodeAnalysisWorkspacesCommonVersion>3.8.0</MicrosoftCodeAnalysisWorkspacesCommonVersion>
-
     <!-- VS SDK -->
     <EnvDTE80Version>8.0.0</EnvDTE80Version>
     <EnvDTEVersion>8.0.1</EnvDTEVersion>
@@ -59,17 +57,14 @@
     <StreamJsonRpcVersion>2.6.121</StreamJsonRpcVersion>
     <VSLangProjVersion>16.7.30508.193</VSLangProjVersion>
     <VSSDKTemplateWizardInterfaceVersion>12.0.4</VSSDKTemplateWizardInterfaceVersion>
-
     <!-- Libs -->
     <DiffPlexVersion>1.4.4</DiffPlexVersion>
-
     <!-- Testing -->
     <MicrosoftCodeAnalysis2PrimaryTestVersion>2.6.1</MicrosoftCodeAnalysis2PrimaryTestVersion>
     <MicrosoftCodeAnalysis3PrimaryTestVersion>3.8.0</MicrosoftCodeAnalysis3PrimaryTestVersion>
     <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.20374.2</MicrosoftCodeAnalysisTestingVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <VsixTestingXunitVersion>0.1.49-beta</VsixTestingXunitVersion>
-
     <!-- Analyzers -->
     <RoslynDiagnosticsAnalyzersVersion>2.9.8</RoslynDiagnosticsAnalyzersVersion>
     <StyleCopAnalyzersVersion>1.2.0-beta.164</StyleCopAnalyzersVersion>
