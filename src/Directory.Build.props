@@ -13,14 +13,16 @@
     <!-- VB specific settings -->
     <When Condition="'$(Language)' == 'VB'">
       <PropertyGroup>
-        <LangVersion>15.5</LangVersion>
+        <LangVersion>16</LangVersion>
       </PropertyGroup>
     </When>
 
     <!-- C# specific settings -->
     <When Condition="'$(Language)' == 'C#'">
       <PropertyGroup>
-        <LangVersion>8.0</LangVersion>
+        <LangVersion>9</LangVersion>
+        <WarningLevel>9999</WarningLevel>
+        <Nullable>enable</Nullable>
       </PropertyGroup>
     </When>
   </Choose>
