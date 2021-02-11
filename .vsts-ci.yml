@@ -63,6 +63,7 @@ stages:
       inputs:
         DropName: $(VisualStudioDropName)
         DropFolder: 'artifacts\VSSetup\$(BuildConfiguration)\Insertion'
+        AccessToken: $(System.AccessToken)
         condition: succeeded()
 
     - task: PublishBuildArtifacts@1
