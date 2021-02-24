@@ -24,6 +24,9 @@ namespace GeneratedDemo
 
             Console.WriteLine("\n\nRunning MathsGenerator:\n");
             UseMathsGenerator.Run();
+
+            Console.WriteLine("\n\nRunning UseResxSourceGenerator:\n");
+            UseResxSourceGenerator.Run();
         }
     }
 }
