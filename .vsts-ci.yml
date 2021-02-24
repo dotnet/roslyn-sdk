@@ -21,7 +21,7 @@ stages:
   - job: OfficialBuild
     displayName: Official Build
     pool:
-      name: VSEng-MicroBuildVS2017
+      name: VSEngSS-MicroBuild2019
       demands:
       - cmd
 
@@ -63,6 +63,7 @@ stages:
       inputs:
         DropName: $(VisualStudioDropName)
         DropFolder: 'artifacts\VSSetup\$(BuildConfiguration)\Insertion'
+        AccessToken: $(System.AccessToken)
         condition: succeeded()
 
     - task: PublishBuildArtifacts@1
