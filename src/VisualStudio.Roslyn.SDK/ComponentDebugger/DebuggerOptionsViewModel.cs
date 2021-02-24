@@ -6,69 +6,49 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.ProjectSystem;
-using Microsoft.VisualStudio.ProjectSystem.Debug;
+using System.Runtime.CompilerServices;
 
 namespace Roslyn.ComponentDebugger
 {
     internal class DebuggerOptionsViewModel : INotifyPropertyChanged
     {
-        private IWritableLaunchProfile? _launchProfile;
+        private readonly Action<int> indexChanged;
 
-        private readonly ImmutableArray<ConfiguredProject> _targetProjects;
+        private IEnumerable<string> _projectNames = ImmutableArray<string>.Empty;
 
-        private readonly IEnumerable<string> _targetProjectNames;
+        private int _selectedProjectIndex = -1;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public DebuggerOptionsViewModel(ImmutableArray<ConfiguredProject> targetProjects)
+        public DebuggerOptionsViewModel(Action<int> indexChanged)
         {
-            _targetProjects = targetProjects;
-            _targetProjectNames = _targetProjects.Select(t => Path.GetFileNameWithoutExtension(t.UnconfiguredProject.FullPath));
+            this.indexChanged = indexChanged;
         }
 
-        public IEnumerable<string> ProjectNames { get => _targetProjectNames; }
-
-        public IWritableLaunchProfile? LaunchProfile
+        public IEnumerable<string> ProjectNames
         {
-            get => _launchProfile;
+            get => _projectNames;
             set
             {
-                _launchProfile = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedProjectIndex)));
+                _projectNames = value;
+                NotifyPropertyChanged();
             }
         }
 
         public int SelectedProjectIndex
         {
-            get
-            {
-                if (LaunchProfile?.OtherSettings.ContainsKey(Constants.TargetProjectPropertyName) == true)
-                {
-                    var target = LaunchProfile.OtherSettings[Constants.TargetProjectPropertyName].ToString();
-                    for (var i = 0; i < _targetProjects.Length; i++)
-                    {
-                        if (_targetProjects[i].UnconfiguredProject.FullPath.Equals(target, StringComparison.OrdinalIgnoreCase))
-                        {
-                            return i;
-                        }
-                    }
-                }
-                return -1;
-            }
+            get => _selectedProjectIndex;
             set
             {
-                if (LaunchProfile is object)
-                {
-                    var newTargetProject = _targetProjects[value].UnconfiguredProject;
-                    LaunchProfile.OtherSettings[Constants.TargetProjectPropertyName] = newTargetProject.FullPath;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedProjectIndex)));
-                }
+                _selectedProjectIndex = value;
+                NotifyPropertyChanged();
+                indexChanged(value);
             }
+        }
+
+        private void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

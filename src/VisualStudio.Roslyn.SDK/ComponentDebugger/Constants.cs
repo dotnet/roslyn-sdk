@@ -6,12 +6,12 @@ namespace Roslyn.ComponentDebugger
 {
     internal static class Constants
     {
-        public const string RoslynComponentPropertyName = "IsRoslynComponent";
-
         public const string RoslynComponentCapability = "RoslynComponent";
 
         public const string CommandName = "DebugRoslynComponent";
 
         public const string TargetProjectPropertyName = "targetProject";
+
+        public const string CommandLineArgsRuleName = "CompilerCommandLineArgs";
     }
 }
