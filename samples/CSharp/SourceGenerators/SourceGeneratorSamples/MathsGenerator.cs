@@ -408,8 +408,6 @@ namespace Maths {
     [Generator]
     public class MathsGenerator : ISourceGenerator
     {
-        private bool libraryIsAdded = false;
-
         private const string libraryCode = @"
 using System.Linq;
 using System;
@@ -432,16 +430,10 @@ namespace Maths {
 
         public void Execute(GeneratorExecutionContext context)
         {
-            
             foreach (AdditionalText file in context.AdditionalFiles)
             {
                 if (Path.GetExtension(file.Path).Equals(".math", StringComparison.OrdinalIgnoreCase))
                 {
-                    if(!libraryIsAdded)
-                    {
-                        context.AddSource("___MathLibrary___.cs", SourceText.From(libraryCode, Encoding.UTF8));
-                        libraryIsAdded = true;
-                    }
                     // Load formulas from .math files
                     var mathText = file.GetText();
                     var mathString = "";
@@ -449,7 +441,8 @@ namespace Maths {
                     if(mathText != null)
                     {
                         mathString = mathText.ToString();
-                    } else
+                    } 
+                    else
                     {
                         throw new Exception($"Cannot load file {file.Path}");
                     }
@@ -468,7 +461,10 @@ namespace Maths {
             }
         }
 
-        public void Initialize(GeneratorInitializationContext context) { }
+        public void Initialize(GeneratorInitializationContext context) 
+        {
+            context.RegisterForPostInitialization((pi) => pi.AddSource("__MathLibrary__.cs", libraryCode));
+        }
     }
 }
 

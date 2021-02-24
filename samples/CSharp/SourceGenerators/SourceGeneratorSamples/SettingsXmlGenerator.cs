@@ -12,15 +12,6 @@ namespace Analyzer1
     [Generator]
     public class SettingsXmlGenerator : ISourceGenerator
     {
-        private const string SettingsFileString = @"
-namespace XmlSettings
-{
-    public partial class XmlSettings
-    {
-        
-    }
-}
-";
         public void Execute(GeneratorExecutionContext context)
         {
             // Using the context, get any additional files that end in .xmlsettings
