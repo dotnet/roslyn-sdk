@@ -9,6 +9,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Debug;
 using Microsoft.VisualStudio.ProjectSystem.VS.Debug;
@@ -26,7 +27,7 @@ namespace Roslyn.ComponentDebugger
         private readonly ConfiguredProject _configuredProject;
         private readonly LaunchSettingsManager _launchSettingsManager;
         private readonly IProjectThreadingService _threadingService;
-        private readonly AsyncLazy<string> _compilerRoot;
+        private readonly AsyncLazy<string?> _compilerRoot;
 
         [ImportingConstructor]
         [Obsolete("This exported object must be obtained through the MEF export provider.", error: true)]
@@ -36,7 +37,7 @@ namespace Roslyn.ComponentDebugger
             _launchSettingsManager = launchSettingsManager;
             _threadingService = threadingService;
 
-            _compilerRoot = new AsyncLazy<string>(() => GetCompilerRootAsync(serviceProvider), _threadingService.JoinableTaskFactory);
+            _compilerRoot = new AsyncLazy<string?>(() => GetCompilerRootAsync(serviceProvider), _threadingService.JoinableTaskFactory);
         }
 
         public Task OnAfterLaunchAsync(DebugLaunchOptions launchOptions, ILaunchProfile profile) => Task.CompletedTask;
@@ -54,36 +55,43 @@ namespace Roslyn.ComponentDebugger
                 LaunchDebugEngineGuid = Microsoft.VisualStudio.ProjectSystem.Debug.DebuggerEngines.ManagedOnlyEngine,
                 LaunchOperation = DebugLaunchOperation.CreateProcess
             };
-
-            // try and get the target project
-            var targetProjectUnconfigured = await _launchSettingsManager.TryGetProjectForLaunchAsync(profile);
-            if (targetProjectUnconfigured is object)
+            
+            var compilerRoot = await _compilerRoot.GetValueAsync();
+            if (compilerRoot is object)
             {
-                settings.CurrentDirectory = Path.GetDirectoryName(targetProjectUnconfigured.FullPath);
-                var compiler = _configuredProject.Capabilities.Contains(ProjectCapabilities.VB) ? "vbc.exe" : "csc.exe";
-                var compilerRoot = await _compilerRoot.GetValueAsync();
-                settings.Executable = Path.Combine(compilerRoot, compiler);
+                // try and get the target project
+                var targetProjectUnconfigured = await _launchSettingsManager.TryGetProjectForLaunchAsync(profile);
+                if (targetProjectUnconfigured is object)
+                {
+                    settings.CurrentDirectory = Path.GetDirectoryName(targetProjectUnconfigured.FullPath);
+                    var compiler = _configuredProject.Capabilities.Contains(ProjectCapabilities.VB) ? "vbc.exe" : "csc.exe";
+                    settings.Executable = Path.Combine(compilerRoot, compiler);
 
-                // get its compilation args
-                var args = await targetProjectUnconfigured.GetCompilationArgumentsAsync();
+                    // get its compilation args
+                    var args = await targetProjectUnconfigured.GetCompilationArgumentsAsync();
 
-                // append the command line args to the debugger launch
-                settings.Arguments = string.Join(" ", args);
+                    // append the command line args to the debugger launch
+                    settings.Arguments = string.Join(" ", args);
+                }
             }
-
             // https://github.com/dotnet/roslyn-sdk/issues/728 : better error handling
             return new IDebugLaunchSettings[] { settings };
         }
 
-        private async Task<string> GetCompilerRootAsync(SVsServiceProvider? serviceProvider)
+        private async Task<string?> GetCompilerRootAsync(SVsServiceProvider? serviceProvider)
         {
             await _threadingService.SwitchToUIThread();
 
             // https://github.com/dotnet/roslyn-sdk/issues/729 : don't hardcode net fx compiler
-            object rootDir = string.Empty;
             var shell = (IVsShell?)serviceProvider?.GetService(typeof(SVsShell));
-            shell?.GetProperty((int)__VSSPROPID2.VSSPROPID_InstallRootDir, out rootDir);
-            return Path.Combine((string)rootDir, "MSBuild", "Current", "Bin", "Roslyn");
+            if (shell is object
+                && shell.GetProperty((int)__VSSPROPID2.VSSPROPID_InstallRootDir, out var rootDirObj) == VSConstants.S_OK
+                && rootDirObj is string rootDir)
+            {
+                return Path.Combine(rootDir, "MSBuild", "Current", "Bin", "Roslyn");
+            }
+
+            return null;
         }
     }
 }

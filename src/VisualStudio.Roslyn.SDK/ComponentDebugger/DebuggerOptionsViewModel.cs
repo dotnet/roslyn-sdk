@@ -6,13 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Roslyn.ComponentDebugger
 {
-    internal class DebuggerOptionsViewModel : INotifyPropertyChanged
+    internal sealed class DebuggerOptionsViewModel : INotifyPropertyChanged
     {
-        private readonly Action<int> indexChanged;
+        private readonly Action<int> _indexChanged;
 
         private IEnumerable<string> _projectNames = ImmutableArray<string>.Empty;
 
@@ -22,7 +23,7 @@ namespace Roslyn.ComponentDebugger
 
         public DebuggerOptionsViewModel(Action<int> indexChanged)
         {
-            this.indexChanged = indexChanged;
+            _indexChanged = indexChanged;
         }
 
         public IEnumerable<string> ProjectNames
@@ -30,8 +31,11 @@ namespace Roslyn.ComponentDebugger
             get => _projectNames;
             set
             {
-                _projectNames = value;
-                NotifyPropertyChanged();
+                if (!_projectNames.SequenceEqual(value))
+                {
+                    _projectNames = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -40,9 +44,12 @@ namespace Roslyn.ComponentDebugger
             get => _selectedProjectIndex;
             set
             {
-                _selectedProjectIndex = value;
-                NotifyPropertyChanged();
-                indexChanged(value);
+                if (_selectedProjectIndex != value)
+                {
+                    _selectedProjectIndex = value;
+                    NotifyPropertyChanged();
+                    _indexChanged?.Invoke(value);
+                }
             }
         }
 
