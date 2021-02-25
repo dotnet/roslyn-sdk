@@ -21,7 +21,7 @@ namespace Roslyn.ComponentDebugger
 
         [ImportingConstructor]
         public CommandLineArgumentsDataSource(IProjectThreadingService projectThreadingService, IActiveConfiguredProjectSubscriptionService activeProjectSubscriptionService)
-            : base(projectThreadingService.JoinableTaskContext)
+            : base(projectThreadingService?.JoinableTaskContext)
         {
             this.activeProjectSubscriptionService = activeProjectSubscriptionService;
         }
@@ -30,7 +30,7 @@ namespace Roslyn.ComponentDebugger
         {
             using (JoinableCollection.Join())
             {
-                await this.InitializeAsync();
+                await this.InitializeAsync().ConfigureAwait(true);
                 return this.AppliedValue?.Value ?? ImmutableArray<string>.Empty;
             }
         }
@@ -51,6 +51,11 @@ namespace Roslyn.ComponentDebugger
 
         protected override Task<IProjectVersionedValue<ImmutableArray<string>>> PreprocessAsync(IProjectVersionedValue<IProjectSubscriptionUpdate> input, IProjectVersionedValue<ImmutableArray<string>>? previousOutput)
         {
+            if (input is null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             var description = input.Value.ProjectChanges[Constants.CommandLineArgsRuleName];
             return Task.FromResult<IProjectVersionedValue<ImmutableArray<string>>>(new ProjectVersionedValue<ImmutableArray<string>>(description.After.Items.Keys.ToImmutableArray(), input.DataSourceVersions));
         }

@@ -82,7 +82,7 @@ namespace Roslyn.ComponentDebugger
             }
             _projects = targetProjects.ToImmutableAndFree();
 
-            var launchTargetProject = await _launchSettingsManager.TryGetProjectForLaunchAsync(_launchProfile?.ToLaunchProfile());
+            var launchTargetProject = await _launchSettingsManager.TryGetProjectForLaunchAsync(_launchProfile?.ToLaunchProfile()).ConfigureAwait(true);
             var index = _projects.IndexOf(launchTargetProject!);
 
             _viewModel.ProjectNames = _projects.Select(p => Path.GetFileNameWithoutExtension(p.FullPath));

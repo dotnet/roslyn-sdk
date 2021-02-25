@@ -55,12 +55,12 @@ namespace Roslyn.ComponentDebugger
                 LaunchDebugEngineGuid = Microsoft.VisualStudio.ProjectSystem.Debug.DebuggerEngines.ManagedOnlyEngine,
                 LaunchOperation = DebugLaunchOperation.CreateProcess
             };
-            
-            var compilerRoot = await _compilerRoot.GetValueAsync();
+
+            var compilerRoot = await _compilerRoot.GetValueAsync().ConfigureAwait(true);
             if (compilerRoot is object)
             {
                 // try and get the target project
-                var targetProjectUnconfigured = await _launchSettingsManager.TryGetProjectForLaunchAsync(profile);
+                var targetProjectUnconfigured = await _launchSettingsManager.TryGetProjectForLaunchAsync(profile).ConfigureAwait(true);
                 if (targetProjectUnconfigured is object)
                 {
                     settings.CurrentDirectory = Path.GetDirectoryName(targetProjectUnconfigured.FullPath);
@@ -68,7 +68,7 @@ namespace Roslyn.ComponentDebugger
                     settings.Executable = Path.Combine(compilerRoot, compiler);
 
                     // get its compilation args
-                    var args = await targetProjectUnconfigured.GetCompilationArgumentsAsync();
+                    var args = await targetProjectUnconfigured.GetCompilationArgumentsAsync().ConfigureAwait(true);
 
                     // append the command line args to the debugger launch
                     settings.Arguments = string.Join(" ", args);

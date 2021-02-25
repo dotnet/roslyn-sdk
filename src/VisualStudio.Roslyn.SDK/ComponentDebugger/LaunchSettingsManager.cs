@@ -31,7 +31,7 @@ namespace Roslyn.ComponentDebugger
             if (value is string targetProjectPath)
             {
                 // expand any variables in the path, and root it based on this project
-                var replacedProjectPath = await tokenReplacer.ReplaceTokensInStringAsync(targetProjectPath, true);
+                var replacedProjectPath = await tokenReplacer.ReplaceTokensInStringAsync(targetProjectPath, true).ConfigureAwait(true);
                 replacedProjectPath = owningProject.MakeRooted(replacedProjectPath);
 
                 targetProject = ((IProjectService2)owningProject.Services.ProjectService).GetLoadedProject(replacedProjectPath);
@@ -41,6 +41,16 @@ namespace Roslyn.ComponentDebugger
 
         public void WriteProjectForLaunch(IWritableLaunchProfile profile, UnconfiguredProject targetProject)
         {
+            if (profile is null)
+            {
+                throw new System.ArgumentNullException(nameof(profile));
+            }
+
+            if (targetProject is null)
+            {
+                throw new System.ArgumentNullException(nameof(targetProject));
+            }
+
             var rootedPath = this.owningProject.MakeRelative(targetProject.FullPath);
             profile.OtherSettings[Constants.TargetProjectPropertyName] = rootedPath;
         }
