@@ -16,7 +16,6 @@ namespace GeneratedDemo
 {
     class UseMustacheGenerator
     {
-
         public static void Run()
         {
             WriteLine(Mustache.Constants.Lottery);
