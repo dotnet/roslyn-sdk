@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 #nullable enable
 
@@ -15,9 +12,7 @@ namespace Mustache
     [Generator]
     public class MustacheGenerator : ISourceGenerator
     {
-        public void Execute(GeneratorExecutionContext context)
-        {
-            string attributeSource = @"
+        private const string attributeSource = @"
     [System.AttributeUsage(System.AttributeTargets.Assembly, AllowMultiple=true)]
     internal sealed class MustacheAttribute: System.Attribute
     {
@@ -28,97 +23,60 @@ namespace Mustache
             => (Name, Template, Hash) = (name, template, hash);
     }
 ";
-            context.AddSource("Mustache_MainAttributes__", SourceText.From(attributeSource, Encoding.UTF8));
 
-            Compilation compilation = context.Compilation;
-
-            IEnumerable<(string, string, string)> options = GetMustacheOptions(compilation);
-            IEnumerable<(string, string)> namesSources = SourceFilesFromMustachePaths(options);
-
-            foreach ((string name, string source) in namesSources)
-            {
-                context.AddSource($"Mustache{name}", SourceText.From(source, Encoding.UTF8));
-            }
-        }
-
-        static IEnumerable<(string, string, string)> GetMustacheOptions(Compilation compilation)
+        public void Execute(GeneratorExecutionContext context)
         {
-            // Get all Mustache attributes
-            IEnumerable<SyntaxNode>? allNodes = compilation.SyntaxTrees.SelectMany(s => s.GetRoot().DescendantNodes());
-            IEnumerable<AttributeSyntax> allAttributes = allNodes.Where((d) => d.IsKind(SyntaxKind.Attribute)).OfType<AttributeSyntax>();
-            ImmutableArray<AttributeSyntax> attributes = allAttributes.Where(d => d.Name.ToString() == "Mustache")
-                .ToImmutableArray();
-
-            IEnumerable<SemanticModel> models = compilation.SyntaxTrees.Select(st => compilation.GetSemanticModel(st));
-            foreach (AttributeSyntax att in attributes)
+            SyntaxReceiver rx = (SyntaxReceiver)context.SyntaxContextReceiver!;
+            foreach ((string name, string template, string hash) in rx.TemplateInfo)
             {
-                string mustacheName = "", template = "", hash = "";
-                int index = 0;
-
-                if (att.ArgumentList is null) throw new Exception("Can't be null here");
-
-                SemanticModel m = compilation.GetSemanticModel(att.SyntaxTree);
-
-                foreach (AttributeArgumentSyntax arg in att.ArgumentList.Arguments)
-                {
-                    ExpressionSyntax expr = arg.Expression;
-
-                    TypeInfo t = m.GetTypeInfo(expr);
-                    Optional<object?> v = m.GetConstantValue(expr);
-                    if (index == 0)
-                    {
-                        mustacheName = v.ToString();
-                    }
-                    else if (index == 1)
-                    {
-                        template = v.ToString();
-                    }
-                    else
-                    {
-                        hash = v.ToString();
-                    }
-                    index += 1;
-                }
-                yield return (mustacheName, template, hash);
+                string source = SourceFileFromMustachePath(name, template, hash);
+                context.AddSource($"Mustache{name}", source);
             }
         }
+     
         static string SourceFileFromMustachePath(string name, string template, string hash)
         {
             Func<object, string> tree = HandlebarsDotNet.Handlebars.Compile(template);
             object @object = Newtonsoft.Json.JsonConvert.DeserializeObject(hash);
             string mustacheText = tree(@object);
 
-            return GenerateMustacheClass(name, mustacheText);
-        }
-
-        static IEnumerable<(string, string)> SourceFilesFromMustachePaths(IEnumerable<(string, string, string)> pathsData)
-        {
-
-            foreach ((string name, string template, string hash) in pathsData)
-            {
-                yield return (name, SourceFileFromMustachePath(name, template, hash));
-            }
-        }
-
-        private static string GenerateMustacheClass(string className, string mustacheText)
-        {
             StringBuilder sb = new StringBuilder();
             sb.Append($@"
 namespace Mustache {{
 
     public static partial class Constants {{
 
-        public const string {className} = @""{mustacheText.Replace("\"", "\"\"")}"";
+        public const string {name} = @""{mustacheText.Replace("\"", "\"\"")}"";
     }}
 }}
 ");
             return sb.ToString();
-
         }
 
         public void Initialize(GeneratorInitializationContext context)
         {
-            // No initialization required
+            context.RegisterForPostInitialization((pi) => pi.AddSource("Mustache_MainAttributes__", attributeSource));
+            context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
+        }
+
+        class SyntaxReceiver : ISyntaxContextReceiver
+        {
+            public List<(string name, string template, string hash)> TemplateInfo = new List<(string name, string template, string hash)>();
+
+            public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
+            {
+                // find all valid mustache attributes
+                if (context.Node is AttributeSyntax attrib
+                    && attrib.ArgumentList?.Arguments.Count == 3
+                    && context.SemanticModel.GetTypeInfo(attrib).Type?.ToDisplayString() == "MustacheAttribute")
+                {
+                    string name = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[0].Expression).ToString();
+                    string template = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[1].Expression).ToString();
+                    string hash = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[2].Expression).ToString();
+
+                    TemplateInfo.Add((name, template, hash));
+                }
+            }
         }
     }
 }
