@@ -10,7 +10,7 @@ namespace Roslyn.ComponentDebugger
 
         public const string CommandName = "DebugRoslynComponent";
 
-        public const string TargetProjectPropertyName = "targetProject";
+        public const string TargetProjectKeyName = "targetProject";
 
         public const string CommandLineArgsRuleName = "CompilerCommandLineArgs";
     }

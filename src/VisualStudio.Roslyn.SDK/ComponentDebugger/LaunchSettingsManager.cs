@@ -12,29 +12,29 @@ namespace Roslyn.ComponentDebugger
     [Export]
     public class LaunchSettingsManager
     {
-        private readonly UnconfiguredProject owningProject;
-        private readonly IDebugTokenReplacer tokenReplacer;
+        private readonly UnconfiguredProject _owningProject;
+        private readonly IDebugTokenReplacer _tokenReplacer;
 
         [ImportingConstructor]
         public LaunchSettingsManager(UnconfiguredProject owningProject, IDebugTokenReplacer tokenReplacer)
         {
-            this.owningProject = owningProject;
-            this.tokenReplacer = tokenReplacer;
+            _owningProject = owningProject;
+            _tokenReplacer = tokenReplacer;
         }
 
         public async Task<UnconfiguredProject?> TryGetProjectForLaunchAsync(ILaunchProfile? profile)
         {
             UnconfiguredProject? targetProject = null;
             object? value = null;
-            profile?.OtherSettings?.TryGetValue(Constants.TargetProjectPropertyName, out value);
+            profile?.OtherSettings?.TryGetValue(Constants.TargetProjectKeyName, out value);
 
             if (value is string targetProjectPath)
             {
                 // expand any variables in the path, and root it based on this project
-                var replacedProjectPath = await tokenReplacer.ReplaceTokensInStringAsync(targetProjectPath, true).ConfigureAwait(true);
-                replacedProjectPath = owningProject.MakeRooted(replacedProjectPath);
+                var replacedProjectPath = await _tokenReplacer.ReplaceTokensInStringAsync(targetProjectPath, true).ConfigureAwait(true);
+                replacedProjectPath = _owningProject.MakeRooted(replacedProjectPath);
 
-                targetProject = ((IProjectService2)owningProject.Services.ProjectService).GetLoadedProject(replacedProjectPath);
+                targetProject = ((IProjectService2)_owningProject.Services.ProjectService).GetLoadedProject(replacedProjectPath);
             }
             return targetProject;
         }
@@ -51,8 +51,8 @@ namespace Roslyn.ComponentDebugger
                 throw new System.ArgumentNullException(nameof(targetProject));
             }
 
-            var rootedPath = this.owningProject.MakeRelative(targetProject.FullPath);
-            profile.OtherSettings[Constants.TargetProjectPropertyName] = rootedPath;
+            var rootedPath = _owningProject.MakeRelative(targetProject.FullPath);
+            profile.OtherSettings[Constants.TargetProjectKeyName] = rootedPath;
         }
 
     }

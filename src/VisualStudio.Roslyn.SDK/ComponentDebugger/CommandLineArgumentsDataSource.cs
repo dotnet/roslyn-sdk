@@ -17,13 +17,14 @@ namespace Roslyn.ComponentDebugger
     [AppliesTo("(" + ProjectCapabilities.CSharp + " | " + ProjectCapabilities.VB + ") & !" + ProjectCapabilities.SharedAssetsProject)]
     public class CommandLineArgumentsDataSource : UnconfiguredProjectHostBridge<IProjectVersionedValue<IProjectSubscriptionUpdate>, IProjectVersionedValue<ImmutableArray<string>>, IProjectVersionedValue<ImmutableArray<string>>>
     {
-        private readonly IActiveConfiguredProjectSubscriptionService activeProjectSubscriptionService;
+        private readonly IActiveConfiguredProjectSubscriptionService _activeProjectSubscriptionService;
 
         [ImportingConstructor]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "MEF ensures not null")]
         public CommandLineArgumentsDataSource(IProjectThreadingService projectThreadingService, IActiveConfiguredProjectSubscriptionService activeProjectSubscriptionService)
-            : base(projectThreadingService?.JoinableTaskContext)
+            : base(projectThreadingService.JoinableTaskContext)
         {
-            this.activeProjectSubscriptionService = activeProjectSubscriptionService;
+            _activeProjectSubscriptionService = activeProjectSubscriptionService;
         }
 
         public async Task<ImmutableArray<string>> GetArgsAsync()
@@ -41,8 +42,8 @@ namespace Roslyn.ComponentDebugger
 
         protected override IDisposable LinkExternalInput(ITargetBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>> targetBlock)
         {
-            JoinUpstreamDataSources(this.activeProjectSubscriptionService.ProjectBuildRuleSource);
-            return activeProjectSubscriptionService.ProjectBuildRuleSource.SourceBlock.LinkTo(target: targetBlock,
+            JoinUpstreamDataSources(_activeProjectSubscriptionService.ProjectBuildRuleSource);
+            return _activeProjectSubscriptionService.ProjectBuildRuleSource.SourceBlock.LinkTo(target: targetBlock,
                                                                                               linkOptions: new DataflowLinkOptions { PropagateCompletion = true },
                                                                                               initialDataAsNew: true,
                                                                                               suppressVersionOnlyUpdates: true,

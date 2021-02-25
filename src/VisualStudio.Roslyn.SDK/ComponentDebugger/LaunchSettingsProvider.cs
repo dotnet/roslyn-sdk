@@ -73,7 +73,7 @@ namespace Roslyn.ComponentDebugger
                 // check if the args contain the project as an analyzer ref
                 foreach (var arg in await targetProjectUnconfigured.GetCompilationArgumentsAsync().ConfigureAwait(false))
                 {
-                    if (arg.StartsWith("/analyzer", StringComparison.OrdinalIgnoreCase)
+                    if (arg.StartsWith("/analyzer:", StringComparison.OrdinalIgnoreCase)
                         && arg.EndsWith(target, StringComparison.OrdinalIgnoreCase))
                     {
                         targetProjects.Add(targetProjectUnconfigured);
