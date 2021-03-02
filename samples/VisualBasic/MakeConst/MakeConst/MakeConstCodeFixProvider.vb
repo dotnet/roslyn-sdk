@@ -12,7 +12,7 @@ Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 <ExportCodeFixProvider(LanguageNames.VisualBasic, Name:="MakeConstVB"), [Shared]>
-Public Class MakeConstCodeFixProvider
+Public NotInheritable Class MakeConstCodeFixProvider
     Inherits CodeFixProvider
 
     Public NotOverridable Overrides ReadOnly Property FixableDiagnosticIds As ImmutableArray(Of String)
@@ -22,13 +22,14 @@ Public Class MakeConstCodeFixProvider
     End Property
 
     Public NotOverridable Overrides Function GetFixAllProvider() As FixAllProvider
-        Return Nothing
+        // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
+        Return WellKnownFixAllProviders.BatchFixer
     End Function
 
     Public NotOverridable Overrides Async Function RegisterCodeFixesAsync(context As CodeFixContext) As Task
         Dim diagnostic = context.Diagnostics.First()
         Dim diagnosticSpan = diagnostic.Location.SourceSpan
-        Dim root = Await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+        Dim root = Await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(False)
 
         ' Find the local declaration identified by the diagnostic.
         Dim declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType(Of LocalDeclarationStatementSyntax)().First()
@@ -42,7 +43,7 @@ Public Class MakeConstCodeFixProvider
         context.RegisterCodeFix(action, diagnostic)
     End Function
 
-    Private Async Function MakeConstAsync(document As Document, localDeclaration As LocalDeclarationStatementSyntax, cancellationToken As CancellationToken) As Task(Of Document)
+    Private Shared Async Function MakeConstAsync(document As Document, localDeclaration As LocalDeclarationStatementSyntax, cancellationToken As CancellationToken) As Task(Of Document)
         ' Create a const token with the leading trivia from the local declaration.
         Dim firstToken = localDeclaration.GetFirstToken()
         Dim constToken = SyntaxFactory.Token(
@@ -58,7 +59,7 @@ Public Class MakeConstCodeFixProvider
         Dim formattedLocalDeclaration = newLocalDeclaration.WithAdditionalAnnotations(Formatter.Annotation)
 
         ' Replace the old local declaration with the new local declaration.
-        Dim root = Await document.GetSyntaxRootAsync(cancellationToken)
+        Dim root = Await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(False)
         Dim newRoot = root.ReplaceNode(localDeclaration, formattedLocalDeclaration)
 
         ' Return document with transformed tree.
