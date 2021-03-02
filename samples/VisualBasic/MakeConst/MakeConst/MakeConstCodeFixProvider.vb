@@ -15,18 +15,18 @@ Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Public NotInheritable Class MakeConstCodeFixProvider
     Inherits CodeFixProvider
 
-    Public NotOverridable Overrides ReadOnly Property FixableDiagnosticIds As ImmutableArray(Of String)
+    Public Overrides ReadOnly Property FixableDiagnosticIds As ImmutableArray(Of String)
         Get
             Return ImmutableArray.Create(MakeConstAnalyzer.MakeConstDiagnosticId)
         End Get
     End Property
 
-    Public NotOverridable Overrides Function GetFixAllProvider() As FixAllProvider
+    Public Overrides Function GetFixAllProvider() As FixAllProvider
         ' See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
         Return WellKnownFixAllProviders.BatchFixer
     End Function
 
-    Public NotOverridable Overrides Async Function RegisterCodeFixesAsync(context As CodeFixContext) As Task
+    Public Overrides Async Function RegisterCodeFixesAsync(context As CodeFixContext) As Task
         Dim diagnostic = context.Diagnostics.First()
         Dim diagnosticSpan = diagnostic.Location.SourceSpan
         Dim root = Await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(False)
