@@ -3,7 +3,7 @@
 | Branch | Status |
 |:------:|:------:|
 |dev16.0.x|[![Build Status](https://dnceng.visualstudio.com/public/_apis/build/status/dotnet/roslyn-sdk/public-CI?branchName=dev16.0.x&label=build)](https://dnceng.visualstudio.com/public/_build/latest?definitionId=137&branchName=dev16.0.x)|
-|master|[![Build Status](https://dnceng.visualstudio.com/public/_apis/build/status/dotnet/roslyn-sdk/public-CI?branchName=master&label=build)](https://dnceng.visualstudio.com/public/_build/latest?definitionId=137&branchName=master)|
+|main|[![Build Status](https://dnceng.visualstudio.com/public/_apis/build/status/dotnet/roslyn-sdk/public-CI?branchName=main&label=build)](https://dnceng.visualstudio.com/public/_build/latest?definitionId=137&branchName=main)|
 
 # What is the Roslyn-SDK?
 
