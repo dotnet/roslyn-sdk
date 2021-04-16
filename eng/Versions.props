@@ -52,7 +52,9 @@
     <NuGetSolutionRestoreManagerInteropVersion>5.6.0</NuGetSolutionRestoreManagerInteropVersion>
     <StreamJsonRpcVersion>2.7.67</StreamJsonRpcVersion>
     <VSLangProjVersion>17.0.0-preview-1-31214-1111</VSLangProjVersion>
-    <MicrosoftVisualStudioTemplateWizardInterfaceVersion>17.0.0-preview-1-31209-1111</MicrosoftVisualStudioTemplateWizardInterfaceVersion>    
+    <MicrosoftVisualStudioTemplateWizardInterfaceVersion>17.0.0-preview-1-31209-1111</MicrosoftVisualStudioTemplateWizardInterfaceVersion>
+    <MicrosoftVSSDKBuildToolsVersion>17.0.63-dev17-g3f11f5ab</MicrosoftVSSDKBuildToolsVersion>
+    <MicroBuildPluginsSwixBuildVersion>1.1.33</MicroBuildPluginsSwixBuildVersion>    
     <SystemThreadingTasksDataflowVersion>5.0.0</SystemThreadingTasksDataflowVersion>
     <!-- Project System-->    
     <MicrosoftVisualStudioProjectSystemManagedVersion>17.0.0-beta1-10413-02</MicrosoftVisualStudioProjectSystemManagedVersion>
