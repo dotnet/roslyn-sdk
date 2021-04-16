@@ -36,6 +36,10 @@ stages:
     - task: ms-vseng.MicroBuildTasks.32f78468-e895-4f47-962c-58a699361df8.MicroBuildSwixPlugin@1
       displayName: Install Swix Plugin
 
+    # otherwise it'll complain about accessing an internal feed.
+    - task: NuGetAuthenticate@0
+      displayName: 'Authenticate to AzDO Feeds'
+
     - script: eng\common\CIBuild.cmd
                 -configuration $(BuildConfiguration)
                 /p:OfficialBuildId=$(Build.BuildNumber)
