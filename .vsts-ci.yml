@@ -20,7 +20,7 @@ stages:
   jobs:
   - template: /eng/common/templates/job/onelocbuild.yml
     parameters:
-      CreatePr: false
+      CreatePr: true
       LclSource: lclFilesfromPackage
       LclPackageId: 'LCL-JUNO-PROD-ROSLYNSDK'
 
