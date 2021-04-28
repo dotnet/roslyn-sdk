@@ -18,6 +18,12 @@ stages:
   displayName: Build and Test
 
   jobs:
+  - template: /eng/common/templates/job/onelocbuild.yml
+    parameters:
+      CreatePr: false
+      LclSource: lclFilesfromPackage
+      LclPackageId: 'LCL-JUNO-PROD-ROSLYNSDK'
+
   - job: OfficialBuild
     displayName: Official Build
     pool:
