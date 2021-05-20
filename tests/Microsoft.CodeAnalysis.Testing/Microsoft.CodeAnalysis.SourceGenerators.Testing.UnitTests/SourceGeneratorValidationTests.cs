@@ -227,6 +227,30 @@ DiagnosticResult.CompilerError(""BC30481"").WithSpan(""Microsoft.CodeAnalysis.So
             }.RunAsync();
         }
 
+        [Fact]
+        public async Task CSharpAddGlobalOptions()
+        {
+            var key = "build_property.EnableLogging";
+            var value = "true";
+            CheckGlobalOption.ExpectedKey = key;
+            CheckGlobalOption.ExpectedValue = value;
+            await new CSharpSourceGeneratorTest<CheckGlobalOption>
+            {
+                GlobalOptions = { (key, value) },
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"// Comment",
+                    },
+                    GeneratedSources =
+                    {
+                        ("Microsoft.CodeAnalysis.SourceGenerators.Testing.UnitTests\\Microsoft.CodeAnalysis.Testing.TestGenerators.CheckGlobalOption\\EmptyGeneratedFile.cs", SourceText.From(string.Empty, Encoding.UTF8)),
+                    },
+                },
+            }.RunAsync();
+        }
+
         private class CSharpSourceGeneratorTest<TSourceGenerator> : SourceGeneratorTest<DefaultVerifier>
             where TSourceGenerator : ISourceGenerator, new()
         {
@@ -240,7 +264,7 @@ DiagnosticResult.CompilerError(""BC30481"").WithSpan(""Microsoft.CodeAnalysis.So
                     sourceGenerators,
                     project.AnalyzerOptions.AdditionalFiles,
                     (CSharpParseOptions)project.ParseOptions!,
-                    project.AnalyzerOptions.AnalyzerConfigOptionsProvider);
+                    new AggregateOptionsProvider(project.AnalyzerOptions.AnalyzerConfigOptionsProvider, GlobalOptions));
             }
 
             protected override CompilationOptions CreateCompilationOptions()
@@ -272,7 +296,7 @@ DiagnosticResult.CompilerError(""BC30481"").WithSpan(""Microsoft.CodeAnalysis.So
                     sourceGenerators,
                     project.AnalyzerOptions.AdditionalFiles,
                     (VisualBasicParseOptions)project.ParseOptions!,
-                    project.AnalyzerOptions.AnalyzerConfigOptionsProvider);
+                    new AggregateOptionsProvider(project.AnalyzerOptions.AnalyzerConfigOptionsProvider, GlobalOptions));
             }
 
             protected override CompilationOptions CreateCompilationOptions()

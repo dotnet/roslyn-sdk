@@ -3,6 +3,7 @@ Microsoft.CodeAnalysis.Testing.EmptySourceGeneratorProvider.EmptySourceGenerator
 Microsoft.CodeAnalysis.Testing.EmptySourceGeneratorProvider.Execute(Microsoft.CodeAnalysis.GeneratorExecutionContext context) -> void
 Microsoft.CodeAnalysis.Testing.EmptySourceGeneratorProvider.Initialize(Microsoft.CodeAnalysis.GeneratorInitializationContext context) -> void
 Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>
+Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.GlobalOptions.get -> System.Collections.Generic.List<(string key, string value)>
 Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.SourceGeneratorTest() -> void
 Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.VerifySourceGeneratorAsync(Microsoft.CodeAnalysis.Testing.SolutionState testState, Microsoft.CodeAnalysis.Testing.IVerifier verifier, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Diagnostic>>
 Microsoft.CodeAnalysis.Testing.SourceGeneratorVerifier<TSourceGenerator, TTest, TVerifier>

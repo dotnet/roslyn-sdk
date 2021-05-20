@@ -26,7 +26,7 @@ Public Class VisualBasicSourceGeneratorTest(Of TSourceGenerator As {ISourceGener
             sourceGenerators,
             project.AnalyzerOptions.AdditionalFiles,
             CType(project.ParseOptions, VisualBasicParseOptions),
-            project.AnalyzerOptions.AnalyzerConfigOptionsProvider)
+            New AggregateOptionsProvider(project.AnalyzerOptions.AnalyzerConfigOptionsProvider, GlobalOptions))
     End Function
 
     Protected Overrides Function CreateCompilationOptions() As CompilationOptions

@@ -29,7 +29,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing
                 sourceGenerators,
                 project.AnalyzerOptions.AdditionalFiles,
                 (CSharpParseOptions)project.ParseOptions!,
-                project.AnalyzerOptions.AnalyzerConfigOptionsProvider);
+                new AggregateOptionsProvider(project.AnalyzerOptions.AnalyzerConfigOptionsProvider, GlobalOptions));
         }
 
         protected override CompilationOptions CreateCompilationOptions()

@@ -6,11 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeRefactorings;
+
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
@@ -22,6 +20,11 @@ namespace Microsoft.CodeAnalysis.Testing
     public abstract class SourceGeneratorTest<TVerifier> : AnalyzerTest<TVerifier>
         where TVerifier : IVerifier, new()
     {
+        /// <summary>
+        /// Gets a collection of global options that will be awaiable from Context.AnalyzerConfigOptions.GlobalOptions
+        /// </summary>
+        public List<(string key, string value)> GlobalOptions { get; } = new List<(string, string)>();
+
         protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
             => Enumerable.Empty<DiagnosticAnalyzer>();
 
