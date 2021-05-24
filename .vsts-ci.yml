@@ -77,7 +77,7 @@ stages:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(BuildConfiguration)'
         ArtifactName: 'Logs'
       continueOnError: true
-      condition: not(succeeded())
+      condition: always()
 
     # Publish an artifact that the RoslynInsertionTool is able to find by its name.
     - task: PublishBuildArtifacts@1
