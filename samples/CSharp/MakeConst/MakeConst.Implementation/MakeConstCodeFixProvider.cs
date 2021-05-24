@@ -17,17 +17,15 @@ using Microsoft.CodeAnalysis.Simplification;
 namespace MakeConst
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MakeConstCodeFixProvider)), Shared]
-    public class MakeConstCodeFixProvider : CodeFixProvider
+    public sealed class MakeConstCodeFixProvider : CodeFixProvider
     {
-        private const string title = "Make uppercase";
-
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(MakeConstAnalyzer.MakeConstDiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
             Diagnostic diagnostic = context.Diagnostics.First();
             Microsoft.CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
@@ -44,7 +42,7 @@ namespace MakeConst
             context.RegisterCodeFix(action, diagnostic);
         }
 
-        private async Task<Document> MakeConstAsync(Document document, LocalDeclarationStatementSyntax localDeclaration, CancellationToken cancellationToken)
+        private static async Task<Document> MakeConstAsync(Document document, LocalDeclarationStatementSyntax localDeclaration, CancellationToken cancellationToken)
         {
             // Remove the leading trivia from the local declaration.
             SyntaxToken firstToken = localDeclaration.GetFirstToken();
@@ -64,15 +62,15 @@ namespace MakeConst
             TypeSyntax variableTypeName = variableDeclaration.Type;
             if (variableTypeName.IsVar)
             {
-                SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken);
+                SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
                 // Special case: Ensure that 'var' isn't actually an alias to another type
                 // (e.g. using var = System.String).
-                IAliasSymbol aliasInfo = semanticModel.GetAliasInfo(variableTypeName);
+                IAliasSymbol aliasInfo = semanticModel.GetAliasInfo(variableTypeName, cancellationToken);
                 if (aliasInfo == null)
                 {
                     // Retrieve the type inferred for var.
-                    ITypeSymbol type = semanticModel.GetTypeInfo(variableTypeName).ConvertedType;
+                    ITypeSymbol type = semanticModel.GetTypeInfo(variableTypeName, cancellationToken).ConvertedType;
 
                     // Special case: Ensure that 'var' isn't actually a type named 'var'.
                     if (type.Name != "var")
@@ -100,7 +98,7 @@ namespace MakeConst
             LocalDeclarationStatementSyntax formattedLocal = newLocal.WithAdditionalAnnotations(Formatter.Annotation);
 
             // Replace the old local declaration with the new local declaration.
-            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken);
+            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SyntaxNode newRoot = root.ReplaceNode(localDeclaration, formattedLocal);
 
             // Return document with transformed tree.
