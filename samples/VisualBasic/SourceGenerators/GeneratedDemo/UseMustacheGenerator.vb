@@ -12,23 +12,23 @@ Imports GeneratedDemo.UseMustacheGenerator
 
 Friend Class UseMustacheGenerator
 
-  Public Shared Sub Run()
-    Console.WriteLine(Mustache.Constants.Lottery)
-    Console.WriteLine(Mustache.Constants.HR)
-    Console.WriteLine(Mustache.Constants.HTML)
-    Console.WriteLine(Mustache.Constants.Section)
-    Console.WriteLine(Mustache.Constants.NestedSection)
-  End Sub
+    Public Shared Sub Run()
+        Console.WriteLine(Mustache.Constants.Lottery)
+        Console.WriteLine(Mustache.Constants.HR)
+        Console.WriteLine(Mustache.Constants.HTML)
+        Console.WriteLine(Mustache.Constants.Section)
+        Console.WriteLine(Mustache.Constants.NestedSection)
+    End Sub
 
-  ' Mustache templates and hashes from the manual at https://mustache.github.io/mustache.1.html...
-  Public Const t1 As String = "
+    ' Mustache templates and hashes from the manual at https://mustache.github.io/mustache.1.html...
+    Public Const t1 As String = "
 Hello {{name}}
 You have just won {{value}} dollars!
 {{#in_ca}}
 Well, {{taxed_value}} dollars, after taxes.
 {{/in_ca}}
 "
-  Public Const h1 As String = "
+    Public Const h1 As String = "
 {
   ""name"": ""Chris"",
   ""value"": 10000,
@@ -36,35 +36,35 @@ Well, {{taxed_value}} dollars, after taxes.
   ""in_ca"": true
 }
 "
-  Public Const t2 As String = "
+    Public Const t2 As String = "
 * {{name}}
 * {{age}}
 * {{company}}
 * {{{company}}}
 "
-  Public Const h2 As String = "
+    Public Const h2 As String = "
 {
   ""name"": ""Chris"",
   ""company"": ""<b>GitHub</b>""
 }
 "
-  Public Const t3 As String = "
+    Public Const t3 As String = "
     Shown
     {{#person}}
       Never shown!
     {{/person}}
     "
-  Public Const h3 As String = "
+    Public Const h3 As String = "
 {
   ""person"": false
 }
 "
-  Public Const t4 As String = "
+    Public Const t4 As String = "
 {{#repo}}
   <b>{{name}}</b>
 {{/repo}}
 "
-  Public Const h4 As String = "
+    Public Const h4 As String = "
 {
   ""repo"": [
     { ""name"": ""resque"" },
@@ -73,7 +73,7 @@ Well, {{taxed_value}} dollars, after taxes.
   ]
 }
 "
-  Public Const t5 As String = "
+    Public Const t5 As String = "
 {{#repo}}
   <b>{{name}}</b>
     {{#nested}}
@@ -81,7 +81,7 @@ Well, {{taxed_value}} dollars, after taxes.
     {{/nested}}
 {{/repo}}
 "
-  Public Const h5 As String = "
+    Public Const h5 As String = "
 {
   ""repo"": [
     { ""name"": ""resque"", ""nested"":[{""name"":""nestedResque""}] },

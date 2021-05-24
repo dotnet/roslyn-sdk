@@ -11,38 +11,38 @@ Imports Microsoft.CodeAnalysis.Text
 
 Namespace SourceGeneratorSamples
 
-  <Generator(LanguageNames.VisualBasic)>
-  Public Class SettingsXmlGenerator
-    Implements ISourceGenerator
+    <Generator(LanguageNames.VisualBasic)>
+    Public Class SettingsXmlGenerator
+        Implements ISourceGenerator
 
-    Public Sub Initialize(context As GeneratorInitializationContext) Implements ISourceGenerator.Initialize
+        Public Sub Initialize(context As GeneratorInitializationContext) Implements ISourceGenerator.Initialize
 
-    End Sub
+        End Sub
 
-    Public Sub Execute(context As GeneratorExecutionContext) Implements ISourceGenerator.Execute
-      ' Using the context, get any additional files that end in .xmlsettings
-      For Each settingsFile In context.AdditionalFiles.Where(Function(at) at.Path.EndsWith(".xmlsettings"))
-        ProcessSettingsFile(settingsFile, context)
-      Next
-    End Sub
+        Public Sub Execute(context As GeneratorExecutionContext) Implements ISourceGenerator.Execute
+            ' Using the context, get any additional files that end in .xmlsettings
+            For Each settingsFile In context.AdditionalFiles.Where(Function(at) at.Path.EndsWith(".xmlsettings"))
+                ProcessSettingsFile(settingsFile, context)
+            Next
+        End Sub
 
-    Private Sub ProcessSettingsFile(xmlFile As AdditionalText, context As GeneratorExecutionContext)
+        Private Sub ProcessSettingsFile(xmlFile As AdditionalText, context As GeneratorExecutionContext)
 
-      ' try and load the settings file
-      Dim xmlDoc As New XmlDocument
-      Dim text = xmlFile.GetText(context.CancellationToken).ToString()
-      Try
-        xmlDoc.LoadXml(text)
-      Catch
-        'TODO: issue a diagnostic that says we couldn't parse it
-        Return
-      End Try
+            ' try and load the settings file
+            Dim xmlDoc As New XmlDocument
+            Dim text = xmlFile.GetText(context.CancellationToken).ToString()
+            Try
+                xmlDoc.LoadXml(text)
+            Catch
+                'TODO: issue a diagnostic that says we couldn't parse it
+                Return
+            End Try
 
-      ' create a class in the XmlSetting class that represnts this entry, and a static field that contains a singleton instance.
-      Dim fileName = Path.GetFileName(xmlFile.Path)
-      Dim name = xmlDoc.DocumentElement.GetAttribute("name")
+            ' create a class in the XmlSetting class that represnts this entry, and a static field that contains a singleton instance.
+            Dim fileName = Path.GetFileName(xmlFile.Path)
+            Dim name = xmlDoc.DocumentElement.GetAttribute("name")
 
-      Dim sb = New StringBuilder($"Option Explicit On
+            Dim sb = New StringBuilder($"Option Explicit On
 Option Strict On
 Option Infer On
 
@@ -69,13 +69,13 @@ Namespace Global.AutoSettings
         Return m_fileName
       End Function")
 
-      For i = 0 To xmlDoc.DocumentElement.ChildNodes.Count - 1
+            For i = 0 To xmlDoc.DocumentElement.ChildNodes.Count - 1
 
-        Dim setting = CType(xmlDoc.DocumentElement.ChildNodes(i), XmlElement)
-        Dim settingName = setting.GetAttribute("name")
-        Dim settingType = setting.GetAttribute("type")
+                Dim setting = CType(xmlDoc.DocumentElement.ChildNodes(i), XmlElement)
+                Dim settingName = setting.GetAttribute("name")
+                Dim settingType = setting.GetAttribute("type")
 
-        sb.Append($"
+                sb.Append($"
 
       Public ReadOnly Property {settingName} As {settingType}
         Get
@@ -83,9 +83,9 @@ Namespace Global.AutoSettings
         End Get
       End Property")
 
-      Next
+            Next
 
-      sb.Append("
+            sb.Append("
 
     End Class
 
@@ -93,10 +93,10 @@ Namespace Global.AutoSettings
 
 End Namespace")
 
-      context.AddSource($"Settings_{name}", SourceText.From(sb.ToString(), Encoding.UTF8))
+            context.AddSource($"Settings_{name}", SourceText.From(sb.ToString(), Encoding.UTF8))
 
-    End Sub
+        End Sub
 
-  End Class
+    End Class
 
 End Namespace
