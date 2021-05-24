@@ -1,4 +1,4 @@
-Option Explicit On
+﻿Option Explicit On
 Option Infer On
 Option Strict On
 
@@ -76,7 +76,7 @@ End Namespace
       Next
 
       ' group the fields by class, and generate the source
-      For Each group In fieldSymbols.GroupBy(Function(f) f.ContainingType)
+      For Each group In fieldSymbols.GroupBy(Function(f) f.ContainingType, SymbolEqualityComparer.Default)
         Dim classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol)
         context.AddSource($"{group.Key.Name}_AutoNotify.vb", SourceText.From(classSource, Encoding.UTF8))
       Next
