@@ -43,11 +43,13 @@ stages:
 
     - script: eng\common\CIBuild.cmd
                 -configuration $(BuildConfiguration)
+                /p:RepositoryName=$(Build.Repository.Name)
                 /p:OfficialBuildId=$(Build.BuildNumber)
                 /p:VisualStudioDropName=$(VisualStudioDropName)
                 /p:DotNetSignType=$(SignType)
                 /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
                 /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+                /p:PublishToSymbolServer=true
                 /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory)
                 /p:DotnetPublishUsingPipelines=true
       displayName: Build
