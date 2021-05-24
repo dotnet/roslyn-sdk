@@ -12,8 +12,8 @@
   <ItemGroup>
     <!-- Generator dependencies -->
     <PackageReference Include="CsvTextFieldParser" Version="1.2.2-preview" GeneratePathProperty="true" PrivateAssets="all" />
-    <PackageReference Include="Handlebars.Net" Version="2.0.3" GeneratePathProperty="true" PrivateAssets="all" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" GeneratePathProperty="true" PrivateAssets="all" />
+    <PackageReference Include="Handlebars.Net" Version="1.10.1" GeneratePathProperty="true" PrivateAssets="all" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" GeneratePathProperty="true" PrivateAssets="all" />
   </ItemGroup>
 
   <PropertyGroup>
