@@ -24,7 +24,7 @@
     <MicrosoftCodeAnalysisVisualBasicVersion>3.9.0</MicrosoftCodeAnalysisVisualBasicVersion>
     <MicrosoftCodeAnalysisWorkspacesCommonVersion>3.9.0</MicrosoftCodeAnalysisWorkspacesCommonVersion>
     <!-- VS SDK -->
-    <EnvDTE80Version>16.8.30406.65</EnvDTE80Version>
+    <EnvDTE80Version>16.8.30705.32</EnvDTE80Version>
     <EnvDTEVersion>8.0.1</EnvDTEVersion>
     <MicrosoftServiceHubFrameworkVersion>2.7.100</MicrosoftServiceHubFrameworkVersion>
     <MicrosoftVisualStudioComponentModelHostVersion>16.8.239</MicrosoftVisualStudioComponentModelHostVersion>
