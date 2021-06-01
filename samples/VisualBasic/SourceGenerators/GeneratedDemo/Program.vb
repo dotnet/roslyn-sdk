@@ -28,12 +28,6 @@ Running CsvGenerator:
 ")
         UseCsvGenerator.Run()
 
-        Console.WriteLine("
-
-Running MustacheGenerator:
-")
-        UseMustacheGenerator.Run()
-
     End Sub
 
 End Module
