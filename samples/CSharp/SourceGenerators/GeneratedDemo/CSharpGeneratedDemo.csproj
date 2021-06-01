@@ -8,13 +8,12 @@
   <ItemGroup>
     <AdditionalFiles Include="People.csv" CsvLoadType="Startup" />
     <AdditionalFiles Include="Cars.csv" CsvLoadType="OnDemand" CacheObjects="true" />
-
+    <AdditionalFiles Include="Geometry.math" />
     <AdditionalFiles Include="MainSettings.xmlsettings" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="MainSettings.xmlsettings" CopyToOutputDirectory="PreserveNewest" /> <!-- TODO: remove this when AdditionalFiles supports CopyToOutputDirectory -->
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SourceGeneratorSamples\SourceGeneratorSamples.vbproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\SourceGeneratorSamples\CSharpSourceGeneratorSamples.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <!-- Manually reference the generator props because we locally reference the generator. When added via NuGet this happens automatically -->

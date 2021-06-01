@@ -4,36 +4,30 @@ Option Infer On
 
 Module Program
 
-  Public Sub Main()
+    Public Sub Main()
 
-    Console.WriteLine("Running HelloWorld:
+        Console.WriteLine("Running HelloWorld:
 ")
-    UseHelloWorldGenerator.Run()
+        UseHelloWorldGenerator.Run()
 
-    Console.WriteLine("
+        Console.WriteLine("
 
 Running AutoNotify:
 ")
-    UseAutoNotifyGenerator.Run()
+        UseAutoNotifyGenerator.Run()
 
-    Console.WriteLine("
+        Console.WriteLine("
 
 Running XmlSettings:
 ")
-    UseXmlSettingsGenerator.Run()
+        UseXmlSettingsGenerator.Run()
 
-    Console.WriteLine("
+        Console.WriteLine("
 
 Running CsvGenerator:
 ")
-    UseCsvGenerator.Run()
+        UseCsvGenerator.Run()
 
-    Console.WriteLine("
-
-Running MustacheGenerator:
-")
-    UseMustacheGenerator.Run()
-
-  End Sub
+    End Sub
 
 End Module
