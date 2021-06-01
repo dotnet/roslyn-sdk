@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.CodeAnalysis.CodeFix.Testing\Microsoft.CodeAnalysis.CodeFix.Testing.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.vbproj" />
   </ItemGroup>
   
 </Project>
