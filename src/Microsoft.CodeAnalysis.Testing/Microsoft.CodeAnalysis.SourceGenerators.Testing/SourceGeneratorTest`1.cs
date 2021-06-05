@@ -33,7 +33,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         protected abstract GeneratorDriver CreateGeneratorDriver(Project project, ImmutableArray<ISourceGenerator> sourceGenerators);
 
-        protected override async Task RunImplAsync(CancellationToken cancellationToken)
+        protected override async Task RunImplAsync(DiagnosticResult[] expectedDiagnostics, CancellationToken cancellationToken)
         {
             var analyzers = GetDiagnosticAnalyzers().ToArray();
             var defaultDiagnostic = GetDefaultDiagnostic(analyzers);
@@ -42,7 +42,14 @@ namespace Microsoft.CodeAnalysis.Testing
             var testState = TestState.WithInheritedValuesApplied(null, fixableDiagnostics).WithProcessedMarkup(MarkupOptions, defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, DefaultFilePath);
 
             var diagnostics = await VerifySourceGeneratorAsync(testState, Verify, cancellationToken).ConfigureAwait(false);
-            await VerifyDiagnosticsAsync(new EvaluatedProjectState(testState, ReferenceAssemblies).WithAdditionalDiagnostics(diagnostics), testState.AdditionalProjects.Values.Select(additionalProject => new EvaluatedProjectState(additionalProject, ReferenceAssemblies)).ToImmutableArray(), testState.ExpectedDiagnostics.ToArray(), Verify.PushContext("Diagnostics of test state"), cancellationToken).ConfigureAwait(false);
+            if (expectedDiagnostics.Length == 0)
+            {
+                await VerifyDiagnosticsAsync(new EvaluatedProjectState(testState, ReferenceAssemblies).WithAdditionalDiagnostics(diagnostics), testState.AdditionalProjects.Values.Select(additionalProject => new EvaluatedProjectState(additionalProject, ReferenceAssemblies)).ToImmutableArray(), testState.ExpectedDiagnostics.ToArray(), Verify.PushContext("Diagnostics of test state"), cancellationToken).ConfigureAwait(false);
+            }
+            else
+            {
+                await VerifyDiagnosticsAsync(new EvaluatedProjectState(testState, ReferenceAssemblies).WithAdditionalDiagnostics(diagnostics), testState.AdditionalProjects.Values.Select(additionalProject => new EvaluatedProjectState(additionalProject, ReferenceAssemblies)).ToImmutableArray(), expectedDiagnostics, Verify.PushContext("Diagnostics of test state"), cancellationToken).ConfigureAwait(false);
+            }
         }
 
         protected override async Task<Compilation> GetProjectCompilationAsync(Project project, IVerifier verifier, CancellationToken cancellationToken)

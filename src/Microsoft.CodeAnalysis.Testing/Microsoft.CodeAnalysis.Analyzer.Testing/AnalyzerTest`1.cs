@@ -177,7 +177,7 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             try
             {
-                await RunImplAsync(cancellationToken);
+                await RunImplAsync(Array.Empty<DiagnosticResult>(), cancellationToken);
             }
             finally
             {
@@ -191,9 +191,31 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <summary>
         /// Runs the test.
         /// </summary>
+        /// <param name="expectedDiagnostics">The diagnostics that are expected to be reported by the operation.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the operation will observe.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected virtual async Task RunImplAsync(CancellationToken cancellationToken)
+        public async Task RunAsync(DiagnosticResult[] expectedDiagnostics, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await RunImplAsync(expectedDiagnostics, cancellationToken);
+            }
+            finally
+            {
+                while (_workspaces.TryTake(out var workspace))
+                {
+                    workspace.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Runs the test.
+        /// </summary>
+        /// <param name="expectedDiagnostics">The diagnostics that are expected to be reported by the operation.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the operation will observe.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        protected virtual async Task RunImplAsync(DiagnosticResult[] expectedDiagnostics, CancellationToken cancellationToken)
         {
             Verify.NotEmpty($"{nameof(TestState)}.{nameof(SolutionState.Sources)}", TestState.Sources);
 
@@ -203,12 +225,19 @@ namespace Microsoft.CodeAnalysis.Testing
             var fixableDiagnostics = ImmutableArray<string>.Empty;
             var testState = TestState.WithInheritedValuesApplied(null, fixableDiagnostics).WithProcessedMarkup(MarkupOptions, defaultDiagnostic, supportedDiagnostics, fixableDiagnostics, DefaultFilePath);
 
-            await VerifyDiagnosticsAsync(new EvaluatedProjectState(testState, ReferenceAssemblies), testState.AdditionalProjects.Values.Select(additionalProject => new EvaluatedProjectState(additionalProject, ReferenceAssemblies)).ToImmutableArray(), testState.ExpectedDiagnostics.ToArray(), Verify, cancellationToken).ConfigureAwait(false);
+            if (expectedDiagnostics.Length == 0)
+            {
+                await VerifyDiagnosticsAsync(new EvaluatedProjectState(testState, ReferenceAssemblies), testState.AdditionalProjects.Values.Select(additionalProject => new EvaluatedProjectState(additionalProject, ReferenceAssemblies)).ToImmutableArray(), testState.ExpectedDiagnostics.ToArray(), Verify, cancellationToken).ConfigureAwait(false);
+            }
+            else
+            {
+                await VerifyDiagnosticsAsync(new EvaluatedProjectState(testState, ReferenceAssemblies), testState.AdditionalProjects.Values.Select(additionalProject => new EvaluatedProjectState(additionalProject, ReferenceAssemblies)).ToImmutableArray(), expectedDiagnostics, Verify, cancellationToken).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
         /// Gets the default diagnostic to use during markup processing. By default, the <em>single</em> diagnostic of
-        /// the first analyzer is used, and no default diagonostic is available if multiple diagnostics are provided by
+        /// the first analyzer is used, and no default diagnostic is available if multiple diagnostics are provided by
         /// the analyzer. If <see cref="MarkupOptions.UseFirstDescriptor"/> is used, the first available diagnostic
         /// is used.
         /// </summary>

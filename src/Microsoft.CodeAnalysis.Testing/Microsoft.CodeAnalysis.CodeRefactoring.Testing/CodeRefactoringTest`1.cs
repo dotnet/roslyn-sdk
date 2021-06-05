@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <returns>The <see cref="CodeRefactoringProvider"/> to be used.</returns>
         protected abstract IEnumerable<CodeRefactoringProvider> GetCodeRefactoringProviders();
 
-        protected override async Task RunImplAsync(CancellationToken cancellationToken)
+        protected async Task RunImplAsync(CancellationToken cancellationToken)
         {
             Verify.NotEmpty($"{nameof(TestState)}.{nameof(SolutionState.Sources)}", TestState.Sources);
 
@@ -107,6 +107,12 @@ namespace Microsoft.CodeAnalysis.Testing
                 Verify.True(triggerSpan.HasValue, "Expected the test to include a single trigger span for refactoring");
                 return triggerSpan!.Value;
             }
+        }
+
+        protected override async Task RunImplAsync(DiagnosticResult[] expectedDiagnostics, CancellationToken cancellationToken)
+        {
+            _ = expectedDiagnostics;
+            await RunImplAsync(cancellationToken);
         }
 
         private bool CodeActionExpected()

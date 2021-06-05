@@ -216,7 +216,7 @@ namespace Microsoft.CodeAnalysis.Testing
             }
         }
 
-        protected override async Task RunImplAsync(CancellationToken cancellationToken)
+        protected async Task RunImplAsync(CancellationToken cancellationToken)
         {
             Verify.NotEmpty($"{nameof(TestState)}.{nameof(SolutionState.Sources)}", TestState.Sources);
 
@@ -247,6 +247,12 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 await VerifyFixAsync(testState, fixedState, batchFixedState, Verify, cancellationToken).ConfigureAwait(false);
             }
+        }
+
+        protected override async Task RunImplAsync(DiagnosticResult[] expectedDiagnostics, CancellationToken cancellationToken)
+        {
+            _ = expectedDiagnostics;
+            await RunImplAsync(cancellationToken);
         }
 
         private bool CodeFixExpected()
