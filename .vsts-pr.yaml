@@ -8,7 +8,7 @@ jobs:
 - job: Windows
   pool:
     name: NetCorePublic-Pool
-    queue: BuildPool.Windows.10.Amd64.Open
+    queue: buildpool.windows.10.amd64.vs2019.open
   strategy:
     maxParallel: 6
     matrix:
@@ -21,11 +21,11 @@ jobs:
         _configuration: Release
         _solution: Samples
       SDK Debug Test:
-        _args: -test
+        _args: -test -integrationTest
         _configuration: Debug
         _solution: Roslyn-SDK
       SDK Release Test:
-        _args: -test
+        _args: -test -integrationTest
         _configuration: Release
         _solution: Roslyn-SDK
       SDK Pack:
