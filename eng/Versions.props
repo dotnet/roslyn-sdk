@@ -76,7 +76,7 @@
     <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.20374.2</MicrosoftCodeAnalysisTestingVersion>
     <xunitassertVersion>$(xunitVersion)</xunitassertVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
-    <VsixTestingXunitVersion>0.1.49-beta</VsixTestingXunitVersion>
+    <MicrosoftVisualStudioExtensibilityTestingXunitLegacyVersion>0.1.71-beta</MicrosoftVisualStudioExtensibilityTestingXunitLegacyVersion>
     <!-- Analyzers -->
     <RoslynDiagnosticsAnalyzersVersion>2.9.8</RoslynDiagnosticsAnalyzersVersion>
     <StyleCopAnalyzersVersion>1.2.0-beta.164</StyleCopAnalyzersVersion>

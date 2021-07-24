@@ -1,6 +1,8 @@
 variables:
   - name: DOTNET_ROOT
     value: $(Build.SourcesDirectory)\.dotnet
+  - name: XUNIT_LOGS
+    value: $(Build.SourcesDirectory)\artifacts\log\$(_configuration)
 
 jobs:
 - job: Windows
@@ -44,7 +46,7 @@ jobs:
         ArtifactName: '$(_solution) $(_configuration) logs'
         publishLocation: Container
       continueOnError: true
-      condition: failed()
+      condition: not(succeeded())
     - task: PublishTestResults@2
       inputs:
         testRunner: 'xUnit'
