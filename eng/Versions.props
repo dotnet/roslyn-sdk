@@ -69,7 +69,7 @@
     <VSLangProjVersion>16.7.30508.193</VSLangProjVersion>
     <VSSDKTemplateWizardInterfaceVersion>12.0.4</VSSDKTemplateWizardInterfaceVersion>
     <!-- Libs -->
-    <DiffPlexVersion>1.4.4</DiffPlexVersion>
+    <DiffPlexVersion>1.5.0</DiffPlexVersion>
     <!-- Testing -->
     <MicrosoftCodeAnalysis2PrimaryTestVersion>2.6.1</MicrosoftCodeAnalysis2PrimaryTestVersion>
     <MicrosoftCodeAnalysis3PrimaryTestVersion>3.9.0</MicrosoftCodeAnalysis3PrimaryTestVersion>
