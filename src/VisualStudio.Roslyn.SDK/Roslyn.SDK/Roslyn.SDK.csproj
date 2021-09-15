@@ -13,7 +13,6 @@
     <Ngen>false</Ngen>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BindingPathProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <!-- Setting Template Content to None -->
