@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Rule Name="MyLaunchProfile"
+<Rule Name="ComponentDebuggerLaunchProfile"
       Description="Allows a user to debug a Roslyn Component by running it in the context of another projects build."
       DisplayName="Roslyn Component"
       PageTemplate="commandNameBasedDebugger"
