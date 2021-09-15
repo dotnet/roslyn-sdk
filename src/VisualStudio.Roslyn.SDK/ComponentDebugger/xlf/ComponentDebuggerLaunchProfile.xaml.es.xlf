@@ -12,12 +12,12 @@
         <target state="new">Target Project</target>
         <note />
       </trans-unit>
-      <trans-unit id="Rule|MyLaunchProfile|Description">
+      <trans-unit id="Rule|ComponentDebuggerLaunchProfile|Description">
         <source>Allows a user to debug a Roslyn Component by running it in the context of another projects build.</source>
         <target state="new">Allows a user to debug a Roslyn Component by running it in the context of another projects build.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Rule|MyLaunchProfile|DisplayName">
+      <trans-unit id="Rule|ComponentDebuggerLaunchProfile|DisplayName">
         <source>Roslyn Component</source>
         <target state="new">Roslyn Component</target>
         <note />
