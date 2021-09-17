@@ -12,6 +12,7 @@ variables:
 # Branches that trigger a build on commit
 trigger:
 - main
+- dev17.0
 
 stages:
 - stage: build
