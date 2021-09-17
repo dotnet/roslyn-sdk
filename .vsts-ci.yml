@@ -12,12 +12,18 @@ variables:
 # Branches that trigger a build on commit
 trigger:
 - main
+- dev17.0
 
 stages:
 - stage: build
   displayName: Build and Test
 
   jobs:
+  - template: /eng/common/templates/job/onelocbuild.yml
+    parameters:
+      LclSource: lclFilesfromPackage
+      LclPackageId: 'LCL-JUNO-PROD-ROSLYNSDK'
+
   - job: OfficialBuild
     displayName: Official Build
     pool:
@@ -72,7 +78,7 @@ stages:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(BuildConfiguration)'
         ArtifactName: 'Logs'
       continueOnError: true
-      condition: not(succeeded())
+      condition: always()
 
     # Publish an artifact that the RoslynInsertionTool is able to find by its name.
     - task: PublishBuildArtifacts@1
@@ -115,6 +121,7 @@ stages:
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - template: eng\common\templates\post-build\post-build.yml
     parameters:
+      publishingInfraVersion: 3
       # Symbol validation is not entirely reliable as of yet, so should be turned off until
       # https://github.com/dotnet/arcade/issues/2871 is resolved.
       enableSymbolValidation: false

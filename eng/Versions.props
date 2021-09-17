@@ -3,13 +3,14 @@
   <PropertyGroup>
     <!-- This repo version -->
     <VersionPrefix>4.0.0</VersionPrefix>
-    <NugetPackagePrefix>1.0.1</NugetPackagePrefix>
+    <NugetPackagePrefix>1.1.1</NugetPackagePrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
     <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
+    <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
     <MicrosoftNetCompilersToolsetVersion>3.9.0</MicrosoftNetCompilersToolsetVersion>
     <!-- Force prior version due to https://github.com/microsoft/vstest/pull/2192 and https://github.com/microsoft/vstest/pull/2067 -->
     <MicrosoftNETTestSdkVersion>16.1.1</MicrosoftNETTestSdkVersion>
@@ -61,12 +62,14 @@
     <!-- Project System-->    
     <MicrosoftVisualStudioProjectSystemManagedVersion>17.0.0-beta1-10413-02</MicrosoftVisualStudioProjectSystemManagedVersion>
     <MicrosoftVisualStudioProjectSystemManagedVSVersion>17.0.0-beta1-10413-02</MicrosoftVisualStudioProjectSystemManagedVSVersion>
+    <MicrosoftVisualStudioProjectSystemSDKToolsVersion>17.0.667-pre</MicrosoftVisualStudioProjectSystemSDKToolsVersion>
     <!-- Libs -->
-    <DiffPlexVersion>1.4.4</DiffPlexVersion>
+    <DiffPlexVersion>1.5.0</DiffPlexVersion>
     <!-- Testing -->
     <MicrosoftCodeAnalysis2PrimaryTestVersion>2.6.1</MicrosoftCodeAnalysis2PrimaryTestVersion>
     <MicrosoftCodeAnalysis3PrimaryTestVersion>3.9.0</MicrosoftCodeAnalysis3PrimaryTestVersion>
     <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.20374.2</MicrosoftCodeAnalysisTestingVersion>
+    <xunitassertVersion>$(xunitVersion)</xunitassertVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <VsixTestingXunitVersion>0.1.49-beta</VsixTestingXunitVersion>
     <!-- Analyzers -->

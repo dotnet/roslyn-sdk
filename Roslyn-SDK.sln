@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29814.53
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31706.66
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{924F7971-780C-4E70-A306-86482469502E}"
 EndProject
@@ -190,6 +190,10 @@ EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing.XUnit.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing.XUnit.UnitTests\Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing.XUnit.UnitTests.vbproj", "{92BD1781-5DB4-4F72-BCCB-0D64C0790A2B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.ComponentDebugger", "src\VisualStudio.Roslyn.SDK\ComponentDebugger\Roslyn.ComponentDebugger.csproj", "{421DE59C-8246-4679-9D69-79F16A7187BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "util", "util", "{7A94E723-ADD6-48C4-BBE7-1D5B311187A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyVersionGenerator", "src\VisualStudio.Roslyn.SDK\AssemblyVersionGenerator\AssemblyVersionGenerator.csproj", "{AB6B3C69-9F6F-461C-BFD8-D3F25B9F44AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -545,6 +549,10 @@ Global
 		{421DE59C-8246-4679-9D69-79F16A7187BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{421DE59C-8246-4679-9D69-79F16A7187BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{421DE59C-8246-4679-9D69-79F16A7187BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB6B3C69-9F6F-461C-BFD8-D3F25B9F44AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB6B3C69-9F6F-461C-BFD8-D3F25B9F44AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB6B3C69-9F6F-461C-BFD8-D3F25B9F44AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB6B3C69-9F6F-461C-BFD8-D3F25B9F44AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -642,6 +650,7 @@ Global
 		{7C3FE60E-055B-4E0C-BB85-C7E94A640074} = {9905147E-CC1F-42A0-BD27-05586C583DF7}
 		{92BD1781-5DB4-4F72-BCCB-0D64C0790A2B} = {9905147E-CC1F-42A0-BD27-05586C583DF7}
 		{421DE59C-8246-4679-9D69-79F16A7187BE} = {F9B73995-76C6-4056-ADA9-18342F951361}
+		{AB6B3C69-9F6F-461C-BFD8-D3F25B9F44AD} = {7A94E723-ADD6-48C4-BBE7-1D5B311187A8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {56695AA9-EA80-47A7-8562-E51285906C54}

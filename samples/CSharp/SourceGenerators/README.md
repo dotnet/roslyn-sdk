@@ -28,7 +28,7 @@ You can add the sample generators to your own project by adding an item group co
 
 ```xml
 <ItemGroup>
-    <Analyzer Include="path\to\SourceGeneratorSamples.dll">
+    <Analyzer Include="path\to\SourceGeneratorSamples.dll"/>
 </ItemGroup>
 ```
 
