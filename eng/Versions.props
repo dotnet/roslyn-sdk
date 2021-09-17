@@ -24,6 +24,8 @@
     <MicrosoftCodeAnalysisEditorFeaturesTextVersion>3.9.0</MicrosoftCodeAnalysisEditorFeaturesTextVersion>
     <MicrosoftCodeAnalysisVisualBasicVersion>3.9.0</MicrosoftCodeAnalysisVisualBasicVersion>
     <MicrosoftCodeAnalysisWorkspacesCommonVersion>3.9.0</MicrosoftCodeAnalysisWorkspacesCommonVersion>
+    <!-- We target a lower roslyn API to build internal generators against so they still load in earlier VS versions -->
+    <MicrosoftCodeAnalysisGeneratorVersion>3.9.0</MicrosoftCodeAnalysisGeneratorVersion>
     <!-- VS SDK -->
     <EnvDTE80Version>16.9.30921.233</EnvDTE80Version>
     <EnvDTE90Version>16.8.30705.32</EnvDTE90Version>
