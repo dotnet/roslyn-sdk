@@ -73,6 +73,7 @@
     <VSSDKTemplateWizardInterfaceVersion>12.0.4</VSSDKTemplateWizardInterfaceVersion>
     <!-- Libs -->
     <DiffPlexVersion>1.5.0</DiffPlexVersion>
+    <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
     <!-- Testing -->
     <MicrosoftCodeAnalysis2PrimaryTestVersion>2.6.1</MicrosoftCodeAnalysis2PrimaryTestVersion>
     <MicrosoftCodeAnalysis3PrimaryTestVersion>3.9.0</MicrosoftCodeAnalysis3PrimaryTestVersion>
