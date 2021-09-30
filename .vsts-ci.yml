@@ -19,10 +19,11 @@ stages:
   displayName: Build and Test
 
   jobs:
-  - template: /eng/common/templates/job/onelocbuild.yml
-    parameters:
-      LclSource: lclFilesfromPackage
-      LclPackageId: 'LCL-JUNO-PROD-ROSLYNSDK'
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    - template: /eng/common/templates/job/onelocbuild.yml
+      parameters:
+        LclSource: lclFilesfromPackage
+        LclPackageId: 'LCL-JUNO-PROD-ROSLYNSDK'
 
   - job: OfficialBuild
     displayName: Official Build
