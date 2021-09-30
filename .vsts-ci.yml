@@ -22,6 +22,7 @@ stages:
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
     - template: /eng/common/templates/job/onelocbuild.yml
       parameters:
+        CreatePr: true
         LclSource: lclFilesfromPackage
         LclPackageId: 'LCL-JUNO-PROD-ROSLYNSDK'
 
