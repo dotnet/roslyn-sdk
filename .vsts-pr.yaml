@@ -15,8 +15,8 @@ variables:
 jobs:
 - job: Windows
   pool:
-    name: NetCorePublic-Pool
-    queue: BuildPool.Windows.10.Amd64.Open
+    name: NetCore1ESPool-Svc-Public
+    demands: ImageOverride -equals Build.Windows.10.Amd64.Open
   strategy:
     maxParallel: 6
     matrix:
