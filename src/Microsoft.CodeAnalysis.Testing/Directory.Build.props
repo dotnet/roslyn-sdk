@@ -25,6 +25,23 @@
     <TestingLibrarySourceGeneratorTargetFrameworks>netcoreapp3.1;netstandard2.0;net472</TestingLibrarySourceGeneratorTargetFrameworks>
   </PropertyGroup>
 
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'net452' OR '$(TargetFramework)' == 'net46' OR '$(TargetFramework)' == 'netstandard1.5'">
+      <PropertyGroup>
+        <Testing_MicrosoftCodeAnalysisWorkspaces_Version>1.0.1</Testing_MicrosoftCodeAnalysisWorkspaces_Version>
+        <Testing_MicrosoftCodeAnalysisAnalyzers_Version>2.6.1</Testing_MicrosoftCodeAnalysisAnalyzers_Version>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <Testing_MicrosoftCodeAnalysisWorkspaces_Version>3.8.0</Testing_MicrosoftCodeAnalysisWorkspaces_Version>
+        <Testing_MicrosoftCodeAnalysisAnalyzers_Version>3.3.2</Testing_MicrosoftCodeAnalysisAnalyzers_Version>
+        <DefineConstants>$(DefineConstants);DIAG_SUPPORTS_SUPPRESSION</DefineConstants>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+
   <PropertyGroup Condition="'$(CopyrightMicrosoft)' != ''">
     <Copyright>$(CopyrightMicrosoft)</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

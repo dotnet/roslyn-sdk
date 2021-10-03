@@ -47,8 +47,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="1.0.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="$(Testing_MicrosoftCodeAnalysisAnalyzers_Version)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(Testing_MicrosoftCodeAnalysisWorkspaces_Version)" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="16.1.8" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />

@@ -409,6 +409,14 @@ namespace Microsoft.CodeAnalysis.Testing
                         message);
                 }
 
+#if DIAG_SUPPORTS_SUPPRESSION
+                if (expected.IsSuppressed.HasValue)
+                {
+                    message = FormatVerifierMessage(analyzers, actual.diagnostic, expected, $"Expected diagnostic suppression state to match");
+                    verifier.Equal(expected.IsSuppressed.Value, actual.diagnostic.IsSuppressed, message);
+                }
+#endif
+
                 DiagnosticVerifier?.Invoke(actual.diagnostic, expected, verifier);
             }
         }
@@ -803,6 +811,15 @@ namespace Microsoft.CodeAnalysis.Testing
                     builder.Append(")");
                 }
 
+#if DIAG_SUPPORTS_SUPPRESSION
+                if (diagnostics[i].IsSuppressed)
+                {
+                    builder.Append($".{nameof(DiagnosticResult.WithIsSuppressed)}(");
+                    builder.Append(diagnostics[i].IsSuppressed);
+                    builder.Append(")");
+                }
+#endif
+
                 builder.AppendLine(",");
             }
 
@@ -885,6 +902,15 @@ namespace Microsoft.CodeAnalysis.Testing
                     builder.Append(string.Join(", ", arguments.Select(a => "\"" + a?.ToString() + "\"")));
                     builder.Append(")");
                 }
+
+#if DIAG_SUPPORTS_SUPPRESSION
+                if (diagnostics[i].IsSuppressed.HasValue)
+                {
+                    builder.Append($".{nameof(DiagnosticResult.WithIsSuppressed)}(");
+                    builder.Append(diagnostics[i].IsSuppressed.GetValueOrDefault());
+                    builder.Append(")");
+                }
+#endif
 
                 builder.AppendLine(",");
             }
