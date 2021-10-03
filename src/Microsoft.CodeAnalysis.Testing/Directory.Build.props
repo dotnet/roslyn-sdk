@@ -36,7 +36,7 @@
       <PropertyGroup>
         <Testing_MicrosoftCodeAnalysisWorkspaces_Version>3.8.0</Testing_MicrosoftCodeAnalysisWorkspaces_Version>
         <Testing_MicrosoftCodeAnalysisAnalyzers_Version>3.3.2</Testing_MicrosoftCodeAnalysisAnalyzers_Version>
-        <DefineConstants>$(DefineConstants);DIAG_SUPPORTS_SUPPRESSION</DefineConstants>
+        <DefineConstants Condition="'$(Language)' == 'C#'">$(DefineConstants);DIAG_SUPPORTS_SUPPRESSION</DefineConstants>
       </PropertyGroup>
     </Otherwise>
   </Choose>
