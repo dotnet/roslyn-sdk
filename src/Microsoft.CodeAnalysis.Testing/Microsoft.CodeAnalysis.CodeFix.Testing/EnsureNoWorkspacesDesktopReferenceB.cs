@@ -5,6 +5,7 @@
 
 namespace Microsoft.CodeAnalysis
 {
+    /* This is no longer valid, FileTextLoader is now in Microsoft.CodeAnalysis.Workspaces.Common!
     /// <summary>
     /// This class will fail to compile (CS0419 Ambiguous reference in cref attribute) if the project contains a
     /// reference to Microsoft.CodeAnalysis.Workspaces.Desktop.
@@ -13,6 +14,7 @@ namespace Microsoft.CodeAnalysis
     internal class EnsureNoWorkspacesDesktopReference
     {
     }
+    */
 }
 
 #endif
