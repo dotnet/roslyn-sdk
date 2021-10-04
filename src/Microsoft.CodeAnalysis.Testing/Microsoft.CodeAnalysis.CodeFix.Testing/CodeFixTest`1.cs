@@ -540,7 +540,7 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 currentIteration++;
 
-                var analyzerDiagnostics = await GetSortedDiagnosticsAsync(project.Solution, analyzers, additionalDiagnostics: ImmutableArray<(Project project, Diagnostic diagnostic)>.Empty, CompilerDiagnostics, verifier, cancellationToken).ConfigureAwait(false);
+                var analyzerDiagnostics = await GetSortedDiagnosticsAsync(project!.Solution, analyzers, additionalDiagnostics: ImmutableArray<(Project project, Diagnostic diagnostic)>.Empty, CompilerDiagnostics, verifier, cancellationToken).ConfigureAwait(false);
                 if (analyzerDiagnostics.Length == 0)
                 {
                     break;
@@ -588,7 +588,7 @@ namespace Microsoft.CodeAnalysis.Testing
                             continue;
                         }
 
-                        var context = new CodeFixContext(fixableDocument, diagnostic, (a, d) => actions.Add(a), cancellationToken);
+                        var context = new CodeFixContext(fixableDocument!, diagnostic, (a, d) => actions.Add(a), cancellationToken);
                         await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
                     }
 
@@ -599,11 +599,11 @@ namespace Microsoft.CodeAnalysis.Testing
                         anyActions = true;
 
                         var originalProjectId = project.Id;
-                        var fixedProject = await ApplyCodeActionAsync(fixableDocument.Project, actionToApply, verifier, cancellationToken).ConfigureAwait(false);
+                        var fixedProject = await ApplyCodeActionAsync(fixableDocument!.Project, actionToApply, verifier, cancellationToken).ConfigureAwait(false);
                         if (fixedProject != fixableDocument.Project)
                         {
                             done = false;
-                            project = fixedProject.Solution.GetProject(originalProjectId);
+                            project = fixedProject.Solution.GetProject(originalProjectId)!;
                             break;
                         }
                     }
@@ -637,10 +637,10 @@ namespace Microsoft.CodeAnalysis.Testing
             }
             catch (Exception ex)
             {
-                return (project, ExceptionDispatchInfo.Capture(ex));
+                return (project!, ExceptionDispatchInfo.Capture(ex));
             }
 
-            return (project, null);
+            return (project!, null);
         }
 
         private Task<(Project project, ExceptionDispatchInfo? iterationCountFailure)> FixAllAnalyzerDiagnosticsInDocumentAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, string? codeFixEquivalenceKey, Action<CodeAction, IVerifier>? codeActionVerifier, Project project, int numberOfIterations, IVerifier verifier, CancellationToken cancellationToken)
@@ -729,7 +729,7 @@ namespace Microsoft.CodeAnalysis.Testing
                         }
 
                         var actionsBuilder = ImmutableArray.CreateBuilder<CodeAction>();
-                        var context = new CodeFixContext(diagnosticDocument, diagnostic, (a, d) => actionsBuilder.Add(a), cancellationToken);
+                        var context = new CodeFixContext(diagnosticDocument!, diagnostic, (a, d) => actionsBuilder.Add(a), cancellationToken);
                         await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
                         actions.AddRange(FilterCodeActions(actionsBuilder.ToImmutable()).Select(action => (action, codeFixProvider)));
                     }
@@ -760,9 +760,9 @@ namespace Microsoft.CodeAnalysis.Testing
                 var fixableDocument = project.Solution.GetDocument(firstDiagnostic.Location.SourceTree);
                 var analyzerDiagnosticIds = analyzers.SelectMany(x => x.SupportedDiagnostics).Select(x => x.Id);
                 var compilerDiagnosticIds = codeFixProviders.SelectMany(codeFixProvider => codeFixProvider.FixableDiagnosticIds).Where(x => x.StartsWith("CS", StringComparison.Ordinal) || x.StartsWith("BC", StringComparison.Ordinal));
-                var disabledDiagnosticIds = project.CompilationOptions.SpecificDiagnosticOptions.Where(x => x.Value == ReportDiagnostic.Suppress).Select(x => x.Key);
+                var disabledDiagnosticIds = project.CompilationOptions!.SpecificDiagnosticOptions.Where(x => x.Value == ReportDiagnostic.Suppress).Select(x => x.Key);
                 var relevantIds = analyzerDiagnosticIds.Concat(compilerDiagnosticIds).Except(disabledDiagnosticIds).Distinct();
-                var fixAllContext = new FixAllContext(fixableDocument, effectiveCodeFixProvider, scope, equivalenceKey, relevantIds, fixAllDiagnosticProvider, cancellationToken);
+                var fixAllContext = new FixAllContext(fixableDocument!, effectiveCodeFixProvider!, scope, equivalenceKey!, relevantIds, fixAllDiagnosticProvider, cancellationToken);
 
                 var action = await fixAllProvider.GetFixAsync(fixAllContext).ConfigureAwait(false);
                 if (action == null)
@@ -771,11 +771,11 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
 
                 var originalProjectId = project.Id;
-                var fixedProject = await ApplyCodeActionAsync(fixableDocument.Project, action, verifier, cancellationToken).ConfigureAwait(false);
+                var fixedProject = await ApplyCodeActionAsync(fixableDocument!.Project, action, verifier, cancellationToken).ConfigureAwait(false);
                 if (fixedProject != fixableDocument.Project)
                 {
                     done = false;
-                    project = fixedProject.Solution.GetProject(originalProjectId);
+                    project = fixedProject.Solution.GetProject(originalProjectId)!;
                 }
 
                 if (CodeFixTestBehaviors.HasFlag(CodeFixTestBehaviors.FixOne))
@@ -798,10 +798,10 @@ namespace Microsoft.CodeAnalysis.Testing
             }
             catch (Exception ex)
             {
-                return (project, ExceptionDispatchInfo.Capture(ex));
+                return (project!, ExceptionDispatchInfo.Capture(ex));
             }
 
-            return (project, null);
+            return (project!, null);
         }
 
         /// <summary>
@@ -817,7 +817,7 @@ namespace Microsoft.CodeAnalysis.Testing
             foreach (var document in project.Documents)
             {
                 var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-                allDiagnostics = allDiagnostics.AddRange(semanticModel.GetDiagnostics(cancellationToken: cancellationToken));
+                allDiagnostics = allDiagnostics.AddRange(semanticModel!.GetDiagnostics(cancellationToken: cancellationToken));
             }
 
             return allDiagnostics;
