@@ -21,6 +21,7 @@ namespace Microsoft.CodeAnalysis.Testing
         private readonly ImmutableArray<DiagnosticLocation> _spans;
         private readonly bool _suppressMessage;
         private readonly string? _message;
+        private readonly bool? _isSuppressed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DiagnosticResult"/> structure with the specified
@@ -68,7 +69,7 @@ namespace Microsoft.CodeAnalysis.Testing
             Id = id;
             MessageFormat = messageFormat;
             MessageArguments = messageArguments;
-            IsSuppressed = isSuppressed;
+            _isSuppressed = isSuppressed;
         }
 
         /// <summary>
@@ -156,6 +157,7 @@ namespace Microsoft.CodeAnalysis.Testing
         /// </value>
         public bool HasLocation => !Spans.IsEmpty;
 
+#if DIAG_SUPPORTS_SUPPRESSION
         /// <summary>
         /// Gets a value indicating whether the diagnostic is expected to be suppressed.
         /// </summary>
@@ -164,7 +166,8 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <see langword="false"/> if the diagnostic is expected to be not suppressed;
         /// <see langword="null"/> if the suppression state should not be tested;
         /// </value>
-        public bool? IsSuppressed { get; }
+        public bool? IsSuppressed => _isSuppressed;
+#endif
 
         /// <summary>
         /// Creates a <see cref="DiagnosticResult"/> for a compiler error with the specified ID.
@@ -199,7 +202,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 id: Id,
                 messageFormat: MessageFormat,
                 messageArguments: MessageArguments,
-                isSuppressed: IsSuppressed);
+                isSuppressed: _isSuppressed);
         }
 
         /// <summary>
@@ -219,7 +222,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 id: Id,
                 messageFormat: MessageFormat,
                 messageArguments: MessageArguments,
-                isSuppressed: IsSuppressed);
+                isSuppressed: _isSuppressed);
         }
 
         public DiagnosticResult WithArguments(params object[] arguments)
@@ -233,7 +236,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 id: Id,
                 messageFormat: MessageFormat,
                 messageArguments: arguments,
-                isSuppressed: IsSuppressed);
+                isSuppressed: _isSuppressed);
         }
 
         public DiagnosticResult WithMessage(string? message)
@@ -247,7 +250,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 id: Id,
                 messageFormat: MessageFormat,
                 messageArguments: MessageArguments,
-                isSuppressed: IsSuppressed);
+                isSuppressed: _isSuppressed);
         }
 
         public DiagnosticResult WithMessageFormat(LocalizableString messageFormat)
@@ -261,9 +264,10 @@ namespace Microsoft.CodeAnalysis.Testing
                 id: Id,
                 messageFormat: messageFormat,
                 messageArguments: MessageArguments,
-                isSuppressed: IsSuppressed);
+                isSuppressed: _isSuppressed);
         }
 
+#if DIAG_SUPPORTS_SUPPRESSION
         public DiagnosticResult WithIsSuppressed(bool? isSuppressed)
         {
             return new DiagnosticResult(
@@ -277,6 +281,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 messageArguments: MessageArguments,
                 isSuppressed: isSuppressed);
         }
+#endif
 
         public DiagnosticResult WithNoLocation()
         {
@@ -289,7 +294,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 id: Id,
                 messageFormat: MessageFormat,
                 messageArguments: MessageArguments,
-                isSuppressed: IsSuppressed);
+                isSuppressed: _isSuppressed);
         }
 
         public DiagnosticResult WithLocation(int line, int column)
@@ -356,7 +361,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 id: Id,
                 messageFormat: MessageFormat,
                 messageArguments: MessageArguments,
-                isSuppressed: IsSuppressed);
+                isSuppressed: _isSuppressed);
         }
 
         internal DiagnosticResult WithAppliedMarkupLocations(ImmutableDictionary<string, FileLinePositionSpan> markupLocations)
@@ -399,7 +404,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 id: Id,
                 messageFormat: MessageFormat,
                 messageArguments: MessageArguments,
-                isSuppressed: IsSuppressed);
+                isSuppressed: _isSuppressed);
         }
 
         public DiagnosticResult WithLineOffset(int offset)
@@ -428,7 +433,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 id: Id,
                 messageFormat: MessageFormat,
                 messageArguments: MessageArguments,
-                isSuppressed: IsSuppressed);
+                isSuppressed: _isSuppressed);
         }
 
         private DiagnosticResult AppendSpan(FileLinePositionSpan span, DiagnosticLocationOptions options)
@@ -442,7 +447,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 id: Id,
                 messageFormat: MessageFormat,
                 messageArguments: MessageArguments,
-                isSuppressed: IsSuppressed);
+                isSuppressed: _isSuppressed);
         }
 
         public override string ToString()
