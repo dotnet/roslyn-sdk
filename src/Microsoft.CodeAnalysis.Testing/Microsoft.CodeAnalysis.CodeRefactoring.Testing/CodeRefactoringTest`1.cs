@@ -251,7 +251,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 foreach (var codeRefactoringProvider in codeRefactoringProviders)
                 {
-                    var context = new CodeRefactoringContext(triggerDocument, location.SourceSpan, actions.Add, cancellationToken);
+                    var context = new CodeRefactoringContext(triggerDocument!, location.SourceSpan, actions.Add, cancellationToken);
                     await codeRefactoringProvider.ComputeRefactoringsAsync(context).ConfigureAwait(false);
                 }
 
@@ -262,11 +262,11 @@ namespace Microsoft.CodeAnalysis.Testing
                     anyActions = true;
 
                     var originalProjectId = project.Id;
-                    var fixedProject = await ApplyCodeActionAsync(triggerDocument.Project, actionToApply, verifier, cancellationToken).ConfigureAwait(false);
+                    var fixedProject = await ApplyCodeActionAsync(triggerDocument!.Project, actionToApply, verifier, cancellationToken).ConfigureAwait(false);
                     if (fixedProject != triggerDocument.Project)
                     {
                         done = false;
-                        project = fixedProject.Solution.GetProject(originalProjectId);
+                        project = fixedProject.Solution.GetProject(originalProjectId)!;
                         break;
                     }
                 }
@@ -294,10 +294,10 @@ namespace Microsoft.CodeAnalysis.Testing
             }
             catch (Exception ex)
             {
-                return (project, ExceptionDispatchInfo.Capture(ex));
+                return (project!, ExceptionDispatchInfo.Capture(ex));
             }
 
-            return (project, null);
+            return (project!, null);
 
             async Task<Location> GetTriggerLocationAsync()
             {
@@ -306,10 +306,10 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 var documentIds = project.Solution.GetDocumentIdsWithFilePath(triggerSpan.Spans[0].Span.Path);
                 var document = project.Solution.GetDocument(documentIds.Single());
-                var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+                var text = await document!.GetTextAsync(cancellationToken).ConfigureAwait(false);
                 var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
 
-                return Location.Create(tree, text.Lines.GetTextSpan(span));
+                return Location.Create(tree!, text.Lines.GetTextSpan(span));
             }
         }
 
@@ -326,7 +326,7 @@ namespace Microsoft.CodeAnalysis.Testing
             foreach (var document in project.Documents)
             {
                 var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-                allDiagnostics = allDiagnostics.AddRange(semanticModel.GetDiagnostics(cancellationToken: cancellationToken));
+                allDiagnostics = allDiagnostics.AddRange(semanticModel!.GetDiagnostics(cancellationToken: cancellationToken));
             }
 
             return allDiagnostics;
