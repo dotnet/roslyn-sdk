@@ -202,7 +202,7 @@ namespace Microsoft.CodeAnalysis.Testing
             var changedProject = solution.GetProject(project.Id);
             if (changedProject != project)
             {
-                project = await RecreateProjectDocumentsAsync(changedProject, verifier, cancellationToken).ConfigureAwait(false);
+                project = await RecreateProjectDocumentsAsync(changedProject!, verifier, cancellationToken).ConfigureAwait(false);
             }
 
             return project;
@@ -220,7 +220,7 @@ namespace Microsoft.CodeAnalysis.Testing
             foreach (var documentId in project.DocumentIds)
             {
                 var document = project.GetDocument(documentId);
-                var initialTree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+                var initialTree = await document!.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
                 document = await RecreateDocumentAsync(document, cancellationToken).ConfigureAwait(false);
                 var recreatedTree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
                 if (CodeActionValidationMode != CodeActionValidationMode.None)
@@ -232,15 +232,15 @@ namespace Microsoft.CodeAnalysis.Testing
                         TreeEqualityVisitor.AssertNodesEqual(
                             verifier,
                             SyntaxKindType,
-                            await recreatedTree.GetRootAsync(cancellationToken).ConfigureAwait(false),
-                            await initialTree.GetRootAsync(cancellationToken).ConfigureAwait(false),
+                            await recreatedTree!.GetRootAsync(cancellationToken).ConfigureAwait(false),
+                            await initialTree!.GetRootAsync(cancellationToken).ConfigureAwait(false),
                             checkTrivia: CodeActionValidationMode == CodeActionValidationMode.Full);
                     }
                     catch
                     {
                         // Try to revalidate the tree with a better message
-                        var renderedInitialTree = TreeToString(await initialTree.GetRootAsync(cancellationToken).ConfigureAwait(false), CodeActionValidationMode);
-                        var renderedRecreatedTree = TreeToString(await recreatedTree.GetRootAsync(cancellationToken).ConfigureAwait(false), CodeActionValidationMode);
+                        var renderedInitialTree = TreeToString(await initialTree!.GetRootAsync(cancellationToken).ConfigureAwait(false), CodeActionValidationMode);
+                        var renderedRecreatedTree = TreeToString(await recreatedTree!.GetRootAsync(cancellationToken).ConfigureAwait(false), CodeActionValidationMode);
                         verifier.EqualOrDiff(renderedRecreatedTree, renderedInitialTree);
 
                         // This is not expected to be hit, but it will be hit if the validation failure occurred in a
@@ -415,7 +415,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     else
                     {
                         _verifier.True(actualChild.IsNode);
-                        AssertNodesEqual(expectedChild.AsNode(), actualChild.AsNode(), checkTrivia);
+                        AssertNodesEqual(expectedChild.AsNode()!, actualChild.AsNode()!, checkTrivia);
                     }
                 }
             }
@@ -458,7 +458,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 _verifier.Equal(expected.GetAnnotations(), actual.GetAnnotations());
                 if (expected.HasStructure)
                 {
-                    AssertNodesEqual(expected.GetStructure(), actual.GetStructure(), checkTrivia);
+                    AssertNodesEqual(expected.GetStructure()!, actual.GetStructure()!, checkTrivia);
                 }
             }
 

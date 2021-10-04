@@ -17,6 +17,8 @@ namespace Microsoft.CodeAnalysis.Testing
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => ImmutableArray<DiagnosticDescriptor>.Empty;
 
+#pragma warning disable RS1026 // Enable concurrent execution
+#pragma warning disable RS1025 // Configure generated code analysis
         public override void Initialize(AnalysisContext context)
         {
         }

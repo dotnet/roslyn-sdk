@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#nullable disable warnings
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -1066,7 +1068,7 @@ namespace Microsoft.CodeAnalysis.Testing
             return results.ToImmutableArray();
         }
 
-        protected virtual Task<Compilation> GetProjectCompilationAsync(Project project, IVerifier verifier, CancellationToken cancellationToken)
+        protected virtual Task<Compilation?> GetProjectCompilationAsync(Project project, IVerifier verifier, CancellationToken cancellationToken)
         {
             return project.GetCompilationAsync(cancellationToken);
         }
