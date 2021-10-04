@@ -411,13 +411,15 @@ namespace Microsoft.CodeAnalysis.Testing
                         message);
                 }
 
-#if DIAG_SUPPORTS_SUPPRESSION
                 if (expected.IsSuppressed.HasValue)
                 {
+#if DIAG_SUPPORTS_SUPPRESSION
                     message = FormatVerifierMessage(analyzers, actual.diagnostic, expected, $"Expected diagnostic suppression state to match");
                     verifier.Equal(expected.IsSuppressed.Value, actual.diagnostic.IsSuppressed, message);
-                }
+#else
+                    throw new NotSupportedException("DiagnosticSuppressors are not supported on this platform.");
 #endif
+                }
 
                 DiagnosticVerifier?.Invoke(actual.diagnostic, expected, verifier);
             }
