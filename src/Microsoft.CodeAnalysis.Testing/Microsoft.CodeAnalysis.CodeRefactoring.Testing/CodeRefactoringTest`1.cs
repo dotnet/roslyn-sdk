@@ -294,10 +294,10 @@ namespace Microsoft.CodeAnalysis.Testing
             }
             catch (Exception ex)
             {
-                return (project!, ExceptionDispatchInfo.Capture(ex));
+                return (project, ExceptionDispatchInfo.Capture(ex));
             }
 
-            return (project!, null);
+            return (project, null);
 
             async Task<Location> GetTriggerLocationAsync()
             {

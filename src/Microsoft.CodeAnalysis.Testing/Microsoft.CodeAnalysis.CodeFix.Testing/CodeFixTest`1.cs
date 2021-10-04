@@ -540,7 +540,7 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 currentIteration++;
 
-                var analyzerDiagnostics = await GetSortedDiagnosticsAsync(project!.Solution, analyzers, additionalDiagnostics: ImmutableArray<(Project project, Diagnostic diagnostic)>.Empty, CompilerDiagnostics, verifier, cancellationToken).ConfigureAwait(false);
+                var analyzerDiagnostics = await GetSortedDiagnosticsAsync(project.Solution, analyzers, additionalDiagnostics: ImmutableArray<(Project project, Diagnostic diagnostic)>.Empty, CompilerDiagnostics, verifier, cancellationToken).ConfigureAwait(false);
                 if (analyzerDiagnostics.Length == 0)
                 {
                     break;
@@ -637,10 +637,10 @@ namespace Microsoft.CodeAnalysis.Testing
             }
             catch (Exception ex)
             {
-                return (project!, ExceptionDispatchInfo.Capture(ex));
+                return (project, ExceptionDispatchInfo.Capture(ex));
             }
 
-            return (project!, null);
+            return (project, null);
         }
 
         private Task<(Project project, ExceptionDispatchInfo? iterationCountFailure)> FixAllAnalyzerDiagnosticsInDocumentAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, string? codeFixEquivalenceKey, Action<CodeAction, IVerifier>? codeActionVerifier, Project project, int numberOfIterations, IVerifier verifier, CancellationToken cancellationToken)
@@ -798,10 +798,10 @@ namespace Microsoft.CodeAnalysis.Testing
             }
             catch (Exception ex)
             {
-                return (project!, ExceptionDispatchInfo.Capture(ex));
+                return (project, ExceptionDispatchInfo.Capture(ex));
             }
 
-            return (project!, null);
+            return (project, null);
         }
 
         /// <summary>
