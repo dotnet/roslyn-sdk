@@ -1293,7 +1293,9 @@ namespace Microsoft.CodeAnalysis.Testing
             var workspace = CreateWorkspace();
             foreach (var transform in OptionsTransforms)
             {
+#pragma warning disable CS0618 // Type or member is obsolete
                 workspace.Options = transform(workspace.Options);
+#pragma warning restore CS0618 // Type or member is obsolete
             }
 
             var solution = workspace
