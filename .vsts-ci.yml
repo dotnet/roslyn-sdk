@@ -12,21 +12,24 @@ variables:
 # Branches that trigger a build on commit
 trigger:
 - main
+- dev17.0
 
 stages:
 - stage: build
   displayName: Build and Test
 
   jobs:
-  - template: /eng/common/templates/job/onelocbuild.yml
-    parameters:
-      LclSource: lclFilesfromPackage
-      LclPackageId: 'LCL-JUNO-PROD-ROSLYNSDK'
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    - template: /eng/common/templates/job/onelocbuild.yml
+      parameters:
+        CreatePr: true
+        LclSource: lclFilesfromPackage
+        LclPackageId: 'LCL-JUNO-PROD-ROSLYNSDK'
 
   - job: OfficialBuild
     displayName: Official Build
     pool:
-      name: VSEngSS-MicroBuild2019
+      name: VSEngSS-MicroBuild2019-1ES
       demands:
       - cmd
 
