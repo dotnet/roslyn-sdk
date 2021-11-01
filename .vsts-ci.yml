@@ -17,6 +17,10 @@ trigger:
 stages:
 - stage: build
   displayName: Build and Test
+  pool:
+    name: VSEngSS-MicroBuild2019-1ES
+    demands:
+    - cmd
 
   jobs:
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
@@ -28,10 +32,6 @@ stages:
 
   - job: OfficialBuild
     displayName: Official Build
-    pool:
-      name: VSEngSS-MicroBuild2019-1ES
-      demands:
-      - cmd
 
     steps:
     - task: ms-vseng.MicroBuildTasks.30666190-6959-11e5-9f96-f56098202fef.MicroBuildSigningPlugin@1
