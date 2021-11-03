@@ -2,6 +2,6 @@
 <Project>
   <ItemGroup>
     <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CsvLoadType" />
-    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CacheObject" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CacheObjects" />
   </ItemGroup>
 </Project>
