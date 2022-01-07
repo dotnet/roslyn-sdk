@@ -106,8 +106,6 @@ function Build {
     $properties = $msbuildArgs
   }
 
-  dotnet --list-sdks
-
   MSBuild $toolsetBuildProj `
     $bl `
     $platformArg `
