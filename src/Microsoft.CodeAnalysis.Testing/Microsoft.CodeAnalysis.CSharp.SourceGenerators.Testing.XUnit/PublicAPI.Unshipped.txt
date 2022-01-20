@@ -1,4 +1,8 @@
+Microsoft.CodeAnalysis.CSharp.Testing.XUnit.IncrementalGeneratorVerifier
+Microsoft.CodeAnalysis.CSharp.Testing.XUnit.IncrementalGeneratorVerifier<TIncrementalGenerator>
+Microsoft.CodeAnalysis.CSharp.Testing.XUnit.IncrementalGeneratorVerifier<TIncrementalGenerator>.IncrementalGeneratorVerifier() -> void
 Microsoft.CodeAnalysis.CSharp.Testing.XUnit.SourceGeneratorVerifier
 Microsoft.CodeAnalysis.CSharp.Testing.XUnit.SourceGeneratorVerifier<TSourceGenerator>
 Microsoft.CodeAnalysis.CSharp.Testing.XUnit.SourceGeneratorVerifier<TSourceGenerator>.SourceGeneratorVerifier() -> void
+static Microsoft.CodeAnalysis.CSharp.Testing.XUnit.IncrementalGeneratorVerifier.Create<TIncrementalGenerator>() -> Microsoft.CodeAnalysis.CSharp.Testing.XUnit.IncrementalGeneratorVerifier<TIncrementalGenerator>
 static Microsoft.CodeAnalysis.CSharp.Testing.XUnit.SourceGeneratorVerifier.Create<TSourceGenerator>() -> Microsoft.CodeAnalysis.CSharp.Testing.XUnit.SourceGeneratorVerifier<TSourceGenerator>

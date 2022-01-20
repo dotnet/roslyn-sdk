@@ -1,14 +1,25 @@
+Microsoft.CodeAnalysis.Testing.EmptyIncrementalGeneratorProvider
+Microsoft.CodeAnalysis.Testing.EmptyIncrementalGeneratorProvider.EmptyIncrementalGeneratorProvider() -> void
+Microsoft.CodeAnalysis.Testing.EmptyIncrementalGeneratorProvider.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void
 Microsoft.CodeAnalysis.Testing.EmptySourceGeneratorProvider
 Microsoft.CodeAnalysis.Testing.EmptySourceGeneratorProvider.EmptySourceGeneratorProvider() -> void
 Microsoft.CodeAnalysis.Testing.EmptySourceGeneratorProvider.Execute(Microsoft.CodeAnalysis.GeneratorExecutionContext context) -> void
 Microsoft.CodeAnalysis.Testing.EmptySourceGeneratorProvider.Initialize(Microsoft.CodeAnalysis.GeneratorInitializationContext context) -> void
+Microsoft.CodeAnalysis.Testing.IncrementalGeneratorTest<TVerifier>
+Microsoft.CodeAnalysis.Testing.IncrementalGeneratorTest<TVerifier>.IncrementalGeneratorTest() -> void
+Microsoft.CodeAnalysis.Testing.IncrementalGeneratorTest<TVerifier>.VerifyGeneratorAsync(Microsoft.CodeAnalysis.Testing.SolutionState testState, Microsoft.CodeAnalysis.Testing.IVerifier verifier, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Diagnostic>>
+Microsoft.CodeAnalysis.Testing.IncrementalGeneratorVerifier<TIncrementalGenerator, TTest, TVerifier>
+Microsoft.CodeAnalysis.Testing.IncrementalGeneratorVerifier<TIncrementalGenerator, TTest, TVerifier>.IncrementalGeneratorVerifier() -> void
 Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>
 Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.SourceGeneratorTest() -> void
-Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.VerifySourceGeneratorAsync(Microsoft.CodeAnalysis.Testing.SolutionState testState, Microsoft.CodeAnalysis.Testing.IVerifier verifier, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Diagnostic>>
 Microsoft.CodeAnalysis.Testing.SourceGeneratorVerifier<TSourceGenerator, TTest, TVerifier>
 Microsoft.CodeAnalysis.Testing.SourceGeneratorVerifier<TSourceGenerator, TTest, TVerifier>.SourceGeneratorVerifier() -> void
+abstract Microsoft.CodeAnalysis.Testing.IncrementalGeneratorTest<TVerifier>.CreateGeneratorDriver(Microsoft.CodeAnalysis.Project project, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.ISourceGenerator> sourceGenerators, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.IIncrementalGenerator> incrementalGenerators) -> Microsoft.CodeAnalysis.GeneratorDriver
+abstract Microsoft.CodeAnalysis.Testing.IncrementalGeneratorTest<TVerifier>.GetGenerators() -> (System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.ISourceGenerator> sourceGenerators, System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.IIncrementalGenerator> incrementalGenerators)
 abstract Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.CreateGeneratorDriver(Microsoft.CodeAnalysis.Project project, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.ISourceGenerator> sourceGenerators) -> Microsoft.CodeAnalysis.GeneratorDriver
 abstract Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.GetSourceGenerators() -> System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.ISourceGenerator>
-override Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.GetDiagnosticAnalyzers() -> System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer>
-override Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.GetProjectCompilationAsync(Microsoft.CodeAnalysis.Project project, Microsoft.CodeAnalysis.Testing.IVerifier verifier, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.CodeAnalysis.Compilation>
-override Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.RunImplAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+override Microsoft.CodeAnalysis.Testing.IncrementalGeneratorTest<TVerifier>.GetDiagnosticAnalyzers() -> System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer>
+override Microsoft.CodeAnalysis.Testing.IncrementalGeneratorTest<TVerifier>.GetProjectCompilationAsync(Microsoft.CodeAnalysis.Project project, Microsoft.CodeAnalysis.Testing.IVerifier verifier, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.CodeAnalysis.Compilation>
+override Microsoft.CodeAnalysis.Testing.IncrementalGeneratorTest<TVerifier>.RunImplAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+override sealed Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.CreateGeneratorDriver(Microsoft.CodeAnalysis.Project project, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.ISourceGenerator> sourceGenerators, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.IIncrementalGenerator> incrementalGenerators) -> Microsoft.CodeAnalysis.GeneratorDriver
+override sealed Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.GetGenerators() -> (System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.ISourceGenerator> sourceGenerators, System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.IIncrementalGenerator> incrementalGenerators)
