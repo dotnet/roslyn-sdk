@@ -17,10 +17,10 @@
   </PropertyGroup>
   <!-- Dependencies -->
   <PropertyGroup>
-    <!-- Versions used by several individual references below -->  
+    <!-- Versions used by several individual references below -->
     <MicrosoftCodeAnalysisPackagesVersion>4.0.0-1.21267.34</MicrosoftCodeAnalysisPackagesVersion>
-    <MicrosoftVisualStudioShellPackagesVersion>17.0.0-previews-4-31709-430</MicrosoftVisualStudioShellPackagesVersion> 
-    <MicrosoftVisualStudioEditorPackagesVersion>17.0.391-preview-g5e248c9073</MicrosoftVisualStudioEditorPackagesVersion>  
+    <MicrosoftVisualStudioShellPackagesVersion>17.0.0-previews-4-31709-430</MicrosoftVisualStudioShellPackagesVersion>
+    <MicrosoftVisualStudioEditorPackagesVersion>17.0.391-preview-g5e248c9073</MicrosoftVisualStudioEditorPackagesVersion>
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisAnalyzersVersion>3.3.2</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisCommonVersion>$(MicrosoftCodeAnalysisPackagesVersion)</MicrosoftCodeAnalysisCommonVersion>
@@ -31,7 +31,7 @@
     <!-- We target a lower roslyn API to build internal generators against so they still load in earlier VS versions -->
     <MicrosoftCodeAnalysisGeneratorVersion>3.9.0</MicrosoftCodeAnalysisGeneratorVersion>
     <!-- VS SDK -->
-    <EnvDTE80Version>$(MicrosoftVisualStudioShellPackagesVersion)</EnvDTE80Version>    
+    <EnvDTE80Version>$(MicrosoftVisualStudioShellPackagesVersion)</EnvDTE80Version>
     <EnvDTEVersion>$(MicrosoftVisualStudioShellPackagesVersion)</EnvDTEVersion>
     <MicrosoftServiceHubFrameworkVersion>3.0.2065</MicrosoftServiceHubFrameworkVersion>
     <MicrosoftVisualStudioCompositionVersion>16.9.6-alpha</MicrosoftVisualStudioCompositionVersion>
@@ -59,9 +59,9 @@
     <VSLangProjVersion>$(MicrosoftVisualStudioShellPackagesVersion)</VSLangProjVersion>
     <MicrosoftVisualStudioTemplateWizardInterfaceVersion>17.0.0-preview-1-30928-1111</MicrosoftVisualStudioTemplateWizardInterfaceVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.0.4207-preview4</MicrosoftVSSDKBuildToolsVersion>
-    <MicroBuildPluginsSwixBuildVersion>1.1.33</MicroBuildPluginsSwixBuildVersion>    
+    <MicroBuildPluginsSwixBuildVersion>1.1.33</MicroBuildPluginsSwixBuildVersion>
     <SystemThreadingTasksDataflowVersion>5.0.0</SystemThreadingTasksDataflowVersion>
-    <!-- Project System-->    
+    <!-- Project System-->
     <MicrosoftVisualStudioProjectSystemManagedVersion>17.0.0-beta1-10413-02</MicrosoftVisualStudioProjectSystemManagedVersion>
     <MicrosoftVisualStudioProjectSystemManagedVSVersion>17.0.0-beta1-10413-02</MicrosoftVisualStudioProjectSystemManagedVSVersion>
     <MicrosoftVisualStudioProjectSystemSDKToolsVersion>17.0.667-pre</MicrosoftVisualStudioProjectSystemSDKToolsVersion>
