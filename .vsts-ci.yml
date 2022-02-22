@@ -55,6 +55,8 @@ stages:
                 /p:DotnetPublishUsingPipelines=true
       displayName: Build
 
+    - template: eng\common\templates\steps\generate-sbom.yml
+
     - task: PublishTestResults@1
       displayName: Publish Test Results
       inputs:
