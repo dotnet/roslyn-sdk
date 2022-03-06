@@ -1,7 +1,17 @@
+Microsoft.CodeAnalysis.CSharp.Testing.CSharpIncrementalGeneratorTest<TIncrementalGenerator, TVerifier>
+Microsoft.CodeAnalysis.CSharp.Testing.CSharpIncrementalGeneratorTest<TIncrementalGenerator, TVerifier>.CSharpIncrementalGeneratorTest() -> void
+Microsoft.CodeAnalysis.CSharp.Testing.CSharpIncrementalGeneratorVerifier<TSourceGenerator, TVerifier>
+Microsoft.CodeAnalysis.CSharp.Testing.CSharpIncrementalGeneratorVerifier<TSourceGenerator, TVerifier>.CSharpIncrementalGeneratorVerifier() -> void
 Microsoft.CodeAnalysis.CSharp.Testing.CSharpSourceGeneratorTest<TSourceGenerator, TVerifier>
 Microsoft.CodeAnalysis.CSharp.Testing.CSharpSourceGeneratorTest<TSourceGenerator, TVerifier>.CSharpSourceGeneratorTest() -> void
 Microsoft.CodeAnalysis.CSharp.Testing.CSharpSourceGeneratorVerifier<TSourceGenerator, TVerifier>
 Microsoft.CodeAnalysis.CSharp.Testing.CSharpSourceGeneratorVerifier<TSourceGenerator, TVerifier>.CSharpSourceGeneratorVerifier() -> void
+override Microsoft.CodeAnalysis.CSharp.Testing.CSharpIncrementalGeneratorTest<TIncrementalGenerator, TVerifier>.CreateCompilationOptions() -> Microsoft.CodeAnalysis.CompilationOptions
+override Microsoft.CodeAnalysis.CSharp.Testing.CSharpIncrementalGeneratorTest<TIncrementalGenerator, TVerifier>.CreateGeneratorDriver(Microsoft.CodeAnalysis.Project project, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.ISourceGenerator> sourceGenerators, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.IIncrementalGenerator> incrementalGenerators) -> Microsoft.CodeAnalysis.GeneratorDriver
+override Microsoft.CodeAnalysis.CSharp.Testing.CSharpIncrementalGeneratorTest<TIncrementalGenerator, TVerifier>.CreateParseOptions() -> Microsoft.CodeAnalysis.ParseOptions
+override Microsoft.CodeAnalysis.CSharp.Testing.CSharpIncrementalGeneratorTest<TIncrementalGenerator, TVerifier>.DefaultFileExt.get -> string
+override Microsoft.CodeAnalysis.CSharp.Testing.CSharpIncrementalGeneratorTest<TIncrementalGenerator, TVerifier>.GetGenerators() -> (System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.ISourceGenerator> sourceGenerators, System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.IIncrementalGenerator> incrementalGenerators)
+override Microsoft.CodeAnalysis.CSharp.Testing.CSharpIncrementalGeneratorTest<TIncrementalGenerator, TVerifier>.Language.get -> string
 override Microsoft.CodeAnalysis.CSharp.Testing.CSharpSourceGeneratorTest<TSourceGenerator, TVerifier>.CreateCompilationOptions() -> Microsoft.CodeAnalysis.CompilationOptions
 override Microsoft.CodeAnalysis.CSharp.Testing.CSharpSourceGeneratorTest<TSourceGenerator, TVerifier>.CreateGeneratorDriver(Microsoft.CodeAnalysis.Project project, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.ISourceGenerator> sourceGenerators) -> Microsoft.CodeAnalysis.GeneratorDriver
 override Microsoft.CodeAnalysis.CSharp.Testing.CSharpSourceGeneratorTest<TSourceGenerator, TVerifier>.CreateParseOptions() -> Microsoft.CodeAnalysis.ParseOptions
