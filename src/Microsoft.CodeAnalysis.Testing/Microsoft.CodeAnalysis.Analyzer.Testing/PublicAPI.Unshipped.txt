@@ -233,6 +233,19 @@ Microsoft.CodeAnalysis.Testing.TestBehaviors.SkipGeneratedCodeCheck = 1 -> Micro
 Microsoft.CodeAnalysis.Testing.TestBehaviors.SkipGeneratedSourcesCheck = 4 -> Microsoft.CodeAnalysis.Testing.TestBehaviors
 Microsoft.CodeAnalysis.Testing.TestBehaviors.SkipSuppressionCheck = 2 -> Microsoft.CodeAnalysis.Testing.TestBehaviors
 Microsoft.CodeAnalysis.Testing.TestFileMarkupParser
+Microsoft.CodeAnalysis.Testing.TestMarkupParser
+Microsoft.CodeAnalysis.Testing.TestMarkupParser.GetPosition(string input, out string output, out int cursorPosition) -> void
+Microsoft.CodeAnalysis.Testing.TestMarkupParser.GetPositionAndSpan(string input, out string output, out int cursorPosition, out Microsoft.CodeAnalysis.Text.TextSpan span) -> void
+Microsoft.CodeAnalysis.Testing.TestMarkupParser.GetPositionAndSpans(string input, out int? cursorPosition, out System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Text.TextSpan> spans) -> void
+Microsoft.CodeAnalysis.Testing.TestMarkupParser.GetPositionAndSpans(string input, out int? cursorPosition, out System.Collections.Immutable.ImmutableDictionary<string, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Text.TextSpan>> spans) -> void
+Microsoft.CodeAnalysis.Testing.TestMarkupParser.GetPositionAndSpans(string input, out string output, out int cursorPosition, out System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Text.TextSpan> spans) -> void
+Microsoft.CodeAnalysis.Testing.TestMarkupParser.GetPositionAndSpans(string input, out string output, out int cursorPosition, out System.Collections.Immutable.ImmutableDictionary<string, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Text.TextSpan>> spans) -> void
+Microsoft.CodeAnalysis.Testing.TestMarkupParser.GetPositionAndSpans(string input, out string output, out int? cursorPosition, out System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Text.TextSpan> spans) -> void
+Microsoft.CodeAnalysis.Testing.TestMarkupParser.GetPositionAndSpans(string input, out string output, out int? cursorPosition, out System.Collections.Immutable.ImmutableDictionary<string, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Text.TextSpan>> spans) -> void
+Microsoft.CodeAnalysis.Testing.TestMarkupParser.GetPositionsAndSpans(string input, out string output, out System.Collections.Immutable.ImmutableArray<int> positions, out System.Collections.Immutable.ImmutableDictionary<string, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Text.TextSpan>> spans) -> void
+Microsoft.CodeAnalysis.Testing.TestMarkupParser.GetSpan(string input, out string output, out Microsoft.CodeAnalysis.Text.TextSpan span) -> void
+Microsoft.CodeAnalysis.Testing.TestMarkupParser.GetSpans(string input, out string output, out System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Text.TextSpan> spans) -> void
+Microsoft.CodeAnalysis.Testing.TestMarkupParser.GetSpans(string input, out string output, out System.Collections.Immutable.ImmutableDictionary<string, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Text.TextSpan>> spans) -> void
 abstract Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.CreateCompilationOptions() -> Microsoft.CodeAnalysis.CompilationOptions
 abstract Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.CreateParseOptions() -> Microsoft.CodeAnalysis.ParseOptions
 abstract Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.DefaultFileExt.get -> string
@@ -332,6 +345,8 @@ static Microsoft.CodeAnalysis.Testing.TestFileMarkupParser.GetSpan(string input,
 static Microsoft.CodeAnalysis.Testing.TestFileMarkupParser.GetSpans(string input, out string output, out System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Text.TextSpan> spans) -> void
 static Microsoft.CodeAnalysis.Testing.TestFileMarkupParser.GetSpans(string input, out string output, out System.Collections.Immutable.ImmutableDictionary<string, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Text.TextSpan>> spans) -> void
 static readonly Microsoft.CodeAnalysis.Testing.DiagnosticResult.EmptyDiagnosticResults -> Microsoft.CodeAnalysis.Testing.DiagnosticResult[]
+static readonly Microsoft.CodeAnalysis.Testing.TestMarkupParser.Default -> Microsoft.CodeAnalysis.Testing.TestMarkupParser
+static readonly Microsoft.CodeAnalysis.Testing.TestMarkupParser.IgnorePositionString -> Microsoft.CodeAnalysis.Testing.TestMarkupParser
 virtual Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.ApplyCompilationOptions(Microsoft.CodeAnalysis.Project project) -> Microsoft.CodeAnalysis.Project
 virtual Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.CreateCompilationWithAnalyzers(Microsoft.CodeAnalysis.Compilation compilation, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer> analyzers, Microsoft.CodeAnalysis.Diagnostics.AnalyzerOptions options, System.Threading.CancellationToken cancellationToken) -> Microsoft.CodeAnalysis.Diagnostics.CompilationWithAnalyzers
 virtual Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.CreateProjectImplAsync(Microsoft.CodeAnalysis.Testing.Model.EvaluatedProjectState primaryProject, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Testing.Model.EvaluatedProjectState> additionalProjects, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.CodeAnalysis.Project>

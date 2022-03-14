@@ -393,5 +393,33 @@ namespace Microsoft.CodeAnalysis.Testing
 
             Assert.False(spans.TryGetValue(string.Empty, out _));
         }
+
+        [Fact]
+        public void TwoDollarsNotAsPosition1()
+        {
+            var markup = "first$$second";
+            var expected = "first$$second";
+
+            TestMarkupParser.IgnorePositionString.GetPositionAndSpans(markup, out var output, out int? cursorPosition, out ImmutableArray<TextSpan> spans);
+            Assert.Equal(expected, output);
+            Assert.Null(cursorPosition);
+
+            // Test round-trip
+            Assert.Equal(markup, TestFileMarkupParser.CreateTestFile(output, cursorPosition, ImmutableArray<TextSpan>.Empty));
+        }
+
+        [Fact]
+        public void FourDollarsNotAsPosition1()
+        {
+            var markup = "first$$$$second";
+            var expected = "first$$$$second";
+
+            TestMarkupParser.IgnorePositionString.GetPositionAndSpans(markup, out var output, out int? cursorPosition, out ImmutableArray<TextSpan> spans);
+            Assert.Equal(expected, output);
+            Assert.Null(cursorPosition);
+
+            // Test round-trip
+            Assert.Equal(markup, TestFileMarkupParser.CreateTestFile(output, cursorPosition, ImmutableArray<TextSpan>.Empty));
+        }
     }
 }
