@@ -7,42 +7,42 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace Analyzer1
+namespace Analyzer1;
+
+[Generator]
+public class SettingsXmlGenerator : ISourceGenerator
 {
-    [Generator]
-    public class SettingsXmlGenerator : ISourceGenerator
+    public void Execute(GeneratorExecutionContext context)
     {
-        public void Execute(GeneratorExecutionContext context)
+        // Using the context, get any additional files that end in .xmlsettings
+        IEnumerable<AdditionalText> settingsFiles = context.AdditionalFiles.Where(at => at.Path.EndsWith(".xmlsettings"));
+        foreach (AdditionalText settingsFile in settingsFiles)
         {
-            // Using the context, get any additional files that end in .xmlsettings
-            IEnumerable<AdditionalText> settingsFiles = context.AdditionalFiles.Where(at => at.Path.EndsWith(".xmlsettings"));
-            foreach (AdditionalText settingsFile in settingsFiles)
-            {
-                ProcessSettingsFile(settingsFile, context);
-            }
+            ProcessSettingsFile(settingsFile, context);
         }
-        
-        private void ProcessSettingsFile(AdditionalText xmlFile, GeneratorExecutionContext context)
+    }
+    
+    private void ProcessSettingsFile(AdditionalText xmlFile, GeneratorExecutionContext context)
+    {
+        // try and load the settings file
+        XmlDocument xmlDoc = new XmlDocument();
+        string text = xmlFile.GetText(context.CancellationToken).ToString();
+        try
         {
-            // try and load the settings file
-            XmlDocument xmlDoc = new XmlDocument();
-            string text = xmlFile.GetText(context.CancellationToken).ToString();
-            try
-            {
-                xmlDoc.LoadXml(text);
-            }
-            catch
-            {
-                //TODO: issue a diagnostic that says we couldn't parse it
-                return;
-            }
+            xmlDoc.LoadXml(text);
+        }
+        catch
+        {
+            //TODO: issue a diagnostic that says we couldn't parse it
+            return;
+        }
 
-            
-            // create a class in the XmlSetting class that represnts this entry, and a static field that contains a singleton instance.
-            string fileName = Path.GetFileName(xmlFile.Path);
-            string name = xmlDoc.DocumentElement.GetAttribute("name");
+        
+        // create a class in the XmlSetting class that represnts this entry, and a static field that contains a singleton instance.
+        string fileName = Path.GetFileName(xmlFile.Path);
+        string name = xmlDoc.DocumentElement.GetAttribute("name");
 
-            StringBuilder sb = new StringBuilder($@"
+        StringBuilder sb = new StringBuilder($@"
 namespace AutoSettings
 {{
     using System;
@@ -69,13 +69,13 @@ namespace AutoSettings
             }}
 ");
 
-            for(int i = 0; i < xmlDoc.DocumentElement.ChildNodes.Count; i++)
-            {
-                XmlElement setting = (XmlElement)xmlDoc.DocumentElement.ChildNodes[i];
-                string settingName = setting.GetAttribute("name");
-                string settingType = setting.GetAttribute("type");
+        for(int i = 0; i < xmlDoc.DocumentElement.ChildNodes.Count; i++)
+        {
+            XmlElement setting = (XmlElement)xmlDoc.DocumentElement.ChildNodes[i];
+            string settingName = setting.GetAttribute("name");
+            string settingType = setting.GetAttribute("type");
 
-                sb.Append($@"
+            sb.Append($@"
 
 public {settingType} {settingName}
 {{
@@ -85,15 +85,14 @@ public {settingType} {settingName}
     }}
 }}
 ");
-            }
-
-            sb.Append("} } }");
-
-            context.AddSource($"Settings_{name}", SourceText.From(sb.ToString(), Encoding.UTF8));
         }
-     
-        public void Initialize(GeneratorInitializationContext context)
-        {
-        }
+
+        sb.Append("} } }");
+
+        context.AddSource($"Settings_{name}", SourceText.From(sb.ToString(), Encoding.UTF8));
+    }
+ 
+    public void Initialize(GeneratorInitializationContext context)
+    {
     }
 }
