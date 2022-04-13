@@ -66,7 +66,7 @@ namespace AutoNotify
         string namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
 
         // begin building the generated source
-        StringBuilder source = new StringBuilder($@"
+        StringBuilder source = new ($@"
 namespace {namespaceName}
 {{
     public partial class {classSymbol.Name} : {notifySymbol.ToDisplayString()}

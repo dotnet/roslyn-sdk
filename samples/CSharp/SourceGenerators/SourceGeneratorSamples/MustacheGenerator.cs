@@ -40,7 +40,7 @@ public class MustacheGenerator : ISourceGenerator
         object @object = Newtonsoft.Json.JsonConvert.DeserializeObject(hash);
         string mustacheText = tree(@object);
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new ();
         sb.Append($@"
 namespace Mustache {{
 
@@ -61,7 +61,7 @@ namespace Mustache {{
 
     class SyntaxReceiver : ISyntaxContextReceiver
     {
-        public List<(string name, string template, string hash)> TemplateInfo = new List<(string name, string template, string hash)>();
+        public List<(string name, string template, string hash)> TemplateInfo = new ();
 
         public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
         {

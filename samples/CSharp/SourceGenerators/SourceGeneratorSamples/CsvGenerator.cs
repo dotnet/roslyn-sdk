@@ -58,8 +58,8 @@ public class CSVGenerator : ISourceGenerator
     // , loading the collection multiple times instead of once. Measures could be taken to avoid that.
     public static string GenerateClassFile(string className, string csvText, CsvLoadType loadTime, bool cacheObjects)
     {
-        StringBuilder sb = new StringBuilder();
-        using CsvTextFieldParser parser = new CsvTextFieldParser(new StringReader(csvText));
+        StringBuilder sb = new ();
+        using CsvTextFieldParser parser = new (new StringReader(csvText));
 
         //// Usings
         sb.Append(@"

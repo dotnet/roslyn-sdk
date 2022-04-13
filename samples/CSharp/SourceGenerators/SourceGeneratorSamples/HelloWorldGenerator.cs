@@ -12,7 +12,7 @@ public class HelloWorldGenerator : ISourceGenerator
     public void Execute(GeneratorExecutionContext context)
     {
         // begin creating the source we'll inject into the users compilation
-        StringBuilder sourceBuilder = new StringBuilder(@"
+        StringBuilder sourceBuilder = new (@"
 using System;
 namespace HelloWorldGenerated
 {

@@ -45,7 +45,7 @@ public static class Lexer {
         }
     }
 
-    static (TokenType, string)[] tokenStrings = {
+    static readonly (TokenType, string)[] tokenStrings = {
         (TokenType.EOL,         @"(\r\n|\r|\n)"),
         (TokenType.Spaces,      @"\s+"),
         (TokenType.Number,      @"[+-]?((\d+\.?\d*)|(\.\d+))"),
@@ -58,7 +58,7 @@ public static class Lexer {
         (TokenType.Sum,         @"∑")
     };
 
-    static IEnumerable<(TokenType, Regex)> tokenExpressions =
+    static readonly IEnumerable<(TokenType, Regex)> tokenExpressions =
         tokenStrings.Select(
             t => (t.Item1, new Regex($"^{t.Item2}", RegexOptions.Compiled | RegexOptions.Singleline)));
 
@@ -170,9 +170,10 @@ namespace Maths {
             throw new Exception($"Expected {type} {(value == "" ? "" : $" with {token.Value}")} at {token.Line},{token.Column} Instead found {token.Type} with value {token.Value}");
 
     static HashSet<string> validFunctions =
-        new HashSet<string>(typeof(System.Math).GetMethods().Select(m => m.Name.ToLower()));
+        new(typeof(System.Math).GetMethods().Select(m => m.Name.ToLower()));
 
-    static Dictionary<string, string> replacementStrings = new Dictionary<string, string> {
+    static readonly Dictionary<string, string> replacementStrings = new()
+    {
         {"'''", "Third" }, {"''", "Second" }, {"'", "Prime"}
     };
 
@@ -315,7 +316,7 @@ namespace Maths {
             Consume(ctx, TokenType.Identifier);
         }
     }
-    private static Func<Context, string, bool> IsOp = (ctx, op)
+    private readonly  static Func<Context, string, bool> IsOp = (ctx, op)
         => Peek(ctx, TokenType.Operation, op);
     private static Action<Context, string> ConsOp = (ctx, op)
         => Consume(ctx, TokenType.Operation, op);

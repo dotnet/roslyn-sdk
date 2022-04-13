@@ -25,7 +25,7 @@ public class SettingsXmlGenerator : ISourceGenerator
     private void ProcessSettingsFile(AdditionalText xmlFile, GeneratorExecutionContext context)
     {
         // try and load the settings file
-        XmlDocument xmlDoc = new XmlDocument();
+        XmlDocument xmlDoc = new ();
         string text = xmlFile.GetText(context.CancellationToken).ToString();
         try
         {
@@ -42,7 +42,7 @@ public class SettingsXmlGenerator : ISourceGenerator
         string fileName = Path.GetFileName(xmlFile.Path);
         string name = xmlDoc.DocumentElement.GetAttribute("name");
 
-        StringBuilder sb = new StringBuilder($@"
+        StringBuilder sb = new($@"
 namespace AutoSettings
 {{
     using System;
