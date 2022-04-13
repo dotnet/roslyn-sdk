@@ -5,16 +5,15 @@ using System.Text;
 using static System.Console;
 using CSV;
 
-namespace GeneratedDemo
+namespace GeneratedDemo;
+
+class UseCsvGenerator
 {
-    class UseCsvGenerator
+    public static void Run()
     {
-        public static void Run()
-        {
-           WriteLine("## CARS");
-           Cars.All.ToList().ForEach(c => WriteLine($"{c.Brand}\t{c.Model}\t{c.Year}\t{c.Cc}"));
-           WriteLine("\n## PEOPLE");
-           People.All.ToList().ForEach(p => WriteLine($"{p.Name}\t{p.Address}\t{p._11Age}"));
-        }
+       WriteLine("## CARS");
+       Cars.All.ToList().ForEach(c => WriteLine($"{c.Brand}\t{c.Model}\t{c.Year}\t{c.Cc}"));
+       WriteLine("\n## PEOPLE");
+       People.All.ToList().ForEach(p => WriteLine($"{p.Name}\t{p.Address}\t{p._11Age}"));
     }
 }
