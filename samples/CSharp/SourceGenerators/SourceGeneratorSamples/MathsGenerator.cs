@@ -438,9 +438,9 @@ namespace Maths {
             {
                 // Load formulas from .math files
                 var mathText = file.GetText();
-                var mathString = "";
+                string mathString;
 
-                if(mathText != null)
+                if (mathText != null)
                 {
                     mathString = mathText.ToString();
                 } 
