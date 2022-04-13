@@ -169,7 +169,7 @@ namespace Maths {
     private static StringBuilder Error(Token token, TokenType type, string value = "") => 
             throw new Exception($"Expected {type} {(value == "" ? "" : $" with {token.Value}")} at {token.Line},{token.Column} Instead found {token.Type} with value {token.Value}");
 
-    static HashSet<string> validFunctions =
+    static readonly SymTable validFunctions =
         new(typeof(System.Math).GetMethods().Select(m => m.Name.ToLower()));
 
     static readonly Dictionary<string, string> replacementStrings = new()
@@ -318,7 +318,7 @@ namespace Maths {
     }
     private readonly  static Func<Context, string, bool> IsOp = (ctx, op)
         => Peek(ctx, TokenType.Operation, op);
-    private static Action<Context, string> ConsOp = (ctx, op)
+    private static readonly Action<Context, string> ConsOp = (ctx, op)
         => Consume(ctx, TokenType.Operation, op);
 
     private static void Expr(Context ctx) {
