@@ -16,26 +16,14 @@ public class HelloWorldGenerator : IIncrementalGenerator
 
         // Dependency pipeline. Select class syntax nodes, transform to type symbols and collect their names.
         var classNames = context.SyntaxProvider.CreateSyntaxProvider(
-           predicate: IsClassDeclaration,
-           transform: GetTypeSymbol
-           ).Where(t => t is not null)
-            .Select((t, c) => t!.Name)
+           predicate: static (sn, c) => sn is ClassDeclarationSyntax,
+           transform: static (ct, c) => ct.SemanticModel.GetDeclaredSymbol(ct.Node, c))
+            .Where  (static t => t is not null)
+            .Select (static (t, c) => t!.Name)
             .Collect();
 
         // Register a function to generate the code using the collected type symbols.
         context.RegisterSourceOutput(classNames, GenerateSource);
-    }
-
-    // Predicate function: just pick up the class syntax nodes.
-    private bool IsClassDeclaration(SyntaxNode s, CancellationToken t) => s is ClassDeclarationSyntax;
-
-    // Transform function goes from SyntaxNode to ITypeSymbol.
-    private ITypeSymbol? GetTypeSymbol(GeneratorSyntaxContext context, CancellationToken cancellationToken)
-    {
-        if (context.SemanticModel.GetDeclaredSymbol(context.Node, cancellationToken) is ITypeSymbol typeSymbol)
-            return typeSymbol;
-
-        return null;
     }
 
     // Main function to generate the source code.
