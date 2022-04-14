@@ -8,8 +8,9 @@ public class HelloWorldGenerator : IIncrementalGenerator
         // Select class syntax nodes, transform to type symbols and collect their names.
         var classDeclarations = context.SyntaxProvider.CreateSyntaxProvider(
            predicate: IsClassDeclaration,
-           transform: GetTypeSymbols
-           ).Select((t, c) => t?.Name)
+           transform: GetTypeSymbol
+           ).Where(t => t is not null)
+            .Select((t, c) => t!.Name)
             .Collect();
 
         // Register a function to generate the code using the collected type symbols.
@@ -20,7 +21,7 @@ public class HelloWorldGenerator : IIncrementalGenerator
     private bool IsClassDeclaration(SyntaxNode s, CancellationToken t) => s is ClassDeclarationSyntax;
 
     // Transform function goes from SyntaxNode to ITypeSymbol.
-    private ITypeSymbol? GetTypeSymbols(GeneratorSyntaxContext context, CancellationToken cancellationToken)
+    private ITypeSymbol? GetTypeSymbol(GeneratorSyntaxContext context, CancellationToken cancellationToken)
     {
         if (context.SemanticModel.GetDeclaredSymbol(context.Node, cancellationToken) is ITypeSymbol typeSymbol)
             return typeSymbol;
@@ -29,7 +30,7 @@ public class HelloWorldGenerator : IIncrementalGenerator
     }
 
     // Main function to generate the source code.
-    private void GenerateSource(SourceProductionContext context, ImmutableArray<string?> typeNames)
+    private void GenerateSource(SourceProductionContext context, ImmutableArray<string> typeNames)
     {
         // Begin creating the source we'll inject into the users compilation.
         StringBuilder sourceBuilder = new(@"
@@ -46,12 +47,7 @@ namespace HelloWorldGenerated
 
         // Print out each symbol name we find.
         foreach (var name in typeNames)
-        {
-            if (name is null)
-                continue;
-
             sourceBuilder.AppendLine($"Console.WriteLine(\"{name}\");");
-        }
 
         // Finish creating the source to inject.
         sourceBuilder.Append(@"
