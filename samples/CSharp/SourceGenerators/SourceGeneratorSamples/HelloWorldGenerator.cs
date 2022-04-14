@@ -18,8 +18,8 @@ public class HelloWorldGenerator : IIncrementalGenerator
         var classNames = context.SyntaxProvider.CreateSyntaxProvider(
            predicate: static (sn, c) => sn is ClassDeclarationSyntax,
            transform: static (ct, c) => ct.SemanticModel.GetDeclaredSymbol(ct.Node, c))
-            .Where  (static t => t is not null)
-            .Select (static (t, c) => t!.Name)
+            .Where  (static t        => t is not null)
+            .Select (static (t, c)   => t!.Name)
             .Collect();
 
         // Register a function to generate the code using the collected type symbols.
