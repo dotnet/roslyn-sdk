@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
-using NotVisualBasic.FileIO;
-
-#nullable enable
-
-// CsvTextFileParser from https://github.com/22222/CsvTextFieldParser adding suppression rules for default VS config
+﻿#nullable enable
 
 namespace CsvGenerator;
 
@@ -181,4 +170,3 @@ namespace CSV {
     {
     }
 }
-#pragma warning restore IDE0008 // Use explicit type

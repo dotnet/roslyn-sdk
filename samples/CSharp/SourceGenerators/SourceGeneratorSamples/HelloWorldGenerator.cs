@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
-
-namespace SourceGeneratorSamples;
+﻿namespace SourceGeneratorSamples;
 
 [Generator]
 public class HelloWorldGenerator : IIncrementalGenerator

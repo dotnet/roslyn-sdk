@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
-
-namespace SourceGeneratorSamples;
+﻿namespace SourceGeneratorSamples;
 
 [Generator]
 public class AutoNotifyGenerator : ISourceGenerator
@@ -51,12 +42,12 @@ namespace AutoNotify
         // group the fields by class, and generate the source
         foreach (IGrouping<INamedTypeSymbol, IFieldSymbol> group in receiver.Fields.GroupBy<IFieldSymbol, INamedTypeSymbol>(f => f.ContainingType, SymbolEqualityComparer.Default))
         {
-            string classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
+            string classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol);
            context.AddSource($"{group.Key.Name}_autoNotify.cs", SourceText.From(classSource, Encoding.UTF8));
         }
     }
 
-    private string ProcessClass(INamedTypeSymbol classSymbol, List<IFieldSymbol> fields, ISymbol attributeSymbol, ISymbol notifySymbol, GeneratorExecutionContext context)
+    private string ProcessClass(INamedTypeSymbol classSymbol, List<IFieldSymbol> fields, ISymbol attributeSymbol, ISymbol notifySymbol)
     {
         if (!classSymbol.ContainingSymbol.Equals(classSymbol.ContainingNamespace, SymbolEqualityComparer.Default))
         {
