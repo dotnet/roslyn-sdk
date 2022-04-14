@@ -5,8 +5,17 @@ public class HelloWorldGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // Select class syntax nodes, transform to type symbols and collect their names.
-        var classDeclarations = context.SyntaxProvider.CreateSyntaxProvider(
+        // Use this method to generate constant code (aka that doesn't depend on the syntax tree).
+        context.RegisterPostInitializationOutput(context =>
+            context.AddSource("AStaticFunc.g.cs", @"
+                namespace HelloWorldGenerated;
+                static class Printer {
+                    internal static void PrintUpper(string s) => System.Console.WriteLine(s.ToUpper());
+                }")
+        );
+
+        // Dependency pipeline. Select class syntax nodes, transform to type symbols and collect their names.
+        var classNames = context.SyntaxProvider.CreateSyntaxProvider(
            predicate: IsClassDeclaration,
            transform: GetTypeSymbol
            ).Where(t => t is not null)
@@ -14,7 +23,7 @@ public class HelloWorldGenerator : IIncrementalGenerator
             .Collect();
 
         // Register a function to generate the code using the collected type symbols.
-        context.RegisterSourceOutput(classDeclarations, GenerateSource);
+        context.RegisterSourceOutput(classNames, GenerateSource);
     }
 
     // Predicate function: just pick up the class syntax nodes.
@@ -35,13 +44,12 @@ public class HelloWorldGenerator : IIncrementalGenerator
         // Begin creating the source we'll inject into the users compilation.
         StringBuilder sourceBuilder = new(@"
 using System;
-namespace HelloWorldGenerated
-{
+namespace HelloWorldGenerated;
     public static class HelloWorld
     {
         public static void SayHello() 
         {
-            Console.WriteLine(""Hello from generated code!"");
+            Printer.PrintUpper(""Hello from generated code!""); // Uses the Printer static class
             Console.WriteLine(""The following classes existed in the compilation that created this program:"");
 ");
 
@@ -52,8 +60,7 @@ namespace HelloWorldGenerated
         // Finish creating the source to inject.
         sourceBuilder.Append(@"
         }
-    }
-}");
+    }");
         context.AddSource($"hello_world.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
     }
 
