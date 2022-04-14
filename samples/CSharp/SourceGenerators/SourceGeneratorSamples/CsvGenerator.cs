@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace CsvGenerator;
+﻿namespace CsvGenerator;
 
 [Generator]
 public class CSVGenerator : ISourceGenerator

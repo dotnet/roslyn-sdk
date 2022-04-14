@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace Mustache;
+﻿namespace Mustache;
 
 [Generator]
 public class MustacheGenerator : ISourceGenerator

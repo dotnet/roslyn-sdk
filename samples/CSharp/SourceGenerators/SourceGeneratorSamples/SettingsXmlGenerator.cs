@@ -17,7 +17,9 @@ public class SettingsXmlGenerator : ISourceGenerator
     {
         // try and load the settings file
         XmlDocument xmlDoc = new ();
-        string text = xmlFile.GetText(context.CancellationToken).ToString();
+        var text = xmlFile.GetText(context.CancellationToken)?.ToString();
+        if(text is null) throw new Exception("Error reading the settings file");
+
         try
         {
             xmlDoc.LoadXml(text);

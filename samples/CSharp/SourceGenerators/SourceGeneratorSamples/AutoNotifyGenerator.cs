@@ -1,5 +1,7 @@
 ﻿namespace SourceGeneratorSamples;
 
+#nullable disable // TODO: make this generator nullable safe.
+
 [Generator]
 public class AutoNotifyGenerator : ISourceGenerator
 {
