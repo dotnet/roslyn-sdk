@@ -14,11 +14,12 @@ public class HelloWorldGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // Select class syntax nodes and collect their type symbols.
+        // Select class syntax nodes, transform to type symbols and collect their names.
         var classDeclarations = context.SyntaxProvider.CreateSyntaxProvider(
            predicate: IsClassDeclaration,
            transform: GetTypeSymbols
-           ).Collect();
+           ).Select((t, c) => t.Name)
+            .Collect();
 
         // Register a function to generate the code using the collected type symbols.
         context.RegisterSourceOutput(classDeclarations, GenerateSource);
@@ -37,7 +38,7 @@ public class HelloWorldGenerator : IIncrementalGenerator
     }
 
     // Main function to generate the source code.
-    private void GenerateSource(SourceProductionContext context, ImmutableArray<ITypeSymbol> typeSymbols)
+    private void GenerateSource(SourceProductionContext context, ImmutableArray<string> typeNames)
     {
         // Begin creating the source we'll inject into the users compilation.
         StringBuilder sourceBuilder = new(@"
@@ -52,14 +53,14 @@ namespace HelloWorldGenerated
             Console.WriteLine(""The following classes existed in the compilation that created this program:"");
 ");
 
-        // Print out each symbol we find.
-        foreach (var symbol in typeSymbols)
+        // Print out each symbol name we find.
+        foreach (var name in typeNames)
         {
             // TODO: Why can the symbol be null?
-            if (symbol is null)
+            if (name is null)
                 continue;
 
-            sourceBuilder.AppendLine($"Console.WriteLine(\"{symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}\");");
+            sourceBuilder.AppendLine($"Console.WriteLine(\"{name}\");");
         }
 
         // Finish creating the source to inject.
