@@ -29,5 +29,10 @@ namespace Microsoft.CodeAnalysis.Testing
             var generatedPath = Path.Combine(file.sourceGeneratorType.GetTypeInfo().Assembly.GetName().Name ?? string.Empty, file.sourceGeneratorType.FullName!, file.filename);
             Add((generatedPath, file.content));
         }
+
+        public void Add((string filename, ConfigFile configFile) file)
+        {
+            Add((file.filename, SourceText.From(file.configFile.ToString(), Encoding.UTF8)));
+        }
     }
 }

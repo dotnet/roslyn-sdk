@@ -5,6 +5,7 @@
 #if !NETCOREAPP1_1 && !NET46
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
 using System.Threading.Tasks;
@@ -117,6 +118,32 @@ key = {|Literal:value|}
                     MarkupHandling = MarkupMode.None,
                 },
             }.RunAsync();
+        }
+
+        [Fact]
+        public void AnalyzerConfigFileEquivalentToManualCreation()
+        {
+            var expected = @"
+root = true
+
+[*]
+key = {|Literal:value|}
+";
+
+            var actual = new ConfigFile(
+                preamble: new Dictionary<string, string>
+                {
+                    ["root"] = "true",
+                },
+                sections: new Dictionary<string, Dictionary<string, string>>
+                {
+                    ["*"] = new Dictionary<string, string>
+                    {
+                        ["key"] = "{|Literal:value|}",
+                    },
+                }).ToString();
+
+            Assert.Equal(expected, actual);
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
