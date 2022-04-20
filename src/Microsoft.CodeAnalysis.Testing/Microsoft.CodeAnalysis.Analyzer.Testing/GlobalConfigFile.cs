@@ -9,9 +9,8 @@ namespace Microsoft.CodeAnalysis.Testing
     public class GlobalConfigFile : ConfigFile
     {
         public GlobalConfigFile(
-            Dictionary<string, string>? preamble = null,
-            Dictionary<string, Dictionary<string, string>>? sections = null)
-            : base("/.globalconfig", preamble, sections)
+            Dictionary<string, string>? preamble = null)
+            : base("/.globalconfig", preamble)
         {
         }
     }

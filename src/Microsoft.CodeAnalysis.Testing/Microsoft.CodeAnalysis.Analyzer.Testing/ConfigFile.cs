@@ -8,22 +8,18 @@ using System.Linq;
 
 namespace Microsoft.CodeAnalysis.Testing
 {
-    public class ConfigFile
+    public class ConfigFile : Dictionary<string, Dictionary<string, string>>
     {
         public string FileName { get; }
 
         public Dictionary<string, string> Preamble { get; }
 
-        public Dictionary<string, Dictionary<string, string>> Sections { get; }
-
         public ConfigFile(
             string fileName,
-            Dictionary<string, string>? preamble = null,
-            Dictionary<string, Dictionary<string, string>>? sections = null)
+            Dictionary<string, string>? preamble = null)
         {
             FileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
             Preamble = preamble ?? new Dictionary<string, string>();
-            Sections = sections ?? new Dictionary<string, Dictionary<string, string>>();
         }
 
         private static string ToString(Dictionary<string, string> dictionary)
@@ -46,7 +42,7 @@ namespace Microsoft.CodeAnalysis.Testing
             return @$"
 {ToString(Preamble)}
 
-{ToString(Sections)}
+{ToString(this)}
 ";
         }
     }

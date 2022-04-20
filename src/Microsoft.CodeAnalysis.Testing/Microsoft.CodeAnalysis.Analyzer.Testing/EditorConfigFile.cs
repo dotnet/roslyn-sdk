@@ -9,9 +9,8 @@ namespace Microsoft.CodeAnalysis.Testing
     public class EditorConfigFile : ConfigFile
     {
         public EditorConfigFile(
-            Dictionary<string, string>? preamble = null,
-            Dictionary<string, Dictionary<string, string>>? sections = null)
-            : base("/.editorconfig", preamble, sections)
+            Dictionary<string, string>? preamble = null)
+            : base("/.editorconfig", preamble)
         {
         }
     }

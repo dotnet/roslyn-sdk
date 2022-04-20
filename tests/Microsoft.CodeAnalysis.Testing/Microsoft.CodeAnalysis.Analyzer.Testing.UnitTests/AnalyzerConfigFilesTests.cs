@@ -134,14 +134,13 @@ key = {|Literal:value|}
                 preamble: new Dictionary<string, string>
                 {
                     ["root"] = "true",
-                },
-                sections: new Dictionary<string, Dictionary<string, string>>
+                })
+            {
+                ["*"] = new Dictionary<string, string>
                 {
-                    ["*"] = new Dictionary<string, string>
-                    {
-                        ["key"] = "{|Literal:value|}",
-                    },
-                }).ToString();
+                    ["key"] = "{|Literal:value|}",
+                },
+            }.ToString();
 
             Assert.Equal(expected, actual);
         }
