@@ -42,7 +42,8 @@ namespace Microsoft.CodeAnalysis.Testing
             return @$"
 {ToString(Preamble)}
 
-{ToString(Sections)}";
+{ToString(Sections)}
+";
         }
     }
 }
