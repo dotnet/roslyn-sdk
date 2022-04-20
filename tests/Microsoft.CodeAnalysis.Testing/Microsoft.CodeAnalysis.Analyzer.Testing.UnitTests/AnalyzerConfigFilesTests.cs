@@ -130,16 +130,10 @@ root = true
 key = {|Literal:value|}
 ";
 
-            var actual = new EditorConfigFile(
-                preamble: new Dictionary<string, string>
-                {
-                    ["root"] = "true",
-                })
+            var actual = new EditorConfigFile
             {
-                ["*"] = new Dictionary<string, string>
-                {
-                    ["key"] = "{|Literal:value|}",
-                },
+                ["root"] = "true",
+                ["*", "key"] = "{|Literal:value|}",
             }.ToString();
 
             Assert.Equal(expected, actual);

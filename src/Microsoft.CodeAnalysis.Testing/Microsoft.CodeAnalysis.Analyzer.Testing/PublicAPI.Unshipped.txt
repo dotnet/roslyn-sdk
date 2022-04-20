@@ -50,9 +50,13 @@ Microsoft.CodeAnalysis.Testing.CompilerDiagnostics.None = 0 -> Microsoft.CodeAna
 Microsoft.CodeAnalysis.Testing.CompilerDiagnostics.Suggestions = 3 -> Microsoft.CodeAnalysis.Testing.CompilerDiagnostics
 Microsoft.CodeAnalysis.Testing.CompilerDiagnostics.Warnings = 2 -> Microsoft.CodeAnalysis.Testing.CompilerDiagnostics
 Microsoft.CodeAnalysis.Testing.ConfigFile
-Microsoft.CodeAnalysis.Testing.ConfigFile.ConfigFile(string fileName, System.Collections.Generic.Dictionary<string, string> preamble = null) -> void
+Microsoft.CodeAnalysis.Testing.ConfigFile.ConfigFile(string fileName) -> void
 Microsoft.CodeAnalysis.Testing.ConfigFile.FileName.get -> string
 Microsoft.CodeAnalysis.Testing.ConfigFile.Preamble.get -> System.Collections.Generic.Dictionary<string, string>
+Microsoft.CodeAnalysis.Testing.ConfigFile.this[string globalKey].get -> string
+Microsoft.CodeAnalysis.Testing.ConfigFile.this[string globalKey].set -> void
+Microsoft.CodeAnalysis.Testing.ConfigFile.this[string sectionKey, string key].get -> string
+Microsoft.CodeAnalysis.Testing.ConfigFile.this[string sectionKey, string key].set -> void
 Microsoft.CodeAnalysis.Testing.ConfigFileCollection
 Microsoft.CodeAnalysis.Testing.ConfigFileCollection.Add(Microsoft.CodeAnalysis.Testing.ConfigFile file) -> void
 Microsoft.CodeAnalysis.Testing.ConfigFileCollection.ConfigFileCollection() -> void
@@ -105,11 +109,11 @@ Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithSpan(Microsoft.CodeAnalysis.
 Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithSpan(int startLine, int startColumn, int endLine, int endColumn) -> Microsoft.CodeAnalysis.Testing.DiagnosticResult
 Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithSpan(string path, int startLine, int startColumn, int endLine, int endColumn) -> Microsoft.CodeAnalysis.Testing.DiagnosticResult
 Microsoft.CodeAnalysis.Testing.EditorConfigFile
-Microsoft.CodeAnalysis.Testing.EditorConfigFile.EditorConfigFile(System.Collections.Generic.Dictionary<string, string> preamble = null) -> void
+Microsoft.CodeAnalysis.Testing.EditorConfigFile.EditorConfigFile() -> void
 Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer
 Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer.EmptyDiagnosticAnalyzer() -> void
 Microsoft.CodeAnalysis.Testing.GlobalConfigFile
-Microsoft.CodeAnalysis.Testing.GlobalConfigFile.GlobalConfigFile(System.Collections.Generic.Dictionary<string, string> preamble = null) -> void
+Microsoft.CodeAnalysis.Testing.GlobalConfigFile.GlobalConfigFile() -> void
 Microsoft.CodeAnalysis.Testing.IVerifier
 Microsoft.CodeAnalysis.Testing.IVerifier.Empty<T>(string collectionName, System.Collections.Generic.IEnumerable<T> collection) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.Equal<T>(T expected, T actual, string message = null) -> void
