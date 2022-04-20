@@ -50,6 +50,8 @@ Microsoft.CodeAnalysis.Testing.CompilerDiagnostics.None = 0 -> Microsoft.CodeAna
 Microsoft.CodeAnalysis.Testing.CompilerDiagnostics.Suggestions = 3 -> Microsoft.CodeAnalysis.Testing.CompilerDiagnostics
 Microsoft.CodeAnalysis.Testing.CompilerDiagnostics.Warnings = 2 -> Microsoft.CodeAnalysis.Testing.CompilerDiagnostics
 Microsoft.CodeAnalysis.Testing.ConfigFile
+Microsoft.CodeAnalysis.Testing.ConfigFile.Add(string globalKey, string value) -> void
+Microsoft.CodeAnalysis.Testing.ConfigFile.Add(string sectionKey, string key, string value) -> void
 Microsoft.CodeAnalysis.Testing.ConfigFile.ConfigFile(string fileName) -> void
 Microsoft.CodeAnalysis.Testing.ConfigFile.FileName.get -> string
 Microsoft.CodeAnalysis.Testing.ConfigFile.Preamble.get -> System.Collections.Generic.Dictionary<string, string>

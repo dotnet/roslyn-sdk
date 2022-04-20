@@ -36,13 +36,41 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             get
             {
-                return base[sectionKey][key];
+                if (!TryGetValue(sectionKey, out var values))
+                {
+                    values = new Dictionary<string, string>();
+                    base[sectionKey] = values;
+                }
+
+                return values[key];
             }
 
             set
             {
-                base[sectionKey][key] = value;
+                if (!TryGetValue(sectionKey, out var values))
+                {
+                    values = new Dictionary<string, string>();
+                    base[sectionKey] = values;
+                }
+
+                values[key] = value;
             }
+        }
+
+        public void Add(string globalKey, string value)
+        {
+            Preamble.Add(globalKey, value);
+        }
+
+        public void Add(string sectionKey, string key, string value)
+        {
+            if (!TryGetValue(sectionKey, out var values))
+            {
+                values = new Dictionary<string, string>();
+                base[sectionKey] = values;
+            }
+
+            values.Add(key, value);
         }
 
         private static string ToString(Dictionary<string, string> dictionary)
