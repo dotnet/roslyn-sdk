@@ -130,7 +130,7 @@ root = true
 key = {|Literal:value|}
 ";
 
-            var actual = new ConfigFile(
+            var actual = new EditorConfigFile(
                 preamble: new Dictionary<string, string>
                 {
                     ["root"] = "true",

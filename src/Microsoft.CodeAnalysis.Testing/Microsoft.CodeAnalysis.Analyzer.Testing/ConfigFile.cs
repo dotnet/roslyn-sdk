@@ -10,14 +10,18 @@ namespace Microsoft.CodeAnalysis.Testing
 {
     public class ConfigFile
     {
+        public string FileName { get; }
+
         public Dictionary<string, string> Preamble { get; }
 
         public Dictionary<string, Dictionary<string, string>> Sections { get; }
 
         public ConfigFile(
+            string fileName,
             Dictionary<string, string>? preamble = null,
             Dictionary<string, Dictionary<string, string>>? sections = null)
         {
+            FileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
             Preamble = preamble ?? new Dictionary<string, string>();
             Sections = sections ?? new Dictionary<string, Dictionary<string, string>>();
         }

@@ -9,9 +9,9 @@ namespace Microsoft.CodeAnalysis.Testing
 {
     public class ConfigFileCollection : SourceFileCollection
     {
-        public void Add((string filename, ConfigFile configFile) file)
+        public void Add(ConfigFile file)
         {
-            Add((file.filename, SourceText.From(file.configFile.ToString(), Encoding.UTF8)));
+            Add((file.FileName, SourceText.From(file.ToString(), Encoding.UTF8)));
         }
     }
 }
