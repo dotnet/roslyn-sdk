@@ -53,6 +53,9 @@ Microsoft.CodeAnalysis.Testing.ConfigFile
 Microsoft.CodeAnalysis.Testing.ConfigFile.ConfigFile(System.Collections.Generic.Dictionary<string, string> preamble = null, System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>> sections = null) -> void
 Microsoft.CodeAnalysis.Testing.ConfigFile.Preamble.get -> System.Collections.Generic.Dictionary<string, string>
 Microsoft.CodeAnalysis.Testing.ConfigFile.Sections.get -> System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>>
+Microsoft.CodeAnalysis.Testing.ConfigFileCollection
+Microsoft.CodeAnalysis.Testing.ConfigFileCollection.Add((string filename, Microsoft.CodeAnalysis.Testing.ConfigFile configFile) file) -> void
+Microsoft.CodeAnalysis.Testing.ConfigFileCollection.ConfigFileCollection() -> void
 Microsoft.CodeAnalysis.Testing.DefaultVerifier
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.Context.get -> System.Collections.Immutable.ImmutableStack<string>
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.DefaultVerifier() -> void
@@ -157,7 +160,7 @@ Microsoft.CodeAnalysis.Testing.ProjectState.AdditionalFiles.get -> Microsoft.Cod
 Microsoft.CodeAnalysis.Testing.ProjectState.AdditionalFilesFactories.get -> System.Collections.Generic.List<System.Func<System.Collections.Generic.IEnumerable<(string filename, Microsoft.CodeAnalysis.Text.SourceText content)>>>
 Microsoft.CodeAnalysis.Testing.ProjectState.AdditionalProjectReferences.get -> System.Collections.Generic.List<string>
 Microsoft.CodeAnalysis.Testing.ProjectState.AdditionalReferences.get -> Microsoft.CodeAnalysis.Testing.MetadataReferenceCollection
-Microsoft.CodeAnalysis.Testing.ProjectState.AnalyzerConfigFiles.get -> Microsoft.CodeAnalysis.Testing.SourceFileCollection
+Microsoft.CodeAnalysis.Testing.ProjectState.AnalyzerConfigFiles.get -> Microsoft.CodeAnalysis.Testing.ConfigFileCollection
 Microsoft.CodeAnalysis.Testing.ProjectState.AssemblyName.get -> string
 Microsoft.CodeAnalysis.Testing.ProjectState.DocumentationMode.get -> Microsoft.CodeAnalysis.DocumentationMode?
 Microsoft.CodeAnalysis.Testing.ProjectState.DocumentationMode.set -> void
@@ -222,7 +225,6 @@ Microsoft.CodeAnalysis.Testing.SolutionState.WithProcessedMarkup(Microsoft.CodeA
 Microsoft.CodeAnalysis.Testing.SourceFileCollection
 Microsoft.CodeAnalysis.Testing.SourceFileCollection.Add((System.Type sourceGeneratorType, string filename, Microsoft.CodeAnalysis.Text.SourceText content) file) -> void
 Microsoft.CodeAnalysis.Testing.SourceFileCollection.Add((System.Type sourceGeneratorType, string filename, string content) file) -> void
-Microsoft.CodeAnalysis.Testing.SourceFileCollection.Add((string filename, Microsoft.CodeAnalysis.Testing.ConfigFile configFile) file) -> void
 Microsoft.CodeAnalysis.Testing.SourceFileCollection.Add((string filename, string content) file) -> void
 Microsoft.CodeAnalysis.Testing.SourceFileCollection.SourceFileCollection() -> void
 Microsoft.CodeAnalysis.Testing.SourceFileList
