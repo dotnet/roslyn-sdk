@@ -1,7 +1,10 @@
-﻿namespace CsvGenerator;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace CsvGenerator;
 
 [Generator]
-public class CSVGenerator : ISourceGenerator
+public class CSVGenerator : IIncrementalGenerator
 {
     public enum CsvLoadType
     {
@@ -135,36 +138,37 @@ namespace CSV {
         return new (string, string)[] { (className, GenerateClassFile(className, csvText, loadTime, cacheObjects)) };
     }
 
-    static IEnumerable<(string, string)> SourceFilesFromAdditionalFiles(IEnumerable<(CsvLoadType loadTime, bool cacheObjects, AdditionalText file)> pathsData)
-        => pathsData.SelectMany(d => SourceFilesFromAdditionalFile(d.loadTime, d.cacheObjects, d.file));
-
-    static IEnumerable<(CsvLoadType, bool, AdditionalText)> GetLoadOptions(GeneratorExecutionContext context)
+    public (CsvLoadType, bool, AdditionalText) GetLoadOptionProvider(
+        (AdditionalText file, AnalyzerConfigOptionsProvider config) source,
+        CancellationToken ct)
     {
-        foreach (AdditionalText file in context.AdditionalFiles)
-        {
-            if (Path.GetExtension(file.Path).Equals(".csv", StringComparison.OrdinalIgnoreCase))
-            {
-                // are there any options for it?
-                context.AnalyzerConfigOptions.GetOptions(file).TryGetValue("build_metadata.additionalfiles.CsvLoadType", out string? loadTimeString);
-                Enum.TryParse(loadTimeString, ignoreCase: true, out CsvLoadType loadType);
+        var options = source.config.GetOptions(source.file);
+        
+        options.TryGetValue("build_metadata.additionalfiles.CsvLoadType", out string? loadTimeString);
+        Enum.TryParse(loadTimeString, ignoreCase: true, out CsvLoadType loadType);
 
-                context.AnalyzerConfigOptions.GetOptions(file).TryGetValue("build_metadata.additionalfiles.CacheObjects", out string? cacheObjectsString);
-                bool.TryParse(cacheObjectsString, out bool cacheObjects);
+        options.TryGetValue("build_metadata.additionalfiles.CacheObjects", out string? cacheObjectsString);
+        bool.TryParse(cacheObjectsString, out bool cacheObjects);
 
-                yield return (loadType, cacheObjects, file);
-            }
-        }
+        return (loadType, cacheObjects, source.file);
     }
 
-    public void Execute(GeneratorExecutionContext context)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        IEnumerable<(CsvLoadType, bool, AdditionalText)> options = GetLoadOptions(context);
-        IEnumerable<(string, string)> nameCodeSequence = SourceFilesFromAdditionalFiles(options);
-        foreach ((string name, string code) in nameCodeSequence)
-            context.AddSource($"Csv_{name}", SourceText.From(code, Encoding.UTF8));
-    }
+        IncrementalValuesProvider<AdditionalText> files
+            = context.AdditionalTextsProvider.Where( static file => file.Path.EndsWith(".csv"));
 
-    public void Initialize(GeneratorInitializationContext context)
-    {
+        IncrementalValuesProvider<(AdditionalText, AnalyzerConfigOptionsProvider)>
+            combined = files.Combine(context.AnalyzerConfigOptionsProvider);
+
+        IncrementalValuesProvider<(CsvLoadType, bool, AdditionalText)> transformed
+            = combined.Select(GetLoadOptionProvider); 
+
+        var selector = static ((CsvLoadType ltype, bool cache, AdditionalText text)source, CancellationToken ctoken)
+            => SourceFilesFromAdditionalFile(source.ltype, source.cache, source.text);
+        IncrementalValuesProvider<(string name, string code)> nameAndContent = transformed.SelectMany(selector);
+
+        context.RegisterSourceOutput(nameAndContent, (spc, nameAndContent) =>
+            spc.AddSource($"{nameAndContent.name}.g.cs", nameAndContent.code)); 
     }
 }
