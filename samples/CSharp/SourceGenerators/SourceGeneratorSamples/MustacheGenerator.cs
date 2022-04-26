@@ -1,7 +1,7 @@
 ﻿namespace Mustache;
 
 [Generator]
-public class MustacheGenerator : ISourceGenerator
+public class MustacheGenerator : IIncrementalGenerator
 {
     private const string attributeSource = @"
     [System.AttributeUsage(System.AttributeTargets.Assembly, AllowMultiple=true)]
@@ -15,16 +15,6 @@ public class MustacheGenerator : ISourceGenerator
     }
 ";
 
-    public void Execute(GeneratorExecutionContext context)
-    {
-        SyntaxReceiver rx = (SyntaxReceiver)context.SyntaxContextReceiver!;
-        foreach ((string name, string template, string hash) in rx.TemplateInfo)
-        {
-            string source = SourceFileFromMustachePath(name, template, hash);
-            context.AddSource($"Mustache{name}", source);
-        }
-    }
- 
     static string SourceFileFromMustachePath(string name, string template, string hash)
     {
         Func<object, string> tree = HandlebarsDotNet.Handlebars.Compile(template);
@@ -44,29 +34,39 @@ namespace Mustache {{
         return sb.ToString();
     }
 
-    public void Initialize(GeneratorInitializationContext context)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterForPostInitialization((pi) => pi.AddSource("Mustache_MainAttributes__", attributeSource));
-        context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
+        context.RegisterPostInitializationOutput(
+            ctx => ctx.AddSource("Mustache_MainAttributes__.g.cs", attributeSource));
+
+        var maybeTemplateData = context.SyntaxProvider.CreateSyntaxProvider(
+            predicate: (s, t) => s is AttributeSyntax attrib
+                                 && attrib.ArgumentList?.Arguments.Count == 3,
+            transform: GetTemplateData);
+
+        var templateData = maybeTemplateData
+            .Where(t => t is not null)
+            .Select((t, _) => t!.Value);
+
+        context.RegisterSourceOutput(templateData,
+            (ctx, data) => ctx.AddSource(
+                $"{data.name}.g.cs",
+                SourceFileFromMustachePath(data.name, data.template, data.hash)));
     }
 
-    class SyntaxReceiver : ISyntaxContextReceiver
+    internal static (string name, string template, string hash)?
+        GetTemplateData(GeneratorSyntaxContext context, CancellationToken cancellationToken)
     {
-        public List<(string name, string template, string hash)> TemplateInfo = new ();
-
-        public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
+        var attrib = (AttributeSyntax)context.Node;
+        
+        if(attrib.ArgumentList is not null
+           && context.SemanticModel.GetTypeInfo(attrib).Type?.ToDisplayString() == "MustacheAttribute")
         {
-            // find all valid mustache attributes
-            if (context.Node is AttributeSyntax attrib
-                && attrib.ArgumentList?.Arguments.Count == 3
-                && context.SemanticModel.GetTypeInfo(attrib).Type?.ToDisplayString() == "MustacheAttribute")
-            {
-                string name = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[0].Expression).ToString();
-                string template = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[1].Expression).ToString();
-                string hash = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[2].Expression).ToString();
-
-                TemplateInfo.Add((name, template, hash));
-            }
+            string name = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[0].Expression).ToString();
+            string template = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[1].Expression).ToString();
+            string hash = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[2].Expression).ToString();
+            return (name, template, hash);
         }
+        return null;
     }
 }
