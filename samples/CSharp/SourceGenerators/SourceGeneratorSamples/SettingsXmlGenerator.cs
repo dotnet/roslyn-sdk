@@ -1,19 +1,9 @@
 ﻿namespace Analyzer1;
 
 [Generator]
-public class SettingsXmlGenerator : ISourceGenerator
+public class SettingsXmlGenerator : IIncrementalGenerator
 {
-    public void Execute(GeneratorExecutionContext context)
-    {
-        // Using the context, get any additional files that end in .xmlsettings
-        IEnumerable<AdditionalText> settingsFiles = context.AdditionalFiles.Where(at => at.Path.EndsWith(".xmlsettings"));
-        foreach (AdditionalText settingsFile in settingsFiles)
-        {
-            ProcessSettingsFile(settingsFile, context);
-        }
-    }
-    
-    private void ProcessSettingsFile(AdditionalText xmlFile, GeneratorExecutionContext context)
+    private void ProcessSettingsFile(SourceProductionContext context,  AdditionalText xmlFile)
     {
         // try and load the settings file
         XmlDocument xmlDoc = new ();
@@ -85,7 +75,9 @@ public {settingType} {settingName}
         context.AddSource($"Settings_{name}", SourceText.From(sb.ToString(), Encoding.UTF8));
     }
  
-    public void Initialize(GeneratorInitializationContext context)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+        var xmlFiles = context.AdditionalTextsProvider.Where(at => at.Path.EndsWith(".xmlsettings"));
+        context.RegisterSourceOutput(xmlFiles, ProcessSettingsFile);
     }
 }
