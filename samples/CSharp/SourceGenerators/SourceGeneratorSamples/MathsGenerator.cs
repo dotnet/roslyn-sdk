@@ -393,7 +393,7 @@ namespace Maths {
 }
 
 [Generator]
-public class MathsGenerator : ISourceGenerator
+public class MathsGenerator : IIncrementalGenerator
 {
     private const string libraryCode = @"
 using System.Linq;
@@ -415,42 +415,41 @@ namespace Maths {
 }
 ";
 
-    public void Execute(GeneratorExecutionContext context)
+    public (string name, SourceText code) GetNameAndCode(AdditionalText file, CancellationToken _)
     {
-        foreach (AdditionalText file in context.AdditionalFiles)
+        // Load formulas from .math files
+        var mathText = file.GetText();
+        string mathString;
+
+        if (mathText != null)
         {
-            if (Path.GetExtension(file.Path).Equals(".math", StringComparison.OrdinalIgnoreCase))
-            {
-                // Load formulas from .math files
-                var mathText = file.GetText();
-                string mathString;
-
-                if (mathText != null)
-                {
-                    mathString = mathText.ToString();
-                } 
-                else
-                {
-                    throw new Exception($"Cannot load file {file.Path}");
-                }
-
-                // Get name of generated namespace from file name
-                string fileName = Path.GetFileNameWithoutExtension(file.Path);
-
-                // Parse and gen the formulas functions
-                var tokens = Lexer.Tokenize(mathString);
-                var code = Parser.Parse(tokens);
-
-                var codeFileName = $@"{fileName}.cs";
-
-                context.AddSource(codeFileName, SourceText.From(code, Encoding.UTF8));
-            }
+            mathString = mathText.ToString();
+        } 
+        else
+        {
+            throw new Exception($"Cannot load file {file.Path}");
         }
+
+        // Get name of generated namespace from file name
+        string fileName = Path.GetFileNameWithoutExtension(file.Path);
+
+        // Parse and gen the formulas functions
+        var tokens = Lexer.Tokenize(mathString);
+        var code = Parser.Parse(tokens);
+
+        var codeFileName = $@"{fileName}.cs";
+        
+        return (codeFileName, SourceText.From(code, Encoding.UTF8));
     }
 
-    public void Initialize(GeneratorInitializationContext context) 
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterForPostInitialization((pi) => pi.AddSource("__MathLibrary__.cs", libraryCode));
+        context.RegisterPostInitializationOutput((pi) => pi.AddSource("__MathLibrary__.cs", libraryCode));
+
+        var files       = context.AdditionalTextsProvider.Where(file => Path.GetExtension(file.Path).Equals(".math", StringComparison.OrdinalIgnoreCase));
+        var nameAndCode = files.Select(GetNameAndCode);
+
+        context.RegisterSourceOutput(nameAndCode, (ctx, source) => ctx.AddSource(source.name, source.code));
     }
 }
 
