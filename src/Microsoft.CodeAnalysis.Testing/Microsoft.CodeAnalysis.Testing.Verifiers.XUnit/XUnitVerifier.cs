@@ -1,8 +1,11 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Xunit;
 
@@ -33,7 +36,7 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             }
         }
 
-        public virtual void Equal<T>(T expected, T actual, string message = null)
+        public virtual void Equal<T>(T expected, T actual, string? message = null)
         {
             if (message is null && Context.IsEmpty)
             {
@@ -48,7 +51,7 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             }
         }
 
-        public virtual void True(bool assert, string message = null)
+        public virtual void True([DoesNotReturnIf(false)] bool assert, string? message = null)
         {
             if (message is null && Context.IsEmpty)
             {
@@ -60,7 +63,7 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             }
         }
 
-        public virtual void False(bool assert, string message = null)
+        public virtual void False([DoesNotReturnIf(true)] bool assert, string? message = null)
         {
             if (message is null && Context.IsEmpty)
             {
@@ -72,7 +75,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             }
         }
 
-        public virtual void Fail(string message = null)
+        [DoesNotReturn]
+        public virtual void Fail(string? message = null)
         {
             if (message is null && Context.IsEmpty)
             {
@@ -82,6 +86,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             {
                 Assert.True(false, CreateMessage(message));
             }
+
+            throw ExceptionUtilities.Unreachable;
         }
 
         public virtual void LanguageIsSupported(string language)
@@ -100,27 +106,13 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             }
         }
 
-        public virtual void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> equalityComparer = null, string message = null)
+        public virtual void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T>? equalityComparer = null, string? message = null)
         {
-            if (message is null && Context.IsEmpty)
+            var comparer = new SequenceEqualEnumerableEqualityComparer<T>(equalityComparer);
+            var areEqual = comparer.Equals(expected, actual);
+            if (!areEqual)
             {
-                if (equalityComparer is null)
-                {
-                    Assert.Equal(expected, actual);
-                }
-                else
-                {
-                    Assert.Equal(expected, actual, equalityComparer);
-                }
-            }
-            else
-            {
-                var comparer = new SequenceEqualEnumerableEqualityComparer<T>(equalityComparer);
-                var areEqual = comparer.Equals(expected, actual);
-                if (!areEqual)
-                {
-                    throw new EqualWithMessageException(expected, actual, CreateMessage(message));
-                }
+                throw new EqualWithMessageException(expected, actual, CreateMessage(message));
             }
         }
 
@@ -130,26 +122,26 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             return new XUnitVerifier(Context.Push(context));
         }
 
-        protected virtual string CreateMessage(string message)
+        protected virtual string CreateMessage(string? message)
         {
             foreach (var frame in Context)
             {
                 message = "Context: " + frame + Environment.NewLine + message;
             }
 
-            return message;
+            return message ?? string.Empty;
         }
 
-        private sealed class SequenceEqualEnumerableEqualityComparer<T> : IEqualityComparer<IEnumerable<T>>
+        private sealed class SequenceEqualEnumerableEqualityComparer<T> : IEqualityComparer<IEnumerable<T>?>
         {
             private readonly IEqualityComparer<T> _itemEqualityComparer;
 
-            public SequenceEqualEnumerableEqualityComparer(IEqualityComparer<T> itemEqualityComparer)
+            public SequenceEqualEnumerableEqualityComparer(IEqualityComparer<T>? itemEqualityComparer)
             {
                 _itemEqualityComparer = itemEqualityComparer ?? EqualityComparer<T>.Default;
             }
 
-            public bool Equals(IEnumerable<T> x, IEnumerable<T> y)
+            public bool Equals(IEnumerable<T>? x, IEnumerable<T>? y)
             {
                 if (ReferenceEquals(x, y)) { return true; }
                 if (x is null || y is null) { return false; }
@@ -157,11 +149,19 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
                 return x.SequenceEqual(y, _itemEqualityComparer);
             }
 
-            public int GetHashCode(IEnumerable<T> obj)
+            public int GetHashCode(IEnumerable<T>? obj)
             {
+                if (obj is null)
+                {
+                    return 0;
+                }
+
                 // From System.Tuple
+                //
+                // The suppression is required due to an invalid contract in IEqualityComparer<T>
+                // https://github.com/dotnet/runtime/issues/30998
                 return obj
-                    .Select(item => _itemEqualityComparer.GetHashCode(item))
+                    .Select(item => _itemEqualityComparer.GetHashCode(item!))
                     .Aggregate(
                         0,
                         (aggHash, nextHash) => ((aggHash << 5) + aggHash) ^ nextHash);

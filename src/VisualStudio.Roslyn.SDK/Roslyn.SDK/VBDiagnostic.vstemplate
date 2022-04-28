@@ -31,6 +31,12 @@
       <ProjectTemplateLink ProjectName="$safeprojectname$">
         ProjectTemplates\VisualBasic\Diagnostic\Analyzer\DiagnosticAnalyzer.vstemplate
       </ProjectTemplateLink>
+      <ProjectTemplateLink ProjectName="$safeprojectname$.CodeFixes">
+        ProjectTemplates\VisualBasic\Diagnostic\CodeFix\CodeFixProvider.vstemplate
+      </ProjectTemplateLink>
+      <ProjectTemplateLink ProjectName="$safeprojectname$.Package">
+        ProjectTemplates\VisualBasic\Diagnostic\Package\Package.vstemplate
+      </ProjectTemplateLink>
       <ProjectTemplateLink ProjectName="$safeprojectname$.Test">
         ProjectTemplates\VisualBasic\Diagnostic\Test\Test.vstemplate
       </ProjectTemplateLink>
@@ -40,7 +46,7 @@
     </ProjectCollection>
   </TemplateContent>
   <WizardExtension>
-    <Assembly>Roslyn.SDK.Template.Wizard, Version=$(AssemblyVersion), Culture=neutral, PublicKeyToken=31bf3856ad364e35</Assembly>
+    <Assembly>Roslyn.SDK.Template.Wizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Assembly>
     <FullClassName>RoslynSDKRootTemplateWizard</FullClassName>
   </WizardExtension>
 </VSTemplate>

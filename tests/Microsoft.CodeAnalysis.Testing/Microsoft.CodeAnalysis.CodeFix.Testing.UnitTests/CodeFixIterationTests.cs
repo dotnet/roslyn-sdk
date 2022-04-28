@@ -1,17 +1,12 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Composition;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.Testing.TestAnalyzers;
+using Microsoft.CodeAnalysis.Testing.TestFixes;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.Testing
@@ -59,6 +54,78 @@ class TestClass {
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestOneIterationEachForTwoDiagnosticsFixOnlyFirst()
+        {
+            var testCode = @"
+class TestClass {
+  int x = [|4|];
+  int y = [|4|];
+}
+";
+            var fixedCode = @"
+class TestClass {
+  int x =  5;
+  int y = [|4|];
+}
+";
+            var batchFixedCode = @"
+class TestClass {
+  int x =  5;
+  int y =  5;
+}
+";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedState =
+                {
+                    Sources = { fixedCode },
+                    MarkupHandling = MarkupMode.Allow,
+                },
+                BatchFixedCode = batchFixedCode,
+                CodeFixTestBehaviors = CodeFixTestBehaviors.FixOne,
+                DiagnosticIndexToFix = 0,
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestOneIterationEachForTwoDiagnosticsFixOnlySecond()
+        {
+            var testCode = @"
+class TestClass {
+  int x = [|4|];
+  int y = [|4|];
+}
+";
+            var fixedCode = @"
+class TestClass {
+  int x = [|4|];
+  int y =  5;
+}
+";
+            var batchFixedCode = @"
+class TestClass {
+  int x =  5;
+  int y =  5;
+}
+";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedState =
+                {
+                    Sources = { fixedCode },
+                    MarkupHandling = MarkupMode.Allow,
+                },
+                BatchFixedCode = batchFixedCode,
+                CodeFixTestBehaviors = CodeFixTestBehaviors.FixOne,
+                DiagnosticIndexToFix = 1,
             }.RunAsync();
         }
 
@@ -125,7 +192,7 @@ class TestClass {
 ";
             var fixedCode = @"
 class TestClass {
-  int field =  5;
+  int field =   5;
 }
 ";
             var batchFixedCode = @"
@@ -145,24 +212,24 @@ class TestClass {
                 }.RunAsync();
             });
 
-            Assert.Equal($"Context: Iterative code fix application{Environment.NewLine}The upper limit for the number of code fix iterations was exceeded", exception.Message);
+            new DefaultVerifier().EqualOrDiff($"Context: Iterative code fix application{Environment.NewLine}Expected '1' iterations but found '2' iterations.", exception.Message);
         }
 
         [Theory]
-        [InlineData(-1, "The upper limit for the number of code fix iterations was exceeded")]
-        [InlineData(0, "The upper limit for the number of code fix iterations was exceeded")]
-        [InlineData(1, "Expected '1' iterations but found '2' iterations.")]
-        public async Task TestTwoIterationsRequiredButIncrementalDeclaredIncorrectly(int declaredIncrementalIterations, string message)
+        [InlineData(-1, "Expected '1' iterations but found '2' iterations.", "  5")]
+        [InlineData(0, "The upper limit for the number of code fix iterations was exceeded", " [|4|]")]
+        [InlineData(1, "Expected '1' iterations but found '2' iterations.", "  5")]
+        public async Task TestTwoIterationsRequiredButIncrementalDeclaredIncorrectly(int declaredIncrementalIterations, string message, string replacement)
         {
             var testCode = @"
 class TestClass {
   int field = [|3|];
 }
 ";
-            var fixedCode = @"
-class TestClass {
-  int field =  5;
-}
+            var fixedCode = $@"
+class TestClass {{
+  int field = {replacement};
+}}
 ";
             var batchFixedCode = @"
 class TestClass {
@@ -175,14 +242,14 @@ class TestClass {
                 await new CSharpTest
                 {
                     TestCode = testCode,
-                    FixedCode = fixedCode,
+                    FixedState = { Sources = { fixedCode }, MarkupHandling = MarkupMode.Allow },
                     BatchFixedCode = batchFixedCode,
                     NumberOfIncrementalIterations = declaredIncrementalIterations,
                     NumberOfFixAllIterations = 2,
                 }.RunAsync();
             });
 
-            Assert.Equal($"Context: Iterative code fix application{Environment.NewLine}{message}", exception.Message);
+            new DefaultVerifier().EqualOrDiff($"Context: Iterative code fix application{Environment.NewLine}{message}", exception.Message);
         }
 
         [Fact]
@@ -213,20 +280,25 @@ class TestClass {
         }
 
         [Theory]
-        [InlineData(-1, "The upper limit for the number of code fix iterations was exceeded")]
-        [InlineData(0, "The upper limit for the number of fix all iterations was exceeded")]
-        [InlineData(1, "Expected '1' iterations but found '2' iterations.")]
-        public async Task TestTwoIterationsRequiredButFixAllDeclaredIncorrectly(int declaredFixAllIterations, string message)
+        [InlineData(-1, "Expected '1' iterations but found '2' iterations.", "  5")]
+        [InlineData(0, "The upper limit for the number of fix all iterations was exceeded", " [|4|]")]
+        [InlineData(1, "Expected '1' iterations but found '2' iterations.", "  5")]
+        public async Task TestTwoIterationsRequiredButFixAllDeclaredIncorrectly(int declaredFixAllIterations, string message, string replacement)
         {
             var testCode = @"
 class TestClass {
   int field = [|3|];
 }
 ";
-            var fixedCode = @"
-class TestClass {
+            var fixedCode = $@"
+class TestClass {{
   int field =   5;
-}
+}}
+";
+            var fixAllCode = $@"
+class TestClass {{
+  int field = {replacement};
+}}
 ";
 
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
@@ -235,17 +307,23 @@ class TestClass {
                 {
                     TestCode = testCode,
                     FixedCode = fixedCode,
+                    BatchFixedState = { Sources = { fixAllCode }, MarkupHandling = MarkupMode.Allow },
                     NumberOfIncrementalIterations = 2,
                     NumberOfFixAllIterations = declaredFixAllIterations,
                 }.RunAsync();
             });
 
-            Assert.Equal($"Context: Fix all in document{Environment.NewLine}{message}", exception.Message);
+            new DefaultVerifier().EqualOrDiff($"Context: Fix all in document{Environment.NewLine}{message}", exception.Message);
         }
 
-        [Fact]
+        [Theory]
         [WorkItem(147, "https://github.com/dotnet/roslyn-sdk/issues/147")]
-        public async Task TestOneIterationRequiredForEachOfTwoDocuments()
+        [InlineData(CodeFixTestBehaviors.None)]
+        [InlineData(CodeFixTestBehaviors.SkipFixAllInDocumentCheck)]
+        [InlineData(CodeFixTestBehaviors.SkipFixAllInDocumentCheck | CodeFixTestBehaviors.SkipFixAllInProjectCheck)]
+        [InlineData(CodeFixTestBehaviors.SkipFixAllInDocumentCheck | CodeFixTestBehaviors.SkipFixAllInSolutionCheck)]
+        [InlineData(CodeFixTestBehaviors.SkipFixAllCheck)]
+        public async Task TestOneIterationRequiredForEachOfTwoDocuments(CodeFixTestBehaviors codeFixTestBehaviors)
         {
             var testCode1 = @"
 class TestClass1 {
@@ -272,50 +350,15 @@ class TestClass2 {
             {
                 TestState = { Sources = { testCode1, testCode2 } },
                 FixedState = { Sources = { fixedCode1, fixedCode2 } },
-                NumberOfFixAllInDocumentIterations = 2,
+                CodeFixTestBehaviors = codeFixTestBehaviors,
             }.RunAsync();
         }
 
-        [Fact]
+        [Theory]
         [WorkItem(147, "https://github.com/dotnet/roslyn-sdk/issues/147")]
-        public async Task TestOneIterationRequiredForEachOfTwoDocumentsButNotDeclared()
-        {
-            var testCode1 = @"
-class TestClass1 {
-  int field = [|4|];
-}
-";
-            var testCode2 = @"
-class TestClass2 {
-  int field = [|4|];
-}
-";
-            var fixedCode1 = @"
-class TestClass1 {
-  int field =  5;
-}
-";
-            var fixedCode2 = @"
-class TestClass2 {
-  int field =  5;
-}
-";
-
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
-            {
-                await new CSharpTest
-                {
-                    TestState = { Sources = { testCode1, testCode2 } },
-                    FixedState = { Sources = { fixedCode1, fixedCode2 } },
-                }.RunAsync();
-            });
-
-            Assert.Equal($"Context: Fix all in document{Environment.NewLine}Expected '1' iterations but found '2' iterations.", exception.Message);
-        }
-
-        [Fact]
-        [WorkItem(147, "https://github.com/dotnet/roslyn-sdk/issues/147")]
-        public async Task TestOneIterationRequiredForEachOfTwoDocumentsButDeclaredForAll()
+        [InlineData(CodeFixTestBehaviors.None, "Fix all in project")]
+        [InlineData(CodeFixTestBehaviors.SkipFixAllInProjectCheck, "Fix all in solution")]
+        public async Task TestOneIterationRequiredForEachOfTwoDocumentsButDeclaredForAll(CodeFixTestBehaviors codeFixTestBehaviors, string context)
         {
             var testCode1 = @"
 class TestClass1 {
@@ -345,100 +388,86 @@ class TestClass2 {
                     TestState = { Sources = { testCode1, testCode2 } },
                     FixedState = { Sources = { fixedCode1, fixedCode2 } },
                     NumberOfFixAllIterations = 2,
+                    CodeFixTestBehaviors = codeFixTestBehaviors,
                 }.RunAsync();
             });
 
-            Assert.Equal($"Context: Fix all in project{Environment.NewLine}Expected '2' iterations but found '1' iterations.", exception.Message);
+            Assert.Equal($"Context: {context}{Environment.NewLine}Expected '2' iterations but found '1' iterations.", exception.Message);
         }
 
-        /// <summary>
-        /// Reports a diagnostic on any integer literal token with a value less than five.
-        /// </summary>
-        [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        private class LiteralUnderFiveAnalyzer : DiagnosticAnalyzer
+        [Fact]
+        [WorkItem(874, "https://github.com/dotnet/roslyn-sdk/issues/874")]
+        public async Task TestTwoIterationsRequiredButOneApplied()
         {
-            internal static readonly DiagnosticDescriptor Descriptor =
-                new DiagnosticDescriptor("LiteralUnderFive", "title", "message", "category", DiagnosticSeverity.Warning, isEnabledByDefault: true);
+            var testCode = @"
+class TestClass {
+  int field = [|3|];
+}
+";
+            var fixedCode = @"
+class TestClass {
+  int field =  [|4|];
+}
+";
 
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Descriptor);
-
-            public override void Initialize(AnalysisContext context)
+            await new CSharpTest
             {
-                context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-
-                context.RegisterSyntaxNodeAction(HandleNumericLiteralExpression, SyntaxKind.NumericLiteralExpression);
-            }
-
-            private void HandleNumericLiteralExpression(SyntaxNodeAnalysisContext context)
-            {
-                var node = (LiteralExpressionSyntax)context.Node;
-                if (int.TryParse(node.Token.ValueText, out var value) && value < 5)
+                TestCode = testCode,
+                FixedState =
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, node.Token.GetLocation()));
-                }
-            }
+                    Sources = { fixedCode },
+                    MarkupHandling = MarkupMode.Allow,
+                },
+                CodeActionEquivalenceKey = "IncrementFix:4",
+                CodeActionIndex = 0,
+            }.RunAsync();
         }
 
-        [ExportCodeFixProvider(LanguageNames.CSharp)]
-        [PartNotDiscoverable]
-        private class IncrementFix : CodeFixProvider
+        [Fact]
+        [WorkItem(874, "https://github.com/dotnet/roslyn-sdk/issues/874")]
+        public async Task TestTwoIterationsRequiredButNoneApplied()
         {
-            public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(LiteralUnderFiveAnalyzer.Descriptor.Id);
+            var testCode = @"
+class TestClass {
+  int field = [|3|];
+}
+";
+            var fixedCode = @"
+class TestClass {
+  int field =  [|4|];
+}
+";
 
-            public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
-
-            public override Task RegisterCodeFixesAsync(CodeFixContext context)
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
-                foreach (var diagnostic in context.Diagnostics)
+                await new CSharpTest
                 {
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            "LiteralUnderFive",
-                            cancellationToken => CreateChangedDocument(context.Document, diagnostic.Location.SourceSpan, cancellationToken),
-                            nameof(IncrementFix)),
-                        diagnostic);
-                }
+                    TestCode = testCode,
+                    FixedState =
+                    {
+                        Sources = { fixedCode },
+                        MarkupHandling = MarkupMode.Allow,
+                    },
+                    CodeActionEquivalenceKey = "IncrementFix:3",
+                    CodeActionIndex = 0,
+                }.RunAsync();
+            });
 
-                return Task.CompletedTask;
-            }
-
-            private async Task<Document> CreateChangedDocument(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
-            {
-                var tree = await document.GetSyntaxTreeAsync(cancellationToken);
-                var root = await tree.GetRootAsync(cancellationToken);
-                var token = root.FindToken(sourceSpan.Start);
-                var replacement = int.Parse(token.ValueText) + 1;
-                var newToken = SyntaxFactory.Literal(token.LeadingTrivia, " " + replacement.ToString(), replacement, token.TrailingTrivia);
-                return document.WithSyntaxRoot(root.ReplaceToken(token, newToken));
-            }
+            new DefaultVerifier().EqualOrDiff($"Context: Iterative code fix application{Environment.NewLine}The code action equivalence key and index must be consistent when both are specified.", exception.Message);
         }
 
-        private class CSharpTest : CodeFixTest<DefaultVerifier>
+        private class CSharpTest : CSharpCodeFixTest<LiteralUnderFiveAnalyzer, IncrementFix>
         {
-            public override string Language => LanguageNames.CSharp;
-
-            public override Type SyntaxKindType => typeof(SyntaxKind);
-
-            protected override string DefaultFileExt => "cs";
+            public int DiagnosticIndexToFix { get; set; }
 
             public CSharpTest()
             {
-                CodeFixValidationMode = CodeFixValidationMode.None;
+                CodeActionValidationMode = CodeActionValidationMode.None;
             }
 
-            protected override CompilationOptions CreateCompilationOptions()
+            protected override Diagnostic? TrySelectDiagnosticToFix(ImmutableArray<Diagnostic> fixableDiagnostics)
             {
-                return new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-            }
-
-            protected override IEnumerable<CodeFixProvider> GetCodeFixProviders()
-            {
-                yield return new IncrementFix();
-            }
-
-            protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
-            {
-                yield return new LiteralUnderFiveAnalyzer();
+                return fixableDiagnostics[DiagnosticIndexToFix];
             }
         }
     }

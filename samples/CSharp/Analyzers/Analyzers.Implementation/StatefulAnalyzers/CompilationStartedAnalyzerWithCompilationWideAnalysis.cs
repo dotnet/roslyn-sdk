@@ -88,20 +88,17 @@ namespace Sample.Analyzers
             /// <summary>
             /// List of secure types in the compilation implementing interface <see cref="SecureTypeInterfaceName"/>.
             /// </summary>
-            private List<INamedTypeSymbol> _secureTypes;
+            private readonly List<INamedTypeSymbol> _secureTypes = new List<INamedTypeSymbol>();
 
             /// <summary>
             /// Set of unsecure interface types in the compilation that have methods with an attribute of <see cref="_unsecureMethodAttributeType"/>.
             /// </summary>
-            private HashSet<INamedTypeSymbol> _interfacesWithUnsecureMethods;
+            private readonly HashSet<INamedTypeSymbol> _interfacesWithUnsecureMethods = new HashSet<INamedTypeSymbol>();
 
             public CompilationAnalyzer(INamedTypeSymbol unsecureMethodAttributeType, INamedTypeSymbol secureTypeInterfaceType)
             {
                 _unsecureMethodAttributeType = unsecureMethodAttributeType;
                 _secureTypeInterfaceType = secureTypeInterfaceType;
-
-                _secureTypes = null;
-                _interfacesWithUnsecureMethods = null;
             }
 
             public void AnalyzeSymbol(SymbolAnalysisContext context)
@@ -113,8 +110,10 @@ namespace Sample.Analyzers
                         INamedTypeSymbol namedType = (INamedTypeSymbol)context.Symbol;
                         if (namedType.AllInterfaces.Contains(_secureTypeInterfaceType))
                         {
-                            _secureTypes = _secureTypes ?? new List<INamedTypeSymbol>();
-                            _secureTypes.Add(namedType);
+                            lock (_secureTypes)
+                            {
+                                _secureTypes.Add(namedType);
+                            }
                         }
 
                         break;
@@ -125,8 +124,10 @@ namespace Sample.Analyzers
                         if (method.ContainingType.TypeKind == TypeKind.Interface &&
                             method.GetAttributes().Any(a => a.AttributeClass.Equals(_unsecureMethodAttributeType)))
                         {
-                            _interfacesWithUnsecureMethods = _interfacesWithUnsecureMethods ?? new HashSet<INamedTypeSymbol>();
-                            _interfacesWithUnsecureMethods.Add(method.ContainingType);
+                            lock (_interfacesWithUnsecureMethods)
+                            {
+                                _interfacesWithUnsecureMethods.Add(method.ContainingType);
+                            }
                         }
 
                         break;
@@ -135,7 +136,7 @@ namespace Sample.Analyzers
 
             public void CompilationEndAction(CompilationAnalysisContext context)
             {
-                if (_interfacesWithUnsecureMethods == null || _secureTypes == null)
+                if (_interfacesWithUnsecureMethods.Count == 0 || _secureTypes.Count == 0)
                 {
                     // No violating types.
                     return;

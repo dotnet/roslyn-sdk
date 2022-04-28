@@ -1,5 +1,8 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -24,16 +27,26 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public override Stream OpenRead(string resolvedPath)
         {
+            if (resolvedPath is null)
+            {
+                throw new ArgumentNullException(nameof(resolvedPath));
+            }
+
             if (!XmlReferences.TryGetValue(resolvedPath, out var content))
             {
-                return null;
+                throw new IOException($"Unable to read XML file: {resolvedPath}");
             }
 
             return new MemoryStream(Encoding.UTF8.GetBytes(content));
         }
 
-        public override string ResolveReference(string path, string baseFilePath)
+        public override string? ResolveReference(string path, string baseFilePath)
         {
+            if (!XmlReferences.ContainsKey(path))
+            {
+                return null;
+            }
+
             return path;
         }
     }

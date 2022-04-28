@@ -1,29 +1,26 @@
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using TestHelper;
-using $saferootprojectname$;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
+using VerifyCS = $safeprojectname$.CSharpCodeFixVerifier<
+    $saferootprojectname$.$saferootidentifiername$Analyzer,
+    $saferootprojectname$.$saferootidentifiername$CodeFixProvider>;
 
 namespace $safeprojectname$
 {
     [TestClass]
-    public class UnitTest : CodeFixVerifier
+    public class $saferootidentifiername$UnitTest
     {
-
         //No diagnostics expected to show up
         [TestMethod]
-        public void TestMethod1()
+        public async Task TestMethod1()
         {
             var test = @"";
 
-            VerifyCSharpDiagnostic(test);
+            await VerifyCS.VerifyAnalyzerAsync(test);
         }
 
         //Diagnostic and CodeFix both triggered and checked for
         [TestMethod]
-        public void TestMethod2()
+        public async Task TestMethod2()
         {
             var test = @"
     using System;
@@ -35,22 +32,10 @@ namespace $safeprojectname$
 
     namespace ConsoleApplication1
     {
-        class TypeName
+        class {|#0:TypeName|}
         {   
         }
     }";
-            var expected = new DiagnosticResult
-            {
-                Id = "$saferootidentifiername$",
-                Message = String.Format("Type name '{0}' contains lowercase letters", "TypeName"),
-                Severity = DiagnosticSeverity.Warning,
-                Locations =
-                    new[] {
-                            new DiagnosticResultLocation("Test0.cs", 11, 15)
-                        }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"
     using System;
@@ -66,17 +51,9 @@ namespace $safeprojectname$
         {   
         }
     }";
-            VerifyCSharpFix(test, fixtest);
-        }
 
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new $saferootidentifiername$CodeFixProvider();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new $saferootidentifiername$Analyzer();
+            var expected = VerifyCS.Diagnostic("$saferootidentifiername$").WithLocation(0).WithArguments("TypeName");
+            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
         }
     }
 }

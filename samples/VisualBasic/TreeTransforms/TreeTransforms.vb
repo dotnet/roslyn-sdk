@@ -3,7 +3,7 @@
 
 Imports Xunit
 
-Public Module TreeTransformTests
+Public Class TreeTransformTests
 
     <Fact>
     Public Sub IntTypeToLongTypeTest()
@@ -332,8 +332,8 @@ End Module
 <a>
 Module Module1
     Sub Main()
-        Dim x As Integer = Nothing, y As Object = Nothing, d As Decimal = Nothing, m1 = Nothing
-    End Sub
+        Dim x As Integer = Nothing, y As Object = Nothing, d As Decimal = Nothing, m1
+ = Nothing    End Sub
 End Module
 </a>.Value
 
@@ -599,14 +599,8 @@ End Module
 "Module Module1" & vbLf &
 "    Sub Main()" & vbLf &
 "        Dim A, B, C" & vbLf &
-"        If True Then " & vbCr & vbLf &
-"            A = B + C " & vbCr & vbLf &
-"            B = A + C " & vbCr & vbLf &
-"        Else" & vbCr & vbLf &
-"            C = A + B " & vbCr & vbLf &
-"            B = A - C" & vbCr & vbLf &
-"        End If" & vbLf &
-"    End Sub" & vbLf &
+"        If True Then             A = B + C :            B = A + C         Else            C = A + B :            B = A - C" & vbLf &
+"        End If    End Sub" & vbLf &
 "End Module" & vbLf
 
         Dim actual_transform = Transforms.Transform(input, TransformKind.SingleLineIfToMultiLineIf)
@@ -614,4 +608,4 @@ End Module
         Assert.Equal(expected_transform, actual_transform)
     End Sub
 
-End Module
+End Class

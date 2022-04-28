@@ -1,6 +1,9 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis.Host;
@@ -46,20 +49,22 @@ namespace Microsoft.CodeAnalysis.Testing
             // If IDocumentTextDifferencingService is not exported by default, export it manually
             var manualExportDefinition = new ExportDefinition(
                 typeof(IWorkspaceService).FullName,
-                metadata: new Dictionary<string, object>
+                metadata: new Dictionary<string, object?>
                 {
                     { "ExportTypeIdentity", typeof(IWorkspaceService).FullName },
                     { nameof(ExportWorkspaceServiceAttribute.ServiceType), assemblyQualifiedServiceTypeName },
                     { nameof(ExportWorkspaceServiceAttribute.Layer), ServiceLayer.Default },
-                    { typeof(CreationPolicy).FullName, CreationPolicy.Shared },
+                    { typeof(CreationPolicy).FullName!, CreationPolicy.Shared },
                     { "ContractType", typeof(IWorkspaceService) },
                     { "ContractName", null },
                 });
 
             var serviceImplType = typeof(Workspace).GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.DefaultDocumentTextDifferencingService");
+            RoslynDebug.AssertNotNull(serviceImplType);
+
             return catalog.AddPart(new ComposablePartDefinition(
                 TypeRef.Get(serviceImplType, Resolver.DefaultInstance),
-                new Dictionary<string, object> { { "SharingBoundary", null } },
+                new Dictionary<string, object?> { { "SharingBoundary", null } },
                 new[] { manualExportDefinition },
                 new Dictionary<MemberRef, IReadOnlyCollection<ExportDefinition>>(),
                 Enumerable.Empty<ImportDefinitionBinding>(),

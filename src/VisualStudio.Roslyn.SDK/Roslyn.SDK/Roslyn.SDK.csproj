@@ -1,25 +1,27 @@
-﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+﻿<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <RootNamespace>Roslyn.SDK</RootNamespace>
     <AssemblyName>Roslyn.SDK</AssemblyName>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <EnableDefaultItems>false</EnableDefaultItems>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <DeployProjectOutput>false</DeployProjectOutput>
     <!-- VS Insertion -->
     <VisualStudioInsertionComponent>Microsoft.CodeAnalysis.SDK</VisualStudioInsertionComponent>
+    <SetupProductArch>Neutral</SetupProductArch>
     <Ngen>false</Ngen>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
   <!-- Setting Template Content to None -->
   <ItemGroup>
-    <None Include="ProjectTemplates\CSharp\**\*.cs" />
-    <None Include="ProjectTemplates\CSharp\**\*.csproj" />
-    <None Include="ProjectTemplates\**\*.vsixmanifest" />
-    <None Include="ProjectTemplates\**\CodeRefactoring\**\*.vstemplate" />
-    <None Include="ProjectTemplates\**\Diagnostic\**\*.vstemplate" />
-    <None Include="ProjectTemplates\**\ConsoleApplication\**\*.vstemplate" />
+    <None Include="ItemTemplates\**\*" />
+    <None Include="ProjectTemplates\**\*" />
+    <None Include="Properties\launchSettings.json" />
     <None Include="*.vstemplate" />
   </ItemGroup>
   <!-- C# Item Templates -->
@@ -105,36 +107,33 @@
   <ItemGroup>
     <ProjectReference Include="..\Roslyn.SDK.Template.Wizard\Roslyn.SDK.Template.Wizard.csproj">
       <Name>Roslyn.SDK.Template.Wizard</Name>
+      <Ngen>false</Ngen>
     </ProjectReference>
-    <ProjectReference Include="..\SyntaxVisualizer\Roslyn.SyntaxVisualizer.Control\Roslyn.SyntaxVisualizer.Control.csproj" />
-    <ProjectReference Include="..\SyntaxVisualizer\Roslyn.SyntaxVisualizer.DgmlHelper\Roslyn.SyntaxVisualizer.DgmlHelper.vbproj" />
+    <ProjectReference Include="..\SyntaxVisualizer\Roslyn.SyntaxVisualizer.Control\Roslyn.SyntaxVisualizer.Control.csproj">
+      <Ngen>false</Ngen>
+    </ProjectReference>
+    <ProjectReference Include="..\SyntaxVisualizer\Roslyn.SyntaxVisualizer.DgmlHelper\Roslyn.SyntaxVisualizer.DgmlHelper.vbproj">
+      <Ngen>false</Ngen>
+    </ProjectReference>
     <ProjectReference Include="..\SyntaxVisualizer\Roslyn.SyntaxVisualizer.Extension\Roslyn.SyntaxVisualizer.Extension.csproj">
       <Name>Roslyn.SyntaxVisualizer.Extension</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bGetCopyToOutputDirectoryItems%3bPkgdefProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
+      <Ngen>false</Ngen>
     </ProjectReference>
-    <PackageReference Include="UpdateTemplateVersion" Version="$(UpdateTemplateVersionVersion)" />
+    <ProjectReference Include="..\ComponentDebugger\Roslyn.ComponentDebugger.csproj">
+      <Name>Roslyn.ComponentDebugger</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bGetCopyToOutputDirectoryItems</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+      <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
+      <Ngen>false</Ngen>
+    </ProjectReference>
   </ItemGroup>
-
-  <!-- rewriting of .vstemplate files to reference the correct assembly version number -->
-  <PropertyGroup>
-    <_UpdateTemplateVersionAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(NuGetPackageRoot)\UpdateTemplateVersion\$(UpdateTemplateVersionVersion)\tools\net461\UpdateTemplateVersion.dll</_UpdateTemplateVersionAssembly>
-    <_UpdateTemplateVersionAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(NuGetPackageRoot)\UpdateTemplateVersion\$(UpdateTemplateVersionVersion)\tools\netcoreapp2.0\UpdateTemplateVersion.dll</_UpdateTemplateVersionAssembly>
-  </PropertyGroup>
-
-  <UsingTask AssemblyFile="$(_UpdateTemplateVersionAssembly)" TaskName="UpdateTemplateVersion" />
-  <Target Name="UpdateAssemblyVersionInTemplates" BeforeTargets="GetZipFilesFromVSTemplates">
-    <ItemGroup>
-      <_OriginalVSTemplate Include="@(VSTemplate)" />
-    </ItemGroup>
-    <UpdateTemplateVersion VSTemplatesToRewrite="@(VSTemplate)"
-                           AssemblyVersion="$(AssemblyVersion)"
-                           IntermediatePath="ModifiedTemplates">
-      <Output TaskParameter="NewVSTemplates" ItemName="VSTemplate" />
-    </UpdateTemplateVersion>
-    <ItemGroup>
-      <VSTemplate Remove="@(_OriginalVSTemplate)" />
-    </ItemGroup>
-  </Target>
+  <ItemGroup>
+    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="$(SystemThreadingTasksDataflowVersion)" />
+    <!-- Explicit reference to avoid missing package warning -->
+    <PackageReference Include="Microsoft.VisualStudio.Interop" Version="$(MicrosoftVisualStudioInteropVersion)" />
+    <PackageReference Include="VSLangProj" Version="$(VSLangProjVersion)" />
+  </ItemGroup>
 </Project>

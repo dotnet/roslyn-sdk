@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Immutable;
@@ -6,8 +8,8 @@ using System.Composition;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing.TestAnalyzers;
+using Microsoft.CodeAnalysis.Testing.TestFixes;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.Testing
@@ -33,7 +35,7 @@ namespace MyNamespace {|Brace:{|}
 ";
 
             // Test through the helper
-            await new CSharpCodeFixTest<HighlightBraceAnalyzer, CodeFixNotOfferedProvider>
+            await new CSharpCodeFixTest<HighlightBracesAnalyzer, CodeFixNotOfferedProvider>
             {
                 TestCode = testCode,
                 FixedState = { MarkupHandling = MarkupMode.Allow },
@@ -60,7 +62,7 @@ namespace MyNamespace {|Brace:{|}
             // Test through the helper
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
-                await new CSharpCodeFixTest<HighlightBraceAnalyzer, CodeFixOfferedProvider>
+                await new CSharpCodeFixTest<HighlightBracesAnalyzer, CodeFixOfferedProvider>
                 {
                     TestCode = testCode,
                     FixedState = { MarkupHandling = MarkupMode.Allow },
@@ -92,7 +94,7 @@ namespace MyNamespace {|Brace:{|}
 ";
 
             // Test through the helper
-            await new CSharpCodeFixTest<HighlightBraceAnalyzer, CodeFixOfferedProvider>
+            await new CSharpCodeFixTest<HighlightBracesAnalyzer, CodeFixOfferedProvider>
             {
                 TestCode = testCode,
                 FixedState = { MarkupHandling = MarkupMode.Allow },
@@ -121,7 +123,7 @@ namespace MyNamespace {|Brace:{|}
             // Test through the helper (this scenario cannot be described via the verifier)
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
-                await new CSharpCodeFixTest<HighlightBraceAnalyzer, CodeFixNotOfferedProvider>
+                await new CSharpCodeFixTest<HighlightBracesAnalyzer, CodeFixNotOfferedProvider>
                 {
                     TestCode = testCode,
                     FixedState = { MarkupHandling = MarkupMode.Allow },
@@ -133,41 +135,12 @@ namespace MyNamespace {|Brace:{|}
             Assert.Equal($"Context: Iterative code fix application{Environment.NewLine}Expected '1' iterations but found '0' iterations.", exception.Message);
         }
 
-        [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        private class HighlightBraceAnalyzer : DiagnosticAnalyzer
-        {
-            internal static readonly DiagnosticDescriptor Descriptor =
-                new DiagnosticDescriptor("Brace", "title", "message", "category", DiagnosticSeverity.Warning, isEnabledByDefault: true);
-
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Descriptor);
-
-            public override void Initialize(AnalysisContext context)
-            {
-                context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-
-                context.RegisterSyntaxTreeAction(HandleSyntaxTree);
-            }
-
-            private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
-            {
-                foreach (var token in context.Tree.GetRoot(context.CancellationToken).DescendantTokens())
-                {
-                    if (!token.IsKind(SyntaxKind.OpenBraceToken))
-                    {
-                        continue;
-                    }
-
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
-                }
-            }
-        }
-
         [ExportCodeFixProvider(LanguageNames.CSharp)]
         [PartNotDiscoverable]
         private class CodeFixNotOfferedProvider : CodeFixProvider
         {
             public override ImmutableArray<string> FixableDiagnosticIds
-                => ImmutableArray.Create(HighlightBraceAnalyzer.Descriptor.Id);
+                => ImmutableArray.Create(new HighlightBracesAnalyzer().Descriptor.Id);
 
             public override FixAllProvider GetFixAllProvider()
                 => WellKnownFixAllProviders.BatchFixer;
@@ -181,7 +154,7 @@ namespace MyNamespace {|Brace:{|}
         private class CodeFixOfferedProvider : CodeFixProvider
         {
             public override ImmutableArray<string> FixableDiagnosticIds
-                => ImmutableArray.Create(HighlightBraceAnalyzer.Descriptor.Id);
+                => ImmutableArray.Create(new HighlightBracesAnalyzer().Descriptor.Id);
 
             public override FixAllProvider GetFixAllProvider()
                 => WellKnownFixAllProviders.BatchFixer;
@@ -202,7 +175,7 @@ namespace MyNamespace {|Brace:{|}
             }
         }
 
-        private class Verify<TCodeFix> : CodeFixVerifier<HighlightBraceAnalyzer, TCodeFix, CSharpCodeFixTest<HighlightBraceAnalyzer, TCodeFix>, DefaultVerifier>
+        private class Verify<TCodeFix> : CodeFixVerifier<HighlightBracesAnalyzer, TCodeFix, CSharpCodeFixTest<HighlightBracesAnalyzer, TCodeFix>, DefaultVerifier>
             where TCodeFix : CodeFixProvider, new()
         {
         }

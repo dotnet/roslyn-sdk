@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;netstandard2.0;net452</TargetFrameworks>
+    <TargetFrameworks>$(TestingLibraryTargetFrameworks)</TargetFrameworks>
     <AssemblyName>Microsoft.CodeAnalysis.Analyzer.Testing</AssemblyName>
     <RootNamespace>Microsoft.CodeAnalysis.Testing</RootNamespace>
   </PropertyGroup>
@@ -13,13 +13,53 @@
     <PackageTags>Roslyn Analyzer Test Framework Common</PackageTags>
   </PropertyGroup>
 
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'net452'">
+      <PropertyGroup>
+        <NuGetApiVersion>4.5.3</NuGetApiVersion>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(TargetFramework)' == 'net46'">
+      <PropertyGroup>
+        <NuGetApiVersion>4.9.4</NuGetApiVersion>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(TargetFramework)' == 'netstandard1.5'">
+      <PropertyGroup>
+        <NuGetApiVersion>4.6.4</NuGetApiVersion>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <NuGetApiVersion>5.6.0</NuGetApiVersion>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CodeFix.Testing" />
+    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CodeRefactoring.Testing" />
+    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Testing.Verifiers.MSTest" />
+    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Testing.Verifiers.NUnit" />
+    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Testing.Verifiers.XUnit" />
+
+    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Analyzer.Testing.UnitTests" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="1.0.1" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Composition" Version="15.6.36" />
+    <PackageReference Include="Microsoft.VisualStudio.Composition" Version="16.1.8" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+
+    <!-- Use PrivateAssets=compile to avoid exposing our NuGet dependencies downstream as public API. -->
+    <PackageReference Include="NuGet.Common" Version="$(NuGetApiVersion)" PrivateAssets="compile" />
+    <PackageReference Include="NuGet.Protocol" Version="$(NuGetApiVersion)" PrivateAssets="compile" />
+    <PackageReference Include="NuGet.Resolver" Version="$(NuGetApiVersion)" PrivateAssets="compile" />
+    <PackageReference Include="NuGet.Packaging" Version="$(NuGetApiVersion)" PrivateAssets="compile" />
+
     <!-- Use PrivateAssets=compile to avoid exposing our DiffPlex dependency downstream as public API. -->
-    <PackageReference Include="DiffPlex" Version="1.4.4" PrivateAssets="compile" />
+    <PackageReference Include="DiffPlex" Version="$(DiffPlexVersion)" PrivateAssets="compile" />
   </ItemGroup>
 </Project>

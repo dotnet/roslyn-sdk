@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28606.18
@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.CSharp", "samples\CSharp\Analyzers\Analyzers.Implementation\Analyzers.CSharp.csproj", "{2DDE4D5E-9CB8-4E01-ABAA-D39DAA018A16}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.CSharp.Tests", "samples\CSharp\Analyzers\Analyzers.Test\Analyzers.CSharp.Tests.csproj", "{0E5363B6-DE8C-42B5-9FD3-A2F02CB67001}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.CSharp.UnitTests", "samples\CSharp\Analyzers\Analyzers.Test\Analyzers.CSharp.UnitTests.csproj", "{0E5363B6-DE8C-42B5-9FD3-A2F02CB67001}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.CSharp.Vsix", "samples\CSharp\Analyzers\Analyzers.Vsix\Analyzers.CSharp.Vsix.csproj", "{D3C8EE30-8885-43F4-9C76-0D66A13FC4EA}"
 EndProject
@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToAutoProperty.CShar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToConditional.CSharp", "samples\CSharp\ConvertToConditional\ConvertToConditional.Implementation\ConvertToConditional.CSharp.csproj", "{1305FEEC-7DED-46A9-89C2-2544E8BECEA3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToConditional.CSharp.Tests", "samples\CSharp\ConvertToConditional\ConvertToConditional.Test\ConvertToConditional.CSharp.Tests.csproj", "{2B6860EC-C15D-4E56-A5A2-6399F502B4FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToConditional.CSharp.UnitTests", "samples\CSharp\ConvertToConditional\ConvertToConditional.Test\ConvertToConditional.CSharp.UnitTests.csproj", "{2B6860EC-C15D-4E56-A5A2-6399F502B4FA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToConditional.CSharp.Vsix", "samples\CSharp\ConvertToConditional\ConvertToConditional.Vsix\ConvertToConditional.CSharp.Vsix.csproj", "{D49B7CE5-5292-4EEA-AE1E-5B55C5E059D5}"
 EndProject
@@ -47,13 +47,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RefOutModifier.CSharp", "sa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RefOutModifier.CSharp.Vsix", "samples\CSharp\RefOutModifier\RefOutModifier.Vsix\RefOutModifier.CSharp.Vsix.csproj", "{DE024511-D4E4-4C3D-89DC-37C3A8AA8198}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APISamples.CSharp", "samples\CSharp\APISamples\APISamples.CSharp.csproj", "{2A953FCA-A243-4013-85E5-1CF6B1677BB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APISamples.CSharp.UnitTests", "samples\CSharp\APISamples\APISamples.CSharp.UnitTests.csproj", "{2A953FCA-A243-4013-85E5-1CF6B1677BB2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleClassifier.CSharp", "samples\CSharp\ConsoleClassifier\ConsoleClassifier.CSharp.csproj", "{DD8B331A-75C8-4F49-88A5-541D6FF88BFF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormatSolution.CSharp", "samples\CSharp\FormatSolution\FormatSolution.CSharp.csproj", "{AED8172B-C125-46E9-AA69-A8F18C7914A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TreeTransforms.CSharp", "samples\CSharp\TreeTransforms\TreeTransforms.CSharp.csproj", "{530E151F-3B74-4A9A-896E-79B56E10913B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TreeTransforms.CSharp.UnitTests", "samples\CSharp\TreeTransforms\TreeTransforms.CSharp.UnitTests.csproj", "{530E151F-3B74-4A9A-896E-79B56E10913B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.UnitTestFramework", "samples\Shared\UnitTestFramework\Roslyn.UnitTestFramework.csproj", "{0E033582-88DD-4BC6-A3C5-5B68519FB230}"
 EndProject
@@ -61,11 +61,11 @@ Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Analyzers.VisualBasic", "sa
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Analyzers.VisualBasic.Vsix", "samples\VisualBasic\Analyzers\Analyzers.Vsix\Analyzers.VisualBasic.Vsix.vbproj", "{7F1EE22F-ABE3-46A7-BA81-DE9E778D9BE4}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "APISamples.VisualBasic", "samples\VisualBasic\APISamples\APISamples.VisualBasic.vbproj", "{EF7EAD2E-6B2A-46AB-B788-47D3E868E553}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "APISamples.VisualBasic.UnitTests", "samples\VisualBasic\APISamples\APISamples.VisualBasic.UnitTests.vbproj", "{EF7EAD2E-6B2A-46AB-B788-47D3E868E553}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpToVisualBasicConverter", "samples\CSharp\CSharpToVisualBasicConverter\CSharpToVisualBasicConverter.Lib\CSharpToVisualBasicConverter.csproj", "{404161BB-90BF-4DE0-916E-6AC37F45B4E1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpToVisualBasicConverter.Tests", "samples\CSharp\CSharpToVisualBasicConverter\CSharpToVisualBasicConverter.Test\CSharpToVisualBasicConverter.Tests.csproj", "{91FCE068-24D9-4452-9629-40420206620C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpToVisualBasicConverter.UnitTests", "samples\CSharp\CSharpToVisualBasicConverter\CSharpToVisualBasicConverter.Test\CSharpToVisualBasicConverter.UnitTests.csproj", "{91FCE068-24D9-4452-9629-40420206620C}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "ConsoleClassifier.VisualBasic", "samples\VisualBasic\ConsoleClassifier\ConsoleClassifier.VisualBasic.vbproj", "{AE1C0659-7CBF-4DD1-BBFE-D7A2273822E1}"
 EndProject
@@ -89,7 +89,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImplementNotifyPropertyChan
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImplementNotifyPropertyChanged.CSharp.Vsix", "samples\CSharp\ImplementNotifyPropertyChanged\ImplementNotifyPropertyChanged.Vsix\ImplementNotifyPropertyChanged.CSharp.Vsix.csproj", "{1396AC51-E385-4894-A354-9D566189DDEB}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "TreeTransforms.VisualBasic", "samples\VisualBasic\TreeTransforms\TreeTransforms.VisualBasic.vbproj", "{996E8EDA-D925-45BB-B64A-079381A2BC7A}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "TreeTransforms.VisualBasic.UnitTests", "samples\VisualBasic\TreeTransforms\TreeTransforms.VisualBasic.UnitTests.vbproj", "{996E8EDA-D925-45BB-B64A-079381A2BC7A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RemoveByVal", "RemoveByVal", "{64885FF2-EE63-4433-A890-7903B9E8AFBC}"
 EndProject
@@ -101,7 +101,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MakeConst", "MakeConst", "{
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "MakeConst.VisualBasic", "samples\VisualBasic\MakeConst\MakeConst\MakeConst.VisualBasic.vbproj", "{AB0EC03A-DC42-448D-BECA-C764DC6461EE}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "MakeConst.VisualBasic.Tests", "samples\VisualBasic\MakeConst\MakeConst.Test\MakeConst.VisualBasic.Tests.vbproj", "{20E6E463-CC7E-4A74-98BF-DF956D651360}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "MakeConst.VisualBasic.UnitTests", "samples\VisualBasic\MakeConst\MakeConst.Test\MakeConst.VisualBasic.UnitTests.vbproj", "{20E6E463-CC7E-4A74-98BF-DF956D651360}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "MakeConst.VisualBasic.Vsix", "samples\VisualBasic\MakeConst\MakeConst.Vsix\MakeConst.VisualBasic.Vsix.vbproj", "{9C74F8EA-E6C7-448C-BC04-29F4CE9DC994}"
 EndProject
@@ -109,7 +109,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VisualBasicToCSharpConverte
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "VisualBasicToCSharpConverter.Lib", "samples\VisualBasic\VisualBasicToCSharpConverter\VisualBasicToCSharpConverter.Lib\VisualBasicToCSharpConverter.Lib.vbproj", "{ECB83742-8023-4609-B139-D7B78DD66ED9}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "VisualBasicToCSharpConverter.Tests", "samples\VisualBasic\VisualBasicToCSharpConverter\VisualBasicToCSharpConverter.Test\VisualBasicToCSharpConverter.Tests.vbproj", "{5B7D7569-B5EE-4C01-9AFA-BC1958588160}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "VisualBasicToCSharpConverter.UnitTests", "samples\VisualBasic\VisualBasicToCSharpConverter\VisualBasicToCSharpConverter.Test\VisualBasicToCSharpConverter.UnitTests.vbproj", "{5B7D7569-B5EE-4C01-9AFA-BC1958588160}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SourceGenerators", "SourceGenerators", "{14D18F51-6B59-49D5-9AB7-08B38417A459}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpSourceGeneratorSamples", "samples\CSharp\SourceGenerators\SourceGeneratorSamples\CSharpSourceGeneratorSamples.csproj", "{2ADE5CFA-5DF4-44A9-BD67-E884BCFBA045}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpGeneratedDemo", "samples\CSharp\SourceGenerators\GeneratedDemo\CSharpGeneratedDemo.csproj", "{EC4DB63B-C2B4-4D06-AF98-15253035C6D5}"
+EndProject
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "VisualBasicGeneratedDemo", "samples\VisualBasic\SourceGenerators\GeneratedDemo\VisualBasicGeneratedDemo.vbproj", "{DA924876-9CF5-47E0-AA01-ADAF47653D39}"
+EndProject
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "VisualBasicSourceGeneratorSamples", "samples\VisualBasic\SourceGenerators\SourceGeneratorSamples\VisualBasicSourceGeneratorSamples.vbproj", "{8322B6E4-0CB1-4EC1-A2CC-2E4DB02C834A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SourceGenerators", "SourceGenerators", "{E79B07C8-0859-4B5C-9650-68D855833C6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -269,6 +281,22 @@ Global
 		{5B7D7569-B5EE-4C01-9AFA-BC1958588160}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B7D7569-B5EE-4C01-9AFA-BC1958588160}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B7D7569-B5EE-4C01-9AFA-BC1958588160}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ADE5CFA-5DF4-44A9-BD67-E884BCFBA045}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ADE5CFA-5DF4-44A9-BD67-E884BCFBA045}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ADE5CFA-5DF4-44A9-BD67-E884BCFBA045}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ADE5CFA-5DF4-44A9-BD67-E884BCFBA045}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC4DB63B-C2B4-4D06-AF98-15253035C6D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC4DB63B-C2B4-4D06-AF98-15253035C6D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC4DB63B-C2B4-4D06-AF98-15253035C6D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC4DB63B-C2B4-4D06-AF98-15253035C6D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA924876-9CF5-47E0-AA01-ADAF47653D39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA924876-9CF5-47E0-AA01-ADAF47653D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA924876-9CF5-47E0-AA01-ADAF47653D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA924876-9CF5-47E0-AA01-ADAF47653D39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8322B6E4-0CB1-4EC1-A2CC-2E4DB02C834A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8322B6E4-0CB1-4EC1-A2CC-2E4DB02C834A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8322B6E4-0CB1-4EC1-A2CC-2E4DB02C834A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8322B6E4-0CB1-4EC1-A2CC-2E4DB02C834A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -325,6 +353,12 @@ Global
 		{8E1C9AEC-6EF1-43A8-A378-52C5C0E40532} = {CDA94F62-E35A-4913-8045-D9D42416513C}
 		{ECB83742-8023-4609-B139-D7B78DD66ED9} = {8E1C9AEC-6EF1-43A8-A378-52C5C0E40532}
 		{5B7D7569-B5EE-4C01-9AFA-BC1958588160} = {8E1C9AEC-6EF1-43A8-A378-52C5C0E40532}
+		{14D18F51-6B59-49D5-9AB7-08B38417A459} = {C3FB27E9-C8EE-4F76-B0AA-7CD67A7E652B}
+		{2ADE5CFA-5DF4-44A9-BD67-E884BCFBA045} = {14D18F51-6B59-49D5-9AB7-08B38417A459}
+		{EC4DB63B-C2B4-4D06-AF98-15253035C6D5} = {14D18F51-6B59-49D5-9AB7-08B38417A459}
+		{DA924876-9CF5-47E0-AA01-ADAF47653D39} = {E79B07C8-0859-4B5C-9650-68D855833C6E}
+		{8322B6E4-0CB1-4EC1-A2CC-2E4DB02C834A} = {E79B07C8-0859-4B5C-9650-68D855833C6E}
+		{E79B07C8-0859-4B5C-9650-68D855833C6E} = {CDA94F62-E35A-4913-8045-D9D42416513C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B849838B-3D7A-4B6B-BE07-285DCB1588F4}

@@ -1,67 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <!-- This repo version -->
-    <VersionPrefix>3.2.0</VersionPrefix>
-    <NugetPackagePrefix>1.0.0</NugetPackagePrefix>
+    <VersionPrefix>4.0.0</VersionPrefix>
+    <NugetPackagePrefix>1.1.2</NugetPackagePrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
+    <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
+    <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
-    <!-- Dependencies -->
-    <UpdateTemplateVersionVersion>1.0.4-beta1</UpdateTemplateVersionVersion>
-    <!-- Roslyn for VS 2015 -->
-    <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2015 since the Syntax Visualizer extension still
-               supports it. -->
-    <MicrosoftCodeAnalysisAnalyzersVersionVS2015>1.1.0</MicrosoftCodeAnalysisAnalyzersVersionVS2015>
-    <MicrosoftCodeAnalysisCommonVersionVS2015>1.0.1</MicrosoftCodeAnalysisCommonVersionVS2015>
-    <MicrosoftCodeAnalysisCSharpVersionVS2015>1.0.1</MicrosoftCodeAnalysisCSharpVersionVS2015>
-    <MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015>1.0.1</MicrosoftCodeAnalysisEditorFeaturesTextVersionVS2015>
-    <MicrosoftCodeAnalysisVisualBasicVersionVS2015>1.0.1</MicrosoftCodeAnalysisVisualBasicVersionVS2015>
-    <MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015>1.0.1</MicrosoftCodeAnalysisWorkspacesCommonVersionVS2015>
-    <!-- VS SDK -->
-    <!-- NOTE: Do not upgrade these to be newer than what shipped in VS 2015
-               we need our extensions to work on both. -->
-    <VSLangProjVersion>7.0.3300</VSLangProjVersion>
-    <VSSDKTemplateWizardInterfaceVersion>12.0.4</VSSDKTemplateWizardInterfaceVersion>
-    <EnvDTEVersion>8.0.1</EnvDTEVersion>
-    <EnvDTE80Version>8.0.0</EnvDTE80Version>
-    <MicrosoftVisualStudioComponentModelHostVersion>14.0.25424</MicrosoftVisualStudioComponentModelHostVersion>
-    <MicrosoftVisualStudioCoreUtilityVersion>14.3.25407</MicrosoftVisualStudioCoreUtilityVersion>
-    <MicrosoftVisualStudioEditorVersion>14.3.25407</MicrosoftVisualStudioEditorVersion>
-    <MicrosoftVisualStudioLanguageStandardClassificationVersion>14.3.25407</MicrosoftVisualStudioLanguageStandardClassificationVersion>
-    <MicrosoftVisualStudioOLEInteropVersion>7.10.6070</MicrosoftVisualStudioOLEInteropVersion>
-    <MicrosoftVisualStudioShell140Version>14.3.25407</MicrosoftVisualStudioShell140Version>
-    <MicrosoftVisualStudioShellInteropVersion>7.10.6071</MicrosoftVisualStudioShellInteropVersion>
-    <MicrosoftVisualStudioShellInterop80Version>8.0.50727</MicrosoftVisualStudioShellInterop80Version>
-    <MicrosoftVisualStudioShellInterop90Version>9.0.30729</MicrosoftVisualStudioShellInterop90Version>
-    <MicrosoftVisualStudioShellInterop100Version>10.0.30319</MicrosoftVisualStudioShellInterop100Version>
-    <MicrosoftVisualStudioShellInterop110Version>11.0.61030</MicrosoftVisualStudioShellInterop110Version>
-    <MicrosoftVisualStudioTextDataVersion>14.3.25407</MicrosoftVisualStudioTextDataVersion>
-    <MicrosoftVisualStudioTextLogicVersion>14.3.25407</MicrosoftVisualStudioTextLogicVersion>
-    <MicrosoftVisualStudioTextManagerInteropVersion>7.10.6070</MicrosoftVisualStudioTextManagerInteropVersion>
-    <MicrosoftVisualStudioTextUIVersion>14.3.25407</MicrosoftVisualStudioTextUIVersion>
-    <MicrosoftVisualStudioTextUIWpfVersion>14.3.25407</MicrosoftVisualStudioTextUIWpfVersion>
-    <MicrosoftVisualStudioUtilitiesVersion>14.3.25407</MicrosoftVisualStudioUtilitiesVersion>
-    <MicrosoftVisualStudioThreadingVersion>14.1.131 </MicrosoftVisualStudioThreadingVersion>
-    <!-- Libs -->
-    <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>
-    <SystemCompositionVersion>1.1.0</SystemCompositionVersion>
-    <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
-    <!-- Testing -->
-    <MicrosoftCodeAnalysisPrimaryTestVersion>2.6.1</MicrosoftCodeAnalysisPrimaryTestVersion>
-    <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
-    <!-- Analyzers -->
-    <RoslynDiagnosticsAnalyzersVersion>2.6.2-beta2</RoslynDiagnosticsAnalyzersVersion>
-    <StyleCopAnalyzersVersion>1.1.0-beta008</StyleCopAnalyzersVersion>
+    <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
+    <MicrosoftNetCompilersToolsetVersion>4.1.0</MicrosoftNetCompilersToolsetVersion>
+    <!-- Force prior version due to https://github.com/microsoft/vstest/pull/2192 and https://github.com/microsoft/vstest/pull/2067 -->
+    <MicrosoftNETTestSdkVersion>16.1.1</MicrosoftNETTestSdkVersion>
   </PropertyGroup>
+  <!-- Dependencies -->
   <PropertyGroup>
-    <RestoreSources>
-      $(RestoreSources);
-      https://dotnet.myget.org/F/roslyn/api/v3/index.json;
-      https://dotnet.myget.org/F/roslyn-tools/api/v3/index.json;
-      https://api.nuget.org/v3/index.json
-    </RestoreSources>
+    <!-- Versions used by several individual references below -->
+    <MicrosoftCodeAnalysisPackagesVersion>4.0.1</MicrosoftCodeAnalysisPackagesVersion>
+    <MicrosoftVisualStudioShellPackagesVersion>17.0.31723.112</MicrosoftVisualStudioShellPackagesVersion>
+    <MicrosoftVisualStudioEditorPackagesVersion>17.0.448</MicrosoftVisualStudioEditorPackagesVersion>
+    <MicrosoftVisualStudioExtensibilityTestingVersion>0.1.135-beta</MicrosoftVisualStudioExtensibilityTestingVersion>
+    <!-- Roslyn -->
+    <MicrosoftCodeAnalysisAnalyzersVersion>3.3.3</MicrosoftCodeAnalysisAnalyzersVersion>
+    <MicrosoftCodeAnalysisCommonVersion>$(MicrosoftCodeAnalysisPackagesVersion)</MicrosoftCodeAnalysisCommonVersion>
+    <MicrosoftCodeAnalysisCSharpVersion>$(MicrosoftCodeAnalysisPackagesVersion)</MicrosoftCodeAnalysisCSharpVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesTextVersion>$(MicrosoftCodeAnalysisPackagesVersion)</MicrosoftCodeAnalysisEditorFeaturesTextVersion>
+    <MicrosoftCodeAnalysisVisualBasicVersion>$(MicrosoftCodeAnalysisPackagesVersion)</MicrosoftCodeAnalysisVisualBasicVersion>
+    <MicrosoftCodeAnalysisWorkspacesCommonVersion>$(MicrosoftCodeAnalysisPackagesVersion)</MicrosoftCodeAnalysisWorkspacesCommonVersion>
+    <!-- We target a lower roslyn API to build internal generators against so they still load in earlier VS versions -->
+    <MicrosoftCodeAnalysisGeneratorVersion>3.9.0</MicrosoftCodeAnalysisGeneratorVersion>
+    <!-- VS SDK -->
+    <EnvDTE80Version>$(MicrosoftVisualStudioShellPackagesVersion)</EnvDTE80Version>
+    <EnvDTEVersion>$(MicrosoftVisualStudioShellPackagesVersion)</EnvDTEVersion>
+    <MicrosoftServiceHubFrameworkVersion>3.0.3075</MicrosoftServiceHubFrameworkVersion>
+    <MicrosoftVisualStudioCompositionVersion>16.9.6-alpha</MicrosoftVisualStudioCompositionVersion>
+    <MicrosoftVisualStudioComponentModelHostVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioComponentModelHostVersion>
+    <MicrosoftVisualStudioCoreUtilityVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioCoreUtilityVersion>
+    <MicrosoftVisualStudioEditorVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioEditorVersion>
+    <MicrosoftVisualStudioImageCatalogVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioImageCatalogVersion>
+    <MicrosoftVisualStudioImagingInterop140DesignTimeVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioImagingInterop140DesignTimeVersion>
+    <MicrosoftVisualStudioImagingVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioImagingVersion>
+    <MicrosoftVisualStudioInteropVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioInteropVersion>
+    <MicrosoftVisualStudioLanguageStandardClassificationVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioLanguageStandardClassificationVersion>
+    <MicrosoftVisualStudioSDKAnalyzersVersion>16.10.10</MicrosoftVisualStudioSDKAnalyzersVersion>
+    <MicrosoftVisualStudioShell150Version>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioShell150Version>
+    <MicrosoftVisualStudioShellFrameworkVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioShellFrameworkVersion>
+    <MicrosoftVisualStudioShellInteropVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioShellInteropVersion>
+    <MicrosoftVisualStudioTextDataVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioTextDataVersion>
+    <MicrosoftVisualStudioTextLogicVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioTextLogicVersion>
+    <MicrosoftVisualStudioTextManagerInterop80Version>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioTextManagerInterop80Version>
+    <MicrosoftVisualStudioTextUIWpfVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioTextUIWpfVersion>
+    <MicrosoftVisualStudioThreadingVersion>17.0.63</MicrosoftVisualStudioThreadingVersion>
+    <MicrosoftVisualStudioUtilitiesInternalVersion>16.3.23</MicrosoftVisualStudioUtilitiesInternalVersion>
+    <MicrosoftVisualStudioValidationVersion>17.0.11-alpha</MicrosoftVisualStudioValidationVersion>
+    <NuGetSolutionRestoreManagerInteropVersion>5.6.0</NuGetSolutionRestoreManagerInteropVersion>
+    <StreamJsonRpcVersion>2.8.28</StreamJsonRpcVersion>
+    <VSLangProjVersion>$(MicrosoftVisualStudioShellPackagesVersion)</VSLangProjVersion>
+    <MicrosoftVisualStudioTemplateWizardInterfaceVersion>17.0.0-preview-1-30928-1111</MicrosoftVisualStudioTemplateWizardInterfaceVersion>
+    <MicrosoftVSSDKBuildToolsVersion>17.0.4207-preview4</MicrosoftVSSDKBuildToolsVersion>
+    <MicroBuildPluginsSwixBuildVersion>1.1.33</MicroBuildPluginsSwixBuildVersion>
+    <SystemThreadingTasksDataflowVersion>5.0.0</SystemThreadingTasksDataflowVersion>
+    <!-- Project System-->
+    <MicrosoftVisualStudioProjectSystemManagedVersion>17.0.0-beta1-10413-02</MicrosoftVisualStudioProjectSystemManagedVersion>
+    <MicrosoftVisualStudioProjectSystemManagedVSVersion>17.0.0-beta1-10413-02</MicrosoftVisualStudioProjectSystemManagedVSVersion>
+    <MicrosoftVisualStudioProjectSystemSDKToolsVersion>17.0.667-pre</MicrosoftVisualStudioProjectSystemSDKToolsVersion>
+    <!-- Libs -->
+    <DiffPlexVersion>1.5.0</DiffPlexVersion>
+    <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
+    <!-- Testing -->
+    <MicrosoftCodeAnalysis2PrimaryTestVersion>2.6.1</MicrosoftCodeAnalysis2PrimaryTestVersion>
+    <MicrosoftCodeAnalysis3PrimaryTestVersion>3.9.0</MicrosoftCodeAnalysis3PrimaryTestVersion>
+    <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.20374.2</MicrosoftCodeAnalysisTestingVersion>
+    <xunitassertVersion>$(xunitVersion)</xunitassertVersion>
+    <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
+    <MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>$(MicrosoftVisualStudioExtensibilityTestingVersion)</MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>
+    <MicrosoftVisualStudioExtensibilityTestingXunitVersion>$(MicrosoftVisualStudioExtensibilityTestingVersion)</MicrosoftVisualStudioExtensibilityTestingXunitVersion>
+    <!-- Analyzers -->
+    <RoslynDiagnosticsAnalyzersVersion>2.9.8</RoslynDiagnosticsAnalyzersVersion>
+    <StyleCopAnalyzersVersion>1.2.0-beta.164</StyleCopAnalyzersVersion>
   </PropertyGroup>
 </Project>

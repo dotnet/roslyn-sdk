@@ -1,8 +1,24 @@
+# Branches that trigger a build on commit
+trigger:
+- main
+- dev17.0
+
+# Branches that trigger builds on PR
+pr:
+- main
+- dev17.0
+
+variables:
+  - name: DOTNET_ROOT
+    value: $(Build.SourcesDirectory)\.dotnet
+  - name: XUNIT_LOGS
+    value: $(Build.SourcesDirectory)\artifacts\log\$(_configuration)
+
 jobs:
 - job: Windows
   pool:
-    name: NetCorePublic-Pool
-    queue: buildpool.windows.10.amd64.vs2019.pre.open
+    name: NetCore1ESPool-Public
+    demands: ImageOverride -equals Build.Windows.Amd64.VS2022.Pre.Open
   strategy:
     maxParallel: 6
     matrix:
@@ -15,11 +31,11 @@ jobs:
         _configuration: Release
         _solution: Samples
       SDK Debug Test:
-        _args: -test
+        _args: -test -integrationTest
         _configuration: Debug
         _solution: Roslyn-SDK
       SDK Release Test:
-        _args: -test
+        _args: -test -integrationTest
         _configuration: Release
         _solution: Roslyn-SDK
       SDK Pack:
@@ -33,6 +49,10 @@ jobs:
   timeoutInMinutes: 90
 
   steps:
+    - script: |
+        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpType /t REG_DWORD /d 2
+        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpCount /t REG_DWORD /d 2
+        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpFolder /t REG_SZ /d "$(Build.SourcesDirectory)\artifacts\log\$(_configuration)"
     - script: eng\PRBuild.cmd $(_args) -configuration $(_configuration) -prepareMachine -projects $(Build.SourcesDirectory)\$(_solution).sln /p:OfficialBuild=false
     - task: PublishBuildArtifacts@1
       inputs:
@@ -40,11 +60,11 @@ jobs:
         ArtifactName: '$(_solution) $(_configuration) logs'
         publishLocation: Container
       continueOnError: true
-      condition: failed()
+      condition: not(succeeded())
     - task: PublishTestResults@2
       inputs:
         testRunner: 'xUnit'
-        testResultsFiles: '**/*.xml' 
+        testResultsFiles: '**/*.xml'
         searchFolder: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)'
         configuration: '$(_configuration)'
         publishRunAttachments: true

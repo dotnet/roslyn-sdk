@@ -1,21 +1,31 @@
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project>  
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
+<Project>
   <PropertyGroup>
-    <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
     <NoWarn>$(NoWarn);NU5125;NU3005</NoWarn>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
 
     <!-- Opt-out repo features -->
     <UsingToolXliff>false</UsingToolXliff>
   </PropertyGroup>
 
+  <!-- Recognize MSTest projects -->
+  <PropertyGroup Condition="'$(TestRunnerName)' == '' and ($(MSBuildProjectName.EndsWith('.MSTest.UnitTests')) or $(MSBuildProjectName.EndsWith('.MSTest.Tests')))">
+    <TestRunnerName>MSTest</TestRunnerName>
+  </PropertyGroup>
+
+  <!-- Recognize NUnit projects -->
+  <PropertyGroup Condition="'$(TestRunnerName)' == '' and ($(MSBuildProjectName.EndsWith('.NUnit.UnitTests')) or $(MSBuildProjectName.EndsWith('.NUnit.Tests')))">
+    <TestRunnerName>NUnit</TestRunnerName>
+  </PropertyGroup>
+
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
-    <TestTargetFrameworks>net472;net46;netcoreapp1.1;netcoreapp2.0</TestTargetFrameworks>
-    <!-- Uncomment the following line to test on .NET Core 1.1 -->
-    <!--<TestTargetFrameworks>netcoreapp1.1;$(TestTargetFrameworks)</TestTargetFrameworks>-->
-    <!-- Uncomment the following line to test on .NET Core 2.0 -->
-    <!--<TestTargetFrameworks>netcoreapp2.0;$(TestTargetFrameworks)</TestTargetFrameworks>-->
+    <TestTargetFrameworks>netcoreapp3.1;net472;net46;netcoreapp1.1;netcoreapp2.0</TestTargetFrameworks>
+    <SourceGeneratorTestTargetFrameworks>netcoreapp3.1;net472</SourceGeneratorTestTargetFrameworks>
+
+    <!-- Workaround dependencies that do not yet support netcoreapp3.1 https://github.com/dotnet/roslyn/issues/45114 -->
+    <NoWarn>NU1701;$(NoWarn)</NoWarn>
 
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
@@ -30,7 +40,12 @@
 
     <When Condition="'$(Language)' == 'C#'">
       <PropertyGroup>
-        <LangVersion>7.3</LangVersion>
+        <LangVersion>8</LangVersion>
+      </PropertyGroup>
+
+      <!-- Nullable reference types -->
+      <PropertyGroup>
+        <Nullable>enable</Nullable>
       </PropertyGroup>
     </When>
   </Choose>
@@ -40,11 +55,12 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\..\RoslynSDK.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="StyleCop.Analyzers" Version="$(StyleCopAnalyzersVersion)" PrivateAssets="all" />
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\..\stylecop.json" Link="stylecop.json" />
     <None Include="$(CodeAnalysisRuleSet)" Condition="'$(CodeAnalysisRuleSet)' != ''" Link="%(Filename)%(Extension)" />
+    <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpVersion)" PrivateAssets="all" ExcludeAssets="all" />
   </ItemGroup>
 
 </Project>

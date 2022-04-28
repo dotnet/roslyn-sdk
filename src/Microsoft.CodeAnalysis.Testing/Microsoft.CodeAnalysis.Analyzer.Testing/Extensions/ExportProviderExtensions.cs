@@ -1,9 +1,12 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting.Core;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.Composition;
@@ -26,7 +29,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 _exportProvider = exportProvider;
             }
 
-            public override bool TryGetExport(CompositionContract contract, out object export)
+            public override bool TryGetExport(CompositionContract contract, [NotNullWhen(true)] out object? export)
             {
                 var importMany = contract.MetadataConstraints.Contains(new KeyValuePair<string, object>("IsImportMany", true));
                 var (contractType, metadataType) = GetContractType(contract.ContractType, importMany);
@@ -40,6 +43,7 @@ namespace Microsoft.CodeAnalysis.Testing
                                       select method).Single();
                     var parameterizedMethod = methodInfo.MakeGenericMethod(contractType, metadataType);
                     export = parameterizedMethod.Invoke(_exportProvider, new[] { contract.ContractName });
+                    RoslynDebug.AssertNotNull(export);
                 }
                 else
                 {
@@ -50,12 +54,13 @@ namespace Microsoft.CodeAnalysis.Testing
                                       select method).Single();
                     var parameterizedMethod = methodInfo.MakeGenericMethod(contractType);
                     export = parameterizedMethod.Invoke(_exportProvider, new[] { contract.ContractName });
+                    RoslynDebug.AssertNotNull(export);
                 }
 
                 return true;
             }
 
-            private (Type exportType, Type metadataType) GetContractType(Type contractType, bool importMany)
+            private (Type exportType, Type? metadataType) GetContractType(Type contractType, bool importMany)
             {
                 if (importMany && contractType.IsConstructedGenericType)
                 {
