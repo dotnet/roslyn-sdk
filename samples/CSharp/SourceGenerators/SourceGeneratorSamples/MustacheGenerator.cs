@@ -30,7 +30,7 @@ namespace Mustache
             foreach ((string name, string template, string hash) in rx.TemplateInfo)
             {
                 string source = SourceFileFromMustachePath(name, template, hash);
-                context.AddSource($"Mustache{name}", source);
+                context.AddSource($"Mustache{name}.g.cs", source);
             }
         }
 
@@ -55,7 +55,7 @@ namespace Mustache {{
 
         public void Initialize(GeneratorInitializationContext context)
         {
-            context.RegisterForPostInitialization((pi) => pi.AddSource("Mustache_MainAttributes__", attributeSource));
+            context.RegisterForPostInitialization((pi) => pi.AddSource("Mustache_MainAttributes__.g.cs", attributeSource));
             context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
         }
 

@@ -512,7 +512,7 @@ namespace Maths {
                     var tokens = Lexer.Tokenize(mathString);
                     var code = Parser.Parse(tokens);
 
-                    var codeFileName = $@"{fileName}.cs";
+                    var codeFileName = $@"{fileName}.g.cs";
 
                     context.AddSource(codeFileName, SourceText.From(code, Encoding.UTF8));
                 }
@@ -521,7 +521,7 @@ namespace Maths {
 
         public void Initialize(GeneratorInitializationContext context)
         {
-            context.RegisterForPostInitialization((pi) => pi.AddSource("__MathLibrary__.cs", libraryCode));
+            context.RegisterForPostInitialization((pi) => pi.AddSource("__MathLibrary__.g.cs", libraryCode));
         }
     }
 }

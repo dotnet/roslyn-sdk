@@ -40,7 +40,7 @@ namespace HelloWorldGenerated
 }");
 
             // inject the created source into the users compilation
-            context.AddSource("helloWorldGenerated", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
+            context.AddSource("helloWorldGenerated.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
         }
 
         public void Initialize(GeneratorInitializationContext context)

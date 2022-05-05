@@ -89,7 +89,7 @@ public {settingType} {settingName}
 
             sb.Append("} } }");
 
-            context.AddSource($"Settings_{name}", SourceText.From(sb.ToString(), Encoding.UTF8));
+            context.AddSource($"Settings_{name}.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
         }
 
         public void Initialize(GeneratorInitializationContext context)
