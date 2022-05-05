@@ -1,5 +1,8 @@
 is_global = true
 
+# IDE0055: Fix formatting
+dotnet_diagnostic.IDE0055.severity = warning
+
 dotnet_diagnostic.SA1101.severity = none
 dotnet_diagnostic.SA1201.severity = none
 dotnet_diagnostic.SA1202.severity = none

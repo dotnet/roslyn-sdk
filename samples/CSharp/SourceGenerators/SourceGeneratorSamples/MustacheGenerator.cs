@@ -33,7 +33,7 @@ namespace Mustache
                 context.AddSource($"Mustache{name}", source);
             }
         }
-     
+
         static string SourceFileFromMustachePath(string name, string template, string hash)
         {
             Func<object, string> tree = HandlebarsDotNet.Handlebars.Compile(template);
