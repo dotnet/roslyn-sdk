@@ -57,7 +57,7 @@ End Namespace")
 
             ' inject the created source into the users compilation
 
-            context.AddSource("HelloWorldGenerated", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8))
+            context.AddSource("HelloWorldGenerated.g.vb", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8))
 
         End Sub
 

@@ -41,7 +41,7 @@ End Namespace
         Public Sub Execute(context As GeneratorExecutionContext) Implements ISourceGenerator.Execute
 
             ' add the attribute text
-            context.AddSource("AutoNotifyAttribute", SourceText.From(ATTRIBUTE_TEXT, Encoding.UTF8))
+            context.AddSource("AutoNotifyAttribute.g.vb", SourceText.From(ATTRIBUTE_TEXT, Encoding.UTF8))
 
             ' retreive the populated receiver 
             Dim tempVar = TypeOf context.SyntaxReceiver Is SyntaxReceiver
@@ -78,7 +78,7 @@ End Namespace
             ' group the fields by class, and generate the source
             For Each group In fieldSymbols.GroupBy(Function(f) f.ContainingType, SymbolEqualityComparer.Default)
                 Dim classSource = ProcessClass(CType(group.Key, INamedTypeSymbol), group.ToList(), attributeSymbol, notifySymbol)
-                context.AddSource($"{group.Key.Name}_AutoNotify.vb", SourceText.From(classSource, Encoding.UTF8))
+                context.AddSource($"{group.Key.Name}_AutoNotify.g.vb", SourceText.From(classSource, Encoding.UTF8))
             Next
 
         End Sub

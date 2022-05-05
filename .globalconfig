@@ -1,0 +1,24 @@
+is_global = true
+
+# IDE0055: Fix formatting
+dotnet_diagnostic.IDE0055.severity = warning
+
+dotnet_diagnostic.SA1101.severity = none
+dotnet_diagnostic.SA1201.severity = none
+dotnet_diagnostic.SA1202.severity = none
+dotnet_diagnostic.SA1204.severity = none
+dotnet_diagnostic.SA1308.severity = none
+dotnet_diagnostic.SA1309.severity = none
+dotnet_diagnostic.SA1311.severity = none
+dotnet_diagnostic.SA1412.severity = warning
+dotnet_diagnostic.SA1501.severity = none
+dotnet_diagnostic.SA1600.severity = none
+dotnet_diagnostic.SA1601.severity = none
+dotnet_diagnostic.SA1629.severity = none
+dotnet_diagnostic.SX1101.severity = warning
+dotnet_diagnostic.SX1309.severity = warning
+
+# DiagnosticId must be unique across analyzers: Many tests use similar analyzer instances
+dotnet_diagnostic.RS1019.severity = none
+# Enable analyzer release tracking: only used in this repository for testing
+dotnet_diagnostic.RS2008.severity = none
