@@ -80,7 +80,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
             }
             else
             {
-                return RemoveOutOrRefCodeAction.Applicable(semanticModel, argument, parameters) 
+                return RemoveOutOrRefCodeAction.Applicable(semanticModel, argument, parameters)
                     ? new RemoveOutOrRefCodeAction(document, semanticModel, argument, parameters)
                     : null;
             }
