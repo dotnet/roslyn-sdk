@@ -115,7 +115,7 @@ public {fieldType} {propertyName}
         {
            string? classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol);
            if(classSource is not null)
-               context.AddSource($"{group.Key.Name}_autoNotify.cs", SourceText.From(classSource, Encoding.UTF8));
+               context.AddSource($"{group.Key.Name}_autoNotify.g.cs", SourceText.From(classSource, Encoding.UTF8));
         }
     }
     public void Initialize(IncrementalGeneratorInitializationContext context)

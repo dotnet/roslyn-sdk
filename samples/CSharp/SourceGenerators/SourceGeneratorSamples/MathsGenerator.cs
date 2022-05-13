@@ -437,14 +437,14 @@ namespace Maths {
         var tokens = Lexer.Tokenize(mathString);
         var code = Parser.Parse(tokens);
 
-        var codeFileName = $@"{fileName}.cs";
+        var codeFileName = $@"{fileName}.g.cs";
         
         return (codeFileName, SourceText.From(code, Encoding.UTF8));
     }
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterPostInitializationOutput((pi) => pi.AddSource("__MathLibrary__.cs", libraryCode));
+        context.RegisterPostInitializationOutput((pi) => pi.AddSource("__MathLibrary__.g.cs", libraryCode));
 
         var files       = context.AdditionalTextsProvider.Where(file => Path.GetExtension(file.Path).Equals(".math", StringComparison.OrdinalIgnoreCase));
         var nameAndCode = files.Select(GetNameAndCode);
