@@ -25,6 +25,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Extensibility.Testing.Xunit" Version="$(MicrosoftVisualStudioExtensibilityTestingXunitVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Interop" Version="$(MicrosoftVisualStudioInteropVersion)" />
     <PackageReference Include="Nullable" Version="1.3.0" PrivateAssets="all" />
+    <!-- <PackageReference Include="Newtonsoft.Json" Version="13.0.1" PrivateAssets="all" /> -->
   </ItemGroup>
 
   <ItemGroup>

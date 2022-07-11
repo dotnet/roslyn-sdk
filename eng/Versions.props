@@ -52,16 +52,16 @@
     <MicrosoftVisualStudioTextLogicVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioTextLogicVersion>
     <MicrosoftVisualStudioTextManagerInterop80Version>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioTextManagerInterop80Version>
     <MicrosoftVisualStudioTextUIWpfVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioTextUIWpfVersion>
-    <MicrosoftVisualStudioThreadingVersion>17.0.63</MicrosoftVisualStudioThreadingVersion>
+    <MicrosoftVisualStudioThreadingVersion>17.1.46</MicrosoftVisualStudioThreadingVersion>
     <MicrosoftVisualStudioUtilitiesInternalVersion>16.3.23</MicrosoftVisualStudioUtilitiesInternalVersion>
-    <MicrosoftVisualStudioValidationVersion>17.0.11-alpha</MicrosoftVisualStudioValidationVersion>
+    <MicrosoftVisualStudioValidationVersion>17.0.43</MicrosoftVisualStudioValidationVersion>
     <NuGetSolutionRestoreManagerInteropVersion>5.6.0</NuGetSolutionRestoreManagerInteropVersion>
-    <StreamJsonRpcVersion>2.8.28</StreamJsonRpcVersion>
+    <StreamJsonRpcVersion>2.11.35</StreamJsonRpcVersion>
     <VSLangProjVersion>$(MicrosoftVisualStudioShellPackagesVersion)</VSLangProjVersion>
     <MicrosoftVisualStudioTemplateWizardInterfaceVersion>17.0.0-preview-1-30928-1111</MicrosoftVisualStudioTemplateWizardInterfaceVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.0.4207-preview4</MicrosoftVSSDKBuildToolsVersion>
     <MicroBuildPluginsSwixBuildVersion>1.1.33</MicroBuildPluginsSwixBuildVersion>
-    <SystemThreadingTasksDataflowVersion>5.0.0</SystemThreadingTasksDataflowVersion>
+    <SystemThreadingTasksDataflowVersion>6.0.0</SystemThreadingTasksDataflowVersion>
     <!-- Project System-->
     <MicrosoftVisualStudioProjectSystemManagedVersion>17.0.0-beta1-10413-02</MicrosoftVisualStudioProjectSystemManagedVersion>
     <MicrosoftVisualStudioProjectSystemManagedVSVersion>17.0.0-beta1-10413-02</MicrosoftVisualStudioProjectSystemManagedVSVersion>
