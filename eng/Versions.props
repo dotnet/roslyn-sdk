@@ -19,8 +19,8 @@
   <PropertyGroup>
     <!-- Versions used by several individual references below -->
     <MicrosoftCodeAnalysisPackagesVersion>4.0.1</MicrosoftCodeAnalysisPackagesVersion>
-    <MicrosoftVisualStudioShellPackagesVersion>17.0.31723.112</MicrosoftVisualStudioShellPackagesVersion>
-    <MicrosoftVisualStudioEditorPackagesVersion>17.0.448</MicrosoftVisualStudioEditorPackagesVersion>
+    <MicrosoftVisualStudioShellPackagesVersion>17.2.32505.113</MicrosoftVisualStudioShellPackagesVersion>
+    <MicrosoftVisualStudioEditorPackagesVersion>17.2.3194</MicrosoftVisualStudioEditorPackagesVersion>
     <MicrosoftVisualStudioExtensibilityTestingVersion>0.1.135-beta</MicrosoftVisualStudioExtensibilityTestingVersion>
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisAnalyzersVersion>3.3.3</MicrosoftCodeAnalysisAnalyzersVersion>
@@ -34,7 +34,7 @@
     <!-- VS SDK -->
     <EnvDTE80Version>$(MicrosoftVisualStudioShellPackagesVersion)</EnvDTE80Version>
     <EnvDTEVersion>$(MicrosoftVisualStudioShellPackagesVersion)</EnvDTEVersion>
-    <MicrosoftServiceHubFrameworkVersion>3.0.3075</MicrosoftServiceHubFrameworkVersion>
+    <MicrosoftServiceHubFrameworkVersion>3.1.4097</MicrosoftServiceHubFrameworkVersion>
     <MicrosoftVisualStudioCompositionVersion>16.9.6-alpha</MicrosoftVisualStudioCompositionVersion>
     <MicrosoftVisualStudioComponentModelHostVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioComponentModelHostVersion>
     <MicrosoftVisualStudioCoreUtilityVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioCoreUtilityVersion>
@@ -52,9 +52,9 @@
     <MicrosoftVisualStudioTextLogicVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioTextLogicVersion>
     <MicrosoftVisualStudioTextManagerInterop80Version>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioTextManagerInterop80Version>
     <MicrosoftVisualStudioTextUIWpfVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioTextUIWpfVersion>
-    <MicrosoftVisualStudioThreadingVersion>17.1.46</MicrosoftVisualStudioThreadingVersion>
-    <MicrosoftVisualStudioUtilitiesInternalVersion>16.3.23</MicrosoftVisualStudioUtilitiesInternalVersion>
-    <MicrosoftVisualStudioValidationVersion>17.0.43</MicrosoftVisualStudioValidationVersion>
+    <MicrosoftVisualStudioThreadingVersion>17.2.32</MicrosoftVisualStudioThreadingVersion>
+    <MicrosoftVisualStudioUtilitiesInternalVersion>16.3.36</MicrosoftVisualStudioUtilitiesInternalVersion>
+    <MicrosoftVisualStudioValidationVersion>17.0.53</MicrosoftVisualStudioValidationVersion>
     <NuGetSolutionRestoreManagerInteropVersion>5.6.0</NuGetSolutionRestoreManagerInteropVersion>
     <StreamJsonRpcVersion>2.11.35</StreamJsonRpcVersion>
     <VSLangProjVersion>$(MicrosoftVisualStudioShellPackagesVersion)</VSLangProjVersion>
