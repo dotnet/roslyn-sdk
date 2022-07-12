@@ -63,7 +63,6 @@
 
     <!-- Use PrivateAssets=compile to avoid exposing our DiffPlex dependency downstream as public API. -->
     <PackageReference Include="DiffPlex" Version="$(DiffPlexVersion)" PrivateAssets="compile" />
-
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" PrivateAssets="compile" />
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" PrivateAssets="all" />
   </ItemGroup>
 </Project>

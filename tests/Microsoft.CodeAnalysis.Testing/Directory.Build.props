@@ -60,6 +60,8 @@
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\..\stylecop.json" Link="stylecop.json" />
     <None Include="$(CodeAnalysisRuleSet)" Condition="'$(CodeAnalysisRuleSet)' != ''" Link="%(Filename)%(Extension)" />
     <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpVersion)" PrivateAssets="all" ExcludeAssets="all" />
+    <!-- Because of https://github.com/microsoft/vstest/pull/2192 and https://github.com/microsoft/vstest/pull/2067,
+        We can't udpate the the Test SDK version, so explictly referencing the safe Newtonsoft.Json version here -->
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" PrivateAssets="all" ExcludeAssets="all" />
   </ItemGroup>
 
