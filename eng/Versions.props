@@ -62,6 +62,7 @@
     <MicrosoftVSSDKBuildToolsVersion>17.0.4207-preview4</MicrosoftVSSDKBuildToolsVersion>
     <MicroBuildPluginsSwixBuildVersion>1.1.33</MicroBuildPluginsSwixBuildVersion>
     <SystemThreadingTasksDataflowVersion>6.0.0</SystemThreadingTasksDataflowVersion>
+    <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
     <!-- Project System-->
     <MicrosoftVisualStudioProjectSystemManagedVersion>17.0.0-beta1-10413-02</MicrosoftVisualStudioProjectSystemManagedVersion>
     <MicrosoftVisualStudioProjectSystemManagedVSVersion>17.0.0-beta1-10413-02</MicrosoftVisualStudioProjectSystemManagedVSVersion>

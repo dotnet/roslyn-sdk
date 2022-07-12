@@ -21,4 +21,8 @@
     <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpVersion)" PrivateAssets="all" ExcludeAssets="all" />
   </ItemGroup>
 
+  <ItemGroup Condition="$(IsTestProject)">
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" PrivateAssets="all" ExcludeAssets="all" />
+  </ItemGroup>
+
 </Project>
