@@ -174,7 +174,7 @@ namespace CSV {
             IEnumerable<(CsvLoadType, bool, AdditionalText)> options = GetLoadOptions(context);
             IEnumerable<(string, string)> nameCodeSequence = SourceFilesFromAdditionalFiles(options);
             foreach ((string name, string code) in nameCodeSequence)
-                context.AddSource($"Csv_{name}", SourceText.From(code, Encoding.UTF8));
+                context.AddSource($"Csv_{name}.g.cs", SourceText.From(code, Encoding.UTF8));
         }
 
         public void Initialize(GeneratorInitializationContext context)

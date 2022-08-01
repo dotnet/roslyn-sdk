@@ -1210,8 +1210,8 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitConditionalExpression(CS.Syntax.ConditionalExpressionSyntax node)
             {
-                VB.Syntax.ArgumentSyntax[] argumentsArray = new VB.Syntax.ArgumentSyntax[] 
-                    { 
+                VB.Syntax.ArgumentSyntax[] argumentsArray = new VB.Syntax.ArgumentSyntax[]
+                    {
                         VB.SyntaxFactory.SimpleArgument(VisitExpression(node.Condition)),
                         VB.SyntaxFactory.SimpleArgument(VisitExpression(node.WhenTrue)),
                         VB.SyntaxFactory.SimpleArgument(VisitExpression(node.WhenFalse))
@@ -2012,7 +2012,7 @@ namespace CSharpToVisualBasicConverter
                     VB.SyntaxFactory.EndOperatorStatement());
             }
 
-            public override SyntaxNode VisitPointerType(CS.Syntax.PointerTypeSyntax node) 
+            public override SyntaxNode VisitPointerType(CS.Syntax.PointerTypeSyntax node)
                 // just ignore the pointer part
                 => Visit<SyntaxNode>(node.ElementType);
 
