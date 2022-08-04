@@ -12,28 +12,28 @@ using static GeneratedDemo.UseMustacheGenerator;
 [assembly: Mustache("Section", t4, h4)]
 [assembly: Mustache("NestedSection", t5, h5)]
 
-namespace GeneratedDemo
-{
-    class UseMustacheGenerator
-    {
-        public static void Run()
-        {
-            WriteLine(Mustache.Constants.Lottery);
-            WriteLine(Mustache.Constants.HR);
-            WriteLine(Mustache.Constants.HTML);
-            WriteLine(Mustache.Constants.Section);
-            WriteLine(Mustache.Constants.NestedSection);
-        }
+namespace GeneratedDemo;
 
-        // Mustache templates and hashes from the manual at https://mustache.github.io/mustache.1.html...
-        public const string t1 = @"
+class UseMustacheGenerator
+{
+    public static void Run()
+    {
+        WriteLine(Mustache.Constants.Lottery);
+        WriteLine(Mustache.Constants.HR);
+        WriteLine(Mustache.Constants.HTML);
+        WriteLine(Mustache.Constants.Section);
+        WriteLine(Mustache.Constants.NestedSection);
+    }
+
+    // Mustache templates and hashes from the manual at https://mustache.github.io/mustache.1.html...
+    public const string t1 = @"
 Hello {{name}}
 You have just won {{value}} dollars!
 {{#in_ca}}
 Well, {{taxed_value}} dollars, after taxes.
 {{/in_ca}}
 ";
-        public const string h1 = @"
+    public const string h1 = @"
 {
   ""name"": ""Chris"",
   ""value"": 10000,
@@ -41,35 +41,35 @@ Well, {{taxed_value}} dollars, after taxes.
   ""in_ca"": true
 }
 ";
-        public const string t2 = @"
+    public const string t2 = @"
 * {{name}}
 * {{age}}
 * {{company}}
 * {{{company}}}
 ";
-        public const string h2 = @"
+    public const string h2 = @"
 {
   ""name"": ""Chris"",
   ""company"": ""<b>GitHub</b>""
 }
 ";
-        public const string t3 = @"
+    public const string t3 = @"
 Shown
 {{#person}}
   Never shown!
 {{/person}}
 ";
-        public const string h3 = @"
+    public const string h3 = @"
 {
   ""person"": false
 }
 ";
-        public const string t4 = @"
+    public const string t4 = @"
 {{#repo}}
   <b>{{name}}</b>
 {{/repo}}
 ";
-        public const string h4 = @"
+    public const string h4 = @"
 {
   ""repo"": [
     { ""name"": ""resque"" },
@@ -78,7 +78,7 @@ Shown
   ]
 }
 ";
-        public const string t5 = @"
+    public const string t5 = @"
 {{#repo}}
   <b>{{name}}</b>
     {{#nested}}
@@ -86,7 +86,7 @@ Shown
     {{/nested}}
 {{/repo}}
 ";
-        public const string h5 = @"
+    public const string h5 = @"
 {
   ""repo"": [
     { ""name"": ""resque"", ""nested"":[{""name"":""nestedResque""}] },
@@ -96,5 +96,4 @@ Shown
 }
 ";
 
-    }
 }

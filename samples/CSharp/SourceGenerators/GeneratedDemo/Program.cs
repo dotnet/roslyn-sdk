@@ -1,29 +1,28 @@
 ﻿using System;
 
-namespace GeneratedDemo
+namespace GeneratedDemo;
+
+class Program
 {
-    class Program
+    static void Main()
     {
-        static void Main(string[] args)
-        {
-            // Run the various scenarios
-            Console.WriteLine("Running HelloWorld:\n");
-            UseHelloWorldGenerator.Run();
+        // Run the various scenarios
+        Console.WriteLine("Running HelloWorld:\n");
+        UseHelloWorldGenerator.Run();
 
-            Console.WriteLine("\n\nRunning AutoNotify:\n");
-            UseAutoNotifyGenerator.Run();
+        Console.WriteLine("\n\nRunning AutoNotify:\n");
+        UseAutoNotifyGenerator.Run();
 
-            Console.WriteLine("\n\nRunning XmlSettings:\n");
-            UseXmlSettingsGenerator.Run();
+        Console.WriteLine("\n\nRunning XmlSettings:\n");
+        UseXmlSettingsGenerator.Run();
 
-            Console.WriteLine("\n\nRunning CsvGenerator:\n");
-            UseCsvGenerator.Run();
+        Console.WriteLine("\n\nRunning CsvGenerator:\n");
+        UseCsvGenerator.Run();
 
-            Console.WriteLine("\n\nRunning MustacheGenerator:\n");
-            UseMustacheGenerator.Run();
+        Console.WriteLine("\n\nRunning MustacheGenerator:\n");
+        UseMustacheGenerator.Run();
 
-            Console.WriteLine("\n\nRunning MathsGenerator:\n");
-            UseMathsGenerator.Run();
-        }
+        Console.WriteLine("\n\nRunning MathsGenerator:\n");
+        UseMathsGenerator.Run();
     }
 }

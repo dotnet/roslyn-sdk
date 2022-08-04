@@ -1,51 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
+﻿namespace SourceGeneratorSamples;
 
-namespace SourceGeneratorSamples
+[Generator]
+public class HelloWorldGenerator : IIncrementalGenerator
 {
-    [Generator]
-    public class HelloWorldGenerator : ISourceGenerator
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        public void Execute(GeneratorExecutionContext context)
-        {
-            // begin creating the source we'll inject into the users compilation
-            StringBuilder sourceBuilder = new StringBuilder(@"
+        // Use this method to generate constant code (aka that doesn't depend on the syntax tree).
+        context.RegisterPostInitializationOutput(context =>
+            context.AddSource("AStaticFunc.g.cs", @"
+                namespace HelloWorldGenerated;
+                static class Printer {
+                    internal static void PrintUpper(string s) => System.Console.WriteLine(s.ToUpper());
+                }")
+        );
+
+        // Dependency pipeline. Select class syntax nodes, transform to type symbols and collect their names.
+        var classNames = context.SyntaxProvider.CreateSyntaxProvider(
+           predicate: static (sn, c) => sn is ClassDeclarationSyntax,
+           transform: static (ct, c) => ct.SemanticModel.GetDeclaredSymbol(ct.Node, c))
+            .Where  (static t        => t is not null)
+            .Select (static (t, c)   => t!.Name)
+            .Collect();
+
+        // Register a function to generate the code using the collected type symbols.
+        context.RegisterSourceOutput(classNames, GenerateSource);
+    }
+
+    // Main function to generate the source code.
+    private void GenerateSource(SourceProductionContext context, ImmutableArray<string> typeNames)
+    {
+        // Begin creating the source we'll inject into the users compilation.
+        StringBuilder sourceBuilder = new(@"
 using System;
-namespace HelloWorldGenerated
-{
+namespace HelloWorldGenerated;
     public static class HelloWorld
     {
         public static void SayHello() 
         {
-            Console.WriteLine(""Hello from generated code!"");
-            Console.WriteLine(""The following syntax trees existed in the compilation that created this program:"");
+            Printer.PrintUpper(""Hello from generated code!""); // Uses the Printer static class
+            Console.WriteLine(""The following classes existed in the compilation that created this program:"");
 ");
 
-            // using the context, get a list of syntax trees in the users compilation
-            IEnumerable<SyntaxTree> syntaxTrees = context.Compilation.SyntaxTrees;
+        // Print out each symbol name we find.
+        foreach (var name in typeNames)
+            sourceBuilder.AppendLine($"Console.WriteLine(\"{name}\");");
 
-            // add the filepath of each tree to the class we're building
-            foreach (SyntaxTree tree in syntaxTrees)
-            {
-                sourceBuilder.AppendLine($@"Console.WriteLine(@"" - {tree.FilePath}"");");
-            }
-
-            // finish creating the source to inject
-            sourceBuilder.Append(@"
+        // Finish creating the source to inject.
+        sourceBuilder.Append(@"
         }
+    }");
+        context.AddSource($"hello_world.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
     }
-}");
 
-            // inject the created source into the users compilation
-            context.AddSource("helloWorldGenerated.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
-        }
-
-        public void Initialize(GeneratorInitializationContext context)
-        {
-            // No initialization required
-        }
-    }
 }
