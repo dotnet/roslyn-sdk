@@ -37,6 +37,7 @@ namespace Microsoft.CodeAnalysis.Testing
             AnalyzerConfigFiles.AddRange(sourceState.AnalyzerConfigFiles);
             AdditionalFilesFactories.AddRange(sourceState.AdditionalFilesFactories);
             AdditionalProjectReferences.AddRange(sourceState.AdditionalProjectReferences);
+            AdditionalReferences.AddRange(sourceState.AdditionalReferences);
         }
 
         public string Name { get; }
@@ -77,7 +78,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public MetadataReferenceCollection AdditionalReferences { get; } = new MetadataReferenceCollection();
 
-        private protected string DefaultPrefix { get; }
+        internal string DefaultPrefix { get; }
 
         private protected string DefaultExtension { get; }
     }

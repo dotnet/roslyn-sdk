@@ -1656,8 +1656,8 @@ class Class1
                                                      where declaration.Identifier.Text.Equals(name)
                                                      select model.GetDeclaredSymbol(declaration)).Single();
             INamedTypeSymbol attributeSymbol = (from declaration in tree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>()
-                                   where declaration.Identifier.Text.Equals("ExampleAttribute")
-                                   select model.GetDeclaredSymbol(declaration)).Single();
+                                                where declaration.Identifier.Text.Equals("ExampleAttribute")
+                                                select model.GetDeclaredSymbol(declaration)).Single();
 
             // Verify that a method has no attributes
             IMethodSymbol methodSymbol = getMethod("Method1");

@@ -31,7 +31,7 @@ Namespace SourceGeneratorSamples
             Dim options As IEnumerable(Of (CsvLoadType, Boolean, AdditionalText)) = GetLoadOptions(context)
             Dim nameCodeSequence As IEnumerable(Of (Name As String, Code As String)) = SourceFilesFromAdditionalFiles(options)
             For Each entry In nameCodeSequence
-                context.AddSource($"Csv_{entry.Name}", SourceText.From(entry.Code, Encoding.UTF8))
+                context.AddSource($"Csv_{entry.Name}.g.vb", SourceText.From(entry.Code, Encoding.UTF8))
             Next
         End Sub
 

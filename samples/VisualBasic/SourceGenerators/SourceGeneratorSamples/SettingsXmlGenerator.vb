@@ -93,7 +93,7 @@ Namespace Global.AutoSettings
 
 End Namespace")
 
-            context.AddSource($"Settings_{name}", SourceText.From(sb.ToString(), Encoding.UTF8))
+            context.AddSource($"Settings_{name}.g.vb", SourceText.From(sb.ToString(), Encoding.UTF8))
 
         End Sub
 

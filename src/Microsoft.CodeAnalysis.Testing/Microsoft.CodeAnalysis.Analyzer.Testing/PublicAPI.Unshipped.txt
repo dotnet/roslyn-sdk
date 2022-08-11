@@ -9,6 +9,7 @@ Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.DiagnosticVerifier.set ->
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.DisabledDiagnostics.get -> System.Collections.Generic.List<string>
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.ExpectedDiagnostics.get -> System.Collections.Generic.List<Microsoft.CodeAnalysis.Testing.DiagnosticResult>
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.FormatVerifierMessage(System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer> analyzers, Microsoft.CodeAnalysis.Diagnostic actual, Microsoft.CodeAnalysis.Testing.DiagnosticResult expected, string message) -> string
+Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.GetNameAndFoldersFromPath(string projectPathPrefix, string path) -> (string fileName, System.Collections.Generic.IEnumerable<string> folders)
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.GetSortedDiagnosticsAsync(Microsoft.CodeAnalysis.Solution solution, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer> analyzers, System.Collections.Immutable.ImmutableArray<(Microsoft.CodeAnalysis.Project project, Microsoft.CodeAnalysis.Diagnostic diagnostic)> additionalDiagnostics, Microsoft.CodeAnalysis.Testing.CompilerDiagnostics compilerDiagnostics, Microsoft.CodeAnalysis.Testing.IVerifier verifier, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Immutable.ImmutableArray<(Microsoft.CodeAnalysis.Project project, Microsoft.CodeAnalysis.Diagnostic diagnostic)>>
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.MarkupOptions.get -> Microsoft.CodeAnalysis.Testing.MarkupOptions
 Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.MarkupOptions.set -> void
@@ -262,6 +263,8 @@ static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.Net.Net60MacOS.get -> 
 static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.Net.Net60TvOS.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.Net.Net60Windows.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.Net.Net60iOS.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
+static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.Net.Net70.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
+static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.Net.Net70Windows.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.NetCore.NetCoreApp10.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.NetCore.NetCoreApp11.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.NetCore.NetCoreApp20.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
@@ -345,6 +348,7 @@ virtual Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.GetDefaultDiagnos
 virtual Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.GetProjectCompilationAsync(Microsoft.CodeAnalysis.Project project, Microsoft.CodeAnalysis.Testing.IVerifier verifier, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.CodeAnalysis.Compilation>
 virtual Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.IsCompilerDiagnosticIncluded(Microsoft.CodeAnalysis.Diagnostic diagnostic, Microsoft.CodeAnalysis.Testing.CompilerDiagnostics compilerDiagnostics) -> bool
 virtual Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.RunImplAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+virtual Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.SortDistinctDiagnostics(System.Collections.Generic.IEnumerable<(Microsoft.CodeAnalysis.Project project, Microsoft.CodeAnalysis.Diagnostic diagnostic)> diagnostics) -> System.Collections.Immutable.ImmutableArray<(Microsoft.CodeAnalysis.Project project, Microsoft.CodeAnalysis.Diagnostic diagnostic)>
 virtual Microsoft.CodeAnalysis.Testing.CodeActionTest<TVerifier>.FilterCodeActions(System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.CodeActions.CodeAction> actions) -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.CodeActions.CodeAction>
 virtual Microsoft.CodeAnalysis.Testing.DefaultVerifier.CreateMessage(string message) -> string
 virtual Microsoft.CodeAnalysis.Testing.DefaultVerifier.Empty<T>(string collectionName, System.Collections.Generic.IEnumerable<T> collection) -> void
