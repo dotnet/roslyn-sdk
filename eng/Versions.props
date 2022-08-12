@@ -77,6 +77,8 @@
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>$(MicrosoftVisualStudioExtensibilityTestingVersion)</MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>
     <MicrosoftVisualStudioExtensibilityTestingXunitVersion>$(MicrosoftVisualStudioExtensibilityTestingVersion)</MicrosoftVisualStudioExtensibilityTestingXunitVersion>
+    <!-- Needed to override the transitive 9.0.1 version brought in by the 16.1.1 Microsoft.NET.Test.Sdk -->
+    <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
     <!-- Analyzers -->
     <RoslynDiagnosticsAnalyzersVersion>2.9.8</RoslynDiagnosticsAnalyzersVersion>
     <StyleCopAnalyzersVersion>1.2.0-beta.164</StyleCopAnalyzersVersion>
