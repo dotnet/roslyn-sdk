@@ -903,8 +903,12 @@ namespace Roslyn.SyntaxVisualizer.Control
 
                 if (embeddedClassifications.Count() > 1)
                 {
-                    foreach (var classifiedSpan in embeddedClassifications)
+                    foreach (var classifiedSpan in embeddedClassifications.OrderBy(cs => cs.TextSpan.Start))
                     {
+                        // skip the full span itself
+                        if (classifiedSpan.TextSpan == token.Span)
+                            continue;
+
                         AddEmbeddedClassification(item, classifiedSpan);
                     }
                 }
