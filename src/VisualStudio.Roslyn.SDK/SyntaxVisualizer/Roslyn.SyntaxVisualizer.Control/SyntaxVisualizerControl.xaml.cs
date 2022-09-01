@@ -13,7 +13,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Xml.Linq;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
@@ -114,6 +113,9 @@ namespace Roslyn.SyntaxVisualizer.Control
         public delegate void SyntaxTokenDelegate(SyntaxToken token);
         public event SyntaxTokenDelegate? SyntaxTokenDirectedGraphRequested;
         public event SyntaxTokenDelegate? SyntaxTokenNavigationToSourceRequested;
+
+        public delegate void SyntaxClassifiedSpanDelegate(ClassifiedSpan span);
+        public event SyntaxClassifiedSpanDelegate? SyntaxClassifiedSpanNavigationToSourceRequested;
 
         public delegate void SyntaxTriviaDelegate(SyntaxTrivia trivia);
         public event SyntaxTriviaDelegate? SyntaxTriviaDirectedGraphRequested;
@@ -794,6 +796,7 @@ namespace Roslyn.SyntaxVisualizer.Control
             var tag = new SyntaxTag
             {
                 Category = SyntaxCategory.EmbeddedClassification,
+                FullSpan = classifiedSpan.TextSpan,
                 Span = classifiedSpan.TextSpan,
                 ParentItem = parentItem
             };
@@ -809,6 +812,11 @@ namespace Roslyn.SyntaxVisualizer.Control
                 typeValueLabel.Content = classifiedSpan.GetType().Name;
                 kindValueLabel.Content = null;
                 _propertyGrid.SelectedObject = classifiedSpan;
+
+                if (!_isNavigatingFromSourceToTree && SyntaxClassifiedSpanNavigationToSourceRequested != null)
+                {
+                    SyntaxClassifiedSpanNavigationToSourceRequested(classifiedSpan);
+                }
 
                 _isNavigatingFromTreeToSource = false;
                 e.Handled = true;
