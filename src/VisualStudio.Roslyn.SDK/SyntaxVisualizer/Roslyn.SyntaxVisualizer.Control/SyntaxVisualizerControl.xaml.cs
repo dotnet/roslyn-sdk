@@ -207,6 +207,10 @@ namespace Roslyn.SyntaxVisualizer.Control
                         ClassifiedSpan = classifiedSpans.FirstOrDefault(s => s.TextSpan.Contains(trivia.Span));
                         break;
 
+                    case ClassifiedSpan span:
+                        ClassifiedSpan = span;
+                        break;
+
                     default:
                         ClassifiedSpan = null;
                         break;
@@ -795,7 +799,21 @@ namespace Roslyn.SyntaxVisualizer.Control
             };
 
             var item = CreateTreeViewItem(tag, $"{classifiedSpan.ClassificationType} {classifiedSpan.TextSpan}", false);
-            
+
+            item.Selected += new RoutedEventHandler((sender, e) =>
+            {
+                _isNavigatingFromTreeToSource = true;
+
+                typeTextLabel.Visibility = Visibility.Visible;
+                kindTextLabel.Visibility = Visibility.Hidden;
+                typeValueLabel.Content = classifiedSpan.GetType().Name;
+                kindValueLabel.Content = null;
+                _propertyGrid.SelectedObject = classifiedSpan;
+
+                _isNavigatingFromTreeToSource = false;
+                e.Handled = true;
+            });
+
             parentItem.Items.Add(item);
         }
 
