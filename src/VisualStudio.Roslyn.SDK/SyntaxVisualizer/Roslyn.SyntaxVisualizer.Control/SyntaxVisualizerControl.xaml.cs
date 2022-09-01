@@ -13,6 +13,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
@@ -37,6 +38,7 @@ namespace Roslyn.SyntaxVisualizer.Control
         SyntaxToken,
         SyntaxTrivia,
         Operation,
+        EmbeddedClassification,
     }
 
     // A control for visually displaying the contents of a SyntaxTree.
@@ -518,6 +520,9 @@ namespace Roslyn.SyntaxVisualizer.Control
 
                         foreach (TreeViewItem item in current.Items)
                         {
+                            if (item == null)
+                                continue;
+
                             if (category != SyntaxCategory.Operation && ((SyntaxTag)item.Tag).Category == SyntaxCategory.Operation)
                             {
                                 // Do not prefer navigating to IOperation nodes when clicking in source code
@@ -780,6 +785,20 @@ namespace Roslyn.SyntaxVisualizer.Control
             }
         }
 
+        private void AddEmbeddedClassification(TreeViewItem parentItem, ClassifiedSpan classifiedSpan)
+        {
+            var tag = new SyntaxTag
+            {
+                Category = SyntaxCategory.EmbeddedClassification,
+                Span = classifiedSpan.TextSpan,
+                ParentItem = parentItem
+            };
+
+            var item = CreateTreeViewItem(tag, $"{classifiedSpan.ClassificationType} {classifiedSpan.TextSpan}", false);
+            
+            parentItem.Items.Add(item);
+        }
+
         private void AddToken(TreeViewItem parentItem, SyntaxToken token)
         {
             var kind = token.GetKind();
@@ -874,6 +893,19 @@ namespace Roslyn.SyntaxVisualizer.Control
                     foreach (var trivia in token.TrailingTrivia)
                     {
                         AddTrivia(item, trivia, false);
+                    }
+                }
+            }
+            
+            if (token.GetKind().Contains("String") && item.Items.Count == 0 && classifiedSpans != null) // no child nodes and tokens
+            {
+                var embeddedClassifications = classifiedSpans.Where(cs => token.Span.Contains(cs.TextSpan));
+
+                if (embeddedClassifications.Count() > 1)
+                {
+                    foreach (var classifiedSpan in embeddedClassifications)
+                    {
+                        AddEmbeddedClassification(item, classifiedSpan);
                     }
                 }
             }
