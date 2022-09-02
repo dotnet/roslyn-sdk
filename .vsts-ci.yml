@@ -44,7 +44,13 @@ stages:
     - task: ms-vseng.MicroBuildTasks.32f78468-e895-4f47-962c-58a699361df8.MicroBuildSwixPlugin@1
       displayName: Install Swix Plugin
 
-    - script: eng\common\CIBuild.cmd
+    - script: eng\common\Build.ps1
+                -restore 
+                -build
+                -sign
+                -pack
+                -publish
+                -ci
                 -configuration $(BuildConfiguration)
                 /p:OfficialBuildId=$(Build.BuildNumber)
                 /p:VisualStudioDropName=$(VisualStudioDropName)
