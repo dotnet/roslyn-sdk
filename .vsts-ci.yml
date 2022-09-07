@@ -18,7 +18,7 @@ stages:
 - stage: build
   displayName: Build and Test
   pool:
-    name: VSEngSS-MicroBuild2019-1ES
+    name: VSEngSS-MicroBuild2022-1ES
     demands:
     - cmd
 
@@ -44,7 +44,17 @@ stages:
     - task: ms-vseng.MicroBuildTasks.32f78468-e895-4f47-962c-58a699361df8.MicroBuildSwixPlugin@1
       displayName: Install Swix Plugin
 
-    - script: eng\common\CIBuild.cmd
+    - task: PowerShell@2
+      inputs:
+        targetType: 'filePath'
+        filePath: eng\common\Build.ps1
+        arguments: > # Use this to avoid newline characters in multiline string
+                -restore 
+                -build
+                -sign
+                -pack
+                -publish
+                -ci
                 -configuration $(BuildConfiguration)
                 /p:OfficialBuildId=$(Build.BuildNumber)
                 /p:VisualStudioDropName=$(VisualStudioDropName)
@@ -56,15 +66,6 @@ stages:
       displayName: Build
 
     - template: eng\common\templates\steps\generate-sbom.yml
-
-    - task: PublishTestResults@1
-      displayName: Publish Test Results
-      inputs:
-        testRunner: XUnit
-        testResultsFiles: 'artifacts/TestResults/$(BuildConfiguration)/*.xml'
-        mergeTestResults: true
-        testRunTitle: 'Unit Tests'
-      condition: always()
 
     # Publishes setup VSIXes to a drop.
     # Note: The insertion tool looks for the display name of this task in the logs.
