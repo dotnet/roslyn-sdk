@@ -44,7 +44,11 @@ stages:
     - task: ms-vseng.MicroBuildTasks.32f78468-e895-4f47-962c-58a699361df8.MicroBuildSwixPlugin@1
       displayName: Install Swix Plugin
 
-    - script: eng\common\Build.ps1
+    - task: PowerShell@2
+      inputs:
+        targetType: 'filePath'
+        filePath: eng\common\Build.ps1
+        arguments: > # Use this to avoid newline characters in multiline string
                 -restore 
                 -build
                 -sign
