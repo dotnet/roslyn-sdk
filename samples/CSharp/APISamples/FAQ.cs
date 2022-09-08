@@ -329,11 +329,11 @@ class Program
 C.InstanceField
 C.InstanceMethod()
 C.InstanceProperty
-object.Equals(object)
-object.Equals(object, object)
+object.Equals(object?)
+object.Equals(object?, object?)
 object.GetHashCode()
 object.GetType()
-object.ReferenceEquals(object, object)
+object.ReferenceEquals(object?, object?)
 object.ToString()", results);
         }
 
@@ -1165,15 +1165,14 @@ class Program
         public void OverloadBindingDetermination()
         {
             string source = @"
-using System;
 class Program
 {
-    private int Identity(int a)
+    private static int Identity(int a)
     {
         return a;
     }
 
-    private char Identity(char a)
+    private static char Identity(char a)
     {
         return a;
     }
@@ -1183,7 +1182,7 @@ class Program
         var v1 = Identity(3);
         var v2 = Identity('a');        
         var v3 = Identity(""arg1"")
-    };
+    }
 }
 ";
 
@@ -1192,7 +1191,6 @@ class Program
             SemanticModel model = compilation.GetSemanticModel(tree);
 
             IEnumerable<InvocationExpressionSyntax> allInvocations = tree.GetRoot().DescendantNodes().OfType<InvocationExpressionSyntax>();
-
             // Below, we expect to find that the Method taking an int was selected.
             // We can confidently index into the invocations because we are following the source line-by-line. This is not always a safe practice.
             InvocationExpressionSyntax intInvocation = allInvocations.ElementAt(0);

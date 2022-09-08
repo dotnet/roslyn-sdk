@@ -16,7 +16,7 @@ trigger:
 
 stages:
 - stage: build
-  displayName: Build and Test
+  displayName: Build
   pool:
     name: VSEngSS-MicroBuild2022-1ES
     demands:
