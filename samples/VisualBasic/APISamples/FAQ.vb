@@ -257,7 +257,6 @@ End Module
                                            Order By result)
 
             Dim expected As String = <text>C
-FxResources
 Internal
 j As Integer
 Microsoft
@@ -287,7 +286,6 @@ Program.i As Integer</text>.Value, actual)
 
             Assert.Equal(
 <text>C
-FxResources
 Internal
 Microsoft
 Program

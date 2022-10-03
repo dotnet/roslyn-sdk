@@ -356,28 +356,35 @@ Next", vbNode);
         public void TestAsyncModifier()
         {
             string csharpCode =
-@"async void M()
+@"
+class C 
 {
-}
+    async void M()
+    {
+    }
 
-async Task N()
-{
-}
+    async Task N()
+    {
+    }
 
-async Task<int> O()
-{
+    async Task<int> O()
+    {
+    }
 }";
             string vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(
-@"Async Sub M()
-End Sub
+@"Class C
 
-Async Function N() As Task
-End Function
+    Async Sub M()
+    End Sub
 
-Async Function O() As Task(Of Integer)
-End Function
+    Async Function N() As Task
+    End Function
+
+    Async Function O() As Task(Of Integer)
+    End Function
+End Class
 ",
 vbNode);
         }

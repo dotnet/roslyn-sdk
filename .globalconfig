@@ -22,3 +22,15 @@ dotnet_diagnostic.SX1309.severity = warning
 dotnet_diagnostic.RS1019.severity = none
 # Enable analyzer release tracking: only used in this repository for testing
 dotnet_diagnostic.RS2008.severity = none
+# Prefer 'IsKind' for checking syntax kinds
+dotnet_diagnostic.RS1034.severity = none
+# Use 'SymbolEqualityComparer' when comparing symbols
+dotnet_diagnostic.RS1024.severity = none
+# Configure generated code analysis
+dotnet_diagnostic.RS1025.severity = none
+# Enable concurrent execution
+dotnet_diagnostic.RS1026.severity = none
+# The diagnostic title should not contain a period, nor any line return character, nor any leading or trailing whitespaces
+dotnet_diagnostic.RS1031.severity = none
+# The diagnostic message should not contain any line return character nor any leading or trailing whitespaces and should either be a single sentence without a trailing period or a multi-sentences with a trailing period
+dotnet_diagnostic.RS1032.severity = none
