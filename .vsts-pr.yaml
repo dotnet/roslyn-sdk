@@ -34,16 +34,8 @@ jobs:
         _args: -test
         _configuration: Debug
         _solution: Roslyn-SDK
-      SDK Debug Integration Test:
-        _args: -integrationTest
-        _configuration: Debug
-        _solution: Roslyn-SDK
       SDK Release Test:
         _args: -test
-        _configuration: Release
-        _solution: Roslyn-SDK
-      SDK Release Integration Test:
-        _args: -integrationTest
         _configuration: Release
         _solution: Roslyn-SDK
       SDK Pack:
@@ -54,7 +46,7 @@ jobs:
         _args: -sign
         _configuration: Release
         _solution: Roslyn-SDK
-  timeoutInMinutes: 120
+  timeoutInMinutes: 90
 
   steps:
     - script: |
