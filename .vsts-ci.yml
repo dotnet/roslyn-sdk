@@ -123,6 +123,42 @@ stages:
       queue:
         name: Hosted VS2017
 
+- stage: analysis
+  displayName: Code analysis
+  pool:
+    name: VSEngSS-MicroBuild2022-1ES
+    demands:
+    - cmd
+  jobs:
+    - job: codeql
+      displayName: CodeQL
+      timeoutInMinutes: 120
+      variables:
+        # CG is handled in the primary CI pipeline
+      - name: skipComponentGovernanceDetection
+        value: true
+        # Force CodeQL enabled so it may be run on any branch
+      - name: Codeql.Enabled
+        value: true
+        # Do not let CodeQL 3000 Extension gate scan frequency
+      - name: Codeql.Cadence
+        value: 0
+      - name: Codeql.TSAEnabled
+        value: true 
+      steps:
+        - task: UseDotNet@2
+          inputs:
+            useGlobalJson: true
+        - task: CodeQL3000Init@0
+          displayName: CodeQL Initialize
+        - script: eng\common\cibuild.cmd
+            -configuration Release
+            -prepareMachine
+            /p:Test=false
+          displayName: Windows Build
+        - task: CodeQL3000Finalize@0
+          displayName: CodeQL Finalize
+        
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - template: eng\common\templates\post-build\post-build.yml
     parameters:
