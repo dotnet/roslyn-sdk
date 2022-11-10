@@ -150,6 +150,12 @@ namespace Microsoft.CodeAnalysis.Testing
         public Action<Diagnostic, DiagnosticResult, IVerifier>? DiagnosticVerifier { get; set; }
 
         /// <summary>
+        /// Gets a collection of transformation functions to apply to a <see cref="Compilation"/> during diagnostic or code
+        /// fix test setup.
+        /// </summary>
+        public List<Func<Compilation, Project, Compilation>> CompilationTransforms { get; } = new List<Func<Compilation, Project, Compilation>>();
+
+        /// <summary>
         /// Gets a collection of transformation functions to apply to <see cref="Workspace.Options"/> during diagnostic
         /// or code fix test setup.
         /// </summary>
@@ -922,6 +928,12 @@ namespace Microsoft.CodeAnalysis.Testing
             foreach (var project in solution.Projects)
             {
                 var compilation = await GetProjectCompilationAsync(project, verifier, cancellationToken).ConfigureAwait(false);
+
+                foreach (var transform in CompilationTransforms)
+                {
+                    compilation = transform(compilation, project);
+                }
+
                 var compilationWithAnalyzers = CreateCompilationWithAnalyzers(compilation, analyzers, GetAnalyzerOptions(project), cancellationToken);
                 var allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
 
