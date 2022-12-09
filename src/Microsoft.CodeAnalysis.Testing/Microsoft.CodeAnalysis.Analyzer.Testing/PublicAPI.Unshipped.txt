@@ -171,6 +171,7 @@ Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.AddAssemblies(System.Collecti
 Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.AddFacadeAssemblies(System.Collections.Immutable.ImmutableArray<string> facadeAssemblies) -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.AddLanguageSpecificAssemblies(string language, System.Collections.Immutable.ImmutableArray<string> assemblies) -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.AddPackages(System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Testing.PackageIdentity> packages) -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
+Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.AdditionalPackageSources.get -> System.Collections.Immutable.ImmutableArray<NuGet.Configuration.PackageSource>
 Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.Assemblies.get -> System.Collections.Immutable.ImmutableArray<string>
 Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.AssemblyIdentityComparer.get -> Microsoft.CodeAnalysis.AssemblyIdentityComparer
 Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.FacadeAssemblies.get -> System.Collections.Immutable.ImmutableArray<string>
@@ -204,6 +205,7 @@ Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.WithAssemblyIdentityComparer(
 Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.WithFacadeAssemblies(System.Collections.Immutable.ImmutableArray<string> facadeAssemblies) -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.WithLanguageSpecificAssemblies(System.Collections.Immutable.ImmutableDictionary<string, System.Collections.Immutable.ImmutableArray<string>> languageSpecificAssemblies) -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.WithLanguageSpecificAssemblies(string language, System.Collections.Immutable.ImmutableArray<string> assemblies) -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
+Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.WithPackageSources(System.Collections.Immutable.ImmutableArray<NuGet.Configuration.PackageSource> packageSources) -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.WithPackages(System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Testing.PackageIdentity> packages) -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 Microsoft.CodeAnalysis.Testing.SolutionState
 Microsoft.CodeAnalysis.Testing.SolutionState.AdditionalProjects.get -> Microsoft.CodeAnalysis.Testing.ProjectCollection

@@ -49,6 +49,7 @@ namespace Microsoft.CodeAnalysis.Testing
             FacadeAssemblies = ImmutableArray<string>.Empty;
             LanguageSpecificAssemblies = ImmutableDictionary<string, ImmutableArray<string>>.Empty;
             Packages = ImmutableArray<PackageIdentity>.Empty;
+            AdditionalPackageSources = ImmutableArray<PackageSource>.Empty;
         }
 
         public ReferenceAssemblies(string targetFramework, PackageIdentity? referenceAssemblyPackage, string referenceAssemblyPath)
@@ -61,6 +62,7 @@ namespace Microsoft.CodeAnalysis.Testing
             FacadeAssemblies = ImmutableArray<string>.Empty;
             LanguageSpecificAssemblies = ImmutableDictionary<string, ImmutableArray<string>>.Empty;
             Packages = ImmutableArray<PackageIdentity>.Empty;
+            AdditionalPackageSources = ImmutableArray<PackageSource>.Empty;
         }
 
         private ReferenceAssemblies(
@@ -72,7 +74,8 @@ namespace Microsoft.CodeAnalysis.Testing
             ImmutableArray<string> facadeAssemblies,
             ImmutableDictionary<string, ImmutableArray<string>> languageSpecificAssemblies,
             ImmutableArray<PackageIdentity> packages,
-            string? nugetConfigFilePath)
+            string? nugetConfigFilePath,
+            ImmutableArray<PackageSource> additionalPackageSources)
         {
             TargetFramework = targetFramework;
             AssemblyIdentityComparer = assemblyIdentityComparer;
@@ -83,6 +86,7 @@ namespace Microsoft.CodeAnalysis.Testing
             LanguageSpecificAssemblies = languageSpecificAssemblies;
             Packages = packages.IsDefault ? ImmutableArray<PackageIdentity>.Empty : packages;
             NuGetConfigFilePath = nugetConfigFilePath;
+            AdditionalPackageSources = additionalPackageSources;
         }
 
         public static ReferenceAssemblies Default
@@ -121,16 +125,18 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public ImmutableArray<PackageIdentity> Packages { get; }
 
+        public ImmutableArray<PackageSource> AdditionalPackageSources { get; }
+
         public string? NuGetConfigFilePath { get; }
 
         public ReferenceAssemblies WithAssemblyIdentityComparer(AssemblyIdentityComparer assemblyIdentityComparer)
-            => new ReferenceAssemblies(TargetFramework, assemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath);
+            => new ReferenceAssemblies(TargetFramework, assemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath, AdditionalPackageSources);
 
         public ReferenceAssemblies WithAssemblies(ImmutableArray<string> assemblies)
-            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath);
+            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath, AdditionalPackageSources);
 
         public ReferenceAssemblies WithFacadeAssemblies(ImmutableArray<string> facadeAssemblies)
-            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, facadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath);
+            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, facadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath, AdditionalPackageSources);
 
         public ReferenceAssemblies AddAssemblies(ImmutableArray<string> assemblies)
             => WithAssemblies(Assemblies.AddRange(assemblies));
@@ -139,7 +145,7 @@ namespace Microsoft.CodeAnalysis.Testing
             => WithFacadeAssemblies(FacadeAssemblies.AddRange(facadeAssemblies));
 
         public ReferenceAssemblies WithLanguageSpecificAssemblies(ImmutableDictionary<string, ImmutableArray<string>> languageSpecificAssemblies)
-            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, languageSpecificAssemblies, Packages, NuGetConfigFilePath);
+            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, languageSpecificAssemblies, Packages, NuGetConfigFilePath, AdditionalPackageSources);
 
         public ReferenceAssemblies WithLanguageSpecificAssemblies(string language, ImmutableArray<string> assemblies)
             => WithLanguageSpecificAssemblies(LanguageSpecificAssemblies.SetItem(language, assemblies));
@@ -155,13 +161,16 @@ namespace Microsoft.CodeAnalysis.Testing
         }
 
         public ReferenceAssemblies WithPackages(ImmutableArray<PackageIdentity> packages)
-            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, packages, NuGetConfigFilePath);
+            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, packages, NuGetConfigFilePath, AdditionalPackageSources);
 
         public ReferenceAssemblies AddPackages(ImmutableArray<PackageIdentity> packages)
             => WithPackages(Packages.AddRange(packages));
 
         public ReferenceAssemblies WithNuGetConfigFilePath(string nugetConfigFilePath)
-            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, nugetConfigFilePath);
+            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, nugetConfigFilePath, AdditionalPackageSources);
+
+        public ReferenceAssemblies WithPackageSources(ImmutableArray<PackageSource> packageSources)
+            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath, packageSources);
 
         public async Task<ImmutableArray<MetadataReference>> ResolveAsync(string? language, CancellationToken cancellationToken)
         {
@@ -218,6 +227,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 Directory.CreateDirectory(temporaryPackagesFolder);
 
                 var repositories = sourceRepositoryProvider.GetRepositories().ToImmutableArray();
+                repositories = repositories.AddRange(AdditionalPackageSources.Select(additionalSource => sourceRepositoryProvider.CreateRepository(additionalSource)));
                 repositories = repositories.Insert(0, new SourceRepository(new PackageSource(temporaryPackagesFolder, "test-packages"), Repository.Provider.GetCoreV3(), FeedType.FileSystemPackagesConfig));
                 repositories = repositories.Insert(0, sourceRepositoryProvider.CreateRepository(new PackageSource(new Uri(SettingsUtility.GetGlobalPackagesFolder(settings)).AbsoluteUri, "global"), FeedType.FileSystemV3));
                 var dependencies = ImmutableDictionary.CreateBuilder<NuGet.Packaging.Core.PackageIdentity, SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
