@@ -987,7 +987,7 @@ namespace Microsoft.CodeAnalysis.Testing
                         "net7.0",
                         new PackageIdentity(
                             "Microsoft.NETCore.App.Ref",
-                            "7.0.2"),
+                            "7.0.0"),
                         Path.Combine("ref", "net7.0"));
                 });
 
