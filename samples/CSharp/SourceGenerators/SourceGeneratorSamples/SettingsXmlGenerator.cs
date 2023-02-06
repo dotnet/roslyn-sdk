@@ -12,15 +12,6 @@ namespace Analyzer1
     [Generator]
     public class SettingsXmlGenerator : ISourceGenerator
     {
-        private const string SettingsFileString = @"
-namespace XmlSettings
-{
-    public partial class XmlSettings
-    {
-        
-    }
-}
-";
         public void Execute(GeneratorExecutionContext context)
         {
             // Using the context, get any additional files that end in .xmlsettings
@@ -30,7 +21,7 @@ namespace XmlSettings
                 ProcessSettingsFile(settingsFile, context);
             }
         }
-        
+
         private void ProcessSettingsFile(AdditionalText xmlFile, GeneratorExecutionContext context)
         {
             // try and load the settings file
@@ -46,7 +37,7 @@ namespace XmlSettings
                 return;
             }
 
-            
+
             // create a class in the XmlSetting class that represnts this entry, and a static field that contains a singleton instance.
             string fileName = Path.GetFileName(xmlFile.Path);
             string name = xmlDoc.DocumentElement.GetAttribute("name");
@@ -78,7 +69,7 @@ namespace AutoSettings
             }}
 ");
 
-            for(int i = 0; i < xmlDoc.DocumentElement.ChildNodes.Count; i++)
+            for (int i = 0; i < xmlDoc.DocumentElement.ChildNodes.Count; i++)
             {
                 XmlElement setting = (XmlElement)xmlDoc.DocumentElement.ChildNodes[i];
                 string settingName = setting.GetAttribute("name");
@@ -98,9 +89,9 @@ public {settingType} {settingName}
 
             sb.Append("} } }");
 
-            context.AddSource($"Settings_{name}", SourceText.From(sb.ToString(), Encoding.UTF8));
+            context.AddSource($"Settings_{name}.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
         }
-     
+
         public void Initialize(GeneratorInitializationContext context)
         {
         }

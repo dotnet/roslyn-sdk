@@ -19,6 +19,9 @@ usage()
   echo "Actions:"
   echo "  --restore                  Restore dependencies (short: -r)"
   echo "  --build                    Build solution (short: -b)"
+  echo "  --sourceBuild              Source-build the solution (short: -sb)"
+  echo "                             Will additionally trigger the following actions: --restore, --build, --pack"
+  echo "                             If --configuration is not set explicitly, will also set it to 'Release'"
   echo "  --rebuild                  Rebuild solution"
   echo "  --test                     Run all unit tests in the solution (short: -t)"
   echo "  --integrationTest          Run all integration tests in the solution"
@@ -36,8 +39,6 @@ usage()
   echo "  --prepareMachine         Prepare machine for CI run, clean up processes after build"
   echo "  --nodeReuse <value>      Sets nodereuse msbuild parameter ('true' or 'false')"
   echo "  --warnAsError <value>    Sets warnaserror msbuild parameter ('true' or 'false')"
-  echo "  --useDefaultDotnetInstall <value> Use dotnet-install.* scripts from public location as opposed to from eng common folder"
-  
   echo ""
   echo "Command line arguments not listed above are passed thru to msbuild."
   echo "Arguments can also be passed in with a single hyphen."
@@ -57,6 +58,7 @@ scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 
 restore=false
 build=false
+source_build=false
 rebuild=false
 test=false
 integration_test=false
@@ -75,16 +77,15 @@ exclude_ci_binary_log=false
 pipelines_log=false
 
 projects=''
-configuration='Debug'
+configuration=''
 prepare_machine=false
 verbosity='minimal'
 runtime_source_feed=''
 runtime_source_feed_key=''
-use_default_dotnet_install=false
 
 properties=''
 while [[ $# > 0 ]]; do
-  opt="$(echo "${1/#--/-}" | awk '{print tolower($0)}')"
+  opt="$(echo "${1/#--/-}" | tr "[:upper:]" "[:lower:]")"
   case "$opt" in
     -help|-h)
       usage
@@ -120,6 +121,12 @@ while [[ $# > 0 ]]; do
       rebuild=true
       ;;
     -pack)
+      pack=true
+      ;;
+    -sourcebuild|-sb)
+      build=true
+      source_build=true
+      restore=true
       pack=true
       ;;
     -test|-t)
@@ -159,12 +166,8 @@ while [[ $# > 0 ]]; do
       runtime_source_feed=$2
       shift
       ;;
-    -runtimesourcefeedkey)
+     -runtimesourcefeedkey)
       runtime_source_feed_key=$2
-      shift
-      ;;
-    -usedefaultdotnetinstall)
-      use_default_dotnet_install=$2
       shift
       ;;
     *)
@@ -174,6 +177,10 @@ while [[ $# > 0 ]]; do
 
   shift
 done
+
+if [[ -z "$configuration" ]]; then
+  if [[ "$source_build" = true ]]; then configuration="Release"; else configuration="Debug"; fi
+fi
 
 if [[ "$ci" == true ]]; then
   pipelines_log=true
@@ -212,6 +219,7 @@ function Build {
     /p:RepoRoot="$repo_root" \
     /p:Restore=$restore \
     /p:Build=$build \
+    /p:ArcadeBuildFromSource=$source_build \
     /p:Rebuild=$rebuild \
     /p:Test=$test \
     /p:Pack=$pack \

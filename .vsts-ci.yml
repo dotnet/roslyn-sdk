@@ -1,6 +1,6 @@
 resources:
 - repo: self
-  clean: true 
+  clean: true
 
 # The variables `_DotNetArtifactsCategory` and `_DotNetValidationArtifactsCategory` are required for proper publishing of build artifacts. See https://github.com/dotnet/roslyn/pull/38259
 variables:
@@ -11,19 +11,27 @@ variables:
 
 # Branches that trigger a build on commit
 trigger:
-- master
+- main
+- dev17.0
 
 stages:
 - stage: build
-  displayName: Build and Test
+  displayName: Build
+  pool:
+    name: VSEngSS-MicroBuild2022-1ES
+    demands:
+    - cmd
 
   jobs:
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    - template: /eng/common/templates/job/onelocbuild.yml
+      parameters:
+        CreatePr: true
+        LclSource: lclFilesfromPackage
+        LclPackageId: 'LCL-JUNO-PROD-ROSLYNSDK'
+
   - job: OfficialBuild
     displayName: Official Build
-    pool:
-      name: VSEng-MicroBuildVS2017
-      demands: 
-      - cmd
 
     steps:
     - task: ms-vseng.MicroBuildTasks.30666190-6959-11e5-9f96-f56098202fef.MicroBuildSigningPlugin@1
@@ -32,11 +40,21 @@ stages:
         signType: $(SignType)
         esrpSigning: true
       condition: and(succeeded(), ne(variables['SignType'], ''))
-    
+
     - task: ms-vseng.MicroBuildTasks.32f78468-e895-4f47-962c-58a699361df8.MicroBuildSwixPlugin@1
       displayName: Install Swix Plugin
-    
-    - script: eng\common\CIBuild.cmd 
+
+    - task: PowerShell@2
+      inputs:
+        targetType: 'filePath'
+        filePath: eng\common\Build.ps1
+        arguments: > # Use this to avoid newline characters in multiline string
+                -restore 
+                -build
+                -sign
+                -pack
+                -publish
+                -ci
                 -configuration $(BuildConfiguration)
                 /p:OfficialBuildId=$(Build.BuildNumber)
                 /p:VisualStudioDropName=$(VisualStudioDropName)
@@ -47,23 +65,8 @@ stages:
                 /p:DotnetPublishUsingPipelines=true
       displayName: Build
 
-    - task: PublishTestResults@1
-      displayName: Publish Test Results
-      inputs:
-        testRunner: XUnit
-        testResultsFiles: 'artifacts/TestResults/$(BuildConfiguration)/*.xml'
-        mergeTestResults: true
-        testRunTitle: 'Unit Tests'
-      condition: always()
+    - template: eng\common\templates\steps\generate-sbom.yml
 
-    - task: NuGetPublisher@0
-      displayName: Publish NuGet Packages to MyGet
-      inputs:
-        searchPattern: 'artifacts\packages\$(BuildConfiguration)\Shipping\*.nupkg'
-        connectedServiceName: 'RoslynSdk - NuGet feed'
-        nuGetVersion: 4.0.0.2283
-      condition: succeeded()
-    
     # Publishes setup VSIXes to a drop.
     # Note: The insertion tool looks for the display name of this task in the logs.
     - task: ms-vseng.MicroBuildTasks.4305a8de-ba66-4d8b-b2d1-0dc4ecbbf5e8.MicroBuildUploadVstsDropFolder@1
@@ -71,16 +74,17 @@ stages:
       inputs:
         DropName: $(VisualStudioDropName)
         DropFolder: 'artifacts\VSSetup\$(BuildConfiguration)\Insertion'
+        AccessToken: $(System.AccessToken)
         condition: succeeded()
-    
+
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(BuildConfiguration)'
         ArtifactName: 'Logs'
       continueOnError: true
-      condition: not(succeeded())
-    
+      condition: always()
+
     # Publish an artifact that the RoslynInsertionTool is able to find by its name.
     - task: PublishBuildArtifacts@1
       displayName: Publish Artifact VSSetup
@@ -88,8 +92,8 @@ stages:
         PathtoPublish: 'artifacts\VSSetup\$(BuildConfiguration)'
         ArtifactName: 'VSSetup'
       condition: succeeded()
-      
-    # Publish our NuPkgs as an artifact. The name of this artifact must be PackageArtifacts as the 
+
+    # Publish our NuPkgs as an artifact. The name of this artifact must be PackageArtifacts as the
     # arcade templates depend on the name.
     - task: PublishBuildArtifacts@1
       displayName: Publish Artifact Packages
@@ -97,7 +101,7 @@ stages:
         PathtoPublish: 'artifacts\packages\$(BuildConfiguration)'
         ArtifactName: 'PackageArtifacts'
       condition: succeeded()
-      
+
     # Publish Asset Manifests for Build Asset Registry job
     - task: PublishBuildArtifacts@1
       displayName: Publish Asset Manifests
@@ -105,7 +109,7 @@ stages:
         PathtoPublish: '$(Build.SourcesDirectory)/artifacts/log/$(BuildConfiguration)/AssetManifest'
         ArtifactName: AssetManifests
       condition: succeeded()
-    
+
     - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
       displayName: Cleanup
       condition: always()
@@ -114,14 +118,51 @@ stages:
   - template: /eng/common/templates/job/publish-build-assets.yml
     parameters:
       publishUsingPipelines: true
-      dependsOn:	
+      dependsOn:
         - OfficialBuild
       queue:
         name: Hosted VS2017
 
+- stage: analysis
+  displayName: Code analysis
+  pool:
+    name: VSEngSS-MicroBuild2022-1ES
+    demands:
+    - cmd
+  jobs:
+    - job: codeql
+      displayName: CodeQL
+      timeoutInMinutes: 120
+      variables:
+        # CG is handled in the primary CI pipeline
+      - name: skipComponentGovernanceDetection
+        value: true
+        # Force CodeQL enabled so it may be run on any branch
+      - name: Codeql.Enabled
+        value: true
+        # Do not let CodeQL 3000 Extension gate scan frequency
+      - name: Codeql.Cadence
+        value: 0
+      - name: Codeql.TSAEnabled
+        value: true 
+      steps:
+        - task: UseDotNet@2
+          inputs:
+            useGlobalJson: true
+        - task: CodeQL3000Init@0
+          displayName: CodeQL Initialize
+        - script: eng\common\cibuild.cmd
+            -configuration Release
+            -prepareMachine
+            /p:Test=false
+          displayName: Windows Build
+        - task: CodeQL3000Finalize@0
+          displayName: CodeQL Finalize
+        
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - template: eng\common\templates\post-build\post-build.yml
     parameters:
+      publishingInfraVersion: 3
       # Symbol validation is not entirely reliable as of yet, so should be turned off until
       # https://github.com/dotnet/arcade/issues/2871 is resolved.
       enableSymbolValidation: false
