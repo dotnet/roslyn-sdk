@@ -11,7 +11,9 @@
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
-    <MicrosoftNetCompilersToolsetVersion>4.3.0-3.final</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftNetCompilersToolsetVersion>4.4.0</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftCodeAnalysisCSharpCodeStyleVersion>$(MicrosoftNetCompilersToolsetVersion)</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
+    <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>$(MicrosoftNetCompilersToolsetVersion)</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
     <!-- Force prior version due to https://github.com/microsoft/vstest/pull/2192 and https://github.com/microsoft/vstest/pull/2067 -->
     <MicrosoftNETTestSdkVersion>16.1.1</MicrosoftNETTestSdkVersion>
   </PropertyGroup>
@@ -21,7 +23,7 @@
     <MicrosoftCodeAnalysisPackagesVersion>4.1.0</MicrosoftCodeAnalysisPackagesVersion>
     <MicrosoftVisualStudioShellPackagesVersion>17.3.32809.331</MicrosoftVisualStudioShellPackagesVersion>
     <MicrosoftVisualStudioEditorPackagesVersion>17.3.198</MicrosoftVisualStudioEditorPackagesVersion>
-    <MicrosoftVisualStudioExtensibilityTestingVersion>0.1.135-beta</MicrosoftVisualStudioExtensibilityTestingVersion>
+    <MicrosoftVisualStudioExtensibilityTestingVersion>0.1.165-beta</MicrosoftVisualStudioExtensibilityTestingVersion>
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisAnalyzersVersion>3.3.3</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisCommonVersion>$(MicrosoftCodeAnalysisPackagesVersion)</MicrosoftCodeAnalysisCommonVersion>
