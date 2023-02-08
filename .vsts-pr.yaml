@@ -13,6 +13,8 @@ variables:
     value: $(Build.SourcesDirectory)\.dotnet
   - name: XUNIT_LOGS
     value: $(Build.SourcesDirectory)\artifacts\log\$(_configuration)
+  - name: MSBUILDLOGALLENVIRONMENTVARIABLES
+    value: 1
 
 jobs:
 - job: Windows
