@@ -4,6 +4,6 @@
   <ItemGroup>
     <!-- This is to for the version of System.Security.Cryptography.X509Certificates to always be resolved
         as 4.3 or higher. If this repo ever moves to central package version management, this can be removed. -->
-    <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.0" PrivateAssets="all" />
+    <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.0" PrivateAssets="all" IncludeAssets="none" />
   </ItemGroup>
 </Project>
