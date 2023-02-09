@@ -5,6 +5,7 @@
   <PropertyGroup>
     <Features>strict</Features>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
 
   <!--
