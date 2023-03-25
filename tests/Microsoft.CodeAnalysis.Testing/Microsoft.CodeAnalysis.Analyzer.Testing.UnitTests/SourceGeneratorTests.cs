@@ -3,6 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing.TestAnalyzers;
@@ -28,7 +31,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 TestState =
                 {
                     Sources = { "class MainClass : TestClass { }" },
-                    GeneratedSources = { (typeof(GenerateSourceFile), "Generated.g.cs", "class TestClass { }") },
+                    GeneratedSources = { (typeof(GenerateSourceFile), GenerateSourceFile.CSharpFileName, GenerateSourceFile.CSharpSource) },
                 },
             }.RunAsync();
         }
@@ -41,7 +44,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 TestState =
                 {
                     Sources = { "Class MainClass : Inherits TestClass : End Class" },
-                    GeneratedSources = { (typeof(GenerateSourceFile), "Generated.g.vb", "Class TestClass : End Class") },
+                    GeneratedSources = { (typeof(GenerateSourceFile), GenerateSourceFile.VisualBasicFileName, GenerateSourceFile.VisualBasicSource) },
                 },
             }.RunAsync();
         }
@@ -351,17 +354,43 @@ DiagnosticResult.CompilerError(""BC30481"").WithSpan(""Microsoft.CodeAnalysis.Te
             }.RunAsync();
         }
 
+        [Fact]
+        public async Task AddGeneratedFileWithCustomCheck()
+        {
+            var test = new CSharpTest
+            {
+                TestBehaviors = TestBehaviors.SkipGeneratedSourcesCheck,
+                TestState =
+                {
+                    Sources = { @"{|#0:|}// Comment", },
+                },
+            };
+
+            await test.RunAsync();
+
+            var expected = $"// {GenerateSourceFile.CSharpFileName}\r\n{GenerateSourceFile.CSharpSource}";
+
+            new DefaultVerifier().Equal(expected, JoinTrees(test.GeneratedTrees));
+        }
+
+        private static string JoinTrees(ImmutableArray<SyntaxTree> trees)
+        {
+            return string.Join("\r\n", trees.Select(tree => $"// {Path.GetFileName(tree.FilePath)}\r\n{tree}"));
+        }
+
         [Generator(LanguageNames.CSharp, LanguageNames.VisualBasic)]
         internal class GenerateSourceFile : ISourceGenerator
         {
-            private const string CSharpSource = @"class TestClass { }";
-            private const string VisualBasicSource = @"Class TestClass : End Class";
+            public const string CSharpFileName = "Generated.g.cs";
+            public const string CSharpSource = @"class TestClass { }";
+            public const string VisualBasicSource = @"Class TestClass : End Class";
+            public const string VisualBasicFileName = "Generated.g.vb";
 
             public void Execute(GeneratorExecutionContext context)
             {
                 var (source, hintName) = context.Compilation.Language == LanguageNames.CSharp
-                    ? (source: CSharpSource, hintName: "Generated.g.cs")
-                    : (source: VisualBasicSource, hintName: "Generated.g.vb");
+                    ? (source: CSharpSource, hintName: CSharpFileName)
+                    : (source: VisualBasicSource, hintName: VisualBasicFileName);
 
                 context.AddSource(hintName, source);
             }
