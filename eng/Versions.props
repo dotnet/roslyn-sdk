@@ -74,7 +74,6 @@
     <!-- Testing -->
     <MicrosoftCodeAnalysis2PrimaryTestVersion>2.6.1</MicrosoftCodeAnalysis2PrimaryTestVersion>
     <MicrosoftCodeAnalysis3PrimaryTestVersion>3.9.0</MicrosoftCodeAnalysis3PrimaryTestVersion>
-    <MicrosoftCodeAnalysis4PrimaryTestVersion>4.5.0</MicrosoftCodeAnalysis4PrimaryTestVersion>
     <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.20374.2</MicrosoftCodeAnalysisTestingVersion>
     <xunitassertVersion>$(xunitVersion)</xunitassertVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
