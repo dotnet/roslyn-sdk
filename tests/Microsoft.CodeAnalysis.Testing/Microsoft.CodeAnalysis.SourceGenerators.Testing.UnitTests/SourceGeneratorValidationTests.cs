@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
@@ -261,8 +262,70 @@ DiagnosticResult.CompilerError(""BC30481"").WithSpan(""Microsoft.CodeAnalysis.Te
             }.RunAsync();
         }
 
+#if NET6_0_OR_GREATER
+        [Fact]
+        public async Task TrackedStepsWithExpectedState()
+        {
+            await new CSharpSourceGeneratorTest<AddEmptyFilesFromAdditionalFile>
+            {
+                TestBehaviors = TestBehaviors.SkipGeneratedSourcesCheck,
+                TestState =
+                {
+                    AdditionalFiles =
+                    {
+                        ("FilesToCreate.txt", "File1"),
+                    },
+                },
+                IncrementalGeneratorTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var originalProject = solution.GetProject(projectId)!;
+                        var additionalDocument = originalProject.AdditionalDocuments.First(doc => doc.Name == "FilesToCreate.txt");
+                        return solution.WithAdditionalDocumentText(additionalDocument.Id, SourceText.From("File1\nFile2", Encoding.UTF8));
+                    },
+                },
+                IncrementalGeneratorStates =
+                {
+                    [typeof(AddEmptyFilesFromAdditionalFile)] =
+                    {
+                        [AddEmptyFilesFromAdditionalFile.GetFileText] =
+                        {
+                            new IncrementalGeneratorExpectedStepState
+                            {
+                                InputRunReasons =
+                                {
+                                    ExpectedIncrementalStepRunReason.Modified,
+                                },
+                                OutputRunReasons =
+                                {
+                                    ExpectedIncrementalStepRunReason.Modified,
+                                },
+                            },
+                        },
+                        [AddEmptyFilesFromAdditionalFile.GetLinesFromFile] =
+                        {
+                            new IncrementalGeneratorExpectedStepState
+                            {
+                                InputRunReasons =
+                                {
+                                    ExpectedIncrementalStepRunReason.Modified,
+                                },
+                                OutputRunReasons =
+                                {
+                                    ExpectedIncrementalStepRunReason.Unchanged,
+                                    ExpectedIncrementalStepRunReason.New,
+                                },
+                            },
+                        },
+                    },
+                },
+            }.RunAsync();
+        }
+#endif
+
         private class CSharpSourceGeneratorTest<TSourceGenerator> : SourceGeneratorTest<DefaultVerifier>
-            where TSourceGenerator : ISourceGenerator, new()
+            where TSourceGenerator : new()
         {
             public override string Language => LanguageNames.CSharp;
 

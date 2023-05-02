@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis.Testing;
 
@@ -27,5 +28,19 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing
 
         protected override ParseOptions CreateParseOptions()
             => new CSharpParseOptions(DefaultLanguageVersion, DocumentationMode.Diagnose);
+
+        public IncrementalGeneratorExpectedState IncrementalGeneratorState
+        {
+            get
+            {
+                if (!IncrementalGeneratorStates.TryGetValue(typeof(TSourceGenerator), out var value))
+                {
+                    value = new();
+                    IncrementalGeneratorStates.Add(typeof(TSourceGenerator), value);
+                }
+
+                return value;
+            }
+        }
     }
 }
