@@ -35,7 +35,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing
             {
                 if (!IncrementalGeneratorStates.TryGetValue(typeof(TSourceGenerator), out var value))
                 {
-                    value = new();
+                    value = new IncrementalGeneratorExpectedState();
                     IncrementalGeneratorStates.Add(typeof(TSourceGenerator), value);
                 }
 
