@@ -12,13 +12,13 @@ namespace Microsoft.CodeAnalysis.Testing
 {
     public class IncrementalGeneratorExpectedState
     {
-        internal Dictionary<string, List<IncrementalGeneratorExpectedStepState>> ExpectedStepStates { get; } = new();
+        internal Dictionary<string, List<IncrementalGeneratorExpectedStepState>> ExpectedStepStates { get; } = new Dictionary<string, List<IncrementalGeneratorExpectedStepState>>();
 
         public List<IncrementalGeneratorExpectedStepState> this[string stepName]
         {
             get
             {
-                return ExpectedStepStates[stepName];
+                return ExpectedStepStates.GetOrAdd(stepName, () => new List<IncrementalGeneratorExpectedStepState>());
             }
         }
     }

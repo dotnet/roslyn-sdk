@@ -174,12 +174,12 @@ namespace Microsoft.CodeAnalysis.Testing
         /// Gets a collection of transformation functions to apply to a <see cref="Solution"/> after running source generators
         /// once to test incremental generators.
         /// </summary>
-        public List<Func<Solution, ProjectId, Solution>> IncrementalGeneratorTransforms { get; } = new();
+        public List<Func<Solution, ProjectId, Solution>> IncrementalGeneratorTransforms { get; } = new List<Func<Solution, ProjectId, Solution>>();
 
         /// <summary>
         /// Gets the expected state for incremental generator states per generator type.
         /// </summary>
-        public Dictionary<Type, IncrementalGeneratorExpectedState> IncrementalGeneratorStates { get; } = new();
+        public Dictionary<Type, IncrementalGeneratorExpectedState> IncrementalGeneratorStates { get; } = new Dictionary<Type, IncrementalGeneratorExpectedState>();
 
         /// <summary>
         /// Gets or sets the timeout to use when matching expected and actual diagnostics. The default value is 2
@@ -352,27 +352,37 @@ namespace Microsoft.CodeAnalysis.Testing
                     MatchDiagnosticsTimeout);
             }
 
-            var secondRunSolution = initialProject.Solution;
-            foreach (var incrementalTransform in IncrementalGeneratorTransforms)
+            // If any solution transforms for incremental generator testing have been defined,
+            // then test incremental generators.
+            if (IncrementalGeneratorTransforms.Count != 0)
             {
-                secondRunSolution = incrementalTransform(secondRunSolution, initialProject.Id);
-            }
-
-            var secondRunProject = secondRunSolution.GetProject(initialProject.Id)!;
-
-            var (_, secondRunDriver) = await ApplySourceGeneratorsAsync(secondRunProject, generatorDriver, verifier, cancellationToken).ConfigureAwait(false);
-
-            var generatorRunResults = secondRunDriver.GetRunResult();
-
-            foreach (var generatorResult in generatorRunResults.Results)
-            {
-                if (generatorResult.GeneratorType is not { } generatorType
-                    || generatorResult.TrackedSteps is not { } trackedSteps)
+                var secondRunSolution = initialProject.Solution;
+                foreach (var incrementalTransform in IncrementalGeneratorTransforms)
                 {
-                    continue;
+                    secondRunSolution = incrementalTransform(secondRunSolution, initialProject.Id);
                 }
 
-                VerifyGeneratorSteps(verifier.PushContext("Verifying source generator incremental step state"), generatorType, trackedSteps);
+                var secondRunProject = secondRunSolution.GetProject(initialProject.Id)!;
+
+                updatedDriver = updatedDriver
+                        .ReplaceAdditionalTexts(secondRunProject.AnalyzerOptions.AdditionalFiles)
+                        .WithUpdatedParseOptions(secondRunProject.ParseOptions)
+                        .WithUpdatedAnalyzerConfigOptions(secondRunProject.AnalyzerOptions.AnalyzerConfigOptionsProvider());
+
+                var (_, secondRunDriver) = await ApplySourceGeneratorsAsync(secondRunProject, updatedDriver, verifier, cancellationToken).ConfigureAwait(false);
+
+                var generatorRunResults = secondRunDriver.GetRunResult();
+
+                foreach (var generatorResult in generatorRunResults.Results)
+                {
+                    if (generatorResult.GeneratorType is not { } generatorType
+                        || generatorResult.TrackedSteps is not { } trackedSteps)
+                    {
+                        continue;
+                    }
+
+                    VerifyGeneratorSteps(verifier.PushContext("Verifying source generator incremental step state"), generatorType, trackedSteps);
+                }
             }
 
             return diagnostics;
@@ -488,6 +498,7 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 if (IncrementalGeneratorStates.TryGetValue(generatorType, out var expectedState))
                 {
+                    var seenStepNames = new HashSet<string>(trackedSteps.Keys);
                     foreach (var trackedStep in trackedSteps)
                     {
                         if (expectedState.ExpectedStepStates.TryGetValue(trackedStep.Key, out var expectedStepStates))
@@ -496,24 +507,29 @@ namespace Microsoft.CodeAnalysis.Testing
                             verifier.Equal(expectedStepStates.Count, trackedStepExecutions.Length, $"Expected {expectedStepStates.Count} executions of step '{trackedStep.Key}' but there were only {trackedStepExecutions.Length} executions");
                             for (var i = 0; i < expectedStepStates.Count; i++)
                             {
-                                verifier.Equal(expectedStepStates[i].InputRunReasons.Count, trackedStepExecutions[i].Inputs.Length, $"Expected {expectedStepStates[i].InputRunReasons.Count} inputs for the '{trackedStep.Key}' step's {i.Ordinalize()} execution but there were {trackedStepExecutions[i].Inputs.Length} inputs");
+                                var stepNumber = i + 1;
+                                verifier.Equal(expectedStepStates[i].InputRunReasons.Count, trackedStepExecutions[i].Inputs.Length, $"Expected {expectedStepStates[i].InputRunReasons.Count} inputs for the '{trackedStep.Key}' step's {stepNumber.Ordinalize()} execution but there was {"input".ToQuantity(trackedStepExecutions[i].Inputs.Length)}");
                                 for (var j = 0; j < expectedStepStates[i].InputRunReasons.Count; j++)
                                 {
+                                    var inputNumber = j + 1;
                                     var expectedInputState = expectedStepStates[i].InputRunReasons[j];
                                     var actualInputState = trackedStepExecutions[i].Inputs[j].Input.Outputs[trackedStepExecutions[i].Inputs[j].OutputIndex].Reason;
-                                    verifier.Equal(expectedInputState, actualInputState, $"Expected the {j.Ordinalize()} input state for the {i.Ordinalize()} '{trackedStep.Key}' step to be '{expectedInputState}' but it was '{actualInputState}'");
+                                    verifier.Equal(expectedInputState, actualInputState, $"Expected the {inputNumber.Ordinalize()} input state for the {stepNumber.Ordinalize()} '{trackedStep.Key}' step to be '{expectedInputState}' but it was '{actualInputState}'");
                                 }
 
-                                verifier.Equal(expectedStepStates[i].OutputRunReasons.Count, trackedStepExecutions[i].Outputs.Length, $"Expected {expectedStepStates[i].OutputRunReasons.Count} outputs for the '{trackedStep.Key}' step's {i.Ordinalize()} execution but there were {trackedStepExecutions[i].Outputs.Length} outputs");
+                                verifier.Equal(expectedStepStates[i].OutputRunReasons.Count, trackedStepExecutions[i].Outputs.Length, $"Expected {expectedStepStates[i].OutputRunReasons.Count} outputs for the '{trackedStep.Key}' step's {stepNumber.Ordinalize()} execution but there was {"outputs".ToQuantity(trackedStepExecutions[i].Outputs.Length)}");
                                 for (var j = 0; j < expectedStepStates[i].OutputRunReasons.Count; j++)
                                 {
+                                    var outputNumber = j + 1;
                                     var expectedOutputState = expectedStepStates[i].OutputRunReasons[j];
                                     var actualOutputState = trackedStepExecutions[i].Outputs[j].Reason;
-                                    verifier.Equal(expectedOutputState, actualOutputState, $"Expected the {j.Ordinalize()} output state for the {i.Ordinalize()} '{trackedStep.Key}' step to be '{expectedOutputState}' but it was '{actualOutputState}'");
+                                    verifier.Equal(expectedOutputState, actualOutputState, $"Expected the {outputNumber.Ordinalize()} output state for the {stepNumber.Ordinalize()} '{trackedStep.Key}' step to be '{expectedOutputState}' but it was '{actualOutputState}'");
                                 }
                             }
                         }
                     }
+
+                    var expectedStepNames = new HashSet<string>(trackedSteps.Keys);
                 }
             }
         }
@@ -1281,16 +1297,17 @@ namespace Microsoft.CodeAnalysis.Testing
 
             var sourceGenerators = ImmutableArray.CreateRange(sourceGeneratorTypes, static type => Activator.CreateInstance(type)!);
             var generatorDriver = CreateGeneratorDriver(project, sourceGenerators, verifier);
-            var (finalProject, finalDriver) = await ApplySourceGeneratorsAsync(project, generatorDriver, verifier, cancellationToken).ConfigureAwait(false);
-            return ((await finalProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false))!, finalDriver.GetRunResult().Diagnostics);
+            (project, generatorDriver) = await ApplySourceGeneratorsAsync(project, generatorDriver, verifier, cancellationToken);
+            return (await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false), generatorDriver.GetRunResult().Diagnostics);
         }
 
         private protected async Task<(Project project, LightupGeneratorDriver driver)> ApplySourceGeneratorsAsync(Project project, LightupGeneratorDriver driver, IVerifier verifier, CancellationToken cancellationToken)
         {
             var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
             verifier.True(compilation is { });
+
             var updatedDriver = driver.RunGenerators(compilation, cancellationToken);
-            var result = driver.GetRunResult();
+            var result = updatedDriver.GetRunResult();
 
             var updatedProject = project;
             foreach (var tree in result.GeneratedTrees)
@@ -1331,13 +1348,21 @@ namespace Microsoft.CodeAnalysis.Testing
             var analyzerConfigOptionsProviderType = typeof(CompilationOptions).GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider");
             verifier.True(analyzerConfigOptionsProviderType is not null, "Failed to locate AnalyzerConfigOptionsProvider class");
 
+            var generatorDriverOptionsType = typeof(CompilationOptions).GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.GeneratorDriverOptions");
+
+            var createMethodWithOptions = (from method in generatorDriverType.GetTypeInfo().GetMethods()
+                                           where method is { Name: "Create", IsPublic: true, IsStatic: true }
+                                           let parameterTypes = method.GetParameters().Select(static parameter => parameter.ParameterType)
+                                           where parameterTypes.SequenceEqual(new[] { ienumerableOfISourceGeneratorType, typeof(IEnumerable<AdditionalText>), project.ParseOptions.GetType(), analyzerConfigOptionsProviderType, generatorDriverOptionsType })
+                                           select method).SingleOrDefault();
+
             var createMethod = (from method in generatorDriverType.GetTypeInfo().GetMethods()
                                 where method is { Name: "Create", IsPublic: true, IsStatic: true }
                                 let parameterTypes = method.GetParameters().Select(static parameter => parameter.ParameterType)
                                 where parameterTypes.SequenceEqual(new[] { ienumerableOfISourceGeneratorType, typeof(IEnumerable<AdditionalText>), project.ParseOptions.GetType(), analyzerConfigOptionsProviderType })
                                     || parameterTypes.SequenceEqual(new[] { immutableArrayOfISourceGeneratorType, typeof(ImmutableArray<AdditionalText>), project.ParseOptions.GetType(), analyzerConfigOptionsProviderType })
                                 select method).SingleOrDefault();
-            verifier.True(createMethod is not null, "Failed to locate factory method for diagnostic driver");
+            verifier.True(createMethodWithOptions is not null || createMethod is not null, "Failed to locate factory method for diagnostic driver");
 
             var convertedSourceGeneratorsArray = Array.CreateInstance(isourceGeneratorType, sourceGenerators.Length);
             for (var i = 0; i < sourceGenerators.Length; i++)
@@ -1371,7 +1396,26 @@ namespace Microsoft.CodeAnalysis.Testing
             var analyzerConfigOptionsProvider = analyzerOptions.AnalyzerConfigOptionsProvider();
             verifier.True(analyzerConfigOptionsProvider is not null, "Failed to locate AnalyzerConfigOptionsProvider for project");
 
-            var driver = createMethod.Invoke(null, new[] { convertedSourceGenerators, additionalFiles, project.ParseOptions, analyzerConfigOptionsProvider });
+            object? driver;
+
+            // If we cannot specify generator options or if we are not testing incrementality
+            // don't try to track incremental steps.
+            if (generatorDriverOptionsType is null || IncrementalGeneratorTransforms.Count == 0)
+            {
+                driver = createMethod.Invoke(null, new[] { convertedSourceGenerators, additionalFiles, project.ParseOptions, analyzerConfigOptionsProvider });
+            }
+            else
+            {
+                var constructor = generatorDriverOptionsType.GetConstructor(
+                    new[]
+                    {
+                        generatorDriverOptionsType.GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.IncrementalGeneratorOutputKind")!,
+                        typeof(bool),
+                    });
+                var options = constructor!.Invoke(new object[] { 0, true });
+                driver = createMethodWithOptions!.Invoke(null, new[] { convertedSourceGenerators, additionalFiles, project.ParseOptions, analyzerConfigOptionsProvider, options });
+            }
+
             verifier.True(driver is not null, "Failed to invoke factory method for diagnostic driver");
 
             return new LightupGeneratorDriver(driver);
@@ -1881,6 +1925,39 @@ namespace Microsoft.CodeAnalysis.Testing
                 var runResult = getRunResultMethod.Invoke(_instance, new object[0])!;
                 return new LightupGeneratorDriverRunResult(runResult);
             }
+
+            public LightupGeneratorDriver ReplaceAdditionalTexts(ImmutableArray<AdditionalText> additionalTexts)
+            {
+                var replaceAdditionalTexts = (from method in _instance.GetType().GetTypeInfo().GetMethods()
+                                              where method is { Name: nameof(ReplaceAdditionalTexts), IsStatic: false, IsPublic: true }
+                                              where method.GetParameters().Length == 1
+                                              select method).Single();
+
+                var updatedDriver = replaceAdditionalTexts.Invoke(_instance, new object[] { additionalTexts })!;
+                return new LightupGeneratorDriver(updatedDriver);
+            }
+
+            public LightupGeneratorDriver WithUpdatedParseOptions(ParseOptions options)
+            {
+                var withUpdatedParseOptions = (from method in _instance.GetType().GetTypeInfo().GetMethods()
+                                               where method is { Name: nameof(WithUpdatedParseOptions), IsStatic: false, IsPublic: true }
+                                               where method.GetParameters().Length == 1
+                                               select method).Single();
+
+                var updatedDriver = withUpdatedParseOptions.Invoke(_instance, new object[] { options })!;
+                return new LightupGeneratorDriver(updatedDriver);
+            }
+
+            public LightupGeneratorDriver WithUpdatedAnalyzerConfigOptions(object? options)
+            {
+                var withUpdatedAnalyzerConfigOptions = (from method in _instance.GetType().GetTypeInfo().GetMethods()
+                                                        where method is { Name: nameof(WithUpdatedAnalyzerConfigOptions), IsStatic: false, IsPublic: true }
+                                                        where method.GetParameters().Length == 1
+                                                        select method).Single();
+
+                var updatedDriver = withUpdatedAnalyzerConfigOptions.Invoke(_instance, new object?[] { options })!;
+                return new LightupGeneratorDriver(updatedDriver);
+            }
         }
 
         private protected sealed class LightupGeneratorDriverRunResult
@@ -2001,8 +2078,6 @@ namespace Microsoft.CodeAnalysis.Testing
                 {
                     if (_trackedSteps == null)
                     {
-                        // We need to use Unsafe.As becaue ImmutableDictionary isn't covariant (and neither is ImmutableArray),
-                        // but since the real IncrementalGeneratorRunStep is a reference type, it's safe to do so.
                         var trackedSteps = s_trackedSteps(_instance);
                         if (trackedSteps is null)
                         {
@@ -2012,8 +2087,8 @@ namespace Microsoft.CodeAnalysis.Testing
                         var lightupTrackedStepsBuilder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<LightupIncrementalGeneratorRunStep>>();
                         foreach (var step in (IEnumerable)trackedSteps)
                         {
-                            string name = (string)step!.GetType().GetTypeInfo().GetProperty("Key")!.GetValue(step);
-                            IEnumerable<object> steps = (IEnumerable<object>)step!.GetType().GetTypeInfo().GetProperty("Value")!.GetValue(step);
+                            var name = (string)step!.GetType().GetTypeInfo().GetProperty("Key")!.GetValue(step)!;
+                            var steps = (IEnumerable<object>)step!.GetType().GetTypeInfo().GetProperty("Value")!.GetValue(step)!;
                             lightupTrackedStepsBuilder.Add(name, steps.Select(static step => new LightupIncrementalGeneratorRunStep(step)).ToImmutableArray());
                         }
 
@@ -2041,8 +2116,8 @@ namespace Microsoft.CodeAnalysis.Testing
                         var lightupTrackedStepsBuilder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<LightupIncrementalGeneratorRunStep>>();
                         foreach (var step in (IEnumerable)outputSteps)
                         {
-                            string name = (string)step!.GetType().GetTypeInfo().GetProperty("Key")!.GetValue(step);
-                            IEnumerable<object> steps = (IEnumerable<object>)step!.GetType().GetTypeInfo().GetProperty("Value")!.GetValue(step);
+                            var name = (string)step!.GetType().GetTypeInfo().GetProperty("Key")!.GetValue(step)!;
+                            var steps = (IEnumerable<object>)step!.GetType().GetTypeInfo().GetProperty("Value")!.GetValue(step)!;
                             lightupTrackedStepsBuilder.Add(name, steps.Select(static step => new LightupIncrementalGeneratorRunStep(step)).ToImmutableArray());
                         }
 
@@ -2058,7 +2133,9 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             private static readonly Type? s_incrementalGeneratorRunStepType = typeof(Compilation).GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.IncrementalGeneratorRunStep");
 
-            private static readonly Type? s_incrementalGeneratorRunStepInputType = typeof(ValueTuple<,>).MakeGenericType(s_incrementalGeneratorRunStepType, typeof(int));
+            private static readonly Type? s_incrementalGeneratorRunStepInputType = s_incrementalGeneratorRunStepType is not null
+                ? typeof(ValueTuple<,>).MakeGenericType(s_incrementalGeneratorRunStepType, typeof(int))
+                : null;
 
             private static readonly Func<object, string?> s_name =
                 LightupHelpers.CreatePropertyAccessor<object, string?>(
@@ -2073,13 +2150,13 @@ namespace Microsoft.CodeAnalysis.Testing
                     defaultValue: null);
 
             private static readonly Func<object, object?> s_runStepInput =
-                LightupHelpers.CreatePropertyAccessor<object, object?>(
+                LightupHelpers.CreateFieldAccessor<object, object?>(
                     s_incrementalGeneratorRunStepInputType,
                     nameof(ValueTuple<object, int>.Item1),
                     defaultValue: null);
 
             private static readonly Func<object, int> s_runStepOutputIndex =
-                LightupHelpers.CreatePropertyAccessor<object, int>(
+                LightupHelpers.CreateFieldAccessor<object, int>(
                     s_incrementalGeneratorRunStepInputType,
                     nameof(ValueTuple<object, int>.Item2),
                     defaultValue: 0);
@@ -2099,9 +2176,11 @@ namespace Microsoft.CodeAnalysis.Testing
 
             public string? Name => s_name(_instance);
 
-            private ImmutableArray<(LightupIncrementalGeneratorRunStep Input, int OutputIndex)> _inputs;
+            private ImmutableArray<(LightupIncrementalGeneratorRunStep, int)> _inputs;
 
+#pragma warning disable SA1316 // Tuple element names should use correct casing. Matching Roslyn names.
             public ImmutableArray<(LightupIncrementalGeneratorRunStep Input, int OutputIndex)> Inputs
+#pragma warning restore SA1316 // Tuple element names should use correct casing
             {
                 get
                 {
@@ -2110,14 +2189,14 @@ namespace Microsoft.CodeAnalysis.Testing
                         var inputs = s_inputs(_instance);
                         if (inputs is null)
                         {
-                            _inputs = ImmutableArray<(LightupIncrementalGeneratorRunStep Input, int OutputIndex)>.Empty;
+                            _inputs = ImmutableArray<(LightupIncrementalGeneratorRunStep, int)>.Empty;
                         }
                         else
                         {
-                            var lightupInputsBuilder = ImmutableArray.CreateBuilder<(LightupIncrementalGeneratorRunStep Input, int OutputIndex)>();
+                            var lightupInputsBuilder = ImmutableArray.CreateBuilder<(LightupIncrementalGeneratorRunStep, int)>();
                             foreach (var input in (IEnumerable)inputs)
                             {
-                                lightupInputsBuilder.Add((new LightupIncrementalGeneratorRunStep(s_runStepInput(input)), s_runStepOutputIndex(input)));
+                                lightupInputsBuilder.Add((new LightupIncrementalGeneratorRunStep(s_runStepInput(input!)!), s_runStepOutputIndex(input!)));
                             }
 
                             _inputs = lightupInputsBuilder.ToImmutable();
@@ -2128,9 +2207,11 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
             }
 
-            private ImmutableArray<(object? Value, ExpectedIncrementalStepRunReason Reason)> _outputs;
+            private ImmutableArray<(object?, IncrementalStepExpectedRunReason)> _outputs;
 
-            public ImmutableArray<(object? Value, ExpectedIncrementalStepRunReason Reason)> Outputs
+#pragma warning disable SA1316 // Tuple element names should use correct casing. Matching Roslyn names.
+            public ImmutableArray<(object? Value, IncrementalStepExpectedRunReason Reason)> Outputs
+#pragma warning restore SA1316 // Tuple element names should use correct casing
             {
                 get
                 {
@@ -2139,15 +2220,15 @@ namespace Microsoft.CodeAnalysis.Testing
                         var outputs = s_outputs(_instance);
                         if (outputs is null)
                         {
-                            _outputs = ImmutableArray<(object? Value, ExpectedIncrementalStepRunReason Reason)>.Empty;
+                            _outputs = ImmutableArray<(object?, IncrementalStepExpectedRunReason)>.Empty;
                         }
                         else
                         {
-                            var lightupOutputsBuilder = ImmutableArray.CreateBuilder<(object? Value, ExpectedIncrementalStepRunReason Reason)>();
+                            var lightupOutputsBuilder = ImmutableArray.CreateBuilder<(object?, IncrementalStepExpectedRunReason)>();
                             foreach (var output in (IEnumerable)outputs)
                             {
-                                var value = output!.GetType().GetTypeInfo().GetProperty("Item1")!.GetValue(output);
-                                var reason = (ExpectedIncrementalStepRunReason)output.GetType().GetTypeInfo().GetProperty("Item2")!.GetValue(output)!;
+                                var value = output!.GetType().GetTypeInfo().GetField("Item1")!.GetValue(output);
+                                var reason = (IncrementalStepExpectedRunReason)output.GetType().GetTypeInfo().GetField("Item2")!.GetValue(output)!;
                                 lightupOutputsBuilder.Add((value, reason));
                             }
 

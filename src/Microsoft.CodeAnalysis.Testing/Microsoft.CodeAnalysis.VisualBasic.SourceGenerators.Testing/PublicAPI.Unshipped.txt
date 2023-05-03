@@ -1,4 +1,5 @@
 Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorTest(Of TSourceGenerator, TVerifier)
+Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorTest(Of TSourceGenerator, TVerifier).IncrementalGeneratorState() -> Microsoft.CodeAnalysis.Testing.IncrementalGeneratorExpectedState
 Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorTest(Of TSourceGenerator, TVerifier).New() -> Void
 Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorVerifier(Of TSourceGenerator, TVerifier)
 Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorVerifier(Of TSourceGenerator, TVerifier).New() -> Void

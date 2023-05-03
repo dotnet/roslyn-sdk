@@ -8,7 +8,8 @@ namespace Microsoft.CodeAnalysis.Testing
 {
     public class IncrementalGeneratorExpectedStepState
     {
-        public List<ExpectedIncrementalStepRunReason> InputRunReasons { get; } = new();
-        public List<ExpectedIncrementalStepRunReason> OutputRunReasons { get; } = new();
+        public List<IncrementalStepExpectedRunReason> InputRunReasons { get; } = new List<IncrementalStepExpectedRunReason>();
+
+        public List<IncrementalStepExpectedRunReason> OutputRunReasons { get; } = new List<IncrementalStepExpectedRunReason>();
     }
 }

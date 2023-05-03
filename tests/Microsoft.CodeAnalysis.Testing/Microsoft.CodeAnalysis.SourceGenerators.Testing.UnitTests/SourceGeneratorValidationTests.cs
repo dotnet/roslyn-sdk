@@ -271,6 +271,10 @@ DiagnosticResult.CompilerError(""BC30481"").WithSpan(""Microsoft.CodeAnalysis.Te
                 TestBehaviors = TestBehaviors.SkipGeneratedSourcesCheck,
                 TestState =
                 {
+                    Sources =
+                    {
+                        @"// Comment",
+                    },
                     AdditionalFiles =
                     {
                         ("FilesToCreate.txt", "File1"),
@@ -287,7 +291,7 @@ DiagnosticResult.CompilerError(""BC30481"").WithSpan(""Microsoft.CodeAnalysis.Te
                 },
                 IncrementalGeneratorStates =
                 {
-                    [typeof(AddEmptyFilesFromAdditionalFile)] =
+                    [typeof(AddEmptyFilesFromAdditionalFile)] = new IncrementalGeneratorExpectedState()
                     {
                         [AddEmptyFilesFromAdditionalFile.GetFileText] =
                         {
@@ -295,11 +299,11 @@ DiagnosticResult.CompilerError(""BC30481"").WithSpan(""Microsoft.CodeAnalysis.Te
                             {
                                 InputRunReasons =
                                 {
-                                    ExpectedIncrementalStepRunReason.Modified,
+                                    IncrementalStepExpectedRunReason.Modified,
                                 },
                                 OutputRunReasons =
                                 {
-                                    ExpectedIncrementalStepRunReason.Modified,
+                                    IncrementalStepExpectedRunReason.Modified,
                                 },
                             },
                         },
@@ -309,18 +313,124 @@ DiagnosticResult.CompilerError(""BC30481"").WithSpan(""Microsoft.CodeAnalysis.Te
                             {
                                 InputRunReasons =
                                 {
-                                    ExpectedIncrementalStepRunReason.Modified,
+                                    IncrementalStepExpectedRunReason.Modified,
                                 },
                                 OutputRunReasons =
                                 {
-                                    ExpectedIncrementalStepRunReason.Unchanged,
-                                    ExpectedIncrementalStepRunReason.New,
+                                    IncrementalStepExpectedRunReason.Unchanged,
+                                    IncrementalStepExpectedRunReason.Modified,
                                 },
                             },
                         },
                     },
                 },
             }.RunAsync();
+        }
+
+        [Fact]
+        public async Task UnspecifiedTrackedStepsIgnored()
+        {
+            await new CSharpSourceGeneratorTest<AddEmptyFilesFromAdditionalFile>
+            {
+                TestBehaviors = TestBehaviors.SkipGeneratedSourcesCheck,
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"// Comment",
+                    },
+                    AdditionalFiles =
+                    {
+                        ("FilesToCreate.txt", "File1"),
+                    },
+                },
+                IncrementalGeneratorTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var originalProject = solution.GetProject(projectId)!;
+                        var additionalDocument = originalProject.AdditionalDocuments.First(doc => doc.Name == "FilesToCreate.txt");
+                        return solution.WithAdditionalDocumentText(additionalDocument.Id, SourceText.From("File1\nFile2", Encoding.UTF8));
+                    },
+                },
+                IncrementalGeneratorStates =
+                {
+                    [typeof(AddEmptyFilesFromAdditionalFile)] = new IncrementalGeneratorExpectedState()
+                    {
+                        [AddEmptyFilesFromAdditionalFile.GetFileText] =
+                        {
+                            new IncrementalGeneratorExpectedStepState
+                            {
+                                InputRunReasons =
+                                {
+                                    IncrementalStepExpectedRunReason.Modified,
+                                },
+                                OutputRunReasons =
+                                {
+                                    IncrementalStepExpectedRunReason.Modified,
+                                },
+                            },
+                        },
+                    },
+                },
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TrackedStepWithIncorrectNumberOfInputs()
+        {
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await new CSharpSourceGeneratorTest<AddEmptyFilesFromAdditionalFile>
+                {
+                    TestBehaviors = TestBehaviors.SkipGeneratedSourcesCheck,
+                    TestState =
+                    {
+                        Sources =
+                        {
+                            @"// Comment",
+                        },
+                        AdditionalFiles =
+                        {
+                            ("FilesToCreate.txt", "File1"),
+                        },
+                    },
+                    IncrementalGeneratorTransforms =
+                    {
+                        (solution, projectId) =>
+                        {
+                            var originalProject = solution.GetProject(projectId)!;
+                            var additionalDocument = originalProject.AdditionalDocuments.First(doc => doc.Name == "FilesToCreate.txt");
+                            return solution.WithAdditionalDocumentText(additionalDocument.Id, SourceText.From("File1\nFile2", Encoding.UTF8));
+                        },
+                    },
+                    IncrementalGeneratorStates =
+                    {
+                        [typeof(AddEmptyFilesFromAdditionalFile)] = new IncrementalGeneratorExpectedState()
+                        {
+                            [AddEmptyFilesFromAdditionalFile.GetFileText] =
+                            {
+                                new IncrementalGeneratorExpectedStepState
+                                {
+                                    InputRunReasons =
+                                    {
+                                        IncrementalStepExpectedRunReason.Modified,
+                                        IncrementalStepExpectedRunReason.New,
+                                    },
+                                    OutputRunReasons =
+                                    {
+                                        IncrementalStepExpectedRunReason.Modified,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                }.RunAsync());
+
+            string expectedMessage = @"Context: Source generator application
+Context: Verifying source generator incremental step state
+Expected 2 inputs for the 'GetFileText' step's 1st execution but there was 1 input";
+
+            new DefaultVerifier().EqualOrDiff(expectedMessage, exception.Message);
         }
 #endif
 
