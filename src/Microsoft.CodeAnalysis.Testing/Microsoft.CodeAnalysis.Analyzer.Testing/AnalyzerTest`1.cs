@@ -498,7 +498,15 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 if (IncrementalGeneratorStates.TryGetValue(generatorType, out var expectedState))
                 {
-                    var seenStepNames = new HashSet<string>(trackedSteps.Keys);
+                    var expectedStepNames = new HashSet<string>(expectedState.ExpectedStepStates.Keys);
+
+                    expectedStepNames.ExceptWith(trackedSteps.Keys);
+
+                    if (expectedStepNames.Count != 0)
+                    {
+                        verifier.Fail($"Expected to see steps with the following names, but they were not executed by the '{generatorType.FullName}' generator: {string.Join(", ", expectedStepNames)}");
+                    }
+
                     foreach (var trackedStep in trackedSteps)
                     {
                         if (expectedState.ExpectedStepStates.TryGetValue(trackedStep.Key, out var expectedStepStates))
@@ -528,8 +536,6 @@ namespace Microsoft.CodeAnalysis.Testing
                             }
                         }
                     }
-
-                    var expectedStepNames = new HashSet<string>(trackedSteps.Keys);
                 }
             }
         }
