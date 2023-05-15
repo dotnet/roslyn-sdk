@@ -33,10 +33,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing
         {
             get
             {
-                if (!IncrementalGeneratorStates.TryGetValue(typeof(TSourceGenerator), out var value))
+                if (!IncrementalGeneratorStepStates.TryGetValue(typeof(TSourceGenerator), out var value))
                 {
                     value = new IncrementalGeneratorExpectedState();
-                    IncrementalGeneratorStates.Add(typeof(TSourceGenerator), value);
+                    IncrementalGeneratorStepStates.Add(typeof(TSourceGenerator), value);
                 }
 
                 return value;

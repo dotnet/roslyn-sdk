@@ -36,9 +36,9 @@ Public Class VisualBasicSourceGeneratorTest(Of TSourceGenerator As New, TVerifie
         Get
             Dim state As IncrementalGeneratorExpectedState = Nothing
 
-            If Not IncrementalGeneratorStates.TryGetValue(GetType(TSourceGenerator), state) Then
+            If Not IncrementalGeneratorStepStates.TryGetValue(GetType(TSourceGenerator), state) Then
                 state = New IncrementalGeneratorExpectedState
-                IncrementalGeneratorStates.Add(GetType(TSourceGenerator), state)
+                IncrementalGeneratorStepStates.Add(GetType(TSourceGenerator), state)
             End If
             Return state
         End Get

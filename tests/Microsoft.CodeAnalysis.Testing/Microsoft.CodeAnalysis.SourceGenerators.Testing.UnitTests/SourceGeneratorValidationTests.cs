@@ -280,16 +280,14 @@ DiagnosticResult.CompilerError(""BC30481"").WithSpan(""Microsoft.CodeAnalysis.Te
                         ("FilesToCreate.txt", "File1"),
                     },
                 },
-                IncrementalGeneratorTransforms =
+                IncrementalChangeTestState =
                 {
-                    (solution, projectId) =>
+                    AdditionalFiles =
                     {
-                        var originalProject = solution.GetProject(projectId)!;
-                        var additionalDocument = originalProject.AdditionalDocuments.First(doc => doc.Name == "FilesToCreate.txt");
-                        return solution.WithAdditionalDocumentText(additionalDocument.Id, SourceText.From("File1\nFile2", Encoding.UTF8));
+                        ("FilesToCreate.txt", "File1\nFile2"),
                     },
                 },
-                IncrementalGeneratorStates =
+                IncrementalGeneratorStepStates =
                 {
                     [typeof(AddEmptyFilesFromAdditionalFile)] = new IncrementalGeneratorExpectedState()
                     {
@@ -344,16 +342,18 @@ DiagnosticResult.CompilerError(""BC30481"").WithSpan(""Microsoft.CodeAnalysis.Te
                         ("FilesToCreate.txt", "File1"),
                     },
                 },
-                IncrementalGeneratorTransforms =
+                IncrementalChangeTestState =
                 {
-                    (solution, projectId) =>
+                    Sources =
                     {
-                        var originalProject = solution.GetProject(projectId)!;
-                        var additionalDocument = originalProject.AdditionalDocuments.First(doc => doc.Name == "FilesToCreate.txt");
-                        return solution.WithAdditionalDocumentText(additionalDocument.Id, SourceText.From("File1\nFile2", Encoding.UTF8));
+                        @"// Comment",
+                    },
+                    AdditionalFiles =
+                    {
+                        ("FilesToCreate.txt", "File1\nFile2"),
                     },
                 },
-                IncrementalGeneratorStates =
+                IncrementalGeneratorStepStates =
                 {
                     [typeof(AddEmptyFilesFromAdditionalFile)] = new IncrementalGeneratorExpectedState()
                     {
@@ -394,16 +394,18 @@ DiagnosticResult.CompilerError(""BC30481"").WithSpan(""Microsoft.CodeAnalysis.Te
                             ("FilesToCreate.txt", "File1"),
                         },
                     },
-                    IncrementalGeneratorTransforms =
+                    IncrementalChangeTestState =
                     {
-                        (solution, projectId) =>
+                        Sources =
                         {
-                            var originalProject = solution.GetProject(projectId)!;
-                            var additionalDocument = originalProject.AdditionalDocuments.First(doc => doc.Name == "FilesToCreate.txt");
-                            return solution.WithAdditionalDocumentText(additionalDocument.Id, SourceText.From("File1\nFile2", Encoding.UTF8));
+                            @"// Comment",
+                        },
+                        AdditionalFiles =
+                        {
+                            ("FilesToCreate.txt", "File1\nFile2"),
                         },
                     },
-                    IncrementalGeneratorStates =
+                    IncrementalGeneratorStepStates =
                     {
                         [typeof(AddEmptyFilesFromAdditionalFile)] = new IncrementalGeneratorExpectedState()
                         {
