@@ -41,6 +41,13 @@ namespace $saferootprojectname$
             // TODO: Replace the following code with your own analysis, generating Diagnostic objects for any issues you find
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
 
+            // Check whether the first syntax reference is a type declaration syntax.
+            // This guards against trying to report diagnostic for implicit top-level `Program` type, which cannot be renamed
+            if (!(namedTypeSymbol.DeclaringSyntaxReferences.FirstOrDefault()?.GetSyntax() is BaseTypeDeclarationSyntax))
+            {
+                return;
+            }
+
             // Find just those named type symbols with names containing lowercase letters.
             if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
             {
