@@ -7,6 +7,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
+#pragma warning disable RS1035 // Do not use banned APIs for analyzers
+
 namespace SourceGeneratorSamples
 {
     [Generator]

@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.Text;
 using System.Diagnostics;
 
 #pragma warning disable IDE0008 // Use explicit type
+#pragma warning disable RS1035 // Do not use banned APIs for analyzers
 
 namespace MathsGenerator
 {

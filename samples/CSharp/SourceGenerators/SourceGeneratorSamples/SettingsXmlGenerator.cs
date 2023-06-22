@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
+#pragma warning disable RS1035 // Do not use banned APIs for analyzers
+
 namespace Analyzer1
 {
     [Generator]

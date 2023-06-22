@@ -9,6 +9,8 @@ using NotVisualBasic.FileIO;
 
 #nullable enable
 
+#pragma warning disable RS1035 // Do not use banned APIs for analyzers
+
 // CsvTextFileParser from https://github.com/22222/CsvTextFieldParser adding suppression rules for default VS config
 
 namespace CsvGenerator

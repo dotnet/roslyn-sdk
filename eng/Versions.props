@@ -25,7 +25,7 @@
     <MicrosoftVisualStudioEditorPackagesVersion>17.3.198</MicrosoftVisualStudioEditorPackagesVersion>
     <MicrosoftVisualStudioExtensibilityTestingVersion>0.1.165-beta</MicrosoftVisualStudioExtensibilityTestingVersion>
     <!-- Roslyn -->
-    <MicrosoftCodeAnalysisAnalyzersVersion>3.3.4</MicrosoftCodeAnalysisAnalyzersVersion>
+    <MicrosoftCodeAnalysisAnalyzersVersion>3.3.5-beta1.23322.1</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisCommonVersion>$(MicrosoftCodeAnalysisPackagesVersion)</MicrosoftCodeAnalysisCommonVersion>
     <MicrosoftCodeAnalysisCSharpVersion>$(MicrosoftCodeAnalysisPackagesVersion)</MicrosoftCodeAnalysisCSharpVersion>
     <MicrosoftCodeAnalysisEditorFeaturesTextVersion>$(MicrosoftCodeAnalysisPackagesVersion)</MicrosoftCodeAnalysisEditorFeaturesTextVersion>

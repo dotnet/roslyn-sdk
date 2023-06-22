@@ -7,6 +7,8 @@ Imports System.Text
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Text
 
+#Disable Warning RS1035 ' Do not use APIs banned for analyzers
+
 Namespace SourceGeneratorSamples
 
     <Generator(LanguageNames.VisualBasic)>
