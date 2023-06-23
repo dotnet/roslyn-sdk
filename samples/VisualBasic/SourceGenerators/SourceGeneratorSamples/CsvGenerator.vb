@@ -10,6 +10,8 @@ Imports Microsoft.CodeAnalysis.Text
 
 Imports NotVisualBasic.FileIO
 
+#Disable Warning RS1035 ' Do not use APIs banned for analyzers
+
 ' CsvTextFileParser from https://github.com/22222/CsvTextFieldParser adding suppression rules for default VS config
 
 Namespace SourceGeneratorSamples

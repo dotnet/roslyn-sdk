@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 #nullable enable
+#pragma warning disable RS1035 // Do not use banned APIs for analyzers
 
 namespace Mustache
 {
