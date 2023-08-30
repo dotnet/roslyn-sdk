@@ -9,6 +9,8 @@ variables:
   - name: _DotNetValidationArtifactsCategory
     value: .NETCoreValidation
 
+  - group: DotNet-Blob-Feed
+
 # Branches that trigger a build on commit
 trigger:
 - main
@@ -36,7 +38,7 @@ stages:
     steps:
     - task: NuGetAuthenticate@0
       inputs:
-        nuGetServiceConnections: devdiv/dotnet-core-internal-tooling
+        nuGetServiceConnections: 'devdiv/dotnet-core-internal-tooling'
         forceReinstallCredentialProvider: true
 
     # Needed for SBOM tool
