@@ -11,6 +11,7 @@
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
+    <UsingToolIbcOptimization>true</UsingToolIbcOptimization>
     <MicrosoftNetCompilersToolsetVersion>4.4.0</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftCodeAnalysisCSharpCodeStyleVersion>$(MicrosoftNetCompilersToolsetVersion)</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
     <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>$(MicrosoftNetCompilersToolsetVersion)</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
