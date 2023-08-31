@@ -34,6 +34,33 @@ stages:
     displayName: Official Build
 
     steps:
+
+    # Needed for SBOM tool
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core 3.1 runtime'
+      inputs:
+        packageType: runtime
+        version: 3.1.28
+        installationPath: '$(Build.SourcesDirectory)\.dotnet'
+
+    # Needed because the build fails the NuGet Tools restore without it
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk'
+      inputs:
+        packageType: sdk
+        useGlobalJson: true
+        workingDirectory: '$(Build.SourcesDirectory)'
+
+    # Needed to restore the Microsoft.DevDiv.Optimization.Data.PowerShell package
+    - task: NuGetCommand@2
+      displayName: Restore internal tools
+      inputs:
+        command: restore
+        feedsToUse: config
+        restoreSolution: 'eng\common\internal\Tools.csproj'
+        nugetConfigPath: 'NuGet.config'
+        restoreDirectory: '$(Build.SourcesDirectory)\.packages'
+
     - task: ms-vseng.MicroBuildTasks.30666190-6959-11e5-9f96-f56098202fef.MicroBuildSigningPlugin@1
       displayName: Install Signing Plugin
       inputs:
