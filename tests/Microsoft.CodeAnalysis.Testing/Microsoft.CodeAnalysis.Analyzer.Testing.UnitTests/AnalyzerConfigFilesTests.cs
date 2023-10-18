@@ -5,6 +5,7 @@
 #if !NETCOREAPP1_1 && !NET46
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
 using System.Threading.Tasks;
@@ -97,13 +98,6 @@ key = value
         [Fact]
         public async Task TestDiagnosticInAnalyzerConfigFileBraceNotTreatedAsMarkup()
         {
-            var editorConfig = @"
-root = true
-
-[*]
-key = {|Literal:value|}
-";
-
             await new CSharpTest
             {
                 TestState =
@@ -112,11 +106,59 @@ key = {|Literal:value|}
                     ExpectedDiagnostics = { new DiagnosticResult(HighlightBracesIfAnalyzerConfigMissingAnalyzer.Descriptor).WithLocation(1, 23) },
                     AnalyzerConfigFiles =
                     {
-                        ("/.editorconfig", SourceText.From(editorConfig, Encoding.UTF8)),
+                        new EditorConfigFile
+                        {
+                            ["root"] = "true",
+                            ["*", "key"] = "{|Literal:value|}",
+                        },
                     },
                     MarkupHandling = MarkupMode.None,
                 },
             }.RunAsync();
+        }
+
+        [Fact]
+        public void AnalyzerConfigFileViaDictionarySyntaxEquivalentToManualCreation()
+        {
+            var expected = @"
+root = true
+
+[*]
+key = {|Literal:value|}
+";
+
+            var actual = new EditorConfigFile
+            {
+                ["root"] = "true",
+                ["*", "key"] = "{|Literal:value|}",
+            }.ToString();
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void AnalyzerConfigFileViaAddSyntaxEquivalentToManualCreation()
+        {
+            var expected = @"
+root = true
+
+[*]
+key = {|Literal:value|}
+";
+
+            var actual = new EditorConfigFile
+            {
+                { "root", "true" },
+                {
+                    "*", new Dictionary<string, string>
+                    {
+                        ["key"] = "{|Literal:value|}",
+                    }
+                },
+                { "*", "key", "{|Literal:value|}" },
+            }.ToString();
+
+            Assert.Equal(expected, actual);
         }
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]

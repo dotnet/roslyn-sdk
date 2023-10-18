@@ -51,6 +51,19 @@ Microsoft.CodeAnalysis.Testing.CompilerDiagnostics.Errors = 1 -> Microsoft.CodeA
 Microsoft.CodeAnalysis.Testing.CompilerDiagnostics.None = 0 -> Microsoft.CodeAnalysis.Testing.CompilerDiagnostics
 Microsoft.CodeAnalysis.Testing.CompilerDiagnostics.Suggestions = 3 -> Microsoft.CodeAnalysis.Testing.CompilerDiagnostics
 Microsoft.CodeAnalysis.Testing.CompilerDiagnostics.Warnings = 2 -> Microsoft.CodeAnalysis.Testing.CompilerDiagnostics
+Microsoft.CodeAnalysis.Testing.ConfigFile
+Microsoft.CodeAnalysis.Testing.ConfigFile.Add(string globalKey, string value) -> void
+Microsoft.CodeAnalysis.Testing.ConfigFile.Add(string sectionKey, string key, string value) -> void
+Microsoft.CodeAnalysis.Testing.ConfigFile.ConfigFile(string fileName) -> void
+Microsoft.CodeAnalysis.Testing.ConfigFile.FileName.get -> string
+Microsoft.CodeAnalysis.Testing.ConfigFile.Preamble.get -> System.Collections.Generic.Dictionary<string, string>
+Microsoft.CodeAnalysis.Testing.ConfigFile.this[string globalKey].get -> string
+Microsoft.CodeAnalysis.Testing.ConfigFile.this[string globalKey].set -> void
+Microsoft.CodeAnalysis.Testing.ConfigFile.this[string sectionKey, string key].get -> string
+Microsoft.CodeAnalysis.Testing.ConfigFile.this[string sectionKey, string key].set -> void
+Microsoft.CodeAnalysis.Testing.ConfigFileCollection
+Microsoft.CodeAnalysis.Testing.ConfigFileCollection.Add(Microsoft.CodeAnalysis.Testing.ConfigFile file) -> void
+Microsoft.CodeAnalysis.Testing.ConfigFileCollection.ConfigFileCollection() -> void
 Microsoft.CodeAnalysis.Testing.DefaultVerifier
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.Context.get -> System.Collections.Immutable.ImmutableStack<string>
 Microsoft.CodeAnalysis.Testing.DefaultVerifier.DefaultVerifier() -> void
@@ -99,8 +112,12 @@ Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithSpan(Microsoft.CodeAnalysis.
 Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithSpan(Microsoft.CodeAnalysis.FileLinePositionSpan span, Microsoft.CodeAnalysis.Testing.DiagnosticLocationOptions options) -> Microsoft.CodeAnalysis.Testing.DiagnosticResult
 Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithSpan(int startLine, int startColumn, int endLine, int endColumn) -> Microsoft.CodeAnalysis.Testing.DiagnosticResult
 Microsoft.CodeAnalysis.Testing.DiagnosticResult.WithSpan(string path, int startLine, int startColumn, int endLine, int endColumn) -> Microsoft.CodeAnalysis.Testing.DiagnosticResult
+Microsoft.CodeAnalysis.Testing.EditorConfigFile
+Microsoft.CodeAnalysis.Testing.EditorConfigFile.EditorConfigFile() -> void
 Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer
 Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer.EmptyDiagnosticAnalyzer() -> void
+Microsoft.CodeAnalysis.Testing.GlobalConfigFile
+Microsoft.CodeAnalysis.Testing.GlobalConfigFile.GlobalConfigFile() -> void
 Microsoft.CodeAnalysis.Testing.IVerifier
 Microsoft.CodeAnalysis.Testing.IVerifier.Empty<T>(string collectionName, System.Collections.Generic.IEnumerable<T> collection) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.Equal<T>(T expected, T actual, string message = null) -> void
@@ -156,7 +173,7 @@ Microsoft.CodeAnalysis.Testing.ProjectState.AdditionalFiles.get -> Microsoft.Cod
 Microsoft.CodeAnalysis.Testing.ProjectState.AdditionalFilesFactories.get -> System.Collections.Generic.List<System.Func<System.Collections.Generic.IEnumerable<(string filename, Microsoft.CodeAnalysis.Text.SourceText content)>>>
 Microsoft.CodeAnalysis.Testing.ProjectState.AdditionalProjectReferences.get -> System.Collections.Generic.List<string>
 Microsoft.CodeAnalysis.Testing.ProjectState.AdditionalReferences.get -> Microsoft.CodeAnalysis.Testing.MetadataReferenceCollection
-Microsoft.CodeAnalysis.Testing.ProjectState.AnalyzerConfigFiles.get -> Microsoft.CodeAnalysis.Testing.SourceFileCollection
+Microsoft.CodeAnalysis.Testing.ProjectState.AnalyzerConfigFiles.get -> Microsoft.CodeAnalysis.Testing.ConfigFileCollection
 Microsoft.CodeAnalysis.Testing.ProjectState.AssemblyName.get -> string
 Microsoft.CodeAnalysis.Testing.ProjectState.DocumentationMode.get -> Microsoft.CodeAnalysis.DocumentationMode?
 Microsoft.CodeAnalysis.Testing.ProjectState.DocumentationMode.set -> void
@@ -243,6 +260,7 @@ abstract Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.DefaultFileExt.g
 abstract Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.GetDiagnosticAnalyzers() -> System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer>
 abstract Microsoft.CodeAnalysis.Testing.AnalyzerTest<TVerifier>.Language.get -> string
 abstract Microsoft.CodeAnalysis.Testing.CodeActionTest<TVerifier>.SyntaxKindType.get -> System.Type
+override Microsoft.CodeAnalysis.Testing.ConfigFile.ToString() -> string
 override Microsoft.CodeAnalysis.Testing.DiagnosticResult.ToString() -> string
 override Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext context) -> void
 override Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>

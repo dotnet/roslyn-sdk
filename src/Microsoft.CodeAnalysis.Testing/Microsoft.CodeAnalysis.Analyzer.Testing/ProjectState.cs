@@ -70,7 +70,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public SourceFileCollection AdditionalFiles { get; } = new SourceFileCollection();
 
-        public SourceFileCollection AnalyzerConfigFiles { get; } = new SourceFileCollection();
+        public ConfigFileCollection AnalyzerConfigFiles { get; } = new ConfigFileCollection();
 
         public List<Func<IEnumerable<(string filename, SourceText content)>>> AdditionalFilesFactories { get; } = new List<Func<IEnumerable<(string filename, SourceText content)>>>();
 
