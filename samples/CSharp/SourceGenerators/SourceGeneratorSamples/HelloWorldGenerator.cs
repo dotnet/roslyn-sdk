@@ -4,6 +4,8 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
+#pragma warning disable RS1035 // Do not use banned APIs for analyzers
+
 namespace SourceGeneratorSamples
 {
     [Generator]

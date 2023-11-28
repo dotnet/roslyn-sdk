@@ -112,3 +112,7 @@ dotnet_style_qualification_for_field = false:none
 dotnet_style_qualification_for_property = false:none
 dotnet_style_qualification_for_method = false:none
 dotnet_style_qualification_for_event = false:none
+
+# No diagnostic should be set to a severity greater than warning except for compiler errors where it is impossible to produce a correct binary.
+# Artificially raising the severity of diagnostics to error interferes with the developer inner loop for things like red/green development while running tests.
+# CI sets the Treat Warnings as Errors flag to ensure that any diagnostics that slip through are caught before merge.
