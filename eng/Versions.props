@@ -12,7 +12,7 @@
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
     <UsingToolIbcOptimization>true</UsingToolIbcOptimization>
-    <MicrosoftNetCompilersToolsetVersion>4.4.0</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftNetCompilersToolsetVersion>4.8.0</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftCodeAnalysisCSharpCodeStyleVersion>$(MicrosoftNetCompilersToolsetVersion)</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
     <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>$(MicrosoftNetCompilersToolsetVersion)</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
     <!-- Force prior version due to https://github.com/microsoft/vstest/pull/2192 and https://github.com/microsoft/vstest/pull/2067 -->
