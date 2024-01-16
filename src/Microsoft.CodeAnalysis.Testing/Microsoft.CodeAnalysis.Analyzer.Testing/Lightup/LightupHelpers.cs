@@ -66,6 +66,62 @@ namespace Microsoft.CodeAnalysis.Testing.Lightup
             return expression.Compile();
         }
 
+        /// <summary>
+        /// Generates a compiled accessor method for a field which cannot be bound at compile time.
+        /// </summary>
+        /// <typeparam name="T">The compile-time type representing the instance on which the field is defined. This
+        /// may be a superclass of the actual type on which the field is declared if the declaring type is not
+        /// available at compile time.</typeparam>
+        /// <typeparam name="TResult">The compile-type type representing the result of the field. This may be a
+        /// superclass of the actual type of the field if the field type is not available at compile
+        /// time.</typeparam>
+        /// <param name="type">The runtime time on which the field is defined. If this value is null, the runtime
+        /// time is assumed to not exist, and a fallback accessor returning <paramref name="defaultValue"/> will be
+        /// generated.</param>
+        /// <param name="fieldName">The name of the field to access.</param>
+        /// <param name="defaultValue">The value to return if the field is not available at runtime.</param>
+        /// <returns>An accessor method to access the specified runtime field.</returns>
+        public static Func<T, TResult> CreateFieldAccessor<T, TResult>(Type? type, string fieldName, TResult defaultValue)
+        {
+            if (fieldName is null)
+            {
+                throw new ArgumentNullException(nameof(fieldName));
+            }
+
+            if (type == null)
+            {
+                return CreateFallbackAccessor<T, TResult>(defaultValue);
+            }
+
+            if (!typeof(T).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
+            {
+                throw new InvalidOperationException($"Type '{type}' is not assignable to type '{typeof(T)}'");
+            }
+
+            var field = type.GetTypeInfo().GetDeclaredField(fieldName);
+            if (field == null)
+            {
+                return CreateFallbackAccessor<T, TResult>(defaultValue);
+            }
+
+            if (!typeof(TResult).GetTypeInfo().IsAssignableFrom(field.FieldType.GetTypeInfo()))
+            {
+                throw new InvalidOperationException($"Property '{field}' produces a value of type '{field.FieldType}', which is not assignable to type '{typeof(TResult)}'");
+            }
+
+            var parameter = Expression.Parameter(typeof(T), GenerateParameterName(typeof(T)));
+            Expression instance =
+                type.GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo())
+                ? (Expression)parameter
+                : Expression.Convert(parameter, type);
+
+            Expression<Func<T, TResult>> expression =
+                Expression.Lambda<Func<T, TResult>>(
+                    Expression.Convert(Expression.Field(instance, field), typeof(TResult)),
+                    parameter);
+            return expression.Compile();
+        }
+
         private static string GenerateParameterName(Type parameterType)
         {
             var typeName = parameterType.Name;
