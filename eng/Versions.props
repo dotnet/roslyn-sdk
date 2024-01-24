@@ -70,7 +70,7 @@
     <MicrosoftVisualStudioProjectSystemManagedVSVersion>17.3.51-g48943e0519</MicrosoftVisualStudioProjectSystemManagedVSVersion>
     <MicrosoftVisualStudioProjectSystemSDKToolsVersion>17.3.195-pre</MicrosoftVisualStudioProjectSystemSDKToolsVersion>
     <!-- Libs -->
-    <DiffPlexVersion>1.5.0</DiffPlexVersion>
+    <DiffPlexVersion>1.7.2</DiffPlexVersion>
     <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
     <!-- Testing -->
     <MicrosoftCodeAnalysis2PrimaryTestVersion>2.6.1</MicrosoftCodeAnalysis2PrimaryTestVersion>
