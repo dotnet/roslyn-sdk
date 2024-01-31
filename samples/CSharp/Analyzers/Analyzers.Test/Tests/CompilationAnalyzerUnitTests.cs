@@ -6,9 +6,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Xunit;
-using Verify = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<Sample.Analyzers.CompilationAnalyzer>;
+using Verify = Microsoft.CodeAnalysis.CSharp.Testing.CSharpAnalyzerVerifier<Sample.Analyzers.CompilationAnalyzer, Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace Sample.Analyzers.Test
 {
@@ -28,7 +27,7 @@ class C
             KeyValuePair<string, ReportDiagnostic> specificOption =
                 new KeyValuePair<string, ReportDiagnostic>(DiagnosticIds.SymbolAnalyzerRuleId, ReportDiagnostic.Error);
 
-            await new CSharpAnalyzerTest<CompilationAnalyzer, XUnitVerifier>
+            await new CSharpAnalyzerTest<CompilationAnalyzer, DefaultVerifier>
             {
                 TestCode = test,
                 ExpectedDiagnostics =
@@ -48,7 +47,7 @@ class C
             }.RunAsync();
 
             specificOption = new KeyValuePair<string, ReportDiagnostic>(DiagnosticIds.SymbolAnalyzerRuleId, ReportDiagnostic.Suppress);
-            await new CSharpAnalyzerTest<CompilationAnalyzer, XUnitVerifier>
+            await new CSharpAnalyzerTest<CompilationAnalyzer, DefaultVerifier>
             {
                 TestCode = test,
                 ExpectedDiagnostics =
