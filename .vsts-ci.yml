@@ -24,6 +24,10 @@ extends:
       name: VSEngSS-MicroBuild2022-1ES
       demands:
       - cmd
+    sdl:
+      # We generate SBOM ourselves, so don't need steps injected by 1ES.
+      sbom:
+        enabled: false
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
