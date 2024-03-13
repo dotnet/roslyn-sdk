@@ -71,6 +71,15 @@ extends:
             targetPath: '$(Build.SourcesDirectory)/artifacts/log/$(BuildConfiguration)/AssetManifest'
             artifactName: AssetManifests
 
+          # Publishes setup VSIXes to a drop.
+          # Note: The insertion tool looks for the display name of this task in the logs.
+          - output: microBuildVstsDrop
+            displayName: Upload VSTS Drop
+            condition: succeeded()
+            dropName: $(VisualStudioDropName)
+            dropFolder: 'artifacts\VSSetup\$(BuildConfiguration)\Insertion'
+            accessToken: $(System.AccessToken)
+
         steps:
 
         # Needed for SBOM tool
@@ -133,15 +142,6 @@ extends:
 
         - template: /eng/common/templates-official/steps/generate-sbom.yml@self
 
-        # Publishes setup VSIXes to a drop.
-        # Note: The insertion tool looks for the display name of this task in the logs.
-        - task: ms-vseng.MicroBuildTasks.4305a8de-ba66-4d8b-b2d1-0dc4ecbbf5e8.MicroBuildUploadVstsDropFolder@1
-          displayName: Upload VSTS Drop
-          inputs:
-            DropName: $(VisualStudioDropName)
-            DropFolder: 'artifacts\VSSetup\$(BuildConfiguration)\Insertion'
-            AccessToken: $(System.AccessToken)
-            condition: succeeded()
         - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
           displayName: Cleanup
           condition: always()
