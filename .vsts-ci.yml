@@ -70,6 +70,7 @@ extends:
             condition: succeeded()
             targetPath: '$(Build.SourcesDirectory)/artifacts/log/$(BuildConfiguration)/AssetManifest'
             artifactName: AssetManifests
+
         steps:
 
         # Needed for SBOM tool
