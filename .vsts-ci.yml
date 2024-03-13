@@ -31,7 +31,7 @@ extends:
       displayName: Build
       jobs:
       - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
-        - template: /eng/common/templates/job/onelocbuild.yml@self
+        - template: /eng/common/templates-official/job/onelocbuild.yml@self
           parameters:
             CreatePr: true
             LclSource: lclFilesfromPackage
@@ -130,7 +130,7 @@ extends:
                     /p:GenerateSbom=true
           displayName: Build
 
-        - template: /eng/common/templates/steps/generate-sbom.yml@self
+        - template: /eng/common/templates-official/steps/generate-sbom.yml@self
 
         # Publishes setup VSIXes to a drop.
         # Note: The insertion tool looks for the display name of this task in the logs.
@@ -146,7 +146,7 @@ extends:
           condition: always()
 
       # Publish to Build Asset Registry
-      - template: /eng/common/templates/job/publish-build-assets.yml@self
+      - template: /eng/common/templates-official/job/publish-build-assets.yml@self
         parameters:
           publishUsingPipelines: true
           dependsOn:
@@ -187,7 +187,7 @@ extends:
             displayName: CodeQL Finalize
 
     - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-      - template: /eng/common/templates/post-build/post-build.yml@self
+      - template: /eng/common/templates-official/post-build/post-build.yml@self
         parameters:
           publishingInfraVersion: 3
           # Symbol validation is not entirely reliable as of yet, so should be turned off until
