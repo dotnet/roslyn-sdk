@@ -7,119 +7,73 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Xunit;
 
 namespace Microsoft.CodeAnalysis.Testing.Verifiers
 {
     public class XUnitVerifier : IVerifier
     {
+        private readonly DefaultVerifier _defaultVerifer;
+
         public XUnitVerifier()
-            : this(ImmutableStack<string>.Empty)
+            : this(ImmutableStack<string>.Empty, new DefaultVerifier())
         {
         }
 
         protected XUnitVerifier(ImmutableStack<string> context)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
+
+            // Construct an equivalent DefaultVerifier from the provided context
+            var defaultVerifier = new DefaultVerifier();
+            foreach (var frame in context.Reverse())
+            {
+                defaultVerifier = (DefaultVerifier)defaultVerifier.PushContext(frame);
+            }
+
+            _defaultVerifer = defaultVerifier;
+        }
+
+        private XUnitVerifier(ImmutableStack<string> context, DefaultVerifier defaultVerifier)
+        {
+            Context = context;
+            _defaultVerifer = defaultVerifier;
         }
 
         protected ImmutableStack<string> Context { get; }
 
         public virtual void Empty<T>(string collectionName, IEnumerable<T> collection)
-        {
-            using (var enumerator = collection.GetEnumerator())
-            {
-                if (enumerator.MoveNext())
-                {
-                    throw new EmptyWithMessageException(collection, CreateMessage($"'{collectionName}' is not empty"));
-                }
-            }
-        }
+            => _defaultVerifer.Empty(collectionName, collection);
 
         public virtual void Equal<T>(T expected, T actual, string? message = null)
-        {
-            if (message is null && Context.IsEmpty)
-            {
-                Assert.Equal(expected, actual);
-            }
-            else
-            {
-                if (!EqualityComparer<T>.Default.Equals(expected, actual))
-                {
-                    throw new EqualWithMessageException(expected, actual, CreateMessage(message));
-                }
-            }
-        }
+            => _defaultVerifer.Equal(expected, actual, message);
 
         public virtual void True([DoesNotReturnIf(false)] bool assert, string? message = null)
-        {
-            if (message is null && Context.IsEmpty)
-            {
-                Assert.True(assert);
-            }
-            else
-            {
-                Assert.True(assert, CreateMessage(message));
-            }
-        }
+            => _defaultVerifer.True(assert, message);
 
         public virtual void False([DoesNotReturnIf(true)] bool assert, string? message = null)
-        {
-            if (message is null && Context.IsEmpty)
-            {
-                Assert.False(assert);
-            }
-            else
-            {
-                Assert.False(assert, CreateMessage(message));
-            }
-        }
+            => _defaultVerifer.False(assert, message);
 
         [DoesNotReturn]
         public virtual void Fail(string? message = null)
-        {
-            if (message is null && Context.IsEmpty)
-            {
-                Assert.True(false);
-            }
-            else
-            {
-                Assert.True(false, CreateMessage(message));
-            }
-
-            throw ExceptionUtilities.Unreachable;
-        }
+            => _defaultVerifer.Fail(message);
 
         public virtual void LanguageIsSupported(string language)
-        {
-            Assert.False(language != LanguageNames.CSharp && language != LanguageNames.VisualBasic, CreateMessage($"Unsupported Language: '{language}'"));
-        }
+            => _defaultVerifer.LanguageIsSupported(language);
 
         public virtual void NotEmpty<T>(string collectionName, IEnumerable<T> collection)
-        {
-            using (var enumerator = collection.GetEnumerator())
-            {
-                if (!enumerator.MoveNext())
-                {
-                    throw new NotEmptyWithMessageException(CreateMessage($"'{collectionName}' is empty"));
-                }
-            }
-        }
+            => _defaultVerifer.NotEmpty(collectionName, collection);
 
         public virtual void SequenceEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T>? equalityComparer = null, string? message = null)
-        {
-            var comparer = new SequenceEqualEnumerableEqualityComparer<T>(equalityComparer);
-            var areEqual = comparer.Equals(expected, actual);
-            if (!areEqual)
-            {
-                throw new EqualWithMessageException(expected, actual, CreateMessage(message));
-            }
-        }
+            => _defaultVerifer.SequenceEqual(expected, actual, equalityComparer, message);
 
         public virtual IVerifier PushContext(string context)
         {
-            Assert.IsType<XUnitVerifier>(this);
-            return new XUnitVerifier(Context.Push(context));
+            if (GetType() != typeof(XUnitVerifier))
+            {
+                throw new InvalidOperationException($"'{nameof(PushContext)}' must be overridden to support types derived from '{typeof(XUnitVerifier)}'");
+            }
+
+            return new XUnitVerifier(Context.Push(context), (DefaultVerifier)_defaultVerifer.PushContext(context));
         }
 
         protected virtual string CreateMessage(string? message)
@@ -130,42 +84,6 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             }
 
             return message ?? string.Empty;
-        }
-
-        private sealed class SequenceEqualEnumerableEqualityComparer<T> : IEqualityComparer<IEnumerable<T>?>
-        {
-            private readonly IEqualityComparer<T> _itemEqualityComparer;
-
-            public SequenceEqualEnumerableEqualityComparer(IEqualityComparer<T>? itemEqualityComparer)
-            {
-                _itemEqualityComparer = itemEqualityComparer ?? EqualityComparer<T>.Default;
-            }
-
-            public bool Equals(IEnumerable<T>? x, IEnumerable<T>? y)
-            {
-                if (ReferenceEquals(x, y)) { return true; }
-                if (x is null || y is null) { return false; }
-
-                return x.SequenceEqual(y, _itemEqualityComparer);
-            }
-
-            public int GetHashCode(IEnumerable<T>? obj)
-            {
-                if (obj is null)
-                {
-                    return 0;
-                }
-
-                // From System.Tuple
-                //
-                // The suppression is required due to an invalid contract in IEqualityComparer<T>
-                // https://github.com/dotnet/runtime/issues/30998
-                return obj
-                    .Select(item => _itemEqualityComparer.GetHashCode(item!))
-                    .Aggregate(
-                        0,
-                        (aggHash, nextHash) => ((aggHash << 5) + aggHash) ^ nextHash);
-            }
         }
     }
 }

@@ -15,8 +15,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
         {
             var actual = new int[1];
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<EmptyException>(() => verifier.Empty("someCollectionName", actual));
-            Assert.Equal($"'someCollectionName' is not empty{Environment.NewLine}Assert.Empty() Failure{Environment.NewLine}Expected: <empty>{Environment.NewLine}Actual:   [0]", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.Empty("someCollectionName", actual));
+            Assert.Equal($"'someCollectionName' is not empty", exception.Message);
         }
 
         [Fact]
@@ -24,8 +24,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
         {
             var actual = new int[1];
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<EmptyException>(() => verifier.Empty("someCollectionName", actual));
-            Assert.Equal($"Context: Known Context{Environment.NewLine}'someCollectionName' is not empty{Environment.NewLine}Assert.Empty() Failure{Environment.NewLine}Expected: <empty>{Environment.NewLine}Actual:   [0]", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.Empty("someCollectionName", actual));
+            Assert.Equal($"Context: Known Context{Environment.NewLine}'someCollectionName' is not empty", exception.Message);
         }
 
         [Fact]
@@ -34,10 +34,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             var expected = 0;
             var actual = 1;
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<EqualException>(() => verifier.Equal(expected, actual));
-            Assert.Equal(expected.ToString(), exception.Expected);
-            Assert.Equal(actual.ToString(), exception.Actual);
-            Assert.Equal($"Assert.Equal() Failure{Environment.NewLine}Expected: 0{Environment.NewLine}Actual:   1", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.Equal(expected, actual));
+            Assert.Equal($"items not equal.  expected:'0' actual:'1'", exception.Message);
         }
 
         [Fact]
@@ -46,10 +44,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             var expected = 0;
             var actual = 1;
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<EqualException>(() => verifier.Equal(expected, actual));
-            Assert.Equal(expected.ToString(), exception.Expected);
-            Assert.Equal(actual.ToString(), exception.Actual);
-            Assert.Equal($"Context: Known Context{Environment.NewLine}{Environment.NewLine}Assert.Equal() Failure{Environment.NewLine}Expected: 0{Environment.NewLine}Actual:   1", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.Equal(expected, actual));
+            Assert.Equal($"Context: Known Context{Environment.NewLine}items not equal.  expected:'0' actual:'1'", exception.Message);
         }
 
         [Fact]
@@ -58,10 +54,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             var expected = 0;
             var actual = 1;
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<EqualException>(() => verifier.Equal(expected, actual, "Custom message"));
-            Assert.Equal(expected.ToString(), exception.Expected);
-            Assert.Equal(actual.ToString(), exception.Actual);
-            Assert.Equal($"Custom message{Environment.NewLine}Assert.Equal() Failure{Environment.NewLine}Expected: 0{Environment.NewLine}Actual:   1", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.Equal(expected, actual, "Custom message"));
+            Assert.Equal($"Custom message", exception.Message);
         }
 
         [Fact]
@@ -70,122 +64,120 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             var expected = 0;
             var actual = 1;
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<EqualException>(() => verifier.Equal(expected, actual, "Custom message"));
-            Assert.Equal(expected.ToString(), exception.Expected);
-            Assert.Equal(actual.ToString(), exception.Actual);
-            Assert.Equal($"Context: Known Context{Environment.NewLine}Custom message{Environment.NewLine}Assert.Equal() Failure{Environment.NewLine}Expected: 0{Environment.NewLine}Actual:   1", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.Equal(expected, actual, "Custom message"));
+            Assert.Equal($"Context: Known Context{Environment.NewLine}Custom message", exception.Message);
         }
 
         [Fact]
         public void TestTrueMessage()
         {
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<TrueException>(() => verifier.True(false));
-            Assert.Equal($"Assert.True() Failure{Environment.NewLine}Expected: True{Environment.NewLine}Actual:   False", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.True(false));
+            Assert.Equal($"Expected value to be 'true' but was 'false'", exception.Message);
         }
 
         [Fact]
         public void TestTrueMessageWithContext()
         {
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<TrueException>(() => verifier.True(false));
-            Assert.Equal($"Context: Known Context{Environment.NewLine}{Environment.NewLine}Expected: True{Environment.NewLine}Actual:   False", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.True(false));
+            Assert.Equal($"Context: Known Context{Environment.NewLine}Expected value to be 'true' but was 'false'", exception.Message);
         }
 
         [Fact]
         public void TestTrueCustomMessage()
         {
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<TrueException>(() => verifier.True(false, "Custom message"));
-            Assert.Equal($"Custom message{Environment.NewLine}Expected: True{Environment.NewLine}Actual:   False", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.True(false, "Custom message"));
+            Assert.Equal($"Custom message", exception.Message);
         }
 
         [Fact]
         public void TestTrueCustomMessageWithContext()
         {
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<TrueException>(() => verifier.True(false, "Custom message"));
-            Assert.Equal($"Context: Known Context{Environment.NewLine}Custom message{Environment.NewLine}Expected: True{Environment.NewLine}Actual:   False", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.True(false, "Custom message"));
+            Assert.Equal($"Context: Known Context{Environment.NewLine}Custom message", exception.Message);
         }
 
         [Fact]
         public void TestFalseMessage()
         {
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<FalseException>(() => verifier.False(true));
-            Assert.Equal($"Assert.False() Failure{Environment.NewLine}Expected: False{Environment.NewLine}Actual:   True", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.False(true));
+            Assert.Equal($"Expected value to be 'false' but was 'true'", exception.Message);
         }
 
         [Fact]
         public void TestFalseMessageWithContext()
         {
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<FalseException>(() => verifier.False(true));
-            Assert.Equal($"Context: Known Context{Environment.NewLine}{Environment.NewLine}Expected: False{Environment.NewLine}Actual:   True", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.False(true));
+            Assert.Equal($"Context: Known Context{Environment.NewLine}Expected value to be 'false' but was 'true'", exception.Message);
         }
 
         [Fact]
         public void TestFalseCustomMessage()
         {
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<FalseException>(() => verifier.False(true, "Custom message"));
-            Assert.Equal($"Custom message{Environment.NewLine}Expected: False{Environment.NewLine}Actual:   True", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.False(true, "Custom message"));
+            Assert.Equal($"Custom message", exception.Message);
         }
 
         [Fact]
         public void TestFalseCustomMessageWithContext()
         {
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<FalseException>(() => verifier.False(true, "Custom message"));
-            Assert.Equal($"Context: Known Context{Environment.NewLine}Custom message{Environment.NewLine}Expected: False{Environment.NewLine}Actual:   True", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.False(true, "Custom message"));
+            Assert.Equal($"Context: Known Context{Environment.NewLine}Custom message", exception.Message);
         }
 
         [Fact]
         public void TestFailMessage()
         {
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<TrueException>(() => verifier.Fail());
-            Assert.Equal($"Assert.True() Failure{Environment.NewLine}Expected: True{Environment.NewLine}Actual:   False", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.Fail());
+            Assert.Equal($"Verification failed for an unspecified reason.", exception.Message);
         }
 
         [Fact]
         public void TestFailMessageWithContext()
         {
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<TrueException>(() => verifier.Fail());
-            Assert.Equal($"Context: Known Context{Environment.NewLine}{Environment.NewLine}Expected: True{Environment.NewLine}Actual:   False", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.Fail());
+            Assert.Equal($"Context: Known Context{Environment.NewLine}Verification failed for an unspecified reason.", exception.Message);
         }
 
         [Fact]
         public void TestFailCustomMessage()
         {
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<TrueException>(() => verifier.Fail("Custom message"));
-            Assert.Equal($"Custom message{Environment.NewLine}Expected: True{Environment.NewLine}Actual:   False", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.Fail("Custom message"));
+            Assert.Equal($"Custom message", exception.Message);
         }
 
         [Fact]
         public void TestFailCustomMessageWithContext()
         {
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<TrueException>(() => verifier.Fail("Custom message"));
-            Assert.Equal($"Context: Known Context{Environment.NewLine}Custom message{Environment.NewLine}Expected: True{Environment.NewLine}Actual:   False", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.Fail("Custom message"));
+            Assert.Equal($"Context: Known Context{Environment.NewLine}Custom message", exception.Message);
         }
 
         [Fact]
         public void TestLanguageIsSupportedMessage()
         {
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<FalseException>(() => verifier.LanguageIsSupported("NonLanguage"));
-            Assert.Equal($"Unsupported Language: 'NonLanguage'{Environment.NewLine}Expected: False{Environment.NewLine}Actual:   True", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.LanguageIsSupported("NonLanguage"));
+            Assert.Equal($"Unsupported Language: 'NonLanguage'", exception.Message);
         }
 
         [Fact]
         public void TestLanguageIsSupportedMessageWithContext()
         {
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<FalseException>(() => verifier.LanguageIsSupported("NonLanguage"));
-            Assert.Equal($"Context: Known Context{Environment.NewLine}Unsupported Language: 'NonLanguage'{Environment.NewLine}Expected: False{Environment.NewLine}Actual:   True", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.LanguageIsSupported("NonLanguage"));
+            Assert.Equal($"Context: Known Context{Environment.NewLine}Unsupported Language: 'NonLanguage'", exception.Message);
         }
 
         [Fact]
@@ -193,8 +185,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
         {
             var actual = new int[0];
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<NotEmptyException>(() => verifier.NotEmpty("someCollectionName", actual));
-            Assert.Equal($"'someCollectionName' is empty{Environment.NewLine}Assert.NotEmpty() Failure", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.NotEmpty("someCollectionName", actual));
+            Assert.Equal($"'someCollectionName' is empty", exception.Message);
         }
 
         [Fact]
@@ -202,8 +194,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
         {
             var actual = new int[0];
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<NotEmptyException>(() => verifier.NotEmpty("someCollectionName", actual));
-            Assert.Equal($"Context: Known Context{Environment.NewLine}'someCollectionName' is empty{Environment.NewLine}Assert.NotEmpty() Failure", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.NotEmpty("someCollectionName", actual));
+            Assert.Equal($"Context: Known Context{Environment.NewLine}'someCollectionName' is empty", exception.Message);
         }
 
         [Fact]
@@ -212,10 +204,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             var expected = new int[] { 0 };
             var actual = new int[] { 1 };
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<EqualException>(() => verifier.SequenceEqual(expected, actual));
-            Assert.Equal("Int32[] [0]", exception.Expected);
-            Assert.Equal("Int32[] [1]", exception.Actual);
-            Assert.Equal($"Assert.Equal() Failure{Environment.NewLine}Expected: Int32[] [0]{Environment.NewLine}Actual:   Int32[] [1]", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.SequenceEqual(expected, actual));
+            Assert.Equal($"Sequences are not equal", exception.Message);
         }
 
         [Fact]
@@ -224,10 +214,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             var expected = new int[] { 0 };
             var actual = new int[] { 1 };
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<EqualException>(() => verifier.SequenceEqual(expected, actual));
-            Assert.Equal("Int32[] [0]", exception.Expected);
-            Assert.Equal("Int32[] [1]", exception.Actual);
-            Assert.Equal($"Context: Known Context{Environment.NewLine}{Environment.NewLine}Assert.Equal() Failure{Environment.NewLine}Expected: Int32[] [0]{Environment.NewLine}Actual:   Int32[] [1]", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.SequenceEqual(expected, actual));
+            Assert.Equal($"Context: Known Context{Environment.NewLine}Sequences are not equal", exception.Message);
         }
 
         [Fact]
@@ -236,10 +224,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             var expected = new int[] { 0 };
             var actual = new int[] { 1 };
             var verifier = new XUnitVerifier();
-            var exception = Assert.ThrowsAny<EqualException>(() => verifier.SequenceEqual(expected, actual, message: "Custom message"));
-            Assert.Equal("Int32[] [0]", exception.Expected);
-            Assert.Equal("Int32[] [1]", exception.Actual);
-            Assert.Equal($"Custom message{Environment.NewLine}Assert.Equal() Failure{Environment.NewLine}Expected: Int32[] [0]{Environment.NewLine}Actual:   Int32[] [1]", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.SequenceEqual(expected, actual, message: "Custom message"));
+            Assert.Equal($"Custom message", exception.Message);
         }
 
         [Fact]
@@ -248,10 +234,8 @@ namespace Microsoft.CodeAnalysis.Testing.Verifiers
             var expected = new int[] { 0 };
             var actual = new int[] { 1 };
             var verifier = new XUnitVerifier().PushContext("Known Context");
-            var exception = Assert.ThrowsAny<EqualException>(() => verifier.SequenceEqual(expected, actual, message: "Custom message"));
-            Assert.Equal("Int32[] [0]", exception.Expected);
-            Assert.Equal("Int32[] [1]", exception.Actual);
-            Assert.Equal($"Context: Known Context{Environment.NewLine}Custom message{Environment.NewLine}Assert.Equal() Failure{Environment.NewLine}Expected: Int32[] [0]{Environment.NewLine}Actual:   Int32[] [1]", exception.Message);
+            var exception = Assert.ThrowsAny<InvalidOperationException>(() => verifier.SequenceEqual(expected, actual, message: "Custom message"));
+            Assert.Equal($"Context: Known Context{Environment.NewLine}Custom message", exception.Message);
         }
     }
 }
