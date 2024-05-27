@@ -5,9 +5,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Xunit;
-using Verify = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.AnalyzerVerifier<Sample.Analyzers.SyntaxTreeAnalyzer>;
+using Verify = Microsoft.CodeAnalysis.CSharp.Testing.CSharpAnalyzerVerifier<Sample.Analyzers.SyntaxTreeAnalyzer, Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace Sample.Analyzers.Test
 {
@@ -25,7 +24,7 @@ class C
 }";
             DiagnosticResult expected = Verify.Diagnostic().WithArguments("Test0.cs");
 
-            await new CSharpAnalyzerTest<SyntaxTreeAnalyzer, XUnitVerifier>
+            await new CSharpAnalyzerTest<SyntaxTreeAnalyzer, DefaultVerifier>
             {
                 TestCode = test,
                 SolutionTransforms =
@@ -38,7 +37,7 @@ class C
                 }
             }.RunAsync();
 
-            await new CSharpAnalyzerTest<SyntaxTreeAnalyzer, XUnitVerifier>
+            await new CSharpAnalyzerTest<SyntaxTreeAnalyzer, DefaultVerifier>
             {
                 TestCode = test,
                 ExpectedDiagnostics = { expected },
@@ -52,7 +51,7 @@ class C
                 }
             }.RunAsync();
 
-            await new CSharpAnalyzerTest<SyntaxTreeAnalyzer, XUnitVerifier>
+            await new CSharpAnalyzerTest<SyntaxTreeAnalyzer, DefaultVerifier>
             {
                 TestCode = test,
                 ExpectedDiagnostics = { expected },
