@@ -108,6 +108,28 @@ decrease the overall confidence in the test suite. For analyzers that provide a 
 with the code fix verifier for test cases where diagnostics are reported in the input source. For test cases where no
 diagnostic is reported in the input source, `VerifyAnalyzerAsync` remains appropriate.
 
+### Reuse ReferenceAssemblies between tests
+
+Resolving `ReferenceAssemblies` can be an expensive operation, especially when package references are used. Reuse instances
+of `ReferenceAssemblies` when possible to minimize the number of resolution operations required.
+
+```csharp
+static class ReferenceAssemblyCatalog
+{
+    // Define a static property to share ReferenceAssemblies between tests
+    public static ReferenceAssemblies Net80WithNewtonsoftJson { get; } = ReferenceAssemblies.Net.Net80.AddPackages([new PackageIdentity("Newtonsoft.Json", "12.0.1"))]);
+}
+
+CSharpAnalyzerTest<TAnalyzer, DefaultVerifier> test = new()
+{
+    TestState =
+    {
+        Sources = { source },
+        ReferenceAssemblies = ReferenceAssemblyCatalog.Net80WithNewtonsoftJson, // Use a custom set of reference assemblies for the test
+    },
+};
+```
+
 ## Examples
 
 ### Basic use cases
