@@ -3,7 +3,7 @@
   <PropertyGroup>
     <!-- This repo version -->
     <VersionPrefix>4.0.0</VersionPrefix>
-    <NugetPackagePrefix>1.1.2</NugetPackagePrefix>
+    <NugetPackagePrefix>1.1.3</NugetPackagePrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
