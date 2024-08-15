@@ -260,7 +260,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 Diagnostics:
                 // /0/Test0.cs(3,7): warning CS0414: The field 'TestClass.value' is assigned but its value is never used
-                DiagnosticResult.CompilerWarning("CS0414").WithSpan(3, 7, 3, 12).WithArguments("TestClass.value"),
+                  int {|#0:value|} = 3;
+                DiagnosticResult.CompilerWarning("CS0414").WithLocation(0).WithArguments("TestClass.value"),
 
 
                 """.ReplaceLineEndings();
