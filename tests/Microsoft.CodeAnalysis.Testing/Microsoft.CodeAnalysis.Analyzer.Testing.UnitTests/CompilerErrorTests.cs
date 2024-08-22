@@ -550,5 +550,92 @@ namespace Microsoft.CodeAnalysis.Testing
             }.RunAsync();
         }
 #endif
+
+        [Fact]
+        [WorkItem(516, "https://github.com/dotnet/roslyn-sdk/issues/516")]
+        public void WithArguments_TooManyArguments_ShouldThrowException()
+        {
+            var descriptor = new DiagnosticDescriptor("TestId", "TestTitle", "'{0}' calls '{1}'", "Category", DiagnosticSeverity.Warning, true);
+            var result = new DiagnosticResult(descriptor);
+
+            var exception = Assert.Throws<ArgumentException>(() => result.WithArguments("arg1", "arg2", "arg3"));
+            Assert.Equal("Incorrect number of arguments provided. The message expects 2 argument(s), but received 3.", exception.Message);
+        }
+
+        [Fact]
+        public void WithArguments_TooFewArguments_ShouldThrowException()
+        {
+            var descriptor = new DiagnosticDescriptor("TestId", "TestTitle", "'{0}' calls '{1}'", "Category", DiagnosticSeverity.Warning, true);
+            var result = new DiagnosticResult(descriptor);
+
+            var exception = Assert.Throws<ArgumentException>(() => result.WithArguments("arg1"));
+            Assert.Equal("Incorrect number of arguments provided. The message expects 2 argument(s), but received 1.", exception.Message);
+        }
+
+        [Fact]
+        public void WithArguments_NoPlaceholdersButWithArguments_ShouldThrowException()
+        {
+            var descriptor = new DiagnosticDescriptor("TestId", "TestTitle", "This message has no placeholders.", "Category", DiagnosticSeverity.Warning, true);
+            var result = new DiagnosticResult(descriptor);
+
+            var exception = Assert.Throws<ArgumentException>(() => result.WithArguments("arg1"));
+            Assert.Equal("Incorrect number of arguments provided. The message expects 0 argument(s), but received 1.", exception.Message);
+        }
+
+        [Fact]
+        public void WithArguments_NoArgumentsAndNoPlaceholders_ShouldNotThrowException()
+        {
+            var descriptor = new DiagnosticDescriptor("TestId", "TestTitle", "This message has no placeholders.", "Category", DiagnosticSeverity.Warning, true);
+            var result = new DiagnosticResult(descriptor);
+
+            var formattedResult = result.WithArguments();
+
+            Assert.Empty(formattedResult.MessageArguments!);
+            Assert.Equal("This message has no placeholders.", formattedResult.Message);
+        }
+
+        [Fact]
+        public void WithArguments_PlaceholdersWithoutArguments_ShouldThrowException()
+        {
+            var descriptor = new DiagnosticDescriptor("TestId", "TestTitle", "'{0}' calls '{1}'", "Category", DiagnosticSeverity.Warning, true);
+            var result = new DiagnosticResult(descriptor);
+
+            var exception = Assert.Throws<ArgumentException>(() => result.WithArguments());
+            Assert.Equal("Incorrect number of arguments provided. The message expects 2 argument(s), but received 0.", exception.Message);
+        }
+
+        [Fact]
+        public void WithArguments_ComplexPlaceholders_ShouldFormatCorrectly()
+        {
+            var descriptor = new DiagnosticDescriptor("TestId", "TestTitle", "'{0:MMMM dd, yyyy}' and '{1}'", "Category", DiagnosticSeverity.Warning, true);
+            var result = new DiagnosticResult(descriptor);
+
+            var formattedResult = result.WithArguments(DateTime.Now, "arg2");
+
+            Assert.Contains("arg2", formattedResult.Message);
+        }
+
+        [Fact]
+        public void WithArguments_DifferentDataTypes_ShouldFormatCorrectly()
+        {
+            var descriptor = new DiagnosticDescriptor("TestId", "TestTitle", "'{0}' and '{1}'", "Category", DiagnosticSeverity.Warning, true);
+            var result = new DiagnosticResult(descriptor);
+
+            var formattedResult = result.WithArguments(123, DateTime.Now);
+
+            Assert.Contains("123", formattedResult.Message);
+        }
+
+        [Fact]
+        public void WithArguments_CorrectNumberOfArguments_ShouldNotThrowException()
+        {
+            var descriptor = new DiagnosticDescriptor("TestId", "TestTitle", "'{0}' calls '{1}'", "Category", DiagnosticSeverity.Warning, true);
+            var result = new DiagnosticResult(descriptor);
+
+            var formattedResult = result.WithArguments("arg1", "arg2");
+
+            Assert.Equal(new object[] { "arg1", "arg2" }, formattedResult.MessageArguments);
+            Assert.Equal("'arg1' calls 'arg2'", formattedResult.Message);
+        }
     }
 }
