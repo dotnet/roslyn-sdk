@@ -108,7 +108,8 @@ class Sample { string {|#0:_value|}; }",
 
                 Actual diagnostic:
                     // /0/Test0.cs(1,23): warning Brace: message
-                VerifyCS.Diagnostic().WithSpan(1, 23, 1, 24).WithIsSuppressed(true),
+                namespace MyNamespace {|#0:{|} }
+                VerifyCS.Diagnostic().WithLocation(0).WithIsSuppressed(true),
 
 
                 """.ReplaceLineEndings();

@@ -817,10 +817,28 @@ namespace Microsoft.CodeAnalysis.Testing
             var builder = new StringBuilder();
             for (var i = 0; i < diagnostics.Length; ++i)
             {
-                var diagnosticsId = diagnostics[i].Id;
-                var location = diagnostics[i].Location;
+                var diagnostic = diagnostics[i];
+                var diagnosticsId = diagnostic.Id;
+                var location = diagnostic.Location;
 
-                builder.Append("// ").AppendLine(diagnostics[i].ToString());
+                builder.Append("// ").AppendLine(diagnostic.ToString());
+
+                if (location != Location.None && location.IsInSource)
+                {
+                    var lineSpan = location.GetLineSpan();
+                    var sourceText = location.SourceTree.GetText();
+
+                    // Extract the full line where the diagnostic occurred
+                    var line = sourceText.Lines[lineSpan.StartLinePosition.Line].ToString();
+
+                    // Calculate the start and end positions for the highlight
+                    var startCharacter = lineSpan.StartLinePosition.Character;
+                    var endCharacter = lineSpan.EndLinePosition.Character;
+
+                    var highlightedText = line.Insert(endCharacter, $"|}}").Insert(startCharacter, $"{{|#{i}:");
+
+                    builder.AppendLine(highlightedText);
+                }
 
                 var applicableAnalyzer = analyzers.FirstOrDefault(a => a.SupportedDiagnostics.Any(dd => dd.Id == diagnosticsId));
                 if (applicableAnalyzer != null)
@@ -828,67 +846,38 @@ namespace Microsoft.CodeAnalysis.Testing
                     var analyzerType = applicableAnalyzer.GetType();
                     var rule = location != Location.None && location.IsInSource && applicableAnalyzer.SupportedDiagnostics.Length == 1 ? string.Empty : $"{analyzerType.Name}.{diagnosticsId}";
 
-                    if (location == Location.None || !location.IsInSource)
-                    {
-                        builder.Append($"new DiagnosticResult({rule})");
-                    }
-                    else
-                    {
-                        var resultMethodName = location.SourceTree.FilePath.EndsWith(".cs") ? "VerifyCS.Diagnostic" : "VerifyVB.Diagnostic";
-                        builder.Append($"{resultMethodName}({rule})");
-                    }
+                    builder.Append($"VerifyCS.Diagnostic({rule}).WithLocation({i})");
                 }
                 else
                 {
                     builder.Append(
-                        diagnostics[i].Severity switch
+                        diagnostic.Severity switch
                         {
-                            DiagnosticSeverity.Error => $"{nameof(DiagnosticResult)}.{nameof(DiagnosticResult.CompilerError)}(\"{diagnostics[i].Id}\")",
-                            DiagnosticSeverity.Warning => $"{nameof(DiagnosticResult)}.{nameof(DiagnosticResult.CompilerWarning)}(\"{diagnostics[i].Id}\")",
-                            var severity => $"new {nameof(DiagnosticResult)}(\"{diagnostics[i].Id}\", {nameof(DiagnosticSeverity)}.{severity})",
+                            DiagnosticSeverity.Error => $"{nameof(DiagnosticResult)}.{nameof(DiagnosticResult.CompilerError)}(\"{diagnostic.Id}\")",
+                            DiagnosticSeverity.Warning => $"{nameof(DiagnosticResult)}.{nameof(DiagnosticResult.CompilerWarning)}(\"{diagnostic.Id}\")",
+                            var severity => $"new {nameof(DiagnosticResult)}(\"{diagnostic.Id}\", {nameof(DiagnosticSeverity)}.{severity})",
                         });
-                }
 
-                if (location == Location.None)
-                {
-                    // No additional location data needed
-                }
-                else
-                {
-                    AppendLocation(diagnostics[i].Location);
-                    foreach (var additionalLocation in diagnostics[i].AdditionalLocations)
+                    if (location != Location.None && location.IsInSource)
                     {
-                        AppendLocation(additionalLocation);
+                        builder.Append($".WithLocation({i})");
                     }
                 }
 
-                var arguments = diagnostics[i].Arguments();
-                if (arguments.Count > 0)
+                if (diagnostic.Arguments().Any())
                 {
-                    builder.Append($".{nameof(DiagnosticResult.WithArguments)}(");
-                    builder.Append(string.Join(", ", arguments.Select(a => "\"" + a?.ToString() + "\"")));
-                    builder.Append(")");
+                    builder.Append($".WithArguments({string.Join(", ", diagnostic.Arguments().Select(a => $"\"{a}\""))})");
                 }
 
-                if (diagnostics[i].IsSuppressed())
+                if (diagnostic.IsSuppressed())
                 {
-                    builder.Append($".{nameof(DiagnosticResult.WithIsSuppressed)}(true)");
+                    builder.Append($".WithIsSuppressed(true)");
                 }
 
                 builder.AppendLine(",");
             }
 
             return builder.ToString();
-
-            // Local functions
-            void AppendLocation(Location location)
-            {
-                var lineSpan = location.GetLineSpan();
-                var pathString = location.IsInSource && lineSpan.Path == defaultFilePath ? string.Empty : $"\"{lineSpan.Path}\", ";
-                var linePosition = lineSpan.StartLinePosition;
-                var endLinePosition = lineSpan.EndLinePosition;
-                builder.Append($".WithSpan({pathString}{linePosition.Line + 1}, {linePosition.Character + 1}, {endLinePosition.Line + 1}, {endLinePosition.Character + 1})");
-            }
         }
 
         /// <summary>
