@@ -42,7 +42,8 @@ namespace Sample.Analyzers
                 DiagnosticCategories.Stateful,
                 DiagnosticSeverity.Warning,
                 isEnabledByDefault: true,
-                description: Description);
+                description: Description,
+                customTags: WellKnownDiagnosticTags.CompilationEnd);
 
         public const string UnsecureMethodAttributeName = "MyNamespace.UnsecureMethodAttribute";
         public const string SecureTypeInterfaceName = "MyNamespace.ISecureType";
