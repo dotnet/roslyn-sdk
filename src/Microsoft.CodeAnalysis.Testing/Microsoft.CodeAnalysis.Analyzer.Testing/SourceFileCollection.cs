@@ -18,9 +18,19 @@ namespace Microsoft.CodeAnalysis.Testing
             Add((file.filename, SourceText.From(file.content)));
         }
 
+        public void Add((string filename, string content, Encoding encoding) file)
+        {
+            Add((file.filename, SourceText.From(file.content, file.encoding)));
+        }
+
         public void Add((Type sourceGeneratorType, string filename, string content) file)
         {
-            var contentWithEncoding = SourceText.From(file.content, Encoding.UTF8);
+            Add((file.sourceGeneratorType, file.filename, file.content, Encoding.UTF8));
+        }
+
+        public void Add((Type sourceGeneratorType, string filename, string content, Encoding encoding) file)
+        {
+            var contentWithEncoding = SourceText.From(file.content, file.encoding);
             Add((file.sourceGeneratorType, file.filename, contentWithEncoding));
         }
 
