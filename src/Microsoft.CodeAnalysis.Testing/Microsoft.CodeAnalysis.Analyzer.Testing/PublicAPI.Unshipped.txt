@@ -224,7 +224,9 @@ Microsoft.CodeAnalysis.Testing.SolutionState.WithProcessedMarkup(Microsoft.CodeA
 Microsoft.CodeAnalysis.Testing.SourceFileCollection
 Microsoft.CodeAnalysis.Testing.SourceFileCollection.Add((System.Type sourceGeneratorType, string filename, Microsoft.CodeAnalysis.Text.SourceText content) file) -> void
 Microsoft.CodeAnalysis.Testing.SourceFileCollection.Add((System.Type sourceGeneratorType, string filename, string content) file) -> void
+Microsoft.CodeAnalysis.Testing.SourceFileCollection.Add((System.Type sourceGeneratorType, string filename, string content, System.Text.Encoding encoding) file) -> void
 Microsoft.CodeAnalysis.Testing.SourceFileCollection.Add((string filename, string content) file) -> void
+Microsoft.CodeAnalysis.Testing.SourceFileCollection.Add((string filename, string content, System.Text.Encoding encoding) file) -> void
 Microsoft.CodeAnalysis.Testing.SourceFileCollection.SourceFileCollection() -> void
 Microsoft.CodeAnalysis.Testing.SourceFileList
 Microsoft.CodeAnalysis.Testing.SourceFileList.Add(Microsoft.CodeAnalysis.Text.SourceText content) -> void
