@@ -16,6 +16,7 @@
     <Ngen>false</Ngen>
     <UseCodeBase>true</UseCodeBase>
     <SetupProductArch>Neutral</SetupProductArch>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
   <!-- References -->
@@ -45,6 +46,7 @@
     <PackageReference Include="StreamJsonRpc" Version="$(StreamJsonRpcVersion)" />
     <!-- Explicit reference to avoid missing package warning -->
     <PackageReference Include="Microsoft.VisualStudio.Interop" Version="$(MicrosoftVisualStudioInteropVersion)" />
+    <PackageReference Include="System.Resources.Extensions" Version="$(SystemResourcesExtensionsVersion)" />
   </ItemGroup>
 
   <!-- Project References -->
