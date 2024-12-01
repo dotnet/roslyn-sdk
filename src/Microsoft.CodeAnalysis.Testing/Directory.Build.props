@@ -10,6 +10,9 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
   <PropertyGroup>
+    <!--    Required for the .NET 9 SDK to still build .NET Standard 1.6-->
+    <CheckNotRecommendedTargetFramework>false</CheckNotRecommendedTargetFramework>
+    
     <!--
       netcoreapp3.1: Ensures full support for nullable reference types
       netstandard1.6/net452: Roslyn 1.x
