@@ -1541,7 +1541,8 @@ namespace Microsoft.CodeAnalysis.Testing
             }
         }
 
-        private sealed class ImmutableDictionaryWithImmutableArrayValuesEqualityComparer<TKey, TValue> : IEqualityComparer<ImmutableDictionary<TKey, ImmutableArray<TValue>>?> where TKey : notnull
+        private sealed class ImmutableDictionaryWithImmutableArrayValuesEqualityComparer<TKey, TValue> : IEqualityComparer<ImmutableDictionary<TKey, ImmutableArray<TValue>>?>
+            where TKey : notnull
         {
             public static readonly ImmutableDictionaryWithImmutableArrayValuesEqualityComparer<TKey, TValue> Instance = new();
 
