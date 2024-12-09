@@ -368,7 +368,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 if (x.content is null || y.content is null)
                 {
-                    return ReferenceEquals(x, y);
+                    return Equals(x, y);
                 }
 
                 return x.content.Encoding == y.content.Encoding

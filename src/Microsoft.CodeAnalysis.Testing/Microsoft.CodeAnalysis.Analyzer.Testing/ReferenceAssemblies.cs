@@ -91,7 +91,17 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             get
             {
-#if NETSTANDARD1_6
+#if NET9_0_OR_GREATER
+                return Net.Net90;
+#elif NET8_0_OR_GREATER
+                return Net.Net80;
+#elif NET7_0_OR_GREATER
+                return Net.Net70;
+#elif NET6_0_OR_GREATER
+                return Net.Net60;
+#elif NET5_0_OR_GREATER
+                return Net.Net50;
+#elif NETSTANDARD1_6
                 return NetStandard.NetStandard16;
 #elif NETSTANDARD2_0
                 return NetStandard.NetStandard20;
@@ -1532,6 +1542,7 @@ namespace Microsoft.CodeAnalysis.Testing
         }
 
         private sealed class ImmutableDictionaryWithImmutableArrayValuesEqualityComparer<TKey, TValue> : IEqualityComparer<ImmutableDictionary<TKey, ImmutableArray<TValue>>?>
+            where TKey : notnull
         {
             public static readonly ImmutableDictionaryWithImmutableArrayValuesEqualityComparer<TKey, TValue> Instance = new();
 

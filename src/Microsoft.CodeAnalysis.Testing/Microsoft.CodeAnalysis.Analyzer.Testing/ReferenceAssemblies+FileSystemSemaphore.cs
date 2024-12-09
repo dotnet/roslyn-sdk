@@ -19,7 +19,7 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 _path = path ?? throw new ArgumentNullException(nameof(path));
 
-                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             }
 
             internal async Task<Releaser> WaitAsync(CancellationToken cancellationToken)
