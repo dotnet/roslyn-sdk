@@ -10,19 +10,22 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
   <PropertyGroup>
+    <!--    Required for the .NET 9 SDK to still build .NET Standard 1.6-->
+    <CheckNotRecommendedTargetFramework>false</CheckNotRecommendedTargetFramework>
+    
     <!--
       netcoreapp3.1: Ensures full support for nullable reference types
       netstandard1.6/net452: Roslyn 1.x
       netstandard1.6/net46: Roslyn 2.x
       netstandard2.0/net472: Roslyn 3.x
     -->
-    <TestingLibraryTargetFrameworks>netcoreapp3.1;netstandard1.6;netstandard2.0;net452;net46;net472</TestingLibraryTargetFrameworks>
+    <TestingLibraryTargetFrameworks>net9.0;net8.0;net7.0;net6.0;net5.0;netcoreapp3.1;netstandard1.6;netstandard2.0;net452;net46;net472</TestingLibraryTargetFrameworks>
 
     <!--
       netcoreapp3.1: Ensures full support for nullable reference types
       netstandard2.0/net472: Roslyn 3.x, starting with 3.8.0
     -->
-    <TestingLibrarySourceGeneratorTargetFrameworks>netcoreapp3.1;netstandard2.0;net472</TestingLibrarySourceGeneratorTargetFrameworks>
+    <TestingLibrarySourceGeneratorTargetFrameworks>net9.0;net8.0;net7.0;net6.0;net5.0;netcoreapp3.1;netstandard2.0;net472</TestingLibrarySourceGeneratorTargetFrameworks>
   </PropertyGroup>
   
   <Choose>
