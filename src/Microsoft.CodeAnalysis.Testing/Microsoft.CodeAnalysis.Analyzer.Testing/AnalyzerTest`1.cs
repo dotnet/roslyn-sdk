@@ -1310,7 +1310,7 @@ namespace Microsoft.CodeAnalysis.Testing
                                              where method is { Name: "AsSourceGenerator", IsStatic: true, IsPublic: true }
                                              let parameterTypes = method.GetParameters().Select(parameter => parameter.ParameterType).ToArray()
                                              where parameterTypes.SequenceEqual(new[] { iincrementalGeneratorType })
-                                             select method).SingleOrDefault();
+                                             select method).Single();
                     convertedSourceGeneratorsArray.SetValue(asGeneratorMethod.Invoke(null, new[] { sourceGenerators[i] }), i);
                 }
             }
@@ -1319,7 +1319,7 @@ namespace Microsoft.CodeAnalysis.Testing
                                      where method is { Name: nameof(ImmutableArray.CreateRange), IsStatic: true, IsPublic: true }
                                      let parameterTypes = method.GetParameters().Select(static parameter => parameter.ParameterType).ToArray()
                                      where parameterTypes.Length == 1 && parameterTypes[0].GetGenericTypeDefinition() == typeof(IEnumerable<>)
-                                     select method).SingleOrDefault();
+                                     select method).Single();
             var convertedSourceGenerators = createRangeMethod.MakeGenericMethod(isourceGeneratorType).Invoke(null, new object[] { convertedSourceGeneratorsArray });
 
             var analyzerOptions = GetAnalyzerOptions(project);

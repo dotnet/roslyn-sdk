@@ -12,7 +12,7 @@
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
     <UsingToolIbcOptimization>true</UsingToolIbcOptimization>
-    <MicrosoftNetCompilersToolsetVersion>4.8.0</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftNetCompilersToolsetVersion>4.12.0-3.final</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftCodeAnalysisCSharpCodeStyleVersion>$(MicrosoftNetCompilersToolsetVersion)</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
     <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>$(MicrosoftNetCompilersToolsetVersion)</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
     <!-- Force prior version due to https://github.com/microsoft/vstest/pull/2192 and https://github.com/microsoft/vstest/pull/2067 -->
@@ -60,6 +60,7 @@
     <MicrosoftVisualStudioValidationVersion>17.0.64</MicrosoftVisualStudioValidationVersion>
     <NuGetSolutionRestoreManagerInteropVersion>5.6.0</NuGetSolutionRestoreManagerInteropVersion>
     <StreamJsonRpcVersion>2.12.27</StreamJsonRpcVersion>
+    <SystemResourcesExtensionsVersion>9.0.0</SystemResourcesExtensionsVersion>
     <VSLangProjVersion>$(MicrosoftVisualStudioShellPackagesVersion)</VSLangProjVersion>
     <MicrosoftVisualStudioTemplateWizardInterfaceVersion>17.0.0-preview-1-30928-1111</MicrosoftVisualStudioTemplateWizardInterfaceVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.0.4207-preview4</MicrosoftVSSDKBuildToolsVersion>
