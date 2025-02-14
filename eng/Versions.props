@@ -84,6 +84,6 @@
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
     <!-- Analyzers -->
     <RoslynDiagnosticsAnalyzersVersion>2.9.8</RoslynDiagnosticsAnalyzersVersion>
-    <StyleCopAnalyzersVersion>1.2.0-beta.507</StyleCopAnalyzersVersion>
+    <StyleCopAnalyzersVersion>1.2.0-beta.556</StyleCopAnalyzersVersion>
   </PropertyGroup>
 </Project>
