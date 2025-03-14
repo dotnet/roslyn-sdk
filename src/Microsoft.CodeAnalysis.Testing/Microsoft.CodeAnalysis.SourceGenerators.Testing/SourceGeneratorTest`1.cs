@@ -31,12 +31,6 @@ namespace Microsoft.CodeAnalysis.Testing
 
         protected override async Task RunImplAsync(CancellationToken cancellationToken)
         {
-            if (!TestState.GeneratedSources.Any())
-            {
-                // Verify the test state has at least one source, which may or may not be generated
-                Verify.NotEmpty($"{nameof(TestState)}.{nameof(SolutionState.Sources)}", TestState.Sources);
-            }
-
             var analyzers = GetDiagnosticAnalyzers().ToArray();
             var defaultDiagnostic = GetDefaultDiagnostic(analyzers);
             var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics).ToImmutableArray();
