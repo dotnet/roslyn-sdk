@@ -147,7 +147,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 return null;
             }
 
-            if (result is object)
+            if (result is not null)
             {
                 codeActionVerifier?.Invoke(result, verifier);
             }
@@ -164,7 +164,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 for (var i = builder.Count - 1; i >= 0; i--)
                 {
                     var action = builder[i];
-                    var nestedActions = action.NestedCodeActions();
+                    var nestedActions = action.NestedActions();
                     if (!nestedActions.IsEmpty)
                     {
                         builder.RemoveAt(i);

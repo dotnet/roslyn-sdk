@@ -7,11 +7,13 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DiffPlex;
@@ -33,24 +35,8 @@ namespace Microsoft.CodeAnalysis.Testing
     public abstract class AnalyzerTest<TVerifier>
         where TVerifier : IVerifier, new()
     {
-        private static readonly Lazy<IExportProviderFactory> ExportProviderFactory;
         private static readonly ConditionalWeakTable<Diagnostic, object> NonLocalDiagnostics = new ConditionalWeakTable<Diagnostic, object>();
-
-        static AnalyzerTest()
-        {
-            ExportProviderFactory = new Lazy<IExportProviderFactory>(
-                () =>
-                {
-                    var discovery = new AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true);
-                    var parts = Task.Run(() => discovery.CreatePartsAsync(MefHostServices.DefaultAssemblies)).GetAwaiter().GetResult();
-                    var catalog = ComposableCatalog.Create(Resolver.DefaultInstance).AddParts(parts).WithDocumentTextDifferencingService();
-
-                    var configuration = CompositionConfiguration.Create(catalog);
-                    var runtimeComposition = RuntimeComposition.CreateRuntimeComposition(configuration);
-                    return runtimeComposition.CreateExportProviderFactory();
-                },
-                LazyThreadSafetyMode.ExecutionAndPublication);
-        }
+        private static readonly Regex EncodedIndicesSyntax = new Regex(@"^\s*\[\s*((?<Index>[0-9]+)\s*(,\s*(?<Index>[0-9]+)\s*)*)?\]\s*$", RegexOptions.ExplicitCapture | RegexOptions.Compiled);
 
         /// <summary>
         /// Gets the default verifier for the test.
@@ -175,7 +161,7 @@ namespace Microsoft.CodeAnalysis.Testing
         /// </summary>
         protected TimeSpan MatchDiagnosticsTimeout { get; set; } = TimeSpan.FromSeconds(2);
 
-        private readonly ConcurrentBag<Workspace> _workspaces = new ConcurrentBag<Workspace>();
+        private readonly ConcurrentBag<Workspace> _workspaces = new();
 
         /// <summary>
         /// Runs the test.
@@ -553,11 +539,11 @@ namespace Microsoft.CodeAnalysis.Testing
         private void VerifyDiagnosticResults(IEnumerable<(Project project, Diagnostic diagnostic)> actualResults, ImmutableArray<DiagnosticAnalyzer> analyzers, DiagnosticResult[] expectedResults, IVerifier verifier)
         {
             var matchedDiagnostics = MatchDiagnostics(actualResults.ToArray(), expectedResults);
-            verifier.Equal(actualResults.Count(), matchedDiagnostics.Count(x => x.actual is object), $"{nameof(MatchDiagnostics)} failed to include all actual diagnostics in the result");
-            verifier.Equal(expectedResults.Length, matchedDiagnostics.Count(x => x.expected is object), $"{nameof(MatchDiagnostics)} failed to include all expected diagnostics in the result");
+            verifier.Equal(actualResults.Count(), matchedDiagnostics.Count(x => x.actual is not null), $"{nameof(MatchDiagnostics)} failed to include all actual diagnostics in the result");
+            verifier.Equal(expectedResults.Length, matchedDiagnostics.Count(x => x.expected is not null), $"{nameof(MatchDiagnostics)} failed to include all expected diagnostics in the result");
 
             actualResults = matchedDiagnostics.Select(x => x.actual).Where(x => x is { }).Select(x => x!.Value);
-            expectedResults = matchedDiagnostics.Where(x => x.expected is object).Select(x => x.expected.GetValueOrDefault()).ToArray();
+            expectedResults = matchedDiagnostics.Where(x => x.expected is not null).Select(x => x.expected.GetValueOrDefault()).ToArray();
 
             var expectedCount = expectedResults.Length;
             var actualCount = actualResults.Count();
@@ -579,6 +565,23 @@ namespace Microsoft.CodeAnalysis.Testing
                 else
                 {
                     VerifyDiagnosticLocation(analyzers, actual.diagnostic, expected, actual.diagnostic.Location, expected.Spans[0], verifier);
+                    int[] unnecessaryIndices = { };
+                    if (actual.diagnostic.Properties.TryGetValue(WellKnownDiagnosticTags.Unnecessary, out var encodedUnnecessaryLocations))
+                    {
+                        verifier.True(actual.diagnostic.Descriptor.CustomTags.Contains(WellKnownDiagnosticTags.Unnecessary), "Diagnostic reported extended unnecessary locations, but the descriptor is not marked as unnecessary code.");
+                        var match = EncodedIndicesSyntax.Match(encodedUnnecessaryLocations);
+                        verifier.True(match.Success, $"Expected encoded unnecessary locations to be a valid JSON array of non-negative integers: {encodedUnnecessaryLocations}");
+                        unnecessaryIndices = match.Groups["Index"].Captures.OfType<Capture>().Select(capture => int.Parse(capture.Value)).ToArray();
+                        verifier.NotEmpty(nameof(unnecessaryIndices), unnecessaryIndices);
+                        foreach (var index in unnecessaryIndices)
+                        {
+                            if (index < 0 || index >= actual.diagnostic.AdditionalLocations.Count)
+                            {
+                                verifier.Fail($"All unnecessary indices in the diagnostic must be valid indices in AdditionalLocations [0-{actual.diagnostic.AdditionalLocations.Count}): {encodedUnnecessaryLocations}");
+                            }
+                        }
+                    }
+
                     if (!expected.Options.HasFlag(DiagnosticOptions.IgnoreAdditionalLocations))
                     {
                         var additionalLocations = actual.diagnostic.AdditionalLocations.ToArray();
@@ -586,9 +589,19 @@ namespace Microsoft.CodeAnalysis.Testing
                         message = FormatVerifierMessage(analyzers, actual.diagnostic, expected, $"Expected {expected.Spans.Length - 1} additional locations but got {additionalLocations.Length} for Diagnostic:");
                         verifier.Equal(expected.Spans.Length - 1, additionalLocations.Length, message);
 
-                        for (var j = 0; j < additionalLocations.Length; ++j)
+                        for (var j = 0; j < additionalLocations.Length; j++)
                         {
                             VerifyDiagnosticLocation(analyzers, actual.diagnostic, expected, additionalLocations[j], expected.Spans[j + 1], verifier);
+                            var isActualUnnecessary = unnecessaryIndices.Contains(j);
+                            var isExpectedUnnecessary = expected.Spans[j + 1].Options.HasFlag(DiagnosticLocationOptions.UnnecessaryCode);
+                            if (isExpectedUnnecessary)
+                            {
+                                verifier.True(isActualUnnecessary, $"Expected diagnostic additional location index \"{j}\" to be marked unnecessary, but was not.");
+                            }
+                            else
+                            {
+                                verifier.False(isActualUnnecessary, $"Expected diagnostic additional location index \"{j}\" to not be marked unnecessary, but was instead marked unnecessary.");
+                            }
                         }
                     }
                 }
@@ -836,18 +849,17 @@ namespace Microsoft.CodeAnalysis.Testing
         private static string FormatDiagnostics(ImmutableArray<DiagnosticAnalyzer> analyzers, string defaultFilePath, params Diagnostic[] diagnostics)
         {
             var builder = new StringBuilder();
-            for (var i = 0; i < diagnostics.Length; ++i)
+            foreach (var diagnostic in diagnostics)
             {
-                var diagnosticsId = diagnostics[i].Id;
-                var location = diagnostics[i].Location;
+                var location = diagnostic.Location;
 
-                builder.Append("// ").AppendLine(diagnostics[i].ToString());
+                builder.Append("// ").AppendLine(diagnostic.ToString());
 
-                var applicableAnalyzer = analyzers.FirstOrDefault(a => a.SupportedDiagnostics.Any(dd => dd.Id == diagnosticsId));
+                var applicableAnalyzer = analyzers.FirstOrDefault(a => a.SupportedDiagnostics.Any(dd => dd.Id == diagnostic.Id));
                 if (applicableAnalyzer != null)
                 {
                     var analyzerType = applicableAnalyzer.GetType();
-                    var rule = location != Location.None && location.IsInSource && applicableAnalyzer.SupportedDiagnostics.Length == 1 ? string.Empty : $"{analyzerType.Name}.{diagnosticsId}";
+                    var rule = location != Location.None && location.IsInSource && applicableAnalyzer.SupportedDiagnostics.Length == 1 ? string.Empty : $"{analyzerType.Name}.{diagnostic.Id}";
 
                     if (location == Location.None || !location.IsInSource)
                     {
@@ -862,11 +874,11 @@ namespace Microsoft.CodeAnalysis.Testing
                 else
                 {
                     builder.Append(
-                        diagnostics[i].Severity switch
+                        diagnostic.Severity switch
                         {
-                            DiagnosticSeverity.Error => $"{nameof(DiagnosticResult)}.{nameof(DiagnosticResult.CompilerError)}(\"{diagnostics[i].Id}\")",
-                            DiagnosticSeverity.Warning => $"{nameof(DiagnosticResult)}.{nameof(DiagnosticResult.CompilerWarning)}(\"{diagnostics[i].Id}\")",
-                            var severity => $"new {nameof(DiagnosticResult)}(\"{diagnostics[i].Id}\", {nameof(DiagnosticSeverity)}.{severity})",
+                            DiagnosticSeverity.Error => $"{nameof(DiagnosticResult)}.{nameof(DiagnosticResult.CompilerError)}(\"{diagnostic.Id}\")",
+                            DiagnosticSeverity.Warning => $"{nameof(DiagnosticResult)}.{nameof(DiagnosticResult.CompilerWarning)}(\"{diagnostic.Id}\")",
+                            var severity => $"new {nameof(DiagnosticResult)}(\"{diagnostic.Id}\", {nameof(DiagnosticSeverity)}.{severity})",
                         });
                 }
 
@@ -876,14 +888,27 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
                 else
                 {
-                    AppendLocation(diagnostics[i].Location);
-                    foreach (var additionalLocation in diagnostics[i].AdditionalLocations)
+                    // The unnecessary code designator is ignored for the primary diagnostic location.
+                    AppendLocation(diagnostic.Location, isUnnecessary: false);
+
+                    int[] unnecessaryIndices = { };
+                    if (diagnostic.Properties.TryGetValue(WellKnownDiagnosticTags.Unnecessary, out var encodedUnnecessaryLocations))
                     {
-                        AppendLocation(additionalLocation);
+                        var match = EncodedIndicesSyntax.Match(encodedUnnecessaryLocations);
+                        if (match.Success)
+                        {
+                            unnecessaryIndices = match.Groups["Index"].Captures.OfType<Capture>().Select(capture => int.Parse(capture.Value)).ToArray();
+                        }
+                    }
+
+                    for (var i = 0; i < diagnostic.AdditionalLocations.Count; i++)
+                    {
+                        var additionalLocation = diagnostic.AdditionalLocations[i];
+                        AppendLocation(additionalLocation, isUnnecessary: unnecessaryIndices.Contains(i));
                     }
                 }
 
-                var arguments = diagnostics[i].Arguments();
+                var arguments = diagnostic.Arguments();
                 if (arguments.Count > 0)
                 {
                     builder.Append($".{nameof(DiagnosticResult.WithArguments)}(");
@@ -891,7 +916,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     builder.Append(")");
                 }
 
-                if (diagnostics[i].IsSuppressed())
+                if (diagnostic.IsSuppressed())
                 {
                     builder.Append($".{nameof(DiagnosticResult.WithIsSuppressed)}(true)");
                 }
@@ -902,13 +927,16 @@ namespace Microsoft.CodeAnalysis.Testing
             return builder.ToString();
 
             // Local functions
-            void AppendLocation(Location location)
+            void AppendLocation(Location location, bool isUnnecessary)
             {
                 var lineSpan = location.GetLineSpan();
                 var pathString = location.IsInSource && lineSpan.Path == defaultFilePath ? string.Empty : $"\"{lineSpan.Path}\", ";
                 var linePosition = lineSpan.StartLinePosition;
                 var endLinePosition = lineSpan.EndLinePosition;
-                builder.Append($".WithSpan({pathString}{linePosition.Line + 1}, {linePosition.Character + 1}, {endLinePosition.Line + 1}, {endLinePosition.Character + 1})");
+                var unnecessaryArgument = isUnnecessary
+                    ? $", {nameof(DiagnosticLocationOptions)}.{nameof(DiagnosticLocationOptions.UnnecessaryCode)}"
+                    : string.Empty;
+                builder.Append($".WithSpan({pathString}{linePosition.Line + 1}, {linePosition.Character + 1}, {endLinePosition.Line + 1}, {endLinePosition.Character + 1}{unnecessaryArgument})");
             }
         }
 
@@ -1154,7 +1182,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 }
                 else
                 {
-                    allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
+                    allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync(cancellationToken).ConfigureAwait(false);
                 }
 
                 diagnostics.AddRange(generatorDiagnostics.Select(diagnostic => (project, diagnostic)));
@@ -1162,7 +1190,8 @@ namespace Microsoft.CodeAnalysis.Testing
             }
 
             diagnostics.AddRange(additionalDiagnostics);
-            var results = SortDistinctDiagnostics(diagnostics);
+            var filteredDiagnostics = FilterDiagnostics(diagnostics.ToImmutable());
+            var results = SortDistinctDiagnostics(filteredDiagnostics);
             return results;
 
             static async Task<ImmutableArray<Diagnostic>> GetCompilerDiagnosticsAsync(AnalyzerTest<TVerifier> self, Compilation compilation, ImmutableArray<DiagnosticAnalyzer> analyzers, AnalyzerOptions analyzerOptions, CancellationToken cancellationToken)
@@ -1176,7 +1205,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 // suppressions are applied.
                 var compilerSuppressors = analyzers.Where(static analyzer => IsCompilerDiagnosticSuppressor(analyzer)).ToImmutableArray();
                 var compilationWithAnalyzers = self.CreateCompilationWithAnalyzers(compilation, compilerSuppressors, analyzerOptions, cancellationToken);
-                return await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
+                return await compilationWithAnalyzers.GetAllDiagnosticsAsync(cancellationToken).ConfigureAwait(false);
             }
 
             static bool IsCompilerDiagnosticSuppressor(DiagnosticAnalyzer analyzer)
@@ -1308,7 +1337,7 @@ namespace Microsoft.CodeAnalysis.Testing
                                      select method).SingleOrDefault();
             var convertedSourceGenerators = createRangeMethod.MakeGenericMethod(isourceGeneratorType).Invoke(null, new object[] { convertedSourceGeneratorsArray });
 
-            var analyzerOptions = project.AnalyzerOptions;
+            var analyzerOptions = GetAnalyzerOptions(project);
             var additionalFiles = analyzerOptions.AdditionalFiles;
             var analyzerConfigOptionsProvider = analyzerOptions.AnalyzerConfigOptionsProvider();
             verifier.True(analyzerConfigOptionsProvider is not null, "Failed to locate AnalyzerConfigOptionsProvider for project");
@@ -1637,7 +1666,7 @@ namespace Microsoft.CodeAnalysis.Testing
             var parseOptions = CreateParseOptions()
                 .WithDocumentationMode(projectState.DocumentationMode);
 
-            var workspace = CreateWorkspace();
+            var workspace = await CreateWorkspaceAsync().ConfigureAwait(false);
             foreach (var transform in OptionsTransforms)
             {
                 workspace.Options = transform(workspace.Options);
@@ -1710,16 +1739,27 @@ namespace Microsoft.CodeAnalysis.Testing
             return solution.GetProject(project.Id);
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete($"Use {nameof(CreateWorkspaceAsync)} instead. https://github.com/dotnet/roslyn-sdk/pull/1120", error: true)]
         public Workspace CreateWorkspace()
+            => throw new NotSupportedException();
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete($"Use {nameof(CreateWorkspaceImplAsync)} instead. https://github.com/dotnet/roslyn-sdk/pull/1120", error: true)]
+        protected virtual Workspace CreateWorkspaceImpl()
+            => throw new NotSupportedException();
+
+        public async Task<Workspace> CreateWorkspaceAsync()
         {
-            var workspace = CreateWorkspaceImpl();
+            var workspace = await CreateWorkspaceImplAsync().ConfigureAwait(false);
             _workspaces.Add(workspace);
             return workspace;
         }
 
-        protected virtual Workspace CreateWorkspaceImpl()
+        protected virtual async Task<Workspace> CreateWorkspaceImplAsync()
         {
-            var exportProvider = ExportProviderFactory.Value.CreateExportProvider();
+            var exportProviderFactory = await ExportProviderFactory.GetOrCreateExportProviderFactoryAsync().ConfigureAwait(false);
+            var exportProvider = exportProviderFactory.CreateExportProvider();
             var host = MefHostServices.Create(exportProvider.AsCompositionContext());
             return new AdhocWorkspace(host);
         }
@@ -1729,12 +1769,27 @@ namespace Microsoft.CodeAnalysis.Testing
         protected abstract ParseOptions CreateParseOptions();
 
         /// <summary>
+        /// Filter <see cref="Diagnostic"/>s to only include items of interest to testing. By default, this includes all
+        /// unsuppressed diagnostics, and all diagnostics suppressed by a
+        /// <see cref="T:Microsoft.CodeAnalysis.Diagnostics.DiagnosticSuppressor"/>.
+        /// </summary>
+        /// <param name="diagnostics">A collection of <see cref="Diagnostic"/>s to be filtered.</param>
+        /// <returns>A collection containing the input <paramref name="diagnostics"/>, filtered to only include
+        /// diagnostics relevant for testing.</returns>
+        protected virtual ImmutableArray<(Project project, Diagnostic diagnostic)> FilterDiagnostics(ImmutableArray<(Project project, Diagnostic diagnostic)> diagnostics)
+        {
+            return diagnostics
+                .Where(d => !d.diagnostic.IsSuppressed() || d.diagnostic.ProgrammaticSuppressionInfo() != null)
+                .ToImmutableArray();
+        }
+
+        /// <summary>
         /// Sort <see cref="Diagnostic"/>s by location in source document.
         /// </summary>
         /// <param name="diagnostics">A collection of <see cref="Diagnostic"/>s to be sorted.</param>
         /// <returns>A collection containing the input <paramref name="diagnostics"/>, sorted by
         /// <see cref="Diagnostic.Location"/> and <see cref="Diagnostic.Id"/>.</returns>
-        protected virtual ImmutableArray<(Project project, Diagnostic diagnostic)> SortDistinctDiagnostics(IEnumerable<(Project project, Diagnostic diagnostic)> diagnostics)
+        protected virtual ImmutableArray<(Project project, Diagnostic diagnostic)> SortDistinctDiagnostics(ImmutableArray<(Project project, Diagnostic diagnostic)> diagnostics)
         {
             return diagnostics
                 .OrderBy(d => d.diagnostic.Location.GetLineSpan().Path, StringComparer.Ordinal)

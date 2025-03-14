@@ -19,17 +19,17 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Resolver;
 
-#if NET46 || NET472 || NETSTANDARD || NETCOREAPP3_1
+#if NUGET_SIGNING
 using NuGet.Packaging.Signing;
 #endif
 
 namespace Microsoft.CodeAnalysis.Testing
 {
-    public sealed partial class ReferenceAssemblies
+    public sealed partial class ReferenceAssemblies : IEquatable<ReferenceAssemblies?>
     {
         private const string ReferenceAssembliesPackageVersion = "1.0.2";
 
-        private static readonly FileSystemSemaphore Semaphore = new FileSystemSemaphore(Path.Combine(Path.GetTempPath(), "test-packages", ".lock"));
+        private static readonly FileSystemSemaphore Semaphore = new(Path.Combine(Path.GetTempPath(), "test-packages", ".lock"));
 
         private static ImmutableDictionary<NuGet.Packaging.Core.PackageIdentity, string> s_packageToInstalledLocation
             = ImmutableDictionary.Create<NuGet.Packaging.Core.PackageIdentity, string>(PackageIdentityComparer.Default);
@@ -37,8 +37,10 @@ namespace Microsoft.CodeAnalysis.Testing
         private static ImmutableHashSet<NuGet.Packaging.Core.PackageIdentity> s_emptyPackages
             = ImmutableHashSet.Create<NuGet.Packaging.Core.PackageIdentity>(PackageIdentityComparer.Default);
 
+        private static ImmutableHashSet<ReferenceAssemblies> s_knownAssemblies = ImmutableHashSet<ReferenceAssemblies>.Empty;
+
         private readonly Dictionary<string, ImmutableArray<MetadataReference>> _references
-            = new Dictionary<string, ImmutableArray<MetadataReference>>();
+            = new();
 
         public ReferenceAssemblies(string targetFramework)
         {
@@ -123,14 +125,83 @@ namespace Microsoft.CodeAnalysis.Testing
 
         public string? NuGetConfigFilePath { get; }
 
+        private static ReferenceAssemblies GetOrAddReferenceAssemblies(ReferenceAssemblies value)
+        {
+            if (s_knownAssemblies.TryGetValue(value, out var existingValue))
+            {
+                return existingValue;
+            }
+
+            if (ImmutableInterlocked.Update(
+                ref s_knownAssemblies,
+                static (knownAssemblies, value) => knownAssemblies.Add(value),
+                value))
+            {
+                return value;
+            }
+
+            if (!s_knownAssemblies.TryGetValue(value, out existingValue))
+            {
+                throw new InvalidOperationException();
+            }
+
+            return existingValue;
+        }
+
+        public override int GetHashCode()
+        {
+#if NETCOREAPP
+            var hash = default(HashCode);
+            hash.Add(TargetFramework);
+            hash.Add(AssemblyIdentityComparer);
+            hash.Add(ReferenceAssemblyPackage);
+            hash.Add(ReferenceAssemblyPath);
+            hash.Add(Assemblies, ImmutableArrayEqualityComparer<string>.Instance);
+            hash.Add(FacadeAssemblies, ImmutableArrayEqualityComparer<string>.Instance);
+            hash.Add(LanguageSpecificAssemblies, ImmutableDictionaryWithImmutableArrayValuesEqualityComparer<string, string>.Instance);
+            hash.Add(Packages, ImmutableArrayEqualityComparer<PackageIdentity>.Instance);
+            hash.Add(NuGetConfigFilePath);
+            return hash.ToHashCode();
+#else
+            var hashCode = -450793227;
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(TargetFramework);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<AssemblyIdentityComparer>.Default.GetHashCode(AssemblyIdentityComparer);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<PackageIdentity?>.Default.GetHashCode(ReferenceAssemblyPackage);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string?>.Default.GetHashCode(ReferenceAssemblyPath);
+            hashCode = (hashCode * -1521134295) + ImmutableArrayEqualityComparer<string>.Instance.GetHashCode(Assemblies);
+            hashCode = (hashCode * -1521134295) + ImmutableArrayEqualityComparer<string>.Instance.GetHashCode(FacadeAssemblies);
+            hashCode = (hashCode * -1521134295) + ImmutableDictionaryWithImmutableArrayValuesEqualityComparer<string, string>.Instance.GetHashCode(LanguageSpecificAssemblies);
+            hashCode = (hashCode * -1521134295) + ImmutableArrayEqualityComparer<PackageIdentity>.Instance.GetHashCode(Packages);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string?>.Default.GetHashCode(NuGetConfigFilePath);
+            return hashCode;
+#endif
+        }
+
+        public override bool Equals(object? obj)
+            => Equals(obj as ReferenceAssemblies);
+
+        public bool Equals(ReferenceAssemblies? other)
+        {
+            return other is not null
+                && TargetFramework == other.TargetFramework
+                && EqualityComparer<AssemblyIdentityComparer>.Default.Equals(AssemblyIdentityComparer, other.AssemblyIdentityComparer)
+                && EqualityComparer<PackageIdentity?>.Default.Equals(ReferenceAssemblyPackage, other.ReferenceAssemblyPackage)
+                && ReferenceAssemblyPath == other.ReferenceAssemblyPath
+                && ImmutableArrayEqualityComparer<string>.Instance.Equals(Assemblies, other.Assemblies)
+                && ImmutableArrayEqualityComparer<string>.Instance.Equals(FacadeAssemblies, other.FacadeAssemblies)
+                && ImmutableDictionaryWithImmutableArrayValuesEqualityComparer<string, string>.Instance.Equals(LanguageSpecificAssemblies, other.LanguageSpecificAssemblies)
+                && ImmutableArrayEqualityComparer<PackageIdentity>.Instance.Equals(Packages, other.Packages)
+                && NuGetConfigFilePath == other.NuGetConfigFilePath;
+        }
+
         public ReferenceAssemblies WithAssemblyIdentityComparer(AssemblyIdentityComparer assemblyIdentityComparer)
-            => new ReferenceAssemblies(TargetFramework, assemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath);
+            => GetOrAddReferenceAssemblies(new(TargetFramework, assemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath));
 
         public ReferenceAssemblies WithAssemblies(ImmutableArray<string> assemblies)
-            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath);
+            => GetOrAddReferenceAssemblies(new(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath));
 
         public ReferenceAssemblies WithFacadeAssemblies(ImmutableArray<string> facadeAssemblies)
-            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, facadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath);
+            => GetOrAddReferenceAssemblies(new(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, facadeAssemblies, LanguageSpecificAssemblies, Packages, NuGetConfigFilePath));
 
         public ReferenceAssemblies AddAssemblies(ImmutableArray<string> assemblies)
             => WithAssemblies(Assemblies.AddRange(assemblies));
@@ -139,7 +210,7 @@ namespace Microsoft.CodeAnalysis.Testing
             => WithFacadeAssemblies(FacadeAssemblies.AddRange(facadeAssemblies));
 
         public ReferenceAssemblies WithLanguageSpecificAssemblies(ImmutableDictionary<string, ImmutableArray<string>> languageSpecificAssemblies)
-            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, languageSpecificAssemblies, Packages, NuGetConfigFilePath);
+            => GetOrAddReferenceAssemblies(new(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, languageSpecificAssemblies, Packages, NuGetConfigFilePath));
 
         public ReferenceAssemblies WithLanguageSpecificAssemblies(string language, ImmutableArray<string> assemblies)
             => WithLanguageSpecificAssemblies(LanguageSpecificAssemblies.SetItem(language, assemblies));
@@ -155,17 +226,17 @@ namespace Microsoft.CodeAnalysis.Testing
         }
 
         public ReferenceAssemblies WithPackages(ImmutableArray<PackageIdentity> packages)
-            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, packages, NuGetConfigFilePath);
+            => GetOrAddReferenceAssemblies(new(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, packages, NuGetConfigFilePath));
 
         public ReferenceAssemblies AddPackages(ImmutableArray<PackageIdentity> packages)
             => WithPackages(Packages.AddRange(packages));
 
         public ReferenceAssemblies WithNuGetConfigFilePath(string nugetConfigFilePath)
-            => new ReferenceAssemblies(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, nugetConfigFilePath);
+            => GetOrAddReferenceAssemblies(new(TargetFramework, AssemblyIdentityComparer, ReferenceAssemblyPackage, ReferenceAssemblyPath, Assemblies, FacadeAssemblies, LanguageSpecificAssemblies, Packages, nugetConfigFilePath));
 
         public async Task<ImmutableArray<MetadataReference>> ResolveAsync(string? language, CancellationToken cancellationToken)
         {
-            if (language is object)
+            if (language is not null)
             {
                 if (LanguageSpecificAssemblies.IsEmpty
                     || !LanguageSpecificAssemblies.TryGetValue(language, out var languageSpecificAssemblies)
@@ -222,7 +293,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 repositories = repositories.Insert(0, sourceRepositoryProvider.CreateRepository(new PackageSource(new Uri(SettingsUtility.GetGlobalPackagesFolder(settings)).AbsoluteUri, "global"), FeedType.FileSystemV3));
                 var dependencies = ImmutableDictionary.CreateBuilder<NuGet.Packaging.Core.PackageIdentity, SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
 
-                if (ReferenceAssemblyPackage is object)
+                if (ReferenceAssemblyPackage is not null)
                 {
                     await GetPackageDependenciesAsync(ReferenceAssemblyPackage.ToNuGetIdentity(), targetFramework, repositories, cacheContext, logger, dependencies, cancellationToken);
                 }
@@ -235,7 +306,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 var availablePackages = dependencies.ToImmutable();
 
                 var packagesToInstall = new List<NuGet.Packaging.Core.PackageIdentity>();
-                if (ReferenceAssemblyPackage is object)
+                if (ReferenceAssemblyPackage is not null)
                 {
                     packagesToInstall.Add(ReferenceAssemblyPackage.ToNuGetIdentity()!);
                 }
@@ -244,7 +315,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 {
                     var targetIds = new List<string>(Packages.Select(package => package.Id));
                     var preferredVersions = new List<NuGet.Packaging.Core.PackageIdentity>(Packages.Select(package => package.ToNuGetIdentity()));
-                    if (ReferenceAssemblyPackage is object)
+                    if (ReferenceAssemblyPackage is not null)
                     {
                         // Make sure to include the implicit reference assembly package
                         if (!targetIds.Contains(ReferenceAssemblyPackage.Id))
@@ -274,13 +345,13 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 var globalPathResolver = new PackagePathResolver(SettingsUtility.GetGlobalPackagesFolder(settings));
                 var localPathResolver = new PackagePathResolver(temporaryPackagesFolder);
-#if NET452
+#if NET452 || NET46 || NETSTANDARD1_6
                 var packageExtractionContext = new PackageExtractionContext(logger)
                 {
                     PackageSaveMode = PackageSaveMode.Defaultv3,
                     XmlDocFileSaveMode = XmlDocFileSaveMode.None,
                 };
-#elif NET46 || NET472 || NETSTANDARD1_6 || NETSTANDARD2_0 || NETCOREAPP3_1
+#elif NUGET_SIGNING
                 var packageExtractionContext = new PackageExtractionContext(
                     PackageSaveMode.Defaultv3,
                     XmlDocFileSaveMode.None,
@@ -350,7 +421,7 @@ namespace Microsoft.CodeAnalysis.Testing
                         if (downloadResult.Status == DownloadResourceResultStatus.AvailableWithoutStream)
                         {
                             await PackageExtractor.ExtractPackageAsync(
-#if !NET452
+#if NUGET_SIGNING
 #pragma warning disable SA1114 // Parameter list should follow declaration
                                 downloadResult.PackageSource,
 #pragma warning restore SA1114 // Parameter list should follow declaration
@@ -364,7 +435,7 @@ namespace Microsoft.CodeAnalysis.Testing
                         {
                             Debug.Assert(downloadResult.PackageStream != null, "PackageStream should not be null if download result status != DownloadResourceResultStatus.AvailableWithoutStream");
                             await PackageExtractor.ExtractPackageAsync(
-#if !NET452
+#if NUGET_SIGNING
 #pragma warning disable SA1114 // Parameter list should follow declaration
                                 downloadResult.PackageSource,
 #pragma warning restore SA1114 // Parameter list should follow declaration
@@ -394,7 +465,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     var nearestFramework = frameworkReducer.GetNearest(targetFramework, frameworkItems.Select(x => x.TargetFramework));
                     var refItems = await packageReader.GetItemsAsync(PackagingConstants.Folders.Ref, cancellationToken);
                     var nearestRef = frameworkReducer.GetNearest(targetFramework, refItems.Select(x => x.TargetFramework));
-                    if (nearestRef is object)
+                    if (nearestRef is not null)
                     {
                         var nearestRefItems = refItems.Single(x => x.TargetFramework == nearestRef);
                         foreach (var item in nearestRefItems.Items)
@@ -409,7 +480,7 @@ namespace Microsoft.CodeAnalysis.Testing
                             resolvedAssemblies.Add(Path.Combine(installedPath, item));
                         }
                     }
-                    else if (nearestLib is object)
+                    else if (nearestLib is not null)
                     {
                         var nearestLibItems = libItems.Single(x => x.TargetFramework == nearestLib);
                         foreach (var item in nearestLibItems.Items)
@@ -426,18 +497,18 @@ namespace Microsoft.CodeAnalysis.Testing
                     }
 
                     // Include framework references except for package based frameworks
-                    if (!targetFramework.IsPackageBased && nearestFramework is object)
+                    if (!targetFramework.IsPackageBased && nearestFramework is not null)
                     {
                         var nearestFrameworkItems = frameworkItems.Single(x => x.TargetFramework == nearestFramework);
                         frameworkAssemblies.UnionWith(nearestFrameworkItems.Items);
                     }
                 }
 
-                var referenceAssemblyInstalledPath = ReferenceAssemblyPackage is object
+                var referenceAssemblyInstalledPath = ReferenceAssemblyPackage is not null
                     ? GetInstalledPath(localPathResolver, globalPathResolver, ReferenceAssemblyPackage.ToNuGetIdentity())
                     : null;
-                Debug.Assert(ReferenceAssemblyPackage is null || referenceAssemblyInstalledPath is object, $"Assertion failed: {nameof(ReferenceAssemblyPackage)} is null || {nameof(referenceAssemblyInstalledPath)} is object");
-                Debug.Assert(ReferenceAssemblyPackage is null || ReferenceAssemblyPath is object, $"Assertion failed: {nameof(ReferenceAssemblyPackage)} is null || {nameof(ReferenceAssemblyPath)} is object");
+                Debug.Assert(ReferenceAssemblyPackage is null || referenceAssemblyInstalledPath is not null, $"Assertion failed: {nameof(ReferenceAssemblyPackage)} is null || {nameof(referenceAssemblyInstalledPath)} is object");
+                Debug.Assert(ReferenceAssemblyPackage is null || ReferenceAssemblyPath is not null, $"Assertion failed: {nameof(ReferenceAssemblyPackage)} is null || {nameof(ReferenceAssemblyPath)} is object");
 
                 foreach (var assembly in frameworkAssemblies)
                 {
@@ -460,18 +531,62 @@ namespace Microsoft.CodeAnalysis.Testing
                     }
                 }
 
-                // Prefer assemblies from the reference assembly package to ones otherwise provided
-                if (ReferenceAssemblyPackage is object)
+                // Prefer newer assemblies when more than one have the same name
+                if (ReferenceAssemblyPackage is not null)
                 {
-                    var referenceAssemblies = new HashSet<string>(resolvedAssemblies.Where(resolved => resolved.StartsWith(referenceAssemblyInstalledPath!)));
+                    var comparer = new FrameworkPrecedenceSorter(DefaultFrameworkNameProvider.Instance, allEquivalent: false);
+                    var assembliesByName = resolvedAssemblies.GroupBy(Path.GetFileNameWithoutExtension, StringComparer.OrdinalIgnoreCase);
 
-                    // Suppression due to https://github.com/dotnet/roslyn/issues/44735
-                    var referenceAssemblyNames = new HashSet<string>(referenceAssemblies.Select((Func<string, string>)Path.GetFileNameWithoutExtension!));
-                    resolvedAssemblies.RemoveWhere(resolved => referenceAssemblyNames.Contains(Path.GetFileNameWithoutExtension(resolved)) && !referenceAssemblies.Contains(resolved));
+                    // Keep track of assemblies to remove from resolvedAssemblies. Defer the actual removal to the end
+                    // of this block for ease in future debugging scenarios.
+                    var assembliesToRemove = new List<string>();
+                    foreach (var assemblyNameGroup in assembliesByName)
+                    {
+                        var assembliesByPrecedence = assemblyNameGroup
+                            .Select(static name => (name, framework: GetFrameworkNameFromPath(name)))
+                            .OrderBy(static x => x.framework, comparer)
+                            .ThenByDescending(static x => x.framework, new NuGetFrameworkSorter())
+                            .ToArray();
+                        for (var i = 1; i < assembliesByPrecedence.Length; i++)
+                        {
+                            // We want to keep the last reference listed for the most recent supported target framework.
+                            // Typically, if more than one item has the most recent supported target framework, it will
+                            // be a case where the reference assembly package provides the assembly and a newer version
+                            // is provided explicitly. For example:
+                            //
+                            // Microsoft.NETCore.App.Ref 6.0.0 provides System.Collections.Immutable in the net6.0 folder
+                            // System.Collections.Immutable 8.0.0 provides System.Collections.Immutable in the net6.0 folder
+                            //
+                            // In this example, the Microsoft.NETCore.App.Ref package is resolved first, so by taking
+                            // the last net6.0 assembly, we ensure the assembly from System.Collections.Immutable 8.0.0
+                            // is resolved.
+                            if (Equals(assembliesByPrecedence[0].framework, assembliesByPrecedence[i].framework))
+                            {
+                                assembliesToRemove.Add(assembliesByPrecedence[i - 1].name);
+                            }
+                            else
+                            {
+                                assembliesToRemove.Add(assembliesByPrecedence[i].name);
+                            }
+                        }
+
+                        static NuGetFramework GetFrameworkNameFromPath(string path)
+                        {
+                            var frameworkFolder = Path.GetFileName(Path.GetDirectoryName(path));
+                            if (frameworkFolder is null)
+                            {
+                                return NuGetFramework.UnsupportedFramework;
+                            }
+
+                            return NuGetFramework.ParseFolder(frameworkFolder);
+                        }
+                    }
+
+                    resolvedAssemblies.ExceptWith(assembliesToRemove);
                 }
 
                 // Add the facade assemblies
-                if (ReferenceAssemblyPackage is object)
+                if (ReferenceAssemblyPackage is not null)
                 {
                     var facadesPath = Path.Combine(referenceAssemblyInstalledPath!, ReferenceAssemblyPath!, "Facades");
                     if (Directory.Exists(facadesPath))
@@ -519,7 +634,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     {
                         installedPath = GetInstalledPath(localPathResolver, packageIdentity)
                             ?? GetInstalledPath(globalPathResolver, packageIdentity);
-                        if (installedPath is object)
+                        if (installedPath is not null)
                         {
                             installedPath = ImmutableInterlocked.GetOrAdd(ref s_packageToInstalledLocation, packageIdentity, installedPath);
                         }
@@ -562,7 +677,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 var dependencyInfo = await dependencyInfoResource.ResolvePackage(
                     packageIdentity,
                     targetFramework,
-#if !NET452
+#if NUGET_SIGNING
                     cacheContext,
 #endif
                     logger,
@@ -897,7 +1012,7 @@ namespace Microsoft.CodeAnalysis.Testing
         public static class Net
         {
             private static readonly Lazy<ReferenceAssemblies> _lazyNet50 =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                 {
                     if (!NuGetFramework.Parse("net5.0").IsPackageBased)
                     {
@@ -914,7 +1029,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 });
 
             private static readonly Lazy<ReferenceAssemblies> _lazyNet60 =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                 {
                     if (!NuGetFramework.Parse("net6.0").IsPackageBased)
                     {
@@ -931,43 +1046,43 @@ namespace Microsoft.CodeAnalysis.Testing
                 });
 
             private static readonly Lazy<ReferenceAssemblies> _lazyNet60Windows =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                     Net60.AddPackages(
                         ImmutableArray.Create(
                             new PackageIdentity("Microsoft.WindowsDesktop.App.Ref", "6.0.0"))));
 
             private static readonly Lazy<ReferenceAssemblies> _lazyNet60Android =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                     Net60.AddPackages(
                         ImmutableArray.Create(
                             new PackageIdentity("Microsoft.Android.Ref", "31.0.100-rc.1.12"))));
 
             private static readonly Lazy<ReferenceAssemblies> _lazyNet60iOS =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                     Net60.AddPackages(
                         ImmutableArray.Create(
                             new PackageIdentity("Microsoft.iOS.Ref", "16.0.527"))));
 
             private static readonly Lazy<ReferenceAssemblies> _lazyNet60MacOS =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                     Net60.AddPackages(
                         ImmutableArray.Create(
                             new PackageIdentity("Microsoft.macOS.Ref", "12.3.471"))));
 
             private static readonly Lazy<ReferenceAssemblies> _lazyNet60MacCatalyst =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                     Net60.AddPackages(
                         ImmutableArray.Create(
                             new PackageIdentity("Microsoft.MacCatalyst.Ref", "15.4.471"))));
 
             private static readonly Lazy<ReferenceAssemblies> _lazyNet60TvOS =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                     Net60.AddPackages(
                         ImmutableArray.Create(
                             new PackageIdentity("Microsoft.tvOS.Ref", "16.0.527"))));
 
             private static readonly Lazy<ReferenceAssemblies> _lazyNet70 =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                 {
                     if (!NuGetFramework.Parse("net7.0").IsPackageBased)
                     {
@@ -984,34 +1099,146 @@ namespace Microsoft.CodeAnalysis.Testing
                 });
 
             private static readonly Lazy<ReferenceAssemblies> _lazyNet70Windows =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                     Net70.AddPackages(
                         ImmutableArray.Create(
                             new PackageIdentity("Microsoft.WindowsDesktop.App.Ref", "7.0.0"))));
 
             private static readonly Lazy<ReferenceAssemblies> _lazyNet70MacOS =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                     Net70.AddPackages(
                         ImmutableArray.Create(
                             new PackageIdentity("Microsoft.macOS.Ref", "12.3.2372"))));
 
-            private static readonly Lazy<ReferenceAssemblies> _lazyNet70iOS =
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet70Android =
                 new Lazy<ReferenceAssemblies>(() =>
+                    Net70.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.Android.Ref.33", "33.0.68"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet70iOS =
+                new(() =>
                     Net70.AddPackages(
                         ImmutableArray.Create(
                             new PackageIdentity("Microsoft.iOS.Ref", "16.0.1478"))));
 
             private static readonly Lazy<ReferenceAssemblies> _lazyNet70MacCatalyst =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                     Net70.AddPackages(
                         ImmutableArray.Create(
                             new PackageIdentity("Microsoft.MacCatalyst.Ref", "15.4.2372"))));
 
             private static readonly Lazy<ReferenceAssemblies> _lazyNet70TvOS =
-                new Lazy<ReferenceAssemblies>(() =>
+                new(() =>
                     Net70.AddPackages(
                         ImmutableArray.Create(
                             new PackageIdentity("Microsoft.tvOS.Ref", "16.0.1478"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet80 =
+                new Lazy<ReferenceAssemblies>(() =>
+                {
+                    if (!NuGetFramework.Parse("net8.0").IsPackageBased)
+                    {
+                        // The NuGet version provided at runtime does not recognize the 'net8.0' target framework
+                        throw new NotSupportedException("The 'net8.0' target framework is not supported by this version of NuGet.");
+                    }
+
+                    return new ReferenceAssemblies(
+                        "net8.0",
+                        new PackageIdentity(
+                            "Microsoft.NETCore.App.Ref",
+                            "8.0.0"),
+                        Path.Combine("ref", "net8.0"));
+                });
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet80Windows =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net80.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.WindowsDesktop.App.Ref", "8.0.0"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet80MacOS =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net80.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.macOS.Ref", "14.0.8478"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet80Android =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net80.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.Android.Ref.34", "34.0.43"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet80iOS =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net80.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.iOS.Ref", "17.0.8478"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet80MacCatalyst =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net80.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.MacCatalyst.Ref", "17.0.8478"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet80TvOS =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net80.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.tvOS.Ref", "17.0.8478"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet90 =
+                new Lazy<ReferenceAssemblies>(() =>
+                {
+                    if (!NuGetFramework.Parse("net9.0").IsPackageBased)
+                    {
+                        // The NuGet version provided at runtime does not recognize the 'net9.0' target framework
+                        throw new NotSupportedException("The 'net9.0' target framework is not supported by this version of NuGet.");
+                    }
+
+                    return new ReferenceAssemblies(
+                        "net9.0",
+                        new PackageIdentity(
+                            "Microsoft.NETCore.App.Ref",
+                            "9.0.0-preview.1.24080.9"),
+                        Path.Combine("ref", "net9.0"));
+                });
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet90Windows =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net90.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.WindowsDesktop.App.Ref", "9.0.0-preview.1.24081.3"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet90MacOS =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net90.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.macOS.Ref", "14.2.9088-net9-p1"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet90Android =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net90.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.Android.Ref.34", "34.99.0-preview.1.151"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet90iOS =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net90.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.iOS.Ref", "17.2.9088-net9-p1"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet90MacCatalyst =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net90.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.MacCatalyst.Ref", "17.2.9088-net9-p1"))));
+
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet90TvOS =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net90.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.tvOS.Ref", "17.2.9088-net9-p1"))));
 
             public static ReferenceAssemblies Net50 => _lazyNet50.Value;
 
@@ -1033,6 +1260,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
             public static ReferenceAssemblies Net70Windows => _lazyNet70Windows.Value;
 
+            public static ReferenceAssemblies Net70Android => _lazyNet70Android.Value;
+
             public static ReferenceAssemblies Net70iOS => _lazyNet70iOS.Value;
 
             public static ReferenceAssemblies Net70MacOS => _lazyNet70MacOS.Value;
@@ -1040,6 +1269,34 @@ namespace Microsoft.CodeAnalysis.Testing
             public static ReferenceAssemblies Net70MacCatalyst => _lazyNet70MacCatalyst.Value;
 
             public static ReferenceAssemblies Net70TvOS => _lazyNet70TvOS.Value;
+
+            public static ReferenceAssemblies Net80 => _lazyNet80.Value;
+
+            public static ReferenceAssemblies Net80Windows => _lazyNet80Windows.Value;
+
+            public static ReferenceAssemblies Net80Android => _lazyNet80Android.Value;
+
+            public static ReferenceAssemblies Net80iOS => _lazyNet80iOS.Value;
+
+            public static ReferenceAssemblies Net80MacOS => _lazyNet80MacOS.Value;
+
+            public static ReferenceAssemblies Net80MacCatalyst => _lazyNet80MacCatalyst.Value;
+
+            public static ReferenceAssemblies Net80TvOS => _lazyNet80TvOS.Value;
+
+            public static ReferenceAssemblies Net90 => _lazyNet90.Value;
+
+            public static ReferenceAssemblies Net90Windows => _lazyNet90Windows.Value;
+
+            public static ReferenceAssemblies Net90Android => _lazyNet90Android.Value;
+
+            public static ReferenceAssemblies Net90iOS => _lazyNet90iOS.Value;
+
+            public static ReferenceAssemblies Net90MacOS => _lazyNet90MacOS.Value;
+
+            public static ReferenceAssemblies Net90MacCatalyst => _lazyNet90MacCatalyst.Value;
+
+            public static ReferenceAssemblies Net90TvOS => _lazyNet90TvOS.Value;
         }
 
         public static class NetStandard
@@ -1209,6 +1466,141 @@ namespace Microsoft.CodeAnalysis.Testing
             {
                 var framework = NuGetFramework.ParseFolder(targetFramework);
                 return framework.IsPackageBased;
+            }
+        }
+
+        private sealed class ImmutableArrayEqualityComparer<T> : IEqualityComparer<ImmutableArray<T>>
+        {
+            public static readonly ImmutableArrayEqualityComparer<T> Instance = new();
+
+            private ImmutableArrayEqualityComparer()
+            {
+            }
+
+            public bool Equals(ImmutableArray<T> x, ImmutableArray<T> y)
+            {
+                if (x.IsDefault)
+                {
+                    return y.IsDefault;
+                }
+                else if (y.IsDefault)
+                {
+                    return false;
+                }
+
+                if (x.Length != y.Length)
+                {
+                    return false;
+                }
+
+                for (var i = 0; i < x.Length; i++)
+                {
+                    if (!EqualityComparer<T>.Default.Equals(x[i], y[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            public int GetHashCode(ImmutableArray<T> obj)
+            {
+                if (obj.IsDefault)
+                {
+                    return 0;
+                }
+
+#if NETCOREAPP
+                var hash = default(HashCode);
+                foreach (var item in obj)
+                {
+                    hash.Add(item);
+                }
+
+                return hash.ToHashCode();
+#else
+                var hashCode = -450793227;
+                foreach (var item in obj)
+                {
+                    hashCode = (hashCode * -1521134295) + EqualityComparer<T>.Default.GetHashCode(item);
+                }
+
+                return hashCode;
+#endif
+            }
+        }
+
+        private sealed class ImmutableDictionaryWithImmutableArrayValuesEqualityComparer<TKey, TValue> : IEqualityComparer<ImmutableDictionary<TKey, ImmutableArray<TValue>>?>
+        {
+            public static readonly ImmutableDictionaryWithImmutableArrayValuesEqualityComparer<TKey, TValue> Instance = new();
+
+            private ImmutableDictionaryWithImmutableArrayValuesEqualityComparer()
+            {
+            }
+
+            public bool Equals(ImmutableDictionary<TKey, ImmutableArray<TValue>>? x, ImmutableDictionary<TKey, ImmutableArray<TValue>>? y)
+            {
+                if (x is null)
+                {
+                    return y is null;
+                }
+                else if (y is null)
+                {
+                    return false;
+                }
+
+                if (x.Count != y.Count)
+                {
+                    return false;
+                }
+
+                foreach (var (key, valueX) in x)
+                {
+                    // Use a separate lookup in 'y' since ImmutableDictionary<,> can reorder pairs where the key has the
+                    // same hash code.
+                    if (!y.TryGetValue(key, out var valueY))
+                    {
+                        return false;
+                    }
+
+                    if (!ImmutableArrayEqualityComparer<TValue>.Instance.Equals(valueX, valueY))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            public int GetHashCode(ImmutableDictionary<TKey, ImmutableArray<TValue>>? obj)
+            {
+                if (obj is null)
+                {
+                    return 0;
+                }
+
+#if NETCOREAPP
+                var hash = default(HashCode);
+                foreach (var (key, _) in obj)
+                {
+                    // Intentionally ignore values since ImmutableDictionary<,> can reorder pairs where the key has the
+                    // same hash code.
+                    hash.Add(key);
+                }
+
+                return hash.ToHashCode();
+#else
+                var hashCode = -450793227;
+                foreach (var (key, _) in obj)
+                {
+                    // Intentionally ignore values since ImmutableDictionary<,> can reorder pairs where the key has the
+                    // same hash code.
+                    hashCode = (hashCode * -1521134295) + EqualityComparer<TKey>.Default.GetHashCode(key);
+                }
+
+                return hashCode;
+#endif
             }
         }
     }

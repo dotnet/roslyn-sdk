@@ -1,5 +1,5 @@
 ﻿Imports Xunit
-Imports Verify = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier(Of MakeConst.VisualBasic.MakeConstAnalyzer, MakeConst.VisualBasic.MakeConstCodeFixProvider)
+Imports Verify = Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicCodeFixVerifier(Of MakeConst.VisualBasic.MakeConstAnalyzer, MakeConst.VisualBasic.MakeConstCodeFixProvider, Microsoft.CodeAnalysis.Testing.DefaultVerifier)
 
 Namespace MakeConst.Test
     Public Class UnitTest

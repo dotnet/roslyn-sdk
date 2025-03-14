@@ -21,17 +21,18 @@
     </When>
     <When Condition="'$(TargetFramework)' == 'net46'">
       <PropertyGroup>
-        <NuGetApiVersion>4.9.6</NuGetApiVersion>
+        <NuGetApiVersion>4.5.3</NuGetApiVersion>
       </PropertyGroup>
     </When>
     <When Condition="'$(TargetFramework)' == 'netstandard1.6'">
       <PropertyGroup>
-        <NuGetApiVersion>4.9.6</NuGetApiVersion>
+        <NuGetApiVersion>4.5.3</NuGetApiVersion>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <NuGetApiVersion>6.3.1</NuGetApiVersion>
+        <NuGetApiVersion>6.3.4</NuGetApiVersion>
+        <DefineConstants>$(DefineConstants);NUGET_SIGNING</DefineConstants>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -40,20 +41,16 @@
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CodeFix.Testing" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CodeRefactoring.Testing" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.SourceGenerators.Testing" />
-    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Testing.Verifiers.MSTest" />
-    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Testing.Verifiers.NUnit" />
-    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Testing.Verifiers.XUnit" />
 
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.Analyzer.Testing.UnitTests" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="1.0.1" />
-    <PackageReference Include="Microsoft.VisualBasic" Version="10.0.1" />
+    <PackageReference Include="Microsoft.VisualBasic" Version="10.0.1" Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'" />
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="16.1.8" />
     <PackageReference Include="Nullable" Version="1.3.0" PrivateAssets="all" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="'$(TargetFramework)' == 'netstandard1.6' or '$(TargetFramework)' == 'net452' or '$(TargetFramework)' == 'net46'" />
 
     <!-- Use PrivateAssets=compile to avoid exposing our NuGet dependencies downstream as public API. -->
     <PackageReference Include="NuGet.Common" Version="$(NuGetApiVersion)" PrivateAssets="compile" />

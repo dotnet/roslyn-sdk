@@ -33,7 +33,7 @@ Namespace BasicAnalyzers
         Friend Shared ReadOnly MessageFormat As LocalizableString = "Type '{0}' is a secure type as it implements interface '{1}', but it also implements interface '{2}' which has unsecure method(s)."
         Friend Shared ReadOnly Description As LocalizableString = "Secure types must not implement interfaces with unsecure methods."
 
-        Friend Shared Rule As New DiagnosticDescriptor(DiagnosticIds.CompilationStartedAnalyzerWithCompilationWideAnalysisRuleId, Title, MessageFormat, DiagnosticCategories.Stateful, DiagnosticSeverity.Warning, isEnabledByDefault:=True, description:=Description)
+        Friend Shared Rule As New DiagnosticDescriptor(DiagnosticIds.CompilationStartedAnalyzerWithCompilationWideAnalysisRuleId, Title, MessageFormat, DiagnosticCategories.Stateful, DiagnosticSeverity.Warning, isEnabledByDefault:=True, description:=Description, Nothing, WellKnownDiagnosticTags.CompilationEnd)
 #End Region
 
         Public Const UnsecureMethodAttributeName As String = "MyNamespace.UnsecureMethodAttribute"
