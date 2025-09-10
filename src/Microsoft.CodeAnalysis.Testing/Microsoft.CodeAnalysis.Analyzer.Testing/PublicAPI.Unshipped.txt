@@ -294,6 +294,7 @@ static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.Net.Net90MacOS.get -> 
 static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.Net.Net90TvOS.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.Net.Net90Windows.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.Net.Net90iOS.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
+static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.Net.Net100.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.NetCore.NetCoreApp10.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.NetCore.NetCoreApp11.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
 static Microsoft.CodeAnalysis.Testing.ReferenceAssemblies.NetCore.NetCoreApp20.get -> Microsoft.CodeAnalysis.Testing.ReferenceAssemblies
