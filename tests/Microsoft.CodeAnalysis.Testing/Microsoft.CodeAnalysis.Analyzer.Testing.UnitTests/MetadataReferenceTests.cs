@@ -742,13 +742,11 @@ class TestClass {
                 "net9.0-tvos" => ReferenceAssemblies.Net.Net90TvOS,
                 "net10.0" => ReferenceAssemblies.Net.Net100,
                 "net10.0-windows" => ReferenceAssemblies.Net.Net100Windows,
-
-                // TODO
-                // "net10.0-android" => ReferenceAssemblies.Net.Net100Android,
-                // "net10.0-ios" => ReferenceAssemblies.Net.Net100iOS,
-                // "net10.0-macos" => ReferenceAssemblies.Net.Net100MacOS,
-                // "net10.0-maccatalyst" => ReferenceAssemblies.Net.Net100MacCatalyst,
-                // "net10.0-tvos" => ReferenceAssemblies.Net.Net100TvOS,
+                "net10.0-android" => ReferenceAssemblies.Net.Net100Android,
+                "net10.0-ios" => ReferenceAssemblies.Net.Net100iOS,
+                "net10.0-macos" => ReferenceAssemblies.Net.Net100MacOS,
+                "net10.0-maccatalyst" => ReferenceAssemblies.Net.Net100MacCatalyst,
+                "net10.0-tvos" => ReferenceAssemblies.Net.Net100TvOS,
                 "netstandard1.0" => ReferenceAssemblies.NetStandard.NetStandard10,
                 "netstandard1.1" => ReferenceAssemblies.NetStandard.NetStandard11,
                 "netstandard1.2" => ReferenceAssemblies.NetStandard.NetStandard12,

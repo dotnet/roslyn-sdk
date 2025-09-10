@@ -1263,36 +1263,35 @@ namespace Microsoft.CodeAnalysis.Testing
                         ImmutableArray.Create(
                             new PackageIdentity("Microsoft.WindowsDesktop.App.Ref", "10.0.0-rc.1.25451.107"))));
 
-            // TODO
-            // private static readonly Lazy<ReferenceAssemblies> _lazyNet100MacOS =
-            //     new Lazy<ReferenceAssemblies>(() =>
-            //         Net100.AddPackages(
-            //             ImmutableArray.Create(
-            //                 new PackageIdentity("Microsoft.macOS.Ref", "15.0.10000"))));
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet100MacOS =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net100.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.macOS.Ref.net10.0_15.5", "15.5.10727-net10-rc.1"))));
 
-            // private static readonly Lazy<ReferenceAssemblies> _lazyNet100Android =
-            //     new Lazy<ReferenceAssemblies>(() =>
-            //         Net100.AddPackages(
-            //             ImmutableArray.Create(
-            //                 new PackageIdentity("Microsoft.Android.Ref.35", "35.0.100"))));
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet100Android =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net100.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.Android.Ref.36", "36.0.0-rc.1.285"))));
 
-            // private static readonly Lazy<ReferenceAssemblies> _lazyNet100iOS =
-            //     new Lazy<ReferenceAssemblies>(() =>
-            //         Net100.AddPackages(
-            //             ImmutableArray.Create(
-            //                 new PackageIdentity("Microsoft.iOS.Ref", "18.0.10000"))));
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet100iOS =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net100.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.iOS.Ref.net10.0_18.5", "18.5.10727-net10-rc.1"))));
 
-            // private static readonly Lazy<ReferenceAssemblies> _lazyNet100MacCatalyst =
-            //     new Lazy<ReferenceAssemblies>(() =>
-            //         Net100.AddPackages(
-            //             ImmutableArray.Create(
-            //                 new PackageIdentity("Microsoft.MacCatalyst.Ref", "18.0.10000"))));
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet100MacCatalyst =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net100.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.MacCatalyst.Ref.net10.0_18.5", "18.5.10727-net10-rc.1"))));
 
-            // private static readonly Lazy<ReferenceAssemblies> _lazyNet100TvOS =
-            //     new Lazy<ReferenceAssemblies>(() =>
-            //         Net100.AddPackages(
-            //             ImmutableArray.Create(
-            //                 new PackageIdentity("Microsoft.tvOS.Ref", "18.0.10000"))));
+            private static readonly Lazy<ReferenceAssemblies> _lazyNet100TvOS =
+                new Lazy<ReferenceAssemblies>(() =>
+                    Net100.AddPackages(
+                        ImmutableArray.Create(
+                            new PackageIdentity("Microsoft.tvOS.Ref.net10.0_18.5", "18.5.10727-net10-rc.1"))));
 
             public static ReferenceAssemblies Net50 => _lazyNet50.Value;
 
@@ -1356,16 +1355,15 @@ namespace Microsoft.CodeAnalysis.Testing
 
             public static ReferenceAssemblies Net100Windows => _lazyNet100Windows.Value;
 
-            // TODO
-            // public static ReferenceAssemblies Net100Android => _lazyNet100Android.Value;
+            public static ReferenceAssemblies Net100Android => _lazyNet100Android.Value;
 
-            // public static ReferenceAssemblies Net100iOS => _lazyNet100iOS.Value;
+            public static ReferenceAssemblies Net100iOS => _lazyNet100iOS.Value;
 
-            // public static ReferenceAssemblies Net100MacOS => _lazyNet100MacOS.Value;
+            public static ReferenceAssemblies Net100MacOS => _lazyNet100MacOS.Value;
 
-            // public static ReferenceAssemblies Net100MacCatalyst => _lazyNet100MacCatalyst.Value;
+            public static ReferenceAssemblies Net100MacCatalyst => _lazyNet100MacCatalyst.Value;
 
-            // public static ReferenceAssemblies Net100TvOS => _lazyNet100TvOS.Value;
+            public static ReferenceAssemblies Net100TvOS => _lazyNet100TvOS.Value;
         }
 
         public static class NetStandard
