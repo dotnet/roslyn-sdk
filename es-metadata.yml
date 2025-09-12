@@ -1,0 +1,8 @@
+schemaVersion: 0.0.1
+isProduction: true
+accountableOwners:
+  service: a1173860-fe4c-4151-b83d-8df7af6e3835
+routing:
+  defaultAreaPath:
+    org: devdiv
+    path: DevDiv\NET Developer Experience\Analyzers
