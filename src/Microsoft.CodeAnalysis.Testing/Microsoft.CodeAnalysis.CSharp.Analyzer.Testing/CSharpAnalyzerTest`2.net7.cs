@@ -10,6 +10,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing;
 
 public partial class CSharpAnalyzerTest<TAnalyzer, TVerifier>
 {
+    // For net9.0 the second parameter could be 'params ReadOnlySpan<DiagnosticResult> expectedDiagnostics'
     public static CSharpAnalyzerTest<TAnalyzer, TVerifier> Create([StringSyntax("C#-test")] string source, params DiagnosticResult[] expectedDiagnostics)
     {
         var test = new CSharpAnalyzerTest<TAnalyzer, TVerifier> { TestCode = source };
