@@ -11,6 +11,8 @@ variables:
     value: .NETCore
   - name: _DotNetValidationArtifactsCategory
     value: .NETCoreValidation
+  - name: TeamName
+    value: Roslyn
 
 # Branches that trigger a build on commit
 trigger:
@@ -128,14 +130,18 @@ extends:
             nugetConfigPath: 'NuGet.config'
             restoreDirectory: '$(Build.SourcesDirectory)\.packages'
 
-        - task: ms-vseng.MicroBuildTasks.30666190-6959-11e5-9f96-f56098202fef.MicroBuildSigningPlugin@1
+        - task: MicroBuildSigningPlugin@4
           displayName: Install Signing Plugin
           inputs:
             signType: $(SignType)
-            esrpSigning: true
+            zipSources: false
+            feedSource: 'https://pkgs.dev.azure.com/devdiv/_packaging/MicroBuildToolset/nuget/v3/index.json'
+            ConnectedPMEServiceName: 6cc74545-d7b9-4050-9dfa-ebefcc8961ea
+          env:
+            TeamName: '$(TeamName)'
           condition: and(succeeded(), ne(variables['SignType'], ''))
 
-        - task: ms-vseng.MicroBuildTasks.32f78468-e895-4f47-962c-58a699361df8.MicroBuildSwixPlugin@1
+        - task: MicroBuildSwixPlugin@4
           displayName: Install Swix Plugin
 
         - task: PowerShell@2
@@ -162,7 +168,7 @@ extends:
 
         - template: /eng/common/templates-official/steps/generate-sbom.yml@self
 
-        - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
+        - task: MicroBuildCleanup@1
           displayName: Cleanup
           condition: always()
 
