@@ -103,6 +103,8 @@ namespace Microsoft.CodeAnalysis.Testing
                 return NetFramework.Net472.Default;
 #elif NETCOREAPP3_1
                 return NetCore.NetCoreApp31;
+#elif NET7_0
+                return Net.Net70;
 #endif
             }
         }
