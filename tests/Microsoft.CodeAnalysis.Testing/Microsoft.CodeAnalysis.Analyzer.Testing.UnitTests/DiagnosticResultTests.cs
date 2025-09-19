@@ -100,12 +100,18 @@ namespace Microsoft.CodeAnalysis.Testing
         [Fact]
         public void TestToStringWithMessageFormat()
         {
-            Assert.Equal(
-                "error CS1002: {0} expected",
-                DiagnosticResult.CompilerError("CS1002").WithMessageFormat("{0} expected").ToString());
+            var exception = Assert.Throws<ArgumentException>(() =>
+                DiagnosticResult.CompilerError("CS1002")
+                                .WithMessageFormat("{0} expected")
+                                .ToString());
+            Assert.Equal("Incorrect number of arguments provided. The message expects 1 argument(s), but received 0.", exception.Message);
+
             Assert.Equal(
                 "error CS1002: ; expected",
-                DiagnosticResult.CompilerError("CS1002").WithMessageFormat("{0} expected").WithArguments(";").ToString());
+                DiagnosticResult.CompilerError("CS1002")
+                                .WithMessageFormat("{0} expected")
+                                .WithArguments(";")
+                                .ToString());
         }
 
         [Fact]
