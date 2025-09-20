@@ -113,6 +113,19 @@ Microsoft.CodeAnalysis.Testing.IVerifier.PushContext(string context) -> Microsof
 Microsoft.CodeAnalysis.Testing.IVerifier.SequenceEqual<T>(System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEqualityComparer<T> equalityComparer = null, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifier.True(bool assert, string message = null) -> void
 Microsoft.CodeAnalysis.Testing.IVerifierExtensions
+Microsoft.CodeAnalysis.Testing.IncrementalGeneratorExpectedState
+Microsoft.CodeAnalysis.Testing.IncrementalGeneratorExpectedState.IncrementalGeneratorExpectedState() -> void
+Microsoft.CodeAnalysis.Testing.IncrementalGeneratorExpectedState.this[string stepName].get -> System.Collections.Generic.List<Microsoft.CodeAnalysis.Testing.IncrementalGeneratorExpectedStepState>
+Microsoft.CodeAnalysis.Testing.IncrementalGeneratorExpectedStepState
+Microsoft.CodeAnalysis.Testing.IncrementalGeneratorExpectedStepState.IncrementalGeneratorExpectedStepState() -> void
+Microsoft.CodeAnalysis.Testing.IncrementalGeneratorExpectedStepState.InputRunReasons.get -> System.Collections.Generic.List<Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason>
+Microsoft.CodeAnalysis.Testing.IncrementalGeneratorExpectedStepState.OutputRunReasons.get -> System.Collections.Generic.List<Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason>
+Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason
+Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason.Cached = 3 -> Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason
+Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason.Modified = 1 -> Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason
+Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason.New = 0 -> Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason
+Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason.Removed = 4 -> Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason
+Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason.Unchanged = 2 -> Microsoft.CodeAnalysis.Testing.IncrementalStepExpectedRunReason
 Microsoft.CodeAnalysis.Testing.MarkupMode
 Microsoft.CodeAnalysis.Testing.MarkupMode.Allow = 3 -> Microsoft.CodeAnalysis.Testing.MarkupMode
 Microsoft.CodeAnalysis.Testing.MarkupMode.Ignore = 1 -> Microsoft.CodeAnalysis.Testing.MarkupMode
