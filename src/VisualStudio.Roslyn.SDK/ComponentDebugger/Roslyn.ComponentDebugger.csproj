@@ -23,6 +23,7 @@
     <ProjectReference Include="..\AssemblyVersionGenerator\AssemblyVersionGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.IO.Redist" Version="$(MicrosoftIORedistVersion)" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.Managed" Version="$(MicrosoftVisualStudioProjectSystemManagedVersion)" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.Managed.VS" Version="$(MicrosoftVisualStudioProjectSystemManagedVSVersion)" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.SDK.Tools" Version="$(MicrosoftVisualStudioProjectSystemSDKToolsVersion)" PrivateAssets="all" />
