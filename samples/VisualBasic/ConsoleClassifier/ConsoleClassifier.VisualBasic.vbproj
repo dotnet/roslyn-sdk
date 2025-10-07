@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.3.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.0.0" />
     <PackageReference Include="Microsoft.IO.Redist" Version="6.0.1" PrivateAssets="all" />
+    <PackageReference Include="System.Text.Json" Version="6.0.10" />
   </ItemGroup>
 
 </Project>

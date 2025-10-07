@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Utilities.Internal" Version="$(MicrosoftVisualStudioUtilitiesInternalVersion)" />
     <PackageReference Include="Microsoft.Visualstudio.Validation" Version="$(MicrosoftVisualStudioValidationVersion)" />
     <PackageReference Include="StreamJsonRpc" Version="$(StreamJsonRpcVersion)" />
+    <PackageReference Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
     <PackageReference Include="VSLangProj" Version="$(VSLangProjVersion)" />
   </ItemGroup>
 

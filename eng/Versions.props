@@ -62,6 +62,7 @@
     <MicrosoftVisualStudioValidationVersion>17.0.64</MicrosoftVisualStudioValidationVersion>
     <NuGetSolutionRestoreManagerInteropVersion>5.6.0</NuGetSolutionRestoreManagerInteropVersion>
     <StreamJsonRpcVersion>2.12.27</StreamJsonRpcVersion>
+    <SystemTextJsonVersion>6.0.10</SystemTextJsonVersion>
     <VSLangProjVersion>$(MicrosoftVisualStudioShellPackagesVersion)</VSLangProjVersion>
     <MicrosoftVisualStudioTemplateWizardInterfaceVersion>17.0.0-preview-1-30928-1111</MicrosoftVisualStudioTemplateWizardInterfaceVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.0.4207-preview4</MicrosoftVSSDKBuildToolsVersion>
