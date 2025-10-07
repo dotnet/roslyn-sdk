@@ -35,6 +35,7 @@
     <!-- We target a lower roslyn API to build internal generators against so they still load in earlier VS versions -->
     <MicrosoftCodeAnalysisGeneratorVersion>3.9.0</MicrosoftCodeAnalysisGeneratorVersion>
     <MicrosoftIORedistVersion>6.0.1</MicrosoftIORedistVersion>
+    <MessagePackVersion>2.5.187</MessagePackVersion>
     <!-- VS SDK -->
     <EnvDTE80Version>$(MicrosoftVisualStudioShellPackagesVersion)</EnvDTE80Version>
     <EnvDTEVersion>$(MicrosoftVisualStudioShellPackagesVersion)</EnvDTEVersion>
