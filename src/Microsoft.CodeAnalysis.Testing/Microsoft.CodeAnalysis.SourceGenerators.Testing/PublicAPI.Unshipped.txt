@@ -3,8 +3,11 @@ Microsoft.CodeAnalysis.Testing.EmptySourceGeneratorProvider.EmptySourceGenerator
 Microsoft.CodeAnalysis.Testing.EmptySourceGeneratorProvider.Execute(Microsoft.CodeAnalysis.GeneratorExecutionContext context) -> void
 Microsoft.CodeAnalysis.Testing.EmptySourceGeneratorProvider.Initialize(Microsoft.CodeAnalysis.GeneratorInitializationContext context) -> void
 Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>
+Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.IncrementalChangeTestState.get -> Microsoft.CodeAnalysis.Testing.SolutionState
+Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.IncrementalGeneratorStepStates.get -> System.Collections.Generic.Dictionary<System.Type, Microsoft.CodeAnalysis.Testing.IncrementalGeneratorExpectedState>
 Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.SourceGeneratorTest() -> void
 Microsoft.CodeAnalysis.Testing.SourceGeneratorVerifier<TSourceGenerator, TTest, TVerifier>
 Microsoft.CodeAnalysis.Testing.SourceGeneratorVerifier<TSourceGenerator, TTest, TVerifier>.SourceGeneratorVerifier() -> void
 override Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.GetDiagnosticAnalyzers() -> System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer>
+override Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.RunImplAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
 override abstract Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.GetSourceGenerators() -> System.Collections.Generic.IEnumerable<System.Type>
