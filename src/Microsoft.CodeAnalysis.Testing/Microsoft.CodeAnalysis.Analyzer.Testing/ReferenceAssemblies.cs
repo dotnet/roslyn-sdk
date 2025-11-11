@@ -91,14 +91,10 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             get
             {
-#if NETSTANDARD1_6
-                return NetStandard.NetStandard16;
-#elif NETSTANDARD2_0
+#if NETSTANDARD2_0
                 return NetStandard.NetStandard20;
-#elif NET452
-                return NetFramework.Net452.Default;
-#elif NET46
-                return NetFramework.Net46.Default;
+#elif NET461
+                return NetFramework.Net461.Default;
 #elif NET472
                 return NetFramework.Net472.Default;
 #elif NETCOREAPP3_1

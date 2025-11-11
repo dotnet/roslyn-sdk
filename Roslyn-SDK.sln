@@ -20,6 +20,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SyntaxVisualizer.Extension", "src\VisualStudio.Roslyn.SDK\SyntaxVisualizer\Roslyn.SyntaxVisualizer.Extension\Roslyn.SyntaxVisualizer.Extension.csproj", "{BF3477AA-22C9-4751-A4C0-01EF30728AE9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.CodeAnalysis.Testing", "Microsoft.CodeAnalysis.Testing", "{A3E08CE3-2358-4D36-875B-82C99AC61CD8}"
+	ProjectSection(SolutionItems) = preProject
+		src\Microsoft.CodeAnalysis.Testing\Directory.Build.props = src\Microsoft.CodeAnalysis.Testing\Directory.Build.props
+		src\Microsoft.CodeAnalysis.Testing\Directory.Build.targets = src\Microsoft.CodeAnalysis.Testing\Directory.Build.targets
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Analyzer.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj", "{36F8BB88-BBDB-4917-BCF4-269E7652A314}"
 EndProject
