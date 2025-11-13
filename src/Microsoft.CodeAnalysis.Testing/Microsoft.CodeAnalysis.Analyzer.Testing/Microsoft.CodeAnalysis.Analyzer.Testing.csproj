@@ -14,19 +14,9 @@
   </PropertyGroup>
 
   <Choose>
-    <When Condition="'$(TargetFramework)' == 'net452'">
+    <When Condition="'$(TargetFramework)' == 'net461'">
       <PropertyGroup>
-        <NuGetApiVersion>4.5.3</NuGetApiVersion>
-      </PropertyGroup>
-    </When>
-    <When Condition="'$(TargetFramework)' == 'net46'">
-      <PropertyGroup>
-        <NuGetApiVersion>4.5.3</NuGetApiVersion>
-      </PropertyGroup>
-    </When>
-    <When Condition="'$(TargetFramework)' == 'netstandard1.6'">
-      <PropertyGroup>
-        <NuGetApiVersion>4.5.3</NuGetApiVersion>
+        <NuGetApiVersion>5.11.6</NuGetApiVersion>
       </PropertyGroup>
     </When>
     <Otherwise>
