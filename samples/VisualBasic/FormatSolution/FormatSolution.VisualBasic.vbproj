@@ -8,8 +8,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Locator" Version="1.5.3" />
 
-    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.0.0" />
   </ItemGroup>
 
 </Project>

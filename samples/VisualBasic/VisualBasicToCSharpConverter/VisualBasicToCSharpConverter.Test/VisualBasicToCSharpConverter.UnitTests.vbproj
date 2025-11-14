@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
   </ItemGroup>
 
   <ItemGroup>
