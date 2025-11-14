@@ -24,7 +24,7 @@
     <MicrosoftCodeAnalysisPackagesVersion>4.1.0</MicrosoftCodeAnalysisPackagesVersion>
     <MicrosoftVisualStudioShellPackagesVersion>17.3.32809.331</MicrosoftVisualStudioShellPackagesVersion>
     <MicrosoftVisualStudioEditorPackagesVersion>17.3.198</MicrosoftVisualStudioEditorPackagesVersion>
-    <MicrosoftVisualStudioExtensibilityTestingVersion>0.1.165-beta</MicrosoftVisualStudioExtensibilityTestingVersion>
+    <MicrosoftVisualStudioExtensibilityTestingVersion>0.1.800-beta</MicrosoftVisualStudioExtensibilityTestingVersion>
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisAnalyzersVersion>3.3.5-beta1.23322.1</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisCommonVersion>$(MicrosoftCodeAnalysisPackagesVersion)</MicrosoftCodeAnalysisCommonVersion>
@@ -64,8 +64,10 @@
     <MicrosoftVisualStudioValidationVersion>17.0.64</MicrosoftVisualStudioValidationVersion>
     <NuGetSolutionRestoreManagerInteropVersion>5.6.0</NuGetSolutionRestoreManagerInteropVersion>
     <StreamJsonRpcVersion>2.12.27</StreamJsonRpcVersion>
+    <SystemFormatsAsn1Version>6.0.1</SystemFormatsAsn1Version>
     <SystemTextJsonVersion>6.0.10</SystemTextJsonVersion>
     <VSLangProjVersion>$(MicrosoftVisualStudioShellPackagesVersion)</VSLangProjVersion>
+
     <MicrosoftVisualStudioTemplateWizardInterfaceVersion>17.0.0-preview-1-30928-1111</MicrosoftVisualStudioTemplateWizardInterfaceVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.0.4207-preview4</MicrosoftVSSDKBuildToolsVersion>
     <MicroBuildPluginsSwixBuildVersion>1.1.33</MicroBuildPluginsSwixBuildVersion>
@@ -85,6 +87,8 @@
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>$(MicrosoftVisualStudioExtensibilityTestingVersion)</MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>
     <MicrosoftVisualStudioExtensibilityTestingXunitVersion>$(MicrosoftVisualStudioExtensibilityTestingVersion)</MicrosoftVisualStudioExtensibilityTestingXunitVersion>
+    
+
     <!-- Needed to override the transitive 9.0.1 version brought in by the 16.1.1 Microsoft.NET.Test.Sdk -->
     <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
     <!-- Analyzers -->
