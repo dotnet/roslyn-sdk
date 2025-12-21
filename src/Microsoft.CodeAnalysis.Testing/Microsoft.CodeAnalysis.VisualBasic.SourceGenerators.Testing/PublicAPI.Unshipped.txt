@@ -7,3 +7,7 @@ Overrides Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorT
 Overrides Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorTest(Of TSourceGenerator, TVerifier).DefaultFileExt() -> String
 Overrides Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorTest(Of TSourceGenerator, TVerifier).GetSourceGenerators() -> System.Collections.Generic.IEnumerable(Of System.Type)
 Overrides Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorTest(Of TSourceGenerator, TVerifier).Language() -> String
+Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorTest(Of TSourceGenerator, TVerifier).GlobalOptions() -> System.Collections.Generic.List(Of (String, String))
+Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorTest(Of TSourceGenerator, TVerifier).LanguageVersion() -> Microsoft.CodeAnalysis.VisualBasic.LanguageVersion
+Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorTest(Of TSourceGenerator, TVerifier).LanguageVersion(value As Microsoft.CodeAnalysis.VisualBasic.LanguageVersion) -> Void
+Overrides Microsoft.CodeAnalysis.VisualBasic.Testing.VisualBasicSourceGeneratorTest(Of TSourceGenerator, TVerifier).GetAnalyzerOptions(project As Microsoft.CodeAnalysis.Project) -> Microsoft.CodeAnalysis.Diagnostics.AnalyzerOptions
