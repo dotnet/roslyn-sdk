@@ -24,6 +24,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing
         }
 
         public override bool TryGetValue(string key, out string value)
-            => _workspaceOptions.TryGetValue(key, out value) || _globalOptions.TryGetValue(key, out value);
+            => _workspaceOptions.TryGetValue(key, out value!) || _globalOptions.TryGetValue(key, out value!);
     }
 }
