@@ -4,17 +4,15 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 
 namespace Microsoft.CodeAnalysis.CSharp.Testing
 {
-    public class CSharpSourceGeneratorTest<TSourceGenerator, TVerifier> : SourceGeneratorTest<TVerifier>
+    public class CSharpSourceGeneratorTest<TSourceGenerator, TVerifier> : SourceGeneratorTest<TVerifier>, IGeneratorTestBase
         where TSourceGenerator : new()
         where TVerifier : IVerifier, new()
     {
-        private static readonly LanguageVersion DefaultLanguageVersion =
-            Enum.TryParse("Default", out LanguageVersion version) ? version : LanguageVersion.CSharp6;
-
         protected override IEnumerable<Type> GetSourceGenerators()
             => new Type[] { typeof(TSourceGenerator) };
 
@@ -22,10 +20,28 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing
 
         public override string Language => LanguageNames.CSharp;
 
+        /// <summary>
+        /// Gets the global options to be used in <see cref="GetAnalyzerOptions"/>.
+        /// This can be appended to by the user to provide additional options.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1414:Tuple types in signatures should have element names", Justification = "The tuple names in the global options are unknown.")]
+        public List<(string, string)> GlobalOptions { get; } = new();
+
+        /// <summary>
+        /// Gets or sets the C# language version used for the test. The default is <see cref="LanguageVersion.Default"/>.
+        /// </summary>
+        public LanguageVersion LanguageVersion { get; set; } =
+            Enum.TryParse("Default", out LanguageVersion version) ? version : LanguageVersion.CSharp6;
+
         protected override CompilationOptions CreateCompilationOptions()
             => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
 
         protected override ParseOptions CreateParseOptions()
-            => new CSharpParseOptions(DefaultLanguageVersion, DocumentationMode.Diagnose);
+            => new CSharpParseOptions(LanguageVersion, DocumentationMode.Diagnose);
+
+        protected override AnalyzerOptions GetAnalyzerOptions(Project project)
+            => new(
+                project.AnalyzerOptions.AdditionalFiles,
+                new OptionsProvider(project.AnalyzerOptions.AnalyzerConfigOptionsProvider, GlobalOptions));
     }
 }
