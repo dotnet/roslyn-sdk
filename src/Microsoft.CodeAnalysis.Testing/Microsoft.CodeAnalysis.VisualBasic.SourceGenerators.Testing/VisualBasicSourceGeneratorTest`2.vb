@@ -31,4 +31,16 @@ Public Class VisualBasicSourceGeneratorTest(Of TSourceGenerator As New, TVerifie
     Protected Overrides Function GetSourceGenerators() As IEnumerable(Of Type)
         Return New Type() {GetType(TSourceGenerator)}
     End Function
+
+    Public ReadOnly Property IncrementalGeneratorState As IncrementalGeneratorExpectedState
+        Get
+            Dim state As IncrementalGeneratorExpectedState = Nothing
+
+            If Not IncrementalGeneratorStepStates.TryGetValue(GetType(TSourceGenerator), state) Then
+                state = New IncrementalGeneratorExpectedState
+                IncrementalGeneratorStepStates.Add(GetType(TSourceGenerator), state)
+            End If
+            Return state
+        End Get
+    End Property
 End Class

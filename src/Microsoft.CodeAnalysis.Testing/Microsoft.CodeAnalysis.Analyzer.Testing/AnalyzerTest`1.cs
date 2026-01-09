@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -267,20 +268,24 @@ namespace Microsoft.CodeAnalysis.Testing
                 return ImmutableArray<Diagnostic>.Empty;
             }
 
-            return await VerifySourceGeneratorAsync(Language, sourceGenerators, testState, verifier.PushContext("Source generator application"), cancellationToken);
+            var driver = await VerifySourceGeneratorAsync(Language, sourceGenerators, testState, verifier.PushContext("Source generator application"), cancellationToken);
+            return driver.GetRunResult().Diagnostics;
         }
 
-        private protected async Task<ImmutableArray<Diagnostic>> VerifySourceGeneratorAsync(
+        private protected async Task<LightupGeneratorDriver> VerifySourceGeneratorAsync(
             string language,
             ImmutableArray<Type> sourceGenerators,
             SolutionState testState,
             IVerifier verifier,
             CancellationToken cancellationToken)
         {
-            var project = await CreateProjectAsync(new EvaluatedProjectState(testState, ReferenceAssemblies), testState.AdditionalProjects.Values.Select(additionalProject => new EvaluatedProjectState(additionalProject, ReferenceAssemblies)).ToImmutableArray(), cancellationToken);
+            var initialProject = await CreateProjectAsync(new EvaluatedProjectState(testState, ReferenceAssemblies), testState.AdditionalProjects.Values.Select(additionalProject => new EvaluatedProjectState(additionalProject, ReferenceAssemblies)).ToImmutableArray(), cancellationToken);
 
-            ImmutableArray<Diagnostic> diagnostics;
-            (project, diagnostics) = await ApplySourceGeneratorsAsync(sourceGenerators, project, verifier, cancellationToken).ConfigureAwait(false);
+            var generators = ImmutableArray.CreateRange(sourceGenerators, static type => Activator.CreateInstance(type)!);
+            var generatorDriver = CreateGeneratorDriver(initialProject, generators, verifier);
+            var (project, updatedDriver) = await ApplySourceGeneratorsAsync(initialProject, generatorDriver, verifier, cancellationToken).ConfigureAwait(false);
+
+            var diagnostics = updatedDriver.GetRunResult().Diagnostics;
 
             // After applying the source generator, compare the resulting string to the inputted one
             if (!TestBehaviors.HasFlag(TestBehaviors.SkipGeneratedSourcesCheck))
@@ -322,7 +327,7 @@ namespace Microsoft.CodeAnalysis.Testing
                     MatchDiagnosticsTimeout);
             }
 
-            return diagnostics;
+            return generatorDriver;
 
             static void VerifyDocuments(
                 IVerifier verifier,
@@ -1230,23 +1235,25 @@ namespace Microsoft.CodeAnalysis.Testing
 
         protected virtual async Task<(Compilation compilation, ImmutableArray<Diagnostic> generatorDiagnostics)> GetProjectCompilationAsync(Project project, IVerifier verifier, CancellationToken cancellationToken)
         {
-            var (finalProject, generatorDiagnostics) = await ApplySourceGeneratorsAsync(GetSourceGenerators().ToImmutableArray(), project, verifier, cancellationToken).ConfigureAwait(false);
-            return ((await finalProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false))!, generatorDiagnostics);
+            var sourceGeneratorTypes = GetSourceGenerators().ToImmutableArray();
+            if (sourceGeneratorTypes.IsEmpty)
+            {
+                return (await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false), ImmutableArray<Diagnostic>.Empty);
+            }
+
+            var sourceGenerators = ImmutableArray.CreateRange(sourceGeneratorTypes, static type => Activator.CreateInstance(type)!);
+            var generatorDriver = CreateGeneratorDriver(project, sourceGenerators, verifier);
+            (project, generatorDriver) = await ApplySourceGeneratorsAsync(project, generatorDriver, verifier, cancellationToken);
+            return (await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false), generatorDriver.GetRunResult().Diagnostics);
         }
 
-        private protected async Task<(Project project, ImmutableArray<Diagnostic> diagnostics)> ApplySourceGeneratorsAsync(ImmutableArray<Type> sourceGeneratorTypes, Project project, IVerifier verifier, CancellationToken cancellationToken)
+        private protected async Task<(Project project, LightupGeneratorDriver driver)> ApplySourceGeneratorsAsync(Project project, LightupGeneratorDriver driver, IVerifier verifier, CancellationToken cancellationToken)
         {
             var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
             verifier.True(compilation is { });
 
-            if (sourceGeneratorTypes.IsEmpty)
-            {
-                return (project, ImmutableArray<Diagnostic>.Empty);
-            }
-
-            var sourceGenerators = ImmutableArray.CreateRange(sourceGeneratorTypes, static type => Activator.CreateInstance(type)!);
-            var driver = CreateGeneratorDriver(project, sourceGenerators, verifier).RunGenerators(compilation, cancellationToken);
-            var result = driver.GetRunResult();
+            var updatedDriver = driver.RunGenerators(compilation, cancellationToken);
+            var result = updatedDriver.GetRunResult();
 
             var updatedProject = project;
             foreach (var tree in result.GeneratedTrees)
@@ -1255,7 +1262,7 @@ namespace Microsoft.CodeAnalysis.Testing
                 updatedProject = updatedProject.AddDocument(fileName, await tree.GetTextAsync(cancellationToken).ConfigureAwait(false), folders: folders, filePath: tree.FilePath).Project;
             }
 
-            return (updatedProject, result.Diagnostics);
+            return (updatedProject, updatedDriver);
         }
 
         private protected static (string fileName, IEnumerable<string> folders) GetNameAndFoldersFromSourceGeneratedFilePath(string filePath)
@@ -1287,13 +1294,21 @@ namespace Microsoft.CodeAnalysis.Testing
             var analyzerConfigOptionsProviderType = typeof(CompilationOptions).GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider");
             verifier.True(analyzerConfigOptionsProviderType is not null, "Failed to locate AnalyzerConfigOptionsProvider class");
 
+            var generatorDriverOptionsType = typeof(CompilationOptions).GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.GeneratorDriverOptions");
+
+            var createMethodWithOptions = (from method in generatorDriverType.GetTypeInfo().GetMethods()
+                                           where method is { Name: "Create", IsPublic: true, IsStatic: true }
+                                           let parameterTypes = method.GetParameters().Select(static parameter => parameter.ParameterType)
+                                           where parameterTypes.SequenceEqual(new[] { ienumerableOfISourceGeneratorType, typeof(IEnumerable<AdditionalText>), project.ParseOptions.GetType(), analyzerConfigOptionsProviderType, generatorDriverOptionsType })
+                                           select method).SingleOrDefault();
+
             var createMethod = (from method in generatorDriverType.GetTypeInfo().GetMethods()
                                 where method is { Name: "Create", IsPublic: true, IsStatic: true }
                                 let parameterTypes = method.GetParameters().Select(static parameter => parameter.ParameterType)
                                 where parameterTypes.SequenceEqual(new[] { ienumerableOfISourceGeneratorType, typeof(IEnumerable<AdditionalText>), project.ParseOptions.GetType(), analyzerConfigOptionsProviderType })
                                     || parameterTypes.SequenceEqual(new[] { immutableArrayOfISourceGeneratorType, typeof(ImmutableArray<AdditionalText>), project.ParseOptions.GetType(), analyzerConfigOptionsProviderType })
                                 select method).SingleOrDefault();
-            verifier.True(createMethod is not null, "Failed to locate factory method for diagnostic driver");
+            verifier.True(createMethodWithOptions is not null || createMethod is not null, "Failed to locate factory method for diagnostic driver");
 
             var convertedSourceGeneratorsArray = Array.CreateInstance(isourceGeneratorType, sourceGenerators.Length);
             for (var i = 0; i < sourceGenerators.Length; i++)
@@ -1327,7 +1342,43 @@ namespace Microsoft.CodeAnalysis.Testing
             var analyzerConfigOptionsProvider = analyzerOptions.AnalyzerConfigOptionsProvider();
             verifier.True(analyzerConfigOptionsProvider is not null, "Failed to locate AnalyzerConfigOptionsProvider for project");
 
-            var driver = createMethod.Invoke(null, new[] { convertedSourceGenerators, additionalFiles, project.ParseOptions, analyzerConfigOptionsProvider });
+            object? driver;
+
+            // If we cannot specify generator options or if we are not testing incrementality
+            // don't try to track incremental steps.
+            if (generatorDriverOptionsType is null)
+            {
+                driver = createMethod.Invoke(null, new[] { convertedSourceGenerators, additionalFiles, project.ParseOptions, analyzerConfigOptionsProvider });
+            }
+            else
+            {
+                var constructorWithIncrementalTracking = generatorDriverOptionsType.GetConstructor(
+                    new[]
+                    {
+                        generatorDriverOptionsType.GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.IncrementalGeneratorOutputKind")!,
+                        typeof(bool),
+                    });
+
+                object options;
+
+                if (constructorWithIncrementalTracking is not null)
+                {
+                    options = constructorWithIncrementalTracking.Invoke(new object[] { 0, true });
+                }
+                else
+                {
+                    var constructorWithOnlyOutputKinds = generatorDriverOptionsType.GetConstructor(
+                        new[]
+                        {
+                            generatorDriverOptionsType.GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.IncrementalGeneratorOutputKind")!,
+                        });
+                    verifier.True(constructorWithOnlyOutputKinds is not null);
+                    options = constructorWithOnlyOutputKinds!.Invoke(new object[] { 0 });
+                }
+
+                driver = createMethodWithOptions!.Invoke(null, new[] { convertedSourceGenerators, additionalFiles, project.ParseOptions, analyzerConfigOptionsProvider, options });
+            }
+
             verifier.True(driver is not null, "Failed to invoke factory method for diagnostic driver");
 
             return new LightupGeneratorDriver(driver);
@@ -1832,7 +1883,7 @@ namespace Microsoft.CodeAnalysis.Testing
             }
         }
 
-        private sealed class LightupGeneratorDriver
+        private protected sealed class LightupGeneratorDriver
         {
             private readonly object _instance;
 
@@ -1863,9 +1914,42 @@ namespace Microsoft.CodeAnalysis.Testing
                 var runResult = getRunResultMethod.Invoke(_instance, new object[0])!;
                 return new LightupGeneratorDriverRunResult(runResult);
             }
+
+            public LightupGeneratorDriver ReplaceAdditionalTexts(ImmutableArray<AdditionalText> additionalTexts)
+            {
+                var replaceAdditionalTexts = (from method in _instance.GetType().GetTypeInfo().GetMethods()
+                                              where method is { Name: nameof(ReplaceAdditionalTexts), IsStatic: false, IsPublic: true }
+                                              where method.GetParameters().Length == 1
+                                              select method).Single();
+
+                var updatedDriver = replaceAdditionalTexts.Invoke(_instance, new object[] { additionalTexts })!;
+                return new LightupGeneratorDriver(updatedDriver);
+            }
+
+            public LightupGeneratorDriver WithUpdatedParseOptions(ParseOptions options)
+            {
+                var withUpdatedParseOptions = (from method in _instance.GetType().GetTypeInfo().GetMethods()
+                                               where method is { Name: nameof(WithUpdatedParseOptions), IsStatic: false, IsPublic: true }
+                                               where method.GetParameters().Length == 1
+                                               select method).Single();
+
+                var updatedDriver = withUpdatedParseOptions.Invoke(_instance, new object[] { options })!;
+                return new LightupGeneratorDriver(updatedDriver);
+            }
+
+            public LightupGeneratorDriver WithUpdatedAnalyzerConfigOptions(object? options)
+            {
+                var withUpdatedAnalyzerConfigOptions = (from method in _instance.GetType().GetTypeInfo().GetMethods()
+                                                        where method is { Name: nameof(WithUpdatedAnalyzerConfigOptions), IsStatic: false, IsPublic: true }
+                                                        where method.GetParameters().Length == 1
+                                                        select method).Single();
+
+                var updatedDriver = withUpdatedAnalyzerConfigOptions.Invoke(_instance, new object?[] { options })!;
+                return new LightupGeneratorDriver(updatedDriver);
+            }
         }
 
-        private sealed class LightupGeneratorDriverRunResult
+        private protected sealed class LightupGeneratorDriverRunResult
         {
             private static readonly Type? s_generatorDriverRunResultType = typeof(Compilation).GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.GeneratorDriverRunResult");
 
@@ -1881,6 +1965,12 @@ namespace Microsoft.CodeAnalysis.Testing
                     nameof(Diagnostics),
                     defaultValue: ImmutableArray<Diagnostic>.Empty);
 
+            private static readonly Func<object, object> s_results =
+                LightupHelpers.CreatePropertyAccessor<object, object>(
+                    s_generatorDriverRunResultType,
+                    nameof(Results),
+                    defaultValue: ImmutableArray<object>.Empty);
+
             private readonly object _instance;
 
             public LightupGeneratorDriverRunResult(object instance)
@@ -1891,6 +1981,253 @@ namespace Microsoft.CodeAnalysis.Testing
             public ImmutableArray<SyntaxTree> GeneratedTrees => s_generatedTrees(_instance);
 
             public ImmutableArray<Diagnostic> Diagnostics => s_diagnostics(_instance);
+
+            private ImmutableArray<LightupGeneratorRunResult> _results;
+
+            public ImmutableArray<LightupGeneratorRunResult> Results
+            {
+                get
+                {
+                    if (_results.IsDefault)
+                    {
+                        var results = s_results(_instance);
+                        var builder = ImmutableArray.CreateBuilder<LightupGeneratorRunResult>();
+                        foreach (var result in (IEnumerable)results)
+                        {
+                            builder.Add(new LightupGeneratorRunResult(result!));
+                        }
+
+                        _results = builder.ToImmutable();
+                    }
+
+                    return _results;
+                }
+            }
+        }
+
+        private protected sealed class LightupGeneratorRunResult
+        {
+            private static readonly Type? s_generatorRunResultType = typeof(Compilation).GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.GeneratorRunResult");
+
+            private static readonly Type? s_generatorExtensions = typeof(Compilation).GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.GeneratorExtensions");
+
+            private static readonly Func<object, object?> s_Generator =
+                LightupHelpers.CreatePropertyAccessor<object, object?>(
+                    s_generatorRunResultType,
+                    nameof(Generator),
+                    defaultValue: null);
+
+            private static readonly Func<object, ImmutableArray<Diagnostic>> s_diagnostics =
+                LightupHelpers.CreatePropertyAccessor<object, ImmutableArray<Diagnostic>>(
+                    s_generatorRunResultType,
+                    nameof(Diagnostics),
+                    defaultValue: ImmutableArray<Diagnostic>.Empty);
+
+            private static readonly Func<object, Exception?> s_exception =
+                LightupHelpers.CreatePropertyAccessor<object, Exception?>(
+                    s_generatorRunResultType,
+                    nameof(Exception),
+                    defaultValue: null);
+
+            private static readonly Func<object, object?> s_trackedSteps =
+                LightupHelpers.CreatePropertyAccessor<object, object?>(
+                    s_generatorRunResultType,
+                    nameof(TrackedSteps),
+                    defaultValue: null);
+
+            private static readonly Func<object, object?> s_outputSteps =
+                LightupHelpers.CreatePropertyAccessor<object, object?>(
+                    s_generatorRunResultType,
+                    nameof(OutputSteps),
+                    defaultValue: null);
+
+            private static readonly MethodInfo? s_getGeneratorType =
+                s_generatorExtensions?.GetTypeInfo().GetMethod("GetGeneratorType");
+
+            private readonly object _instance;
+
+            public LightupGeneratorRunResult(object instance)
+            {
+                _instance = instance;
+            }
+
+            public object? Generator => s_Generator(_instance);
+
+            public Type? GeneratorType => (Type?)s_getGeneratorType?.Invoke(null, new[] { Generator });
+
+            public ImmutableArray<Diagnostic> Diagnostics => s_diagnostics(_instance);
+
+            public Exception? Exception => s_exception(_instance);
+
+            private ImmutableDictionary<string, ImmutableArray<LightupIncrementalGeneratorRunStep>>? _trackedSteps;
+
+            public ImmutableDictionary<string, ImmutableArray<LightupIncrementalGeneratorRunStep>>? TrackedSteps
+            {
+                get
+                {
+                    if (_trackedSteps == null)
+                    {
+                        var trackedSteps = s_trackedSteps(_instance);
+                        if (trackedSteps is null)
+                        {
+                            return null;
+                        }
+
+                        var lightupTrackedStepsBuilder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<LightupIncrementalGeneratorRunStep>>();
+                        foreach (var step in (IEnumerable)trackedSteps)
+                        {
+                            var name = (string)step!.GetType().GetTypeInfo().GetProperty("Key")!.GetValue(step)!;
+                            var steps = (IEnumerable<object>)step!.GetType().GetTypeInfo().GetProperty("Value")!.GetValue(step)!;
+                            lightupTrackedStepsBuilder.Add(name, steps.Select(static step => new LightupIncrementalGeneratorRunStep(step)).ToImmutableArray());
+                        }
+
+                        _trackedSteps = lightupTrackedStepsBuilder.ToImmutable();
+                    }
+
+                    return _trackedSteps;
+                }
+            }
+
+            private ImmutableDictionary<string, ImmutableArray<LightupIncrementalGeneratorRunStep>>? _outputSteps;
+
+            public ImmutableDictionary<string, ImmutableArray<LightupIncrementalGeneratorRunStep>>? OutputSteps
+            {
+                get
+                {
+                    if (_trackedSteps == null)
+                    {
+                        var outputSteps = s_outputSteps(_instance);
+                        if (outputSteps is null)
+                        {
+                            return null;
+                        }
+
+                        var lightupTrackedStepsBuilder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<LightupIncrementalGeneratorRunStep>>();
+                        foreach (var step in (IEnumerable)outputSteps)
+                        {
+                            var name = (string)step!.GetType().GetTypeInfo().GetProperty("Key")!.GetValue(step)!;
+                            var steps = (IEnumerable<object>)step!.GetType().GetTypeInfo().GetProperty("Value")!.GetValue(step)!;
+                            lightupTrackedStepsBuilder.Add(name, steps.Select(static step => new LightupIncrementalGeneratorRunStep(step)).ToImmutableArray());
+                        }
+
+                        _outputSteps = lightupTrackedStepsBuilder.ToImmutable();
+                    }
+
+                    return _outputSteps;
+                }
+            }
+        }
+
+        private protected sealed class LightupIncrementalGeneratorRunStep
+        {
+            private static readonly Type? s_incrementalGeneratorRunStepType = typeof(Compilation).GetTypeInfo().Assembly.GetType("Microsoft.CodeAnalysis.IncrementalGeneratorRunStep");
+
+            private static readonly Type? s_incrementalGeneratorRunStepInputType = s_incrementalGeneratorRunStepType is not null
+                ? typeof(ValueTuple<,>).MakeGenericType(s_incrementalGeneratorRunStepType, typeof(int))
+                : null;
+
+            private static readonly Func<object, string?> s_name =
+                LightupHelpers.CreatePropertyAccessor<object, string?>(
+                    s_incrementalGeneratorRunStepType,
+                    nameof(Name),
+                    defaultValue: null);
+
+            private static readonly Func<object, object?> s_inputs =
+                LightupHelpers.CreatePropertyAccessor<object, object?>(
+                    s_incrementalGeneratorRunStepType,
+                    nameof(Inputs),
+                    defaultValue: null);
+
+            private static readonly Func<object, object?> s_runStepInput =
+                LightupHelpers.CreateFieldAccessor<object, object?>(
+                    s_incrementalGeneratorRunStepInputType,
+                    nameof(ValueTuple<object, int>.Item1),
+                    defaultValue: null);
+
+            private static readonly Func<object, int> s_runStepOutputIndex =
+                LightupHelpers.CreateFieldAccessor<object, int>(
+                    s_incrementalGeneratorRunStepInputType,
+                    nameof(ValueTuple<object, int>.Item2),
+                    defaultValue: 0);
+
+            private static readonly Func<object, object?> s_outputs =
+                LightupHelpers.CreatePropertyAccessor<object, object?>(
+                    s_incrementalGeneratorRunStepType,
+                    nameof(Outputs),
+                    defaultValue: null);
+
+            private readonly object _instance;
+
+            public LightupIncrementalGeneratorRunStep(object instance)
+            {
+                _instance = instance;
+            }
+
+            public string? Name => s_name(_instance);
+
+            private ImmutableArray<(LightupIncrementalGeneratorRunStep, int)> _inputs;
+
+#pragma warning disable SA1316 // Tuple element names should use correct casing. Matching Roslyn names.
+            public ImmutableArray<(LightupIncrementalGeneratorRunStep Input, int OutputIndex)> Inputs
+#pragma warning restore SA1316 // Tuple element names should use correct casing
+            {
+                get
+                {
+                    if (_inputs.IsDefault)
+                    {
+                        var inputs = s_inputs(_instance);
+                        if (inputs is null)
+                        {
+                            _inputs = ImmutableArray<(LightupIncrementalGeneratorRunStep, int)>.Empty;
+                        }
+                        else
+                        {
+                            var lightupInputsBuilder = ImmutableArray.CreateBuilder<(LightupIncrementalGeneratorRunStep, int)>();
+                            foreach (var input in (IEnumerable)inputs)
+                            {
+                                lightupInputsBuilder.Add((new LightupIncrementalGeneratorRunStep(s_runStepInput(input!)!), s_runStepOutputIndex(input!)));
+                            }
+
+                            _inputs = lightupInputsBuilder.ToImmutable();
+                        }
+                    }
+
+                    return _inputs;
+                }
+            }
+
+            private ImmutableArray<(object?, IncrementalStepExpectedRunReason)> _outputs;
+
+#pragma warning disable SA1316 // Tuple element names should use correct casing. Matching Roslyn names.
+            public ImmutableArray<(object? Value, IncrementalStepExpectedRunReason Reason)> Outputs
+#pragma warning restore SA1316 // Tuple element names should use correct casing
+            {
+                get
+                {
+                    if (_outputs.IsDefault)
+                    {
+                        var outputs = s_outputs(_instance);
+                        if (outputs is null)
+                        {
+                            _outputs = ImmutableArray<(object?, IncrementalStepExpectedRunReason)>.Empty;
+                        }
+                        else
+                        {
+                            var lightupOutputsBuilder = ImmutableArray.CreateBuilder<(object?, IncrementalStepExpectedRunReason)>();
+                            foreach (var output in (IEnumerable)outputs)
+                            {
+                                var value = output!.GetType().GetTypeInfo().GetField("Item1")!.GetValue(output);
+                                var reason = (IncrementalStepExpectedRunReason)output.GetType().GetTypeInfo().GetField("Item2")!.GetValue(output)!;
+                                lightupOutputsBuilder.Add((value, reason));
+                            }
+
+                            _outputs = lightupOutputsBuilder.ToImmutable();
+                        }
+                    }
+
+                    return _outputs;
+                }
+            }
         }
     }
 }
