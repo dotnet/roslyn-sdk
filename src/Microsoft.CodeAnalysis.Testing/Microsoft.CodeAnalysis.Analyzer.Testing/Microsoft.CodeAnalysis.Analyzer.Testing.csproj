@@ -19,6 +19,11 @@
         <NuGetApiVersion>5.11.6</NuGetApiVersion>
       </PropertyGroup>
     </When>
+    <When Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+      <PropertyGroup>
+        <NuGetApiVersion>6.3.4</NuGetApiVersion>
+      </PropertyGroup>
+    </When>
     <Otherwise>
       <PropertyGroup>
         <NuGetApiVersion>7.0.1</NuGetApiVersion>
