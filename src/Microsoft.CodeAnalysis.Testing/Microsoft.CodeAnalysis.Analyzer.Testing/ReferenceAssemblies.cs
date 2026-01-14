@@ -520,7 +520,7 @@ namespace Microsoft.CodeAnalysis.Testing
                         var assembliesByPrecedence = assemblyNameGroup
                             .Select(static name => (name, framework: GetFrameworkNameFromPath(name)))
                             .OrderBy(static x => x.framework, comparer)
-                            .ThenByDescending(static x => x.framework, new NuGetFrameworkSorter())
+                            .ThenByDescending(static x => x.framework, NuGetFrameworkSorter.Instance)
                             .ToArray();
                         for (var i = 1; i < assembliesByPrecedence.Length; i++)
                         {
