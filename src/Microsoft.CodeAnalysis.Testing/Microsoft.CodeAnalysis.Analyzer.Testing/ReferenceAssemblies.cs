@@ -271,7 +271,7 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <seealso href="https://martinbjorkstrom.com/posts/2018-09-19-revisiting-nuget-client-libraries"/>
         private async Task<ImmutableArray<MetadataReference>> ResolveCoreAsync(string language, CancellationToken cancellationToken)
         {
-            var settings = string.IsNullOrEmpty(NuGetConfigFilePath) ? Settings.LoadDefaultSettings(root: null) : Settings.LoadSpecificSettings(root: null, NuGetConfigFilePath);
+            var settings = string.IsNullOrEmpty(NuGetConfigFilePath) ? Settings.LoadDefaultSettings(root: null) : Settings.LoadSpecificSettings(root: null!, NuGetConfigFilePath!);
             var sourceRepositoryProvider = new SourceRepositoryProvider(new PackageSourceProvider(settings), Repository.Provider.GetCoreV3());
             var targetFramework = NuGetFramework.ParseFolder(TargetFramework);
             var logger = NullLogger.Instance;
@@ -521,9 +521,9 @@ namespace Microsoft.CodeAnalysis.Testing
                             .Select(static name => (name, framework: GetFrameworkNameFromPath(name)))
                             .OrderBy(static x => x.framework, comparer)
 #if NUGET_SIGNING
-                            .ThenByDescending(static x => x.framework,NuGetFrameworkSorter.Instance)
+                            .ThenByDescending(static x => x.framework, NuGetFrameworkSorter.Instance)
 #else
-                            .ThenByDescending(static x => x.framework,new NuGetFrameworkSorter())
+                            .ThenByDescending(static x => x.framework, new NuGetFrameworkSorter())
 #endif
                             .ToArray();
                         for (var i = 1; i < assembliesByPrecedence.Length; i++)
@@ -1576,6 +1576,7 @@ namespace Microsoft.CodeAnalysis.Testing
         }
 
         private sealed class ImmutableDictionaryWithImmutableArrayValuesEqualityComparer<TKey, TValue> : IEqualityComparer<ImmutableDictionary<TKey, ImmutableArray<TValue>>?>
+            where TKey : notnull
         {
             public static readonly ImmutableDictionaryWithImmutableArrayValuesEqualityComparer<TKey, TValue> Instance = new();
 
