@@ -30,6 +30,20 @@ To reference prerelease packages, add a **NuGet.Config** file to your solution d
   * Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing
   * Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing
 
+### Resolve version conficts between the analyzer project and test project
+
+By default the testing packages indirectly depend on older versions of Microsoft.CodeAnalysis.CSharp and Microsoft.CodeAnalysis.VisualBasic. Analyzers designed to process code that uses newer C# and Visual Basic language features will depend on higher versions of these packages. In case of version conflicts, override the version of Microsoft.CodeAnalysis.CSharp.**Workspaces** or Microsoft.CodeAnalysis.VisualBasic.**Workspaces** in your testing project to match the version of the code analysis package used in your analyzer project.
+
+For C#
+```xml
+<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="Your version here" PrivateAssets="all" />
+```
+
+For Visual Basic
+```xml
+<PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="Your version here" PrivateAssets="all" />
+```
+
 ### Obsolete Packages
 
 This collection of packages previously included a number of packages for testing with specific test frameworks, such as
