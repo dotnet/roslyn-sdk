@@ -8,3 +8,5 @@ Microsoft.CodeAnalysis.Testing.SourceGeneratorVerifier<TSourceGenerator, TTest, 
 Microsoft.CodeAnalysis.Testing.SourceGeneratorVerifier<TSourceGenerator, TTest, TVerifier>.SourceGeneratorVerifier() -> void
 override Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.GetDiagnosticAnalyzers() -> System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer>
 override abstract Microsoft.CodeAnalysis.Testing.SourceGeneratorTest<TVerifier>.GetSourceGenerators() -> System.Collections.Generic.IEnumerable<System.Type>
+Microsoft.CodeAnalysis.Testing.IGeneratorTestBase
+Microsoft.CodeAnalysis.Testing.IGeneratorTestBase.GlobalOptions.get -> System.Collections.Generic.List<(string, string)>
