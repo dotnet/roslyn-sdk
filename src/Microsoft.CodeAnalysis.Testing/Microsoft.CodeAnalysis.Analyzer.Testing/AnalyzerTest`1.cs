@@ -1230,7 +1230,9 @@ namespace Microsoft.CodeAnalysis.Testing
 
         protected virtual async Task<(Compilation compilation, ImmutableArray<Diagnostic> generatorDiagnostics)> GetProjectCompilationAsync(Project project, IVerifier verifier, CancellationToken cancellationToken)
         {
-            var (finalProject, generatorDiagnostics) = await ApplySourceGeneratorsAsync(GetSourceGenerators().ToImmutableArray(), project, verifier, cancellationToken).ConfigureAwait(false);
+            var (finalProject, generatorDiagnostics) = project.Name == DefaultTestProjectName
+                ? await ApplySourceGeneratorsAsync(GetSourceGenerators().ToImmutableArray(), project, verifier, cancellationToken).ConfigureAwait(false)
+                : (project, ImmutableArray<Diagnostic>.Empty);
             return ((await finalProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false))!, generatorDiagnostics);
         }
 
