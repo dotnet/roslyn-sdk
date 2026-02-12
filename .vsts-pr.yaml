@@ -20,7 +20,7 @@ jobs:
 - job: Windows
   pool:
     name: NetCore-Public
-    demands: ImageOverride -equals windows.vs2022.scout.amd64.open
+    demands: ImageOverride -equals windows.vs2022.amd64.open
   strategy:
     maxParallel: 6
     matrix:
