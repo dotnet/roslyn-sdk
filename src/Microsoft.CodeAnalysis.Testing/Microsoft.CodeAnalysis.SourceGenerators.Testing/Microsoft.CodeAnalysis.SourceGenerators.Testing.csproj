@@ -18,6 +18,7 @@
 
     <!-- Use PrivateAssets=compile to avoid exposing our DiffPlex dependency downstream as public API. -->
     <PackageReference Include="DiffPlex" Version="$(DiffPlexVersion)" PrivateAssets="compile" />
+    <PackageReference Include="Humanizer.Core" Version="$(HumanizerCoreVersion)" PrivateAssets="compile" />
   </ItemGroup>
 
   <ItemGroup>

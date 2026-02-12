@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
@@ -270,8 +271,182 @@ namespace Microsoft.CodeAnalysis.Testing
             }.RunAsync();
         }
 
+#if NET6_0_OR_GREATER
+        [Fact]
+        public async Task TrackedStepsWithExpectedState()
+        {
+            await new CSharpSourceGeneratorTest<AddEmptyFilesFromAdditionalFile>
+            {
+                TestBehaviors = TestBehaviors.SkipGeneratedSourcesCheck,
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"// Comment",
+                    },
+                    AdditionalFiles =
+                    {
+                        ("FilesToCreate.txt", "File1"),
+                    },
+                },
+                IncrementalChangeTestState =
+                {
+                    AdditionalFiles =
+                    {
+                        ("FilesToCreate.txt", "File1\nFile2"),
+                    },
+                },
+                IncrementalGeneratorStepStates =
+                {
+                    [typeof(AddEmptyFilesFromAdditionalFile)] = new IncrementalGeneratorExpectedState()
+                    {
+                        [AddEmptyFilesFromAdditionalFile.GetFileText] =
+                        {
+                            new IncrementalGeneratorExpectedStepState
+                            {
+                                InputRunReasons =
+                                {
+                                    IncrementalStepExpectedRunReason.Modified,
+                                },
+                                OutputRunReasons =
+                                {
+                                    IncrementalStepExpectedRunReason.Modified,
+                                },
+                            },
+                        },
+                        [AddEmptyFilesFromAdditionalFile.GetLinesFromFile] =
+                        {
+                            new IncrementalGeneratorExpectedStepState
+                            {
+                                InputRunReasons =
+                                {
+                                    IncrementalStepExpectedRunReason.Modified,
+                                },
+                                OutputRunReasons =
+                                {
+                                    IncrementalStepExpectedRunReason.Unchanged,
+                                    IncrementalStepExpectedRunReason.Modified,
+                                },
+                            },
+                        },
+                    },
+                },
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task UnspecifiedTrackedStepsIgnored()
+        {
+            await new CSharpSourceGeneratorTest<AddEmptyFilesFromAdditionalFile>
+            {
+                TestBehaviors = TestBehaviors.SkipGeneratedSourcesCheck,
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"// Comment",
+                    },
+                    AdditionalFiles =
+                    {
+                        ("FilesToCreate.txt", "File1"),
+                    },
+                },
+                IncrementalChangeTestState =
+                {
+                    Sources =
+                    {
+                        @"// Comment",
+                    },
+                    AdditionalFiles =
+                    {
+                        ("FilesToCreate.txt", "File1\nFile2"),
+                    },
+                },
+                IncrementalGeneratorStepStates =
+                {
+                    [typeof(AddEmptyFilesFromAdditionalFile)] = new IncrementalGeneratorExpectedState()
+                    {
+                        [AddEmptyFilesFromAdditionalFile.GetFileText] =
+                        {
+                            new IncrementalGeneratorExpectedStepState
+                            {
+                                InputRunReasons =
+                                {
+                                    IncrementalStepExpectedRunReason.Modified,
+                                },
+                                OutputRunReasons =
+                                {
+                                    IncrementalStepExpectedRunReason.Modified,
+                                },
+                            },
+                        },
+                    },
+                },
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TrackedStepWithIncorrectNumberOfInputs()
+        {
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await new CSharpSourceGeneratorTest<AddEmptyFilesFromAdditionalFile>
+                {
+                    TestBehaviors = TestBehaviors.SkipGeneratedSourcesCheck,
+                    TestState =
+                    {
+                        Sources =
+                        {
+                            @"// Comment",
+                        },
+                        AdditionalFiles =
+                        {
+                            ("FilesToCreate.txt", "File1"),
+                        },
+                    },
+                    IncrementalChangeTestState =
+                    {
+                        Sources =
+                        {
+                            @"// Comment",
+                        },
+                        AdditionalFiles =
+                        {
+                            ("FilesToCreate.txt", "File1\nFile2"),
+                        },
+                    },
+                    IncrementalGeneratorStepStates =
+                    {
+                        [typeof(AddEmptyFilesFromAdditionalFile)] = new IncrementalGeneratorExpectedState()
+                        {
+                            [AddEmptyFilesFromAdditionalFile.GetFileText] =
+                            {
+                                new IncrementalGeneratorExpectedStepState
+                                {
+                                    InputRunReasons =
+                                    {
+                                        IncrementalStepExpectedRunReason.Modified,
+                                        IncrementalStepExpectedRunReason.New,
+                                    },
+                                    OutputRunReasons =
+                                    {
+                                        IncrementalStepExpectedRunReason.Modified,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                }.RunAsync());
+
+            string expectedMessage = @"Context: Source generator application
+Context: Verifying source generator incremental step state
+Expected 2 inputs for the 'GetFileText' step's 1st execution but there was 1 input";
+
+            new DefaultVerifier().EqualOrDiff(expectedMessage, exception.Message);
+        }
+#endif
+
         private class CSharpSourceGeneratorTest<TSourceGenerator> : SourceGeneratorTest<DefaultVerifier>
-            where TSourceGenerator : ISourceGenerator, new()
+            where TSourceGenerator : new()
         {
             public override string Language => LanguageNames.CSharp;
 
