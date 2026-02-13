@@ -23,11 +23,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VisualBasic", "VisualBasic"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{FDCF8D27-D24F-41BB-8A21-22D83D062E9F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.CSharp.Vsix", "samples\CSharp\Analyzers\Analyzers.Vsix\Analyzers.CSharp.Vsix.csproj", "{D3C8EE30-8885-43F4-9C76-0D66A13FC4EA}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.CSharp", "samples\CSharp\Analyzers\Analyzers.Implementation\Analyzers.CSharp.csproj", "{2DDE4D5E-9CB8-4E01-ABAA-D39DAA018A16}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.CSharp.UnitTests", "samples\CSharp\Analyzers\Analyzers.Test\Analyzers.CSharp.UnitTests.csproj", "{0E5363B6-DE8C-42B5-9FD3-A2F02CB67001}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.CSharp.Vsix", "samples\CSharp\Analyzers\Analyzers.Vsix\Analyzers.CSharp.Vsix.csproj", "{D3C8EE30-8885-43F4-9C76-0D66A13FC4EA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToAutoProperty.CSharp", "samples\CSharp\ConvertToAutoProperty\ConvertToAutoProperty.Implementation\ConvertToAutoProperty.CSharp.csproj", "{827CDC89-B2BE-41E1-ABC2-792BA5B3A507}"
 EndProject
