@@ -40,6 +40,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8C343846-5F9F-4033-9B52-B44C61962449}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.CodeAnalysis.Testing", "Microsoft.CodeAnalysis.Testing", "{9905147E-CC1F-42A0-BD27-05586C583DF7}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Microsoft.CodeAnalysis.Testing\Directory.Build.props = tests\Microsoft.CodeAnalysis.Testing\Directory.Build.props
+		tests\Microsoft.CodeAnalysis.Testing\Directory.Build.targets = tests\Microsoft.CodeAnalysis.Testing\Directory.Build.targets
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Analyzer.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.UnitTests\Microsoft.CodeAnalysis.Analyzer.Testing.UnitTests.csproj", "{FE26E824-EC4D-4CF9-9927-7E4B81502349}"
 EndProject
@@ -90,6 +94,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "util", "util", "{7A94E723-ADD6-48C4-BBE7-1D5B311187A8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssemblyVersionGenerator", "src\VisualStudio.Roslyn.SDK\AssemblyVersionGenerator\AssemblyVersionGenerator.csproj", "{AB6B3C69-9F6F-461C-BFD8-D3F25B9F44AD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{B403A356-738B-48CC-B9DD-81D5AE8ABE10}"
+	ProjectSection(SolutionItems) = preProject
+		eng\Versions.props = eng\Versions.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
