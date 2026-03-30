@@ -19,7 +19,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing
         public ConfigOptions(AnalyzerConfigOptions workspaceOptions, List<(string option, string val)> globalOptions)
         {
             _workspaceOptions = workspaceOptions;
-            _globalOptions = globalOptions.ToDictionary(t => t.Item1, t => t.Item2);
+            _globalOptions = globalOptions.ToDictionary(t => t.option, t => t.val);
         }
 
         public override bool TryGetValue(string key, out string value)
