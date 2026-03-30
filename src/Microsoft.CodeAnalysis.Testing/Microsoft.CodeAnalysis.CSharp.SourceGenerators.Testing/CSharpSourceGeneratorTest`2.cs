@@ -24,8 +24,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing
         /// Gets the global options to be used in <see cref="GetAnalyzerOptions"/>.
         /// This can be appended to by the user to provide additional options.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1414:Tuple types in signatures should have element names", Justification = "The tuple names in the global options are unknown.")]
-        public List<(string, string)> GlobalOptions { get; } = new();
+        public List<(string option, string val)> GlobalOptions { get; } = new();
 
         /// <summary>
         /// Gets or sets the C# language version used for the test. The default is <see cref="LanguageVersion.Default"/>.

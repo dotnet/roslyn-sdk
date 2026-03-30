@@ -16,8 +16,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing
         private readonly AnalyzerConfigOptions _workspaceOptions;
         private readonly Dictionary<string, string> _globalOptions;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1414:Tuple types in signatures should have element names", Justification = "The tuple names in the global options are unknown.")]
-        public ConfigOptions(AnalyzerConfigOptions workspaceOptions, List<(string, string)> globalOptions)
+        public ConfigOptions(AnalyzerConfigOptions workspaceOptions, List<(string option, string val)> globalOptions)
         {
             _workspaceOptions = workspaceOptions;
             _globalOptions = globalOptions.ToDictionary(t => t.Item1, t => t.Item2);

@@ -17,7 +17,6 @@ namespace Microsoft.CodeAnalysis.Testing
         /// <summary>
         /// Gets the additional global options that will appear in the context.AnalyzerConfigOptions.GlobalOptions object.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1414:Tuple types in signatures should have element names", Justification = "The tuple names in the global options are unknown.")]
-        public List<(string, string)> GlobalOptions { get; }
+        public List<(string option, string val)> GlobalOptions { get; }
     }
 }

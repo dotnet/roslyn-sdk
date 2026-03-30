@@ -14,8 +14,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Testing
     {
         private readonly AnalyzerConfigOptionsProvider _analyzerConfigOptionsProvider;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1414:Tuple types in signatures should have element names", Justification = "The tuple names in the global options are unknown.")]
-        public OptionsProvider(AnalyzerConfigOptionsProvider analyzerConfigOptionsProvider, List<(string, string)> globalOptions)
+        public OptionsProvider(AnalyzerConfigOptionsProvider analyzerConfigOptionsProvider, List<(string option, string val)> globalOptions)
         {
             _analyzerConfigOptionsProvider = analyzerConfigOptionsProvider;
             GlobalOptions = new ConfigOptions(_analyzerConfigOptionsProvider.GlobalOptions, globalOptions);
