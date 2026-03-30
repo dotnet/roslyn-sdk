@@ -88,8 +88,26 @@ namespace Microsoft.CodeAnalysis.Testing
         {
             get
             {
-#if NETSTANDARD2_0
+#if NET10_0_OR_GREATER
+                return Net.Net100;
+#elif NET9_0_OR_GREATER
+                return Net.Net90;
+#elif NET8_0_OR_GREATER
+                return Net.Net80;
+#elif NET7_0_OR_GREATER
+                return Net.Net70;
+#elif NET6_0_OR_GREATER
+                return Net.Net60;
+#elif NET5_0_OR_GREATER
+                return Net.Net50;
+#elif NETSTANDARD1_6
+                return NetStandard.NetStandard16;
+#elif NETSTANDARD2_0
                 return NetStandard.NetStandard20;
+#elif NET452
+                return NetFramework.Net452.Default;
+#elif NET46
+                return NetFramework.Net46.Default;
 #elif NET461
                 return NetFramework.Net461.Default;
 #elif NET472
