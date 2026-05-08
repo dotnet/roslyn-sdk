@@ -1,7 +1,7 @@
 schemaVersion: 0.0.1
 isProduction: true
 accountableOwners:
-  service: a1173860-fe4c-4151-b83d-8df7af6e3835
+  service: c8aedd2a-1f14-4660-83e2-c74a9417c3cc
 routing:
   defaultAreaPath:
     org: devdiv
