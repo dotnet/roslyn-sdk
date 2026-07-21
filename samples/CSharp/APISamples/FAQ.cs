@@ -381,7 +381,7 @@ class Program
 
         [FAQ(7)]
         [Fact]
-        public void FindAllReferencesToAMethodInASolution()
+        public async Task FindAllReferencesToAMethodInASolution()
         {
             string source1 = @"
 namespace NS
@@ -435,16 +435,16 @@ class Program
             Document document1 = project1.GetDocument(document1Id);
 
             // Get MethodDeclarationSyntax corresponding to the 'MethodThatWeAreTryingToFind'.
-            MethodDeclarationSyntax methodDeclaration = document1.GetSyntaxRootAsync().Result
+            MethodDeclarationSyntax methodDeclaration = (await document1.GetSyntaxRootAsync())
                 .DescendantNodes().OfType<MethodDeclarationSyntax>()
                 .Single(m => m.Identifier.ValueText == "MethodThatWeAreTryingToFind");
 
             // Get MethodSymbol corresponding to the 'MethodThatWeAreTryingToFind'.
-            IMethodSymbol method = (IMethodSymbol)document1.GetSemanticModelAsync().Result
+            IMethodSymbol method = (IMethodSymbol)(await document1.GetSemanticModelAsync())
                 .GetDeclaredSymbol(methodDeclaration);
 
             // Find all references to the 'MethodThatWeAreTryingToFind' in the solution.
-            IEnumerable<ReferencedSymbol> methodReferences = SymbolFinder.FindReferencesAsync(method, solution).Result;
+            IEnumerable<ReferencedSymbol> methodReferences = await SymbolFinder.FindReferencesAsync(method, solution);
             Assert.Single(methodReferences);
             ReferencedSymbol methodReference = methodReferences.Single();
             Assert.Equal(3, methodReference.Locations.Count());
