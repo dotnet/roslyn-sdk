@@ -4,7 +4,7 @@ namespace GeneratedDemo
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             // Run the various scenarios
             Console.WriteLine("Running HelloWorld:\n");

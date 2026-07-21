@@ -59,7 +59,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
                 return null;
             }
 
-            (ArgumentSyntax argument, IEnumerable<ParameterSyntax> parameters) = await GetArgumentAndParametersAsync(semanticModel, methodSymbol, token).ConfigureAwait(false);
+            (ArgumentSyntax argument, IEnumerable<ParameterSyntax> parameters) = await GetArgumentAndParametersAsync(methodSymbol, token).ConfigureAwait(false);
             if (argument == null || parameters == null)
             {
                 return null;
@@ -87,7 +87,6 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
         }
 
         private async Task<(ArgumentSyntax, IEnumerable<ParameterSyntax>)> GetArgumentAndParametersAsync(
-            SemanticModel semanticModel,
             IMethodSymbol methodSymbol,
             SyntaxToken token)
         {
