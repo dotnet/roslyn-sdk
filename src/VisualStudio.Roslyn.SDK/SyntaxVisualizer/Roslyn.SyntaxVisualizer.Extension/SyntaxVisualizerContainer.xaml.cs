@@ -205,7 +205,6 @@ namespace Roslyn.SyntaxVisualizer.Extension
             var componentModel = GetRequiredMefService<IComponentModel, SComponentModel>(GlobalServiceProvider);
             Assumes.Present(componentModel);
             return componentModel.GetService<TServiceInterface>();
-            ;
         }
         #endregion
 
