@@ -10,7 +10,7 @@ namespace Roslyn.SyntaxVisualizer.Control
     {
         internal static Point Clamp(this Point p, FrameworkElement element)
         {
-            var pos = Mouse.GetPosition(element);
+            var pos = p;
             pos.X = Math.Min(Math.Max(0, pos.X), element.ActualWidth);
             pos.Y = Math.Min(Math.Max(0, pos.Y), element.ActualHeight);
             return pos;
