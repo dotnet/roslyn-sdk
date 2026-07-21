@@ -162,9 +162,9 @@ namespace Roslyn.SyntaxVisualizer.Extension
             Microsoft.VisualStudio.OLE.Interop.IServiceProvider serviceProvider, Guid guidService, bool unique)
         {
             var guidInterface = VSConstants.IID_IUnknown;
-            var ptr = IntPtr.Zero;
             object? service = null;
 
+            IntPtr ptr;
 #pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
             if (serviceProvider.QueryService(ref guidService, ref guidInterface, out ptr) == 0 &&
 #pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
@@ -204,7 +204,8 @@ namespace Roslyn.SyntaxVisualizer.Extension
         {
             var componentModel = GetRequiredMefService<IComponentModel, SComponentModel>(GlobalServiceProvider);
             Assumes.Present(componentModel);
-            return componentModel.GetService<TServiceInterface>(); ;
+            return componentModel.GetService<TServiceInterface>();
+            ;
         }
         #endregion
 

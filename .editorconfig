@@ -250,7 +250,7 @@ dotnet_diagnostic.IDE0060.severity = warning
 # IDE0060: Remove unused parameter
 dotnet_diagnostic.IDE0060.severity = none
 
-[src/{Analyzers,CodeStyle,Features,Workspaces,EditorFeatures,VisualStudio}/**/*.{cs,vb}]
+[src/**/*.{cs,vb}] # updated path from Roslyn
 
 # IDE0011: Add braces
 csharp_prefer_braces = when_multiline:warning
@@ -293,7 +293,7 @@ dotnet_diagnostic.IDE2005.severity = warning
 # csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental
 dotnet_diagnostic.IDE2006.severity = warning
 
-[src/{VisualStudio}/**/*.{cs,vb}]
+[src/VisualStudio.Roslyn.SDK/**/*.{cs,vb}] # updated path from Roslyn
 # CA1822: Make member static
 # There is a risk of accidentally breaking an internal API that partners rely on though IVT.
 dotnet_code_quality.CA1822.api_surface = private

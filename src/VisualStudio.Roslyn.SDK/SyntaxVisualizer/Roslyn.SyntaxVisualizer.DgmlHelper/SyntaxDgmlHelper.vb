@@ -30,7 +30,7 @@ Namespace Roslyn.SyntaxVisualizer.DgmlHelper
         <Extension()>
         Public Function ToDgml(nodeOrToken As SyntaxNodeOrToken,
                            Optional options As SyntaxDgmlOptions = Nothing) As XElement
-            Dim dgml As XElement = Nothing
+            Dim dgml As XElement
 
             If nodeOrToken.IsNode Then
                 dgml = ToDgml(nodeOrToken.AsNode, options)
