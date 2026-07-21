@@ -405,6 +405,7 @@ namespace Microsoft.VisualStudio.Extensibility.Testing
 
             private int OnActiveProjectCfgChange(IVsHierarchy pIVsHierarchy)
             {
+                _ = pIVsHierarchy;
                 OnActiveProjectConfigurationChange?.Invoke();
                 return 0;
             }

@@ -18,7 +18,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
         private readonly ArgumentSyntax argument;
         private readonly IEnumerable<ParameterSyntax> parameters;
 
-        public static bool Applicable(SemanticModel semanticModel, ArgumentSyntax argument, IEnumerable<ParameterSyntax> parameters)
+        public static bool Applicable(SemanticModel semanticModel, ArgumentSyntax argument)
         {
             SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(argument.Expression);
             ISymbol symbol = symbolInfo.Symbol;

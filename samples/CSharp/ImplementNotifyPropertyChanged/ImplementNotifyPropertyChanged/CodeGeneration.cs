@@ -47,8 +47,8 @@ namespace ImplementNotifyPropertyChangedCS
             return updated
                 .WithBackingFields(properties, workspace)
                 .WithBaseType(original, model)
-                .WithPropertyChangedEvent(original, model, workspace)
-                .WithSetPropertyMethod(original, model, workspace);
+                .WithPropertyChangedEvent(original, model)
+                .WithSetPropertyMethod(original, model);
         }
 
         private static TypeDeclarationSyntax WithBackingFields(this TypeDeclarationSyntax node, IEnumerable<ExpandablePropertyInfo> properties, Workspace workspace)
@@ -156,7 +156,7 @@ namespace ImplementNotifyPropertyChangedCS
             return node;
         }
 
-        private static TypeDeclarationSyntax WithPropertyChangedEvent(this TypeDeclarationSyntax node, TypeDeclarationSyntax original, SemanticModel semanticModel, Workspace workspace)
+        private static TypeDeclarationSyntax WithPropertyChangedEvent(this TypeDeclarationSyntax node, TypeDeclarationSyntax original, SemanticModel semanticModel)
         {
             INamedTypeSymbol classSymbol = semanticModel.GetDeclaredSymbol(original);
             INamedTypeSymbol interfaceSymbol = semanticModel.Compilation.GetTypeByMetadataName(InterfaceName);
@@ -206,7 +206,7 @@ namespace ImplementNotifyPropertyChangedCS
             return null;
         }
 
-        private static TypeDeclarationSyntax WithSetPropertyMethod(this TypeDeclarationSyntax node, TypeDeclarationSyntax original, SemanticModel semanticModel, Workspace workspace)
+        private static TypeDeclarationSyntax WithSetPropertyMethod(this TypeDeclarationSyntax node, TypeDeclarationSyntax original, SemanticModel semanticModel)
         {
             INamedTypeSymbol classSymbol = semanticModel.GetDeclaredSymbol(original);
             INamedTypeSymbol interfaceSymbol = semanticModel.Compilation.GetTypeByMetadataName(InterfaceName);

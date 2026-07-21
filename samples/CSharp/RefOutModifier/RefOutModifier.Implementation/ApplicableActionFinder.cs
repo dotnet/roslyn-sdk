@@ -67,20 +67,20 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
             // currently only support everything in one file
             IEnumerable<SyntaxNode> nodes = (new SyntaxNode[] { argument }).Concat(parameters);
-            if (document.Project.GetContainingDocuments(nodes, cancellationToken).Count() != 1)
+            if (document.Project.GetContainingDocuments(nodes).Count() != 1)
             {
                 return null;
             }
 
             if (tree.OnArgumentOrParameterWithoutRefOut(position))
             {
-                return AddOutOrRefCodeAction.Applicable(semanticModel, argument, parameters)
+                return AddOutOrRefCodeAction.Applicable(semanticModel, argument)
                     ? new AddOutOrRefCodeAction(document, semanticModel, argument, parameters)
                     : null;
             }
             else
             {
-                return RemoveOutOrRefCodeAction.Applicable(semanticModel, argument, parameters)
+                return RemoveOutOrRefCodeAction.Applicable(semanticModel, argument)
                     ? new RemoveOutOrRefCodeAction(document, semanticModel, argument, parameters)
                     : null;
             }
@@ -91,7 +91,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
             IMethodSymbol methodSymbol,
             SyntaxToken token)
         {
-            (int parameterIndex, IEnumerable<ParameterSyntax> parameters) = GetParameterInfo(semanticModel, methodSymbol, token);
+            (int parameterIndex, IEnumerable<ParameterSyntax> parameters) = GetParameterInfo(methodSymbol, token);
             if (parameters == null)
             {
                 return (null, null);
@@ -160,7 +160,6 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
         }
 
         private (int, IEnumerable<ParameterSyntax>) GetParameterInfo(
-            SemanticModel semanticModel,
             IMethodSymbol methodSymbol,
             SyntaxToken token)
         {

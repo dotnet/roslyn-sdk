@@ -36,7 +36,11 @@ namespace CSharpToVisualBasicConverter.Utilities
             }
         }
 
-        public static SyntaxNode GetParent(this SyntaxTree syntaxTree, SyntaxNode node) => node?.Parent;
+        public static SyntaxNode GetParent(this SyntaxTree syntaxTree, SyntaxNode node)
+        {
+            _ = syntaxTree;
+            return node?.Parent;
+        }
 
         public static TypeSyntax GetVariableType(this VariableDeclaratorSyntax variable)
         {
