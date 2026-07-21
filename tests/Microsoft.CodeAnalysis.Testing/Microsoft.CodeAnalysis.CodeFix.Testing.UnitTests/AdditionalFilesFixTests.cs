@@ -354,6 +354,8 @@ namespace Microsoft.CodeAnalysis.Testing
 
             private static Task<Solution> CreateChangedSolution(Document document, bool remove, CancellationToken cancellationToken)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var solution = document.Project.Solution;
                 if (remove)
                 {
