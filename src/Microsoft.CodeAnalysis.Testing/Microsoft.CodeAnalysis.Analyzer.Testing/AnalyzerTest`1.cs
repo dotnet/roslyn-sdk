@@ -267,11 +267,10 @@ namespace Microsoft.CodeAnalysis.Testing
                 return ImmutableArray<Diagnostic>.Empty;
             }
 
-            return await VerifySourceGeneratorAsync(Language, sourceGenerators, testState, verifier.PushContext("Source generator application"), cancellationToken);
+            return await VerifySourceGeneratorAsync(sourceGenerators, testState, verifier.PushContext("Source generator application"), cancellationToken);
         }
 
         private protected async Task<ImmutableArray<Diagnostic>> VerifySourceGeneratorAsync(
-            string language,
             ImmutableArray<Type> sourceGenerators,
             SolutionState testState,
             IVerifier verifier,
