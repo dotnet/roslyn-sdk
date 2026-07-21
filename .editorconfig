@@ -7,7 +7,7 @@ root = true
 [*]
 indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
-spelling_exclusion_path = SpellingExclusions.dic
+# spelling_exclusion_path = SpellingExclusions.dic # file does not exist in roslyn-sdk
 
 # Code files
 [*.{cs,csx,vb,vbx}]
