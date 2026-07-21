@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -109,7 +110,7 @@ class Program
 
         [FAQ(3)]
         [Fact]
-        public void GetTypeForExpressions()
+        public async Task GetTypeForExpressions()
         {
             string source = @"
 using System;
@@ -132,10 +133,10 @@ class Program
                 .AddMetadataReference(projectId, Mscorlib)
                 .AddDocument(documentId, "MyFile.cs", source);
             Document document = solution.GetDocument(documentId);
-            SemanticModel model = (SemanticModel)document.GetSemanticModelAsync().Result;
+            SemanticModel model = (SemanticModel)await document.GetSemanticModelAsync();
 
             // Get BinaryExpressionSyntax corresponding to the expression 's[0] + d' above.
-            BinaryExpressionSyntax addExpression = document.GetSyntaxRootAsync().Result
+            BinaryExpressionSyntax addExpression = (await document.GetSyntaxRootAsync())
                 .DescendantNodes().OfType<BinaryExpressionSyntax>().Single();
 
             // Get TypeSymbol corresponding to expression 's[0] + d' above.
@@ -1104,7 +1105,7 @@ Visiting StructDeclarationSyntax (Kind = StructDeclaration)", walker.Results.ToS
 
         [FAQ(19)]
         [Fact]
-        public void GetFullyQualifiedName()
+        public async Task GetFullyQualifiedName()
         {
             string source = @"
 using System;
@@ -1133,8 +1134,8 @@ class Program
                 .AddMetadataReference(projectId, Mscorlib)
                 .AddDocument(documentId, "MyFile.cs", source);
             Document document = solution.GetDocument(documentId);
-            SyntaxNode root = document.GetSyntaxRootAsync().Result;
-            SemanticModel model = (SemanticModel)document.GetSemanticModelAsync().Result;
+            SyntaxNode root = await document.GetSyntaxRootAsync();
+            SemanticModel model = (SemanticModel)await document.GetSemanticModelAsync();
 
             // Get StructDeclarationSyntax corresponding to 'struct S' above.
             StructDeclarationSyntax structDeclaration = root.DescendantNodes()
@@ -1333,7 +1334,7 @@ class Program
 
         [FAQ(24)]
         [Fact]
-        public void GetAssemblySymbolsAndSyntaxTreesFromAProject()
+        public async Task GetAssemblySymbolsAndSyntaxTreesFromAProject()
         {
             string source = @"
 class Program
@@ -1355,7 +1356,7 @@ class Program
             // OR var project = Workspace.LoadStandaloneProject("<Path>").CurrentSolution.Projects.First();
 
             Project project = solution.Projects.Single();
-            Compilation compilation = project.GetCompilationAsync().Result;
+            Compilation compilation = await project.GetCompilationAsync();
 
             // Get AssemblySymbols for above compilation and the assembly (mscorlib) referenced by it.
             IAssemblySymbol compilationAssembly = compilation.Assembly;
@@ -1364,7 +1365,7 @@ class Program
             Assert.True(compilation.GetTypeByMetadataName("Program").ContainingAssembly.Equals(compilationAssembly));
             Assert.True(compilation.GetTypeByMetadataName("System.Object").ContainingAssembly.Equals(referencedAssembly));
 
-            SyntaxTree tree = project.Documents.Single().GetSyntaxTreeAsync().Result;
+            SyntaxTree tree = await project.Documents.Single().GetSyntaxTreeAsync();
             Assert.Equal("MyFile.cs", tree.FilePath);
         }
 
@@ -2296,7 +2297,7 @@ class Program
 
         [FAQ(35)]
         [Fact]
-        public void UseServices()
+        public async Task UseServices()
         {
             string source = @"using System.Diagnostics;
 using System;
@@ -2326,7 +2327,7 @@ class Program
             Document document = solution.GetDocument(documentId);
 
             // Format the document.
-            document = Formatter.FormatAsync(document).Result;
+            document = await Formatter.FormatAsync(document);
             string expected = @"using System.Diagnostics;
 using System;
 using System.IO;
@@ -2345,15 +2346,15 @@ class Program
         Console.WriteLine(p.Id);
     }
 }";
-            string actual = document.GetSyntaxRootAsync().Result.ToString();
+            string actual = (await document.GetSyntaxRootAsync()).ToString();
             Assert.Equal(expected, actual);
 
             // Simplify names used in the document i.e. remove unnecessary namespace qualifiers.
-            SyntaxNode newRoot = (SyntaxNode)document.GetSyntaxRootAsync().Result;
+            SyntaxNode newRoot = await document.GetSyntaxRootAsync();
             newRoot = new SimplifyNamesAnnotionRewriter().Visit(newRoot);
             document = document.WithSyntaxRoot(newRoot);
 
-            document = Simplifier.ReduceAsync(document).Result;
+            document = await Simplifier.ReduceAsync(document);
             expected = @"using System.Diagnostics;
 using System;
 using System.IO;
@@ -2372,7 +2373,7 @@ class Program
         Console.WriteLine(p.Id);
     }
 }";
-            actual = document.GetSyntaxRootAsync().Result.ToString();
+            actual = (await document.GetSyntaxRootAsync()).ToString();
             Assert.Equal(expected, actual);
         }
         #endregion
