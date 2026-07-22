@@ -9,6 +9,7 @@ pr:
 - dev17.0
 
 variables:
+  - template: /eng/common/templates/variables/pool-providers.yml
   - name: DOTNET_ROOT
     value: $(Build.SourcesDirectory)\.dotnet
   - name: XUNIT_LOGS
@@ -19,8 +20,8 @@ variables:
 jobs:
 - job: Windows
   pool:
-    name: NetCore-Public
-    demands: ImageOverride -equals windows.vs2022.amd64.open
+    name: $(DncEngPublicBuildPool)
+    demands: ImageOverride -equals windows.vs2026.amd64.open
   strategy:
     maxParallel: 6
     matrix:
