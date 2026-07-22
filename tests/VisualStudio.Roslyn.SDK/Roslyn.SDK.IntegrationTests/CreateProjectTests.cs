@@ -11,10 +11,9 @@ namespace Microsoft.CodeAnalysis.Testing
 {
     public class CreateProjectTests : AbstractIntegrationTest
     {
-        private const string VsixInstallerVs18Issue = "VS18 test harness currently fails VSIX install due to Microsoft.VisualStudio.ExtensionManager.Implementation, Version=17.0.0.0 binding.";
         private static readonly DefaultVerifier s_verifier = new DefaultVerifier();
 
-        [IdeFact(Skip = VsixInstallerVs18Issue)]
+        [IdeFact]
         public async Task CreateFromTemplateAsync()
         {
             await TestServices.SolutionExplorer.CreateSolutionAsync(nameof(CreateProjectTests), HangMitigatingCancellationToken);
@@ -73,7 +72,7 @@ namespace Microsoft.CodeAnalysis.Testing
             Assert.Equal(0, await TestServices.ErrorList.GetErrorCountAsync(__VSERRORCATEGORY.EC_WARNING, HangMitigatingCancellationToken));
         }
 
-        [IdeFact(Skip = VsixInstallerVs18Issue)]
+        [IdeFact]
         public async Task CreateStandaloneToolFromCSharpTemplateAsync()
         {
             await TestServices.SolutionExplorer.CreateSolutionAsync(nameof(CreateProjectTests), HangMitigatingCancellationToken);
@@ -127,7 +126,7 @@ namespace Microsoft.CodeAnalysis.Testing
             Assert.Equal(0, await TestServices.ErrorList.GetErrorCountAsync(__VSERRORCATEGORY.EC_WARNING, HangMitigatingCancellationToken));
         }
 
-        [IdeFact(Skip = VsixInstallerVs18Issue)]
+        [IdeFact]
         public async Task CreateStandaloneToolFromVisualBasicTemplateAsync()
         {
             await TestServices.SolutionExplorer.CreateSolutionAsync(nameof(CreateProjectTests), HangMitigatingCancellationToken);

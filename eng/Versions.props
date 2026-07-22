@@ -24,7 +24,8 @@
     <MicrosoftCodeAnalysisPackagesVersion>4.1.0</MicrosoftCodeAnalysisPackagesVersion>
     <MicrosoftVisualStudioShellPackagesVersion>17.3.32809.331</MicrosoftVisualStudioShellPackagesVersion>
     <MicrosoftVisualStudioEditorPackagesVersion>17.3.198</MicrosoftVisualStudioEditorPackagesVersion>
-    <MicrosoftVisualStudioExtensibilityTestingVersion>0.1.800-beta</MicrosoftVisualStudioExtensibilityTestingVersion>
+    <MicrosoftVisualStudioExtensibilityTestingVersion>5.10.0-1.26371.19</MicrosoftVisualStudioExtensibilityTestingVersion>
+    <MicrosoftVisualStudioInterop18Version>18.10.605</MicrosoftVisualStudioInterop18Version>
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisAnalyzersVersion>3.3.5-beta1.23322.1</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisCommonVersion>$(MicrosoftCodeAnalysisPackagesVersion)</MicrosoftCodeAnalysisCommonVersion>
@@ -66,6 +67,10 @@
     <SystemFormatsAsn1Version Condition="'$(TargetFramework)' == 'net8.0'">9.0.6</SystemFormatsAsn1Version>
     <SystemFormatsAsn1Version Condition="'$(TargetFramework)' != 'net8.0'">6.0.1</SystemFormatsAsn1Version>
     <SystemTextJsonVersion>6.0.10</SystemTextJsonVersion>
+    <SystemCollectionsImmutable10Version>10.0.8</SystemCollectionsImmutable10Version>
+    <SystemMemoryVersion>4.6.3</SystemMemoryVersion>
+    <SystemRuntimeCompilerServicesUnsafeVersion>6.1.2</SystemRuntimeCompilerServicesUnsafeVersion>
+    <SystemThreadingTasksExtensionsVersion>4.6.3</SystemThreadingTasksExtensionsVersion>
     <VSLangProjVersion>$(MicrosoftVisualStudioShellPackagesVersion)</VSLangProjVersion>
     <MicrosoftVisualStudioTemplateWizardInterfaceVersion>17.0.0-preview-1-30928-1111</MicrosoftVisualStudioTemplateWizardInterfaceVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.0.4207-preview4</MicrosoftVSSDKBuildToolsVersion>
