@@ -49,7 +49,7 @@ namespace ConvertToAutoProperty
             if (propertyDeclaration == property)
             {
                 // Add an annotation to format the new property.
-                return ConvertToAutoProperty().WithAdditionalAnnotations(Formatter.Annotation);
+                return ConvertToAutoProperty(propertyDeclaration).WithAdditionalAnnotations(Formatter.Annotation);
             }
 
             return base.VisitPropertyDeclaration(propertyDeclaration);
@@ -83,7 +83,7 @@ namespace ConvertToAutoProperty
             return variable;
         }
 
-        private PropertyDeclarationSyntax ConvertToAutoProperty()
+        private PropertyDeclarationSyntax ConvertToAutoProperty(PropertyDeclarationSyntax propertyDeclaration)
         {
             // Produce the new property.
             PropertyDeclarationSyntax newProperty = property

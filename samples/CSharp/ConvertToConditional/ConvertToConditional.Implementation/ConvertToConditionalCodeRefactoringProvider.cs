@@ -45,7 +45,7 @@ namespace ConvertToConditional
             {
                 ConvertToConditionalCodeAction action =
                     new ConvertToConditionalCodeAction("Convert to conditional expression",
-                                                       (c) => Task.FromResult(ConvertToConditional(document, semanticModel, ifStatement, returnStatement)));
+                                                       (c) => Task.FromResult(ConvertToConditional(document, semanticModel, ifStatement, returnStatement, c)));
                 context.RegisterRefactoring(action);
             }
         }
@@ -53,7 +53,8 @@ namespace ConvertToConditional
         private Document ConvertToConditional(Document document,
                                               SemanticModel semanticModel,
                                               IfStatementSyntax ifStatement,
-                                              StatementSyntax replacementStatement)
+                                              StatementSyntax replacementStatement,
+                                              CancellationToken cancellationToken)
         {
             SyntaxNode oldRoot = semanticModel.SyntaxTree.GetRoot();
             SyntaxNode newRoot = oldRoot.ReplaceNode(

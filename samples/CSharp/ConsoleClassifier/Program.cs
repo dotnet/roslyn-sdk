@@ -13,7 +13,7 @@ namespace ConsoleClassifier
 {
     class Program
     {
-        static async Task Main()
+        static async Task Main(string[] args)
         {
             AdhocWorkspace workspace = new AdhocWorkspace();
             Solution solution = workspace.CurrentSolution;

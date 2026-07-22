@@ -119,7 +119,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
             return ((SyntaxTree)location.SourceTree).GetRoot().FindToken(location.SourceSpan.Start);
         }
 
-        public static IEnumerable<Document> GetContainingDocuments(this Project project, IEnumerable<SyntaxNode> nodes)
+        public static IEnumerable<Document> GetContainingDocuments(this Project project, IEnumerable<SyntaxNode> nodes, CancellationToken cancellationToken)
         {
             return nodes.Where(n => n.SyntaxTree != null).Select(n => project.GetDocument(n.SyntaxTree)).Distinct();
         }

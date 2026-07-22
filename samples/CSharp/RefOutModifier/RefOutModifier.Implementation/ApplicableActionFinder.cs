@@ -59,7 +59,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
                 return null;
             }
 
-            (ArgumentSyntax argument, IEnumerable<ParameterSyntax> parameters) = await GetArgumentAndParametersAsync(methodSymbol, token).ConfigureAwait(false);
+            (ArgumentSyntax argument, IEnumerable<ParameterSyntax> parameters) = await GetArgumentAndParametersAsync(semanticModel, methodSymbol, token).ConfigureAwait(false);
             if (argument == null || parameters == null)
             {
                 return null;
@@ -67,30 +67,31 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
             // currently only support everything in one file
             IEnumerable<SyntaxNode> nodes = (new SyntaxNode[] { argument }).Concat(parameters);
-            if (document.Project.GetContainingDocuments(nodes).Count() != 1)
+            if (document.Project.GetContainingDocuments(nodes, cancellationToken).Count() != 1)
             {
                 return null;
             }
 
             if (tree.OnArgumentOrParameterWithoutRefOut(position))
             {
-                return AddOutOrRefCodeAction.Applicable(semanticModel, argument)
+                return AddOutOrRefCodeAction.Applicable(semanticModel, argument, parameters)
                     ? new AddOutOrRefCodeAction(document, semanticModel, argument, parameters)
                     : null;
             }
             else
             {
-                return RemoveOutOrRefCodeAction.Applicable(semanticModel, argument)
+                return RemoveOutOrRefCodeAction.Applicable(semanticModel, argument, parameters)
                     ? new RemoveOutOrRefCodeAction(document, semanticModel, argument, parameters)
                     : null;
             }
         }
 
         private async Task<(ArgumentSyntax, IEnumerable<ParameterSyntax>)> GetArgumentAndParametersAsync(
+            SemanticModel semanticModel,
             IMethodSymbol methodSymbol,
             SyntaxToken token)
         {
-            (int parameterIndex, IEnumerable<ParameterSyntax> parameters) = GetParameterInfo(methodSymbol, token);
+            (int parameterIndex, IEnumerable<ParameterSyntax> parameters) = GetParameterInfo(semanticModel, methodSymbol, token);
             if (parameters == null)
             {
                 return (null, null);
@@ -159,6 +160,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
         }
 
         private (int, IEnumerable<ParameterSyntax>) GetParameterInfo(
+            SemanticModel semanticModel,
             IMethodSymbol methodSymbol,
             SyntaxToken token)
         {
