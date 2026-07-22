@@ -107,7 +107,6 @@ csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
 [*.cs]
-# Disable enforcement of items covered by StyleCop Analyzers
 dotnet_style_qualification_for_field = false:none
 dotnet_style_qualification_for_property = false:none
 dotnet_style_qualification_for_method = false:none
