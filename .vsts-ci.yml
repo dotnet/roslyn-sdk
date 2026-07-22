@@ -18,7 +18,7 @@ variables:
 # Branches that trigger a build on commit
 trigger:
 - main
-- dev18.0
+- dev17.0
 
 schedules:
   - cron: "0 8 23-29 * 0"
