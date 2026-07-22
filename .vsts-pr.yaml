@@ -1,12 +1,12 @@
 # Branches that trigger a build on commit
 trigger:
 - main
-- - dev17.0
+- dev17.0
 
 # Branches that trigger builds on PR
 pr:
 - main
-- - dev17.0
+- dev17.0
 
 variables:
   - template: /eng/common/templates/variables/pool-providers.yml
