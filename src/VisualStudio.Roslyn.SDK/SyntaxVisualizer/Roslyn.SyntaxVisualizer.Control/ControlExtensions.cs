@@ -8,6 +8,8 @@ namespace Roslyn.SyntaxVisualizer.Control
 {
     internal static class ControlExtensions
     {
+        // preserve pre-migration implementation
+        // https://github.com/dotnet/roslyn/issues/84573
         internal static Point Clamp(this Point _, FrameworkElement element)
         {
             var pos = Mouse.GetPosition(element);
