@@ -18,7 +18,7 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
   <ItemGroup>
-    <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpVersion)" PrivateAssets="all" ExcludeAssets="all" />
+    <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpVersion)" PrivateAssets="all" ExcludeAssets="all" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
   </ItemGroup>
 
 </Project>
