@@ -8,9 +8,9 @@ namespace Roslyn.SyntaxVisualizer.Control
 {
     internal static class ControlExtensions
     {
-        internal static Point Clamp(this Point p, FrameworkElement element)
+        internal static Point Clamp(this Point _, FrameworkElement element)
         {
-            var pos = p;
+            var pos = Mouse.GetPosition(element);
             pos.X = Math.Min(Math.Max(0, pos.X), element.ActualWidth);
             pos.Y = Math.Min(Math.Max(0, pos.Y), element.ActualHeight);
             return pos;
