@@ -160,6 +160,7 @@ namespace Microsoft.CodeAnalysis.Testing
 
         internal abstract class CustomAnalysisContext : AnalysisContext
         {
+            // Set via reflection
             public bool ConfiguresGeneratedCode;
         }
     }
