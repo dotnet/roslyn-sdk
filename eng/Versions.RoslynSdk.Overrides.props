@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <!-- Preserve repo-specific build behavior while projects migrate to Roslyn's analyzer baselines. -->
+    <UsingToolPdbConverter>true</UsingToolPdbConverter>
+    <UsingToolVisualStudioIbcTraining>false</UsingToolVisualStudioIbcTraining>
+    <UsingToolXUnit>true</UsingToolXUnit>
+    <UsingToolXliff>false</UsingToolXliff>
+    <MicrosoftNetCompilersToolsetVersion>4.8.0</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftCodeAnalysisAnalyzersVersion>3.3.5-beta1.23322.1</MicrosoftCodeAnalysisAnalyzersVersion>
+    <RoslynDiagnosticsAnalyzersVersion>2.9.8</RoslynDiagnosticsAnalyzersVersion>
+    <MicrosoftNETTestSdkVersion>16.1.1</MicrosoftNETTestSdkVersion>
+  </PropertyGroup>
+</Project>

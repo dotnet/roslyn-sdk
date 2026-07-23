@@ -17,6 +17,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Threading;
 
 using Roslyn.SyntaxVisualizer.DgmlHelper;
 using Roslyn.Utilities;
@@ -29,6 +30,8 @@ namespace Roslyn.SyntaxVisualizer.Extension
     {
         private readonly SyntaxVisualizerToolWindow parent;
         private readonly CancellationSeries cancellationSeries = new();
+        private readonly JoinableTaskCollection joinableTasks;
+        private readonly JoinableTaskFactory joinableTaskFactory;
         private IWpfTextView? activeWpfTextView;
         private IClassificationFormatMap? activeClassificationFormatMap;
         private IEditorFormatMap? activeEditorFormatMap;
@@ -41,6 +44,9 @@ namespace Roslyn.SyntaxVisualizer.Extension
 
         internal SyntaxVisualizerContainer(SyntaxVisualizerToolWindow parent)
         {
+            joinableTasks = ThreadHelper.JoinableTaskContext.CreateCollection();
+            joinableTaskFactory = ThreadHelper.JoinableTaskContext.CreateFactory(joinableTasks);
+
             InitializeComponent();
 
             this.parent = parent;
@@ -246,6 +252,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
             }
 
             cancellationSeries.Dispose();
+            joinableTaskFactory.Run(joinableTasks.JoinTillEmptyAsync);
         }
         #endregion
 
@@ -278,7 +285,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
                 return;
             }
 
-            _ = ThreadHelper.JoinableTaskFactory.RunAsync(
+            _ = joinableTaskFactory.RunAsync(
                 async () =>
                 {
                     // Get the SyntaxTree and SemanticModel corresponding to the Document.
