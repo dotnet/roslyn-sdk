@@ -158,4 +158,6 @@
     <MicrosoftNETTestSdkVersion>17.14.1</MicrosoftNETTestSdkVersion>
   </PropertyGroup>
 
+  <Import Project="Versions.RoslynSdk.Overrides.props" />
+
 </Project>
