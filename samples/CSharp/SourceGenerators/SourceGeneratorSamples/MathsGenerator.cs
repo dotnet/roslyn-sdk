@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using static System.Console;
-using Tokens = System.Collections.Generic.IEnumerable<MathsGenerator.Token>;
-using SymTable = System.Collections.Generic.HashSet<string>;
-using System.Linq;
 using Microsoft.CodeAnalysis;
-using System.IO;
 using Microsoft.CodeAnalysis.Text;
-using System.Diagnostics;
+using static System.Console;
+using SymTable = System.Collections.Generic.HashSet<string>;
+using Tokens = System.Collections.Generic.IEnumerable<MathsGenerator.Token>;
 
 #pragma warning disable IDE0008 // Use explicit type
 #pragma warning disable RS1035 // Do not use banned APIs for analyzers

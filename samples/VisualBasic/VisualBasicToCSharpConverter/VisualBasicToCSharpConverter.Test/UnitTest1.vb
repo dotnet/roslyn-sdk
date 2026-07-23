@@ -1,10 +1,10 @@
 ﻿Option Strict Off
 
 Imports Microsoft.CodeAnalysis
+Imports VisualBasicToCSharpConverter
 Imports Xunit
 Imports CS = Microsoft.CodeAnalysis.CSharp
 Imports VB = Microsoft.CodeAnalysis.VisualBasic
-Imports VisualBasicToCSharpConverter
 
 Namespace VisualBasicToCSharpConverter.UnitTests.Converting
 
