@@ -2,9 +2,9 @@
 
 Option Strict Off
 
+Imports System.Composition
 Imports System.Threading
 Imports System.Threading.Tasks
-Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeActions
 Imports Microsoft.CodeAnalysis.CodeRefactorings

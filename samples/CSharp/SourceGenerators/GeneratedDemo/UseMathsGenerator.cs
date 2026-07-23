@@ -1,5 +1,5 @@
-﻿using static System.Console;
-using Maths;
+﻿using Maths;
+using static System.Console;
 
 namespace GeneratedDemo
 {
