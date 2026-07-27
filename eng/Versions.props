@@ -99,8 +99,8 @@
         - Linux source-build only builds a single implementation of M.CA.*.
         - Linux source-build does have some ability to provide surface area packages via the source-build-reference-packages repo.
           However, because these reference packages do not provide implementations, they cannot be used in any case
-          where the package contents would be redisted or executed. An SBRP may not be created for a version that is used both
-          as a reference assembly and redisted.
+          where the package contents would be redistributed or executed.
+          An SBRP may not be created for a version that is used both as a reference assembly and redistributed.
     -->
     <When Condition="'$(DotNetBuildSourceOnly)' != 'true'">
       <PropertyGroup>
