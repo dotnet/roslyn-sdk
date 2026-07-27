@@ -151,8 +151,9 @@
 
   <PropertyGroup>
     <!--
-      Test SDK should match the version of TestPlatform packages required by this repo and defined
-      in Directory.Packages.props - Microsoft.TestPlatform.TranslationLayer and Microsoft.TestPlatform.ObjectModel.
+      Test SDK should match the version of TestPlatform packages required by Roslyn and defined
+      in Roslyn's Directory.Packages.props:
+      Microsoft.TestPlatform.TranslationLayer and Microsoft.TestPlatform.ObjectModel.
       This version needs to match the Test SDK version consumed by Arcade.
     -->
     <MicrosoftNETTestSdkVersion>17.14.1</MicrosoftNETTestSdkVersion>
