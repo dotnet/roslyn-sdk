@@ -243,6 +243,8 @@ namespace Roslyn.SyntaxVisualizer.Extension
 
         void IDisposable.Dispose()
         {
+            Clear();
+
             if (runningDocumentTableCookie != 0)
             {
 #pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
