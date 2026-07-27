@@ -8,6 +8,7 @@
     <MicrosoftNetCompilersToolsetVersion>4.8.0</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftCodeAnalysisAnalyzersVersion>3.3.5-beta1.23322.1</MicrosoftCodeAnalysisAnalyzersVersion>
     <RoslynDiagnosticsAnalyzersVersion>2.9.8</RoslynDiagnosticsAnalyzersVersion>
+    <!-- Legacy test projects require the Test SDK version used before Roslyn alignment. -->
     <MicrosoftNETTestSdkVersion>16.1.1</MicrosoftNETTestSdkVersion>
   </PropertyGroup>
 </Project>

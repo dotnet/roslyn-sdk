@@ -251,6 +251,14 @@ namespace Roslyn.SyntaxVisualizer.Extension
                 runningDocumentTableCookie = 0;
             }
 
+            if (solutionEventsCookie != 0)
+            {
+#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
+                solutionService?.UnadviseSolutionEvents(solutionEventsCookie);
+#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
+                solutionEventsCookie = 0;
+            }
+
             cancellationSeries.Dispose();
             joinableTaskFactory.Run(joinableTasks.JoinTillEmptyAsync);
         }
@@ -458,6 +466,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
             }
         }
 
+        private uint solutionEventsCookie;
         private IVsSolution? solutionService;
         private IVsSolution? SolutionService
         {
@@ -561,7 +570,10 @@ namespace Roslyn.SyntaxVisualizer.Extension
                 // This ensures that the file won't be persisted in the .suo file and that it therefore won't get re-opened
                 // when the solution is re-opened.
 #pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
-                SolutionService?.AdviseSolutionEvents(this, out _);
+                if (solutionEventsCookie == 0 && SolutionService is { } solution)
+                {
+                    solution.AdviseSolutionEvents(this, out solutionEventsCookie);
+                }
 #pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
             }
         }
