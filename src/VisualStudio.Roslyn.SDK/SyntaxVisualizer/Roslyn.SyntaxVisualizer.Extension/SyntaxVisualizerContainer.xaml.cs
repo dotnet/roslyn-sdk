@@ -298,17 +298,23 @@ namespace Roslyn.SyntaxVisualizer.Extension
             _ = joinableTaskFactory.RunAsync(
                 async () =>
                 {
-                    // Get the SyntaxTree and SemanticModel corresponding to the Document.
-                    activeSyntaxTree = await document.GetSyntaxTreeAsync(cancellationToken);
-                    var activeSemanticModel = await document.GetSemanticModelAsync(cancellationToken);
-
-                    // Display the SyntaxTree.
-                    if (activeSyntaxTree is not null)
+                    try
                     {
-                        await syntaxVisualizer.DisplaySyntaxTreeAsync(document, activeSyntaxTree, activeSemanticModel, lazy: true, document.Project.Solution.Workspace, cancellationToken);
-                    }
+                        // Get the SyntaxTree and SemanticModel corresponding to the Document.
+                        activeSyntaxTree = await document.GetSyntaxTreeAsync(cancellationToken);
+                        var activeSemanticModel = await document.GetSemanticModelAsync(cancellationToken);
 
-                    NavigateFromSource();
+                        // Display the SyntaxTree.
+                        if (activeSyntaxTree is not null)
+                        {
+                            await syntaxVisualizer.DisplaySyntaxTreeAsync(document, activeSyntaxTree, activeSemanticModel, lazy: true, document.Project.Solution.Workspace, cancellationToken);
+                        }
+
+                        NavigateFromSource();
+                    }
+                    catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                    {
+                    }
                 });
         }
 
