@@ -260,7 +260,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
             }
 
             cancellationSeries.Dispose();
-            joinableTaskFactory.Run(joinableTasks.JoinTillEmptyAsync);
+            ThreadHelper.JoinableTaskFactory.Run(joinableTasks.JoinTillEmptyAsync);
         }
         #endregion
 
