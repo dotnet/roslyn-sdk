@@ -94,6 +94,7 @@
     <MinorVersion />
     <VersionPrefix>$(NugetPackagePrefix)</VersionPrefix>
     <AssemblyVersion>$(NugetPackagePrefix).0</AssemblyVersion>
+    <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
   </PropertyGroup>
 
 </Project>
