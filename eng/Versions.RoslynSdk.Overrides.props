@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <!-- Preserve repo-specific build behavior while projects migrate to Roslyn's analyzer baselines. -->
+    <!-- Intentionally override imported Roslyn/Maestro values while projects migrate to Roslyn's analyzer baselines. -->
     <UsingToolPdbConverter>true</UsingToolPdbConverter>
     <UsingToolVisualStudioIbcTraining>false</UsingToolVisualStudioIbcTraining>
     <UsingToolXUnit>true</UsingToolXUnit>

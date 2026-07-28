@@ -3,10 +3,10 @@
   <Import Project="Versions.RoslynSdk.props" />
   <Import Project="Version.Details.props" />
 
-  <!-- Roslyn version -->
+  <!-- Repository version -->
   <PropertyGroup>
-    <MajorVersion>5</MajorVersion>
-    <MinorVersion>10</MinorVersion>
+    <MajorVersion>4</MajorVersion>
+    <MinorVersion>0</MinorVersion>
     <PatchVersion>0</PatchVersion>
     <PreReleaseVersionLabel>1</PreReleaseVersionLabel>
     <PreReleaseVersionLabel Condition="'$(DotNetSignType)' == 'test'">$(PreReleaseVersionLabel)-test</PreReleaseVersionLabel>

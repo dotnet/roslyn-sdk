@@ -7,7 +7,7 @@
     <MicrosoftNetCompilersToolsetVersion>4.8.0</MicrosoftNetCompilersToolsetVersion>
   </PropertyGroup>
 
-  <!-- Dependencies used only by Roslyn SDK projects. Roslyn values loaded later take precedence. -->
+  <!-- Defaults used only by Roslyn SDK projects. Later Roslyn values take precedence unless explicitly retained by the final compatibility overrides. -->
   <PropertyGroup>
     <MicrosoftCodeAnalysisPackagesVersion>4.1.0</MicrosoftCodeAnalysisPackagesVersion>
     <MicrosoftVisualStudioShellPackagesVersion>17.3.32809.331</MicrosoftVisualStudioShellPackagesVersion>
