@@ -101,6 +101,12 @@ namespace Roslyn.SyntaxVisualizer.Extension
             UpdateThemedColors();
         }
 
+        // Clear() is the public/internal "soft reset" called when the tool window is unloaded or the
+        // active document changes. It cancels in-flight work and detaches editor event subscriptions so
+        // the component is idle but still reusable for the next document load. Dispose() calls Clear()
+        // first for a complete tear-down, then releases resources that cannot be reused (COM event cookies,
+        // the CancellationSeries itself). The isDisposed guard in Clear() prevents calling into the
+        // already-disposed CancellationSeries when Clear() is invoked during or after Dispose().
         internal void Clear()
         {
             if (!isDisposed)
