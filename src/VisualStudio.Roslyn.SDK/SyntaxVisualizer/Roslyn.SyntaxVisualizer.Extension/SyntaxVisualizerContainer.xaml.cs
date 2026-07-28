@@ -275,9 +275,8 @@ namespace Roslyn.SyntaxVisualizer.Extension
 
             if (solutionEventsCookie.HasValue)
             {
-#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
+                ThreadHelper.ThrowIfNotOnUIThread();
                 solutionService?.UnadviseSolutionEvents(solutionEventsCookie.Value);
-#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
                 solutionEventsCookie = null;
             }
 
