@@ -13,6 +13,8 @@
     <SystemTextJsonVersion>6.0.10</SystemTextJsonVersion>
     <SystemThreadingTasksDataflowVersion>7.0.0</SystemThreadingTasksDataflowVersion>
     <!-- Legacy test projects require the Test SDK version used before Roslyn alignment. -->
+    <!-- https://github.com/microsoft/vstest/pull/2192 -->
+    <!-- https://github.com/microsoft/vstest/pull/2067 -->
     <MicrosoftNETTestSdkVersion>16.1.1</MicrosoftNETTestSdkVersion>
   </PropertyGroup>
 </Project>
