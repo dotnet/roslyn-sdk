@@ -742,7 +742,6 @@ namespace Roslyn.SyntaxVisualizer.Extension
         private void SyntaxVisualizerToolWindow_Unloaded(object sender, RoutedEventArgs e)
         {
             Clear();
-            DeleteDgmlTempFolder();
         }
 
         private void SyntaxVisualizerToolWindow_GotFocus(object sender, RoutedEventArgs e)
