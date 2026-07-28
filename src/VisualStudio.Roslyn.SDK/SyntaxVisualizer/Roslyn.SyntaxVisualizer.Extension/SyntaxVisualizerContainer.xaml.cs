@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -32,6 +33,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
         private readonly CancellationSeries cancellationSeries = new();
         private readonly JoinableTaskCollection joinableTasks;
         private readonly JoinableTaskFactory joinableTaskFactory;
+        private bool isDisposed;
         private IWpfTextView? activeWpfTextView;
         private IClassificationFormatMap? activeClassificationFormatMap;
         private IEditorFormatMap? activeEditorFormatMap;
@@ -101,6 +103,11 @@ namespace Roslyn.SyntaxVisualizer.Extension
 
         internal void Clear()
         {
+            if (!isDisposed)
+            {
+                _ = cancellationSeries.CreateNext(new CancellationToken(canceled: true));
+            }
+
             if (typingTimer != null)
             {
                 typingTimer.Stop();
@@ -243,7 +250,13 @@ namespace Roslyn.SyntaxVisualizer.Extension
 
         void IDisposable.Dispose()
         {
+            if (isDisposed)
+            {
+                return;
+            }
+
             Clear();
+            isDisposed = true;
             DeleteDgmlTempFolder();
 
             if (runningDocumentTableCookie != 0)
