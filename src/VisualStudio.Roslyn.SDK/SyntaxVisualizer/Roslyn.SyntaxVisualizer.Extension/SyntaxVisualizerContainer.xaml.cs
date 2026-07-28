@@ -276,6 +276,9 @@ namespace Roslyn.SyntaxVisualizer.Extension
             }
 
             cancellationSeries.Dispose();
+            // Clear() already cancelled all in-flight tasks via cancellationSeries. This join
+            // merely waits for those tasks to observe the cancellation and exit, which completes
+            // almost immediately. We still join so VS does not observe half-torn-down state.
             ThreadHelper.JoinableTaskFactory.Run(joinableTasks.JoinTillEmptyAsync);
         }
         #endregion
