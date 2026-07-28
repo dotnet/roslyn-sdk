@@ -45,14 +45,14 @@
     <MicrosoftVisualStudioTextLogicVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioTextLogicVersion>
     <MicrosoftVisualStudioTextManagerInterop80Version>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioTextManagerInterop80Version>
     <MicrosoftVisualStudioTextUIWpfVersion>$(MicrosoftVisualStudioEditorPackagesVersion)</MicrosoftVisualStudioTextUIWpfVersion>
-    <MicrosoftVisualStudioThreadingVersion>18.7.19</MicrosoftVisualStudioThreadingVersion>
+    <MicrosoftVisualStudioThreadingAnalyzersVersion>18.7.19</MicrosoftVisualStudioThreadingAnalyzersVersion>
+    <MicrosoftVisualStudioThreadingVersion>17.3.44</MicrosoftVisualStudioThreadingVersion>
     <MicrosoftVisualStudioUtilitiesInternalVersion>16.3.36</MicrosoftVisualStudioUtilitiesInternalVersion>
     <MicrosoftVisualStudioValidationVersion>17.13.22</MicrosoftVisualStudioValidationVersion>
     <NuGetSolutionRestoreManagerInteropVersion>5.6.0</NuGetSolutionRestoreManagerInteropVersion>
     <StreamJsonRpcVersion>2.12.27</StreamJsonRpcVersion>
     <SystemFormatsAsn1Version Condition="'$(TargetFramework)' == 'net8.0'">9.0.6</SystemFormatsAsn1Version>
     <SystemFormatsAsn1Version Condition="'$(TargetFramework)' != 'net8.0'">6.0.1</SystemFormatsAsn1Version>
-    <SystemTextJsonVersion>6.0.10</SystemTextJsonVersion>
     <SystemCollectionsImmutable10Version>10.0.8</SystemCollectionsImmutable10Version>
     <SystemMemoryVersion>4.6.3</SystemMemoryVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.1.2</SystemRuntimeCompilerServicesUnsafeVersion>
@@ -61,7 +61,6 @@
     <MicrosoftVisualStudioTemplateWizardInterfaceVersion>17.0.0-preview-1-30928-1111</MicrosoftVisualStudioTemplateWizardInterfaceVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.0.4207-preview4</MicrosoftVSSDKBuildToolsVersion>
     <MicroBuildPluginsSwixBuildVersion>1.1.33</MicroBuildPluginsSwixBuildVersion>
-    <SystemThreadingTasksDataflowVersion>7.0.0</SystemThreadingTasksDataflowVersion>
     <MicrosoftVisualStudioProjectSystemManagedVersion>17.3.51-g48943e0519</MicrosoftVisualStudioProjectSystemManagedVersion>
     <MicrosoftVisualStudioProjectSystemManagedVSVersion>17.3.51-g48943e0519</MicrosoftVisualStudioProjectSystemManagedVSVersion>
     <MicrosoftVisualStudioProjectSystemSDKToolsVersion>17.3.195-pre</MicrosoftVisualStudioProjectSystemSDKToolsVersion>
