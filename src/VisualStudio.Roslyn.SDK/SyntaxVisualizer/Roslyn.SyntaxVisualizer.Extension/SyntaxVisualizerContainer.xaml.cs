@@ -46,6 +46,8 @@ namespace Roslyn.SyntaxVisualizer.Extension
 
         internal SyntaxVisualizerContainer(SyntaxVisualizerToolWindow parent)
         {
+            // Create a private JoinableTaskCollection rather than using the package's collection so
+            // that Dispose() can wait only for tasks this component issues, not unrelated package work.
             joinableTasks = ThreadHelper.JoinableTaskContext.CreateCollection();
             joinableTaskFactory = ThreadHelper.JoinableTaskContext.CreateFactory(joinableTasks);
 
