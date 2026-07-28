@@ -90,6 +90,8 @@
 
   <!-- Use a different versioning scheme for nuget packages -->
   <PropertyGroup>
+    <MajorVersion />
+    <MinorVersion />
     <VersionPrefix>$(NugetPackagePrefix)</VersionPrefix>
   </PropertyGroup>
 
