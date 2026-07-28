@@ -244,6 +244,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
         void IDisposable.Dispose()
         {
             Clear();
+            DeleteDgmlTempFolder();
 
             if (runningDocumentTableCookie != 0)
             {
@@ -642,6 +643,12 @@ namespace Roslyn.SyntaxVisualizer.Extension
         // solution is re-opened.
         int IVsSolutionEvents.OnBeforeCloseSolution(object ignore)
         {
+            DeleteDgmlTempFolder();
+            return VSConstants.S_OK;
+        }
+
+        private void DeleteDgmlTempFolder()
+        {
             if (!string.IsNullOrWhiteSpace(dgmlFilePath))
             {
                 var folderPath = Path.GetDirectoryName(dgmlFilePath);
@@ -649,9 +656,9 @@ namespace Roslyn.SyntaxVisualizer.Extension
                 {
                     Directory.Delete(folderPath, recursive: true);
                 }
-            }
 
-            return VSConstants.S_OK;
+                dgmlFilePath = null;
+            }
         }
 
         #region Unused IVsSolutionEvents Events
