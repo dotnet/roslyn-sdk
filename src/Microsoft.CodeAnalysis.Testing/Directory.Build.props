@@ -93,6 +93,7 @@
     <MajorVersion />
     <MinorVersion />
     <VersionPrefix>$(NugetPackagePrefix)</VersionPrefix>
+    <AssemblyVersion>$(NugetPackagePrefix).0</AssemblyVersion>
   </PropertyGroup>
 
 </Project>
