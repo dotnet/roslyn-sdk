@@ -90,12 +90,7 @@
 
   <!-- Use a different versioning scheme for nuget packages -->
   <PropertyGroup>
-    <MajorVersion />
-    <MinorVersion />
     <VersionPrefix>$(NugetPackagePrefix)</VersionPrefix>
-    <AssemblyVersion>$(NugetPackagePrefix).0</AssemblyVersion>
-    <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
-    <PreReleaseVersionLabel Condition="'$(DotNetSignType)' == 'test'">beta1-test</PreReleaseVersionLabel>
   </PropertyGroup>
 
 </Project>
