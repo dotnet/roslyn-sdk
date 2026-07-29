@@ -1,0 +1,20 @@
+<Project>
+  <PropertyGroup>
+    <!-- Intentionally override imported Roslyn/Maestro values while projects migrate to Roslyn's analyzer baselines. -->
+    <UsingToolPdbConverter>true</UsingToolPdbConverter>
+    <UsingToolVisualStudioIbcTraining>false</UsingToolVisualStudioIbcTraining>
+    <UsingToolXUnit>true</UsingToolXUnit>
+    <UsingToolXliff>false</UsingToolXliff>
+    <MicrosoftNetCompilersToolsetVersion>4.8.0</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftCodeAnalysisCSharpCodeStyleVersion>$(MicrosoftNetCompilersToolsetVersion)</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
+    <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>$(MicrosoftNetCompilersToolsetVersion)</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
+    <MicrosoftCodeAnalysisAnalyzersVersion>3.3.5-beta1.23322.1</MicrosoftCodeAnalysisAnalyzersVersion>
+    <RoslynDiagnosticsAnalyzersVersion>2.9.8</RoslynDiagnosticsAnalyzersVersion>
+    <SystemTextJsonVersion>6.0.10</SystemTextJsonVersion>
+    <SystemThreadingTasksDataflowVersion>7.0.0</SystemThreadingTasksDataflowVersion>
+    <!-- Legacy test projects require the Test SDK version used before Roslyn alignment. -->
+    <!-- https://github.com/microsoft/vstest/pull/2192 -->
+    <!-- https://github.com/microsoft/vstest/pull/2067 -->
+    <MicrosoftNETTestSdkVersion>16.1.1</MicrosoftNETTestSdkVersion>
+  </PropertyGroup>
+</Project>
