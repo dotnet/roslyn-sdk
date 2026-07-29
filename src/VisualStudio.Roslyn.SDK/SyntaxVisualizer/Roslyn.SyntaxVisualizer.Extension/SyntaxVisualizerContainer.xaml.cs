@@ -3,7 +3,6 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -18,7 +17,6 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Threading;
 
 using Roslyn.SyntaxVisualizer.DgmlHelper;
 using Roslyn.Utilities;
@@ -31,9 +29,6 @@ namespace Roslyn.SyntaxVisualizer.Extension
     {
         private readonly SyntaxVisualizerToolWindow parent;
         private readonly CancellationSeries cancellationSeries = new();
-        private readonly JoinableTaskCollection joinableTasks;
-        private readonly JoinableTaskFactory joinableTaskFactory;
-        private bool isDisposed;
         private IWpfTextView? activeWpfTextView;
         private IClassificationFormatMap? activeClassificationFormatMap;
         private IEditorFormatMap? activeEditorFormatMap;
@@ -46,11 +41,6 @@ namespace Roslyn.SyntaxVisualizer.Extension
 
         internal SyntaxVisualizerContainer(SyntaxVisualizerToolWindow parent)
         {
-            // Create a private JoinableTaskCollection rather than using the package's collection so
-            // that Dispose() can wait only for tasks this component issues, not unrelated package work.
-            joinableTasks = ThreadHelper.JoinableTaskContext.CreateCollection();
-            joinableTaskFactory = ThreadHelper.JoinableTaskContext.CreateFactory(joinableTasks);
-
             InitializeComponent();
 
             this.parent = parent;
@@ -103,19 +93,8 @@ namespace Roslyn.SyntaxVisualizer.Extension
             UpdateThemedColors();
         }
 
-        // Clear() is the public/internal "soft reset" called when the tool window is unloaded or the
-        // active document changes. It cancels in-flight work and detaches editor event subscriptions so
-        // the component is idle but still reusable for the next document load. Dispose() calls Clear()
-        // first for a complete tear-down, then releases resources that cannot be reused (COM event cookies,
-        // the CancellationSeries itself). The isDisposed guard in Clear() prevents calling into the
-        // already-disposed CancellationSeries when Clear() is invoked during or after Dispose().
         internal void Clear()
         {
-            if (!isDisposed)
-            {
-                _ = cancellationSeries.CreateNext(new CancellationToken(canceled: true));
-            }
-
             if (typingTimer != null)
             {
                 typingTimer.Stop();
@@ -258,15 +237,6 @@ namespace Roslyn.SyntaxVisualizer.Extension
 
         void IDisposable.Dispose()
         {
-            if (isDisposed)
-            {
-                return;
-            }
-
-            Clear();
-            isDisposed = true;
-            DeleteDgmlTempFolder();
-
             if (runningDocumentTableCookie != 0)
             {
 #pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
@@ -275,18 +245,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
                 runningDocumentTableCookie = 0;
             }
 
-            if (solutionEventsCookie.HasValue)
-            {
-                ThreadHelper.ThrowIfNotOnUIThread();
-                solutionService?.UnadviseSolutionEvents(solutionEventsCookie.Value);
-                solutionEventsCookie = null;
-            }
-
             cancellationSeries.Dispose();
-            // Clear() already cancelled all in-flight tasks via cancellationSeries. This join
-            // merely waits for those tasks to observe the cancellation and exit, which completes
-            // almost immediately. We still join so VS does not observe half-torn-down state.
-            ThreadHelper.JoinableTaskFactory.Run(joinableTasks.JoinTillEmptyAsync);
         }
         #endregion
 
@@ -319,26 +278,20 @@ namespace Roslyn.SyntaxVisualizer.Extension
                 return;
             }
 
-            _ = joinableTaskFactory.RunAsync(
+            _ = ThreadHelper.JoinableTaskFactory.RunAsync(
                 async () =>
                 {
-                    try
-                    {
-                        // Get the SyntaxTree and SemanticModel corresponding to the Document.
-                        activeSyntaxTree = await document.GetSyntaxTreeAsync(cancellationToken);
-                        var activeSemanticModel = await document.GetSemanticModelAsync(cancellationToken);
+                    // Get the SyntaxTree and SemanticModel corresponding to the Document.
+                    activeSyntaxTree = await document.GetSyntaxTreeAsync(cancellationToken);
+                    var activeSemanticModel = await document.GetSemanticModelAsync(cancellationToken);
 
-                        // Display the SyntaxTree.
-                        if (activeSyntaxTree is not null)
-                        {
-                            await syntaxVisualizer.DisplaySyntaxTreeAsync(document, activeSyntaxTree, activeSemanticModel, lazy: true, document.Project.Solution.Workspace, cancellationToken);
-                        }
-
-                        NavigateFromSource();
-                    }
-                    catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                    // Display the SyntaxTree.
+                    if (activeSyntaxTree is not null)
                     {
+                        await syntaxVisualizer.DisplaySyntaxTreeAsync(document, activeSyntaxTree, activeSemanticModel, lazy: true, document.Project.Solution.Workspace, cancellationToken);
                     }
+
+                    NavigateFromSource();
                 });
         }
 
@@ -498,7 +451,6 @@ namespace Roslyn.SyntaxVisualizer.Extension
             }
         }
 
-        private uint? solutionEventsCookie;
         private IVsSolution? solutionService;
         private IVsSolution? SolutionService
         {
@@ -602,11 +554,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
                 // This ensures that the file won't be persisted in the .suo file and that it therefore won't get re-opened
                 // when the solution is re-opened.
 #pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
-                if (solutionEventsCookie is null && SolutionService is { } solution)
-                {
-                    solution.AdviseSolutionEvents(this, out var cookie);
-                    solutionEventsCookie = cookie;
-                }
+                SolutionService?.AdviseSolutionEvents(this, out _);
 #pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
             }
         }
@@ -667,12 +615,6 @@ namespace Roslyn.SyntaxVisualizer.Extension
         // solution is re-opened.
         int IVsSolutionEvents.OnBeforeCloseSolution(object ignore)
         {
-            DeleteDgmlTempFolder();
-            return VSConstants.S_OK;
-        }
-
-        private void DeleteDgmlTempFolder()
-        {
             if (!string.IsNullOrWhiteSpace(dgmlFilePath))
             {
                 var folderPath = Path.GetDirectoryName(dgmlFilePath);
@@ -680,9 +622,9 @@ namespace Roslyn.SyntaxVisualizer.Extension
                 {
                     Directory.Delete(folderPath, recursive: true);
                 }
-
-                dgmlFilePath = null;
             }
+
+            return VSConstants.S_OK;
         }
 
         #region Unused IVsSolutionEvents Events
