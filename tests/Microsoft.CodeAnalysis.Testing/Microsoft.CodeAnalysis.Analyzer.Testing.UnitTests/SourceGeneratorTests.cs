@@ -346,6 +346,41 @@ namespace Microsoft.CodeAnalysis.Testing
         }
 
         [Fact]
+        public async Task AddSimpleFileWithDiagnosticWithAdditionalProjects()
+        {
+            await new CSharpAnalyzerWithSourceGeneratorTest<EmptyDiagnosticAnalyzer, AddEmptyFileWithDiagnostic>
+            {
+                TestState =
+                {
+                    AdditionalProjects =
+                    {
+                        ["AdditionalProject"] =
+                        {
+                            Sources =
+                            {
+                                @"// Comment",
+                            },
+                        },
+                    },
+                    AdditionalProjectReferences = { "AdditionalProject" },
+                    Sources =
+                    {
+                        @"{|#0:|}// Comment",
+                    },
+                    GeneratedSources =
+                    {
+                        ("Microsoft.CodeAnalysis.Testing.Utilities\\Microsoft.CodeAnalysis.Testing.TestGenerators.AddEmptyFileWithDiagnostic\\EmptyGeneratedFile.cs", SourceText.From(string.Empty, Encoding.UTF8)),
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        // /0/Test0.cs(1,1): warning SG0001: Message
+                        new DiagnosticResult(AddEmptyFileWithDiagnostic.Descriptor).WithLocation(0),
+                    },
+                },
+            }.RunAsync();
+        }
+
+        [Fact]
         public async Task AddImplicitSimpleFileWithDiagnostic()
         {
             await new CSharpAnalyzerWithSourceGeneratorTest<EmptyDiagnosticAnalyzer, AddEmptyFileWithDiagnostic>
