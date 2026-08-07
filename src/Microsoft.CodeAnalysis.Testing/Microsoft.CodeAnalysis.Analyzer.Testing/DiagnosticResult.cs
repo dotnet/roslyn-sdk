@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Testing
@@ -122,13 +123,26 @@ namespace Microsoft.CodeAnalysis.Testing
 
                 if (MessageFormat != null)
                 {
+                    var messageFormatString = MessageFormat.ToString();
+
+                    // Ensure placeholders in the MessageFormat match the provided arguments
+                    int placeholderCount = Regex.Matches(messageFormatString, @"\{[0-9]+(:[^}]*)?\}").Count;
+
+                    // Initialize MessageArguments if null
+                    var arguments = MessageArguments ?? EmptyArguments;
+
+                    if (arguments.Length != placeholderCount)
+                    {
+                        throw new ArgumentException($"Incorrect number of arguments provided. The message expects {placeholderCount} argument(s), but received {arguments.Length}.");
+                    }
+
                     try
                     {
-                        return string.Format(MessageFormat.ToString(), MessageArguments ?? EmptyArguments);
+                        return string.Format(messageFormatString, arguments);
                     }
                     catch (FormatException)
                     {
-                        return MessageFormat.ToString();
+                        return messageFormatString;
                     }
                 }
 
