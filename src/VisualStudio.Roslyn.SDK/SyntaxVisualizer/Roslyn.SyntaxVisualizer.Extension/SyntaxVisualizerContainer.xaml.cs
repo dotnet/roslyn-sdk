@@ -67,6 +67,7 @@ namespace Roslyn.SyntaxVisualizer.Extension
 
             syntaxVisualizer.SyntaxNodeNavigationToSourceRequested += node => NavigateToSource(node?.Span);
             syntaxVisualizer.SyntaxTokenNavigationToSourceRequested += token => NavigateToSource(token.Span);
+            syntaxVisualizer.SyntaxClassifiedSpanNavigationToSourceRequested += span => NavigateToSource(span.TextSpan);
             syntaxVisualizer.SyntaxTriviaNavigationToSourceRequested += trivia => NavigateToSource(trivia.Span);
         }
 
