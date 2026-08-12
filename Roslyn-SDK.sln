@@ -7,93 +7,93 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{924F7971-780
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VisualStudio.Roslyn.SDK", "VisualStudio.Roslyn.SDK", "{F9B73995-76C6-4056-ADA9-18342F951361}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK", "src\VisualStudio.Roslyn.SDK\Roslyn.SDK\Roslyn.SDK.csproj", "{BA2F4AB0-0F9B-48EE-B854-54C38CB91115}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK", "src\RoslynSdk\VisualStudio.Roslyn.SDK\Roslyn.SDK\Roslyn.SDK.csproj", "{BA2F4AB0-0F9B-48EE-B854-54C38CB91115}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK.Template.Wizard", "src\VisualStudio.Roslyn.SDK\Roslyn.SDK.Template.Wizard\Roslyn.SDK.Template.Wizard.csproj", "{D060F449-05B9-4830-88A7-4CB879F23A77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK.Template.Wizard", "src\RoslynSdk\VisualStudio.Roslyn.SDK\Roslyn.SDK.Template.Wizard\Roslyn.SDK.Template.Wizard.csproj", "{D060F449-05B9-4830-88A7-4CB879F23A77}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SyntaxVisualizer", "SyntaxVisualizer", "{8D8DB1B3-0533-4D14-B079-CD2EE922B3F8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SyntaxVisualizer.Control", "src\VisualStudio.Roslyn.SDK\SyntaxVisualizer\Roslyn.SyntaxVisualizer.Control\Roslyn.SyntaxVisualizer.Control.csproj", "{DF972A62-6E0A-4354-B217-C39732B237F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SyntaxVisualizer.Control", "src\RoslynSdk\VisualStudio.Roslyn.SDK\SyntaxVisualizer\Roslyn.SyntaxVisualizer.Control\Roslyn.SyntaxVisualizer.Control.csproj", "{DF972A62-6E0A-4354-B217-C39732B237F9}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Roslyn.SyntaxVisualizer.DgmlHelper", "src\VisualStudio.Roslyn.SDK\SyntaxVisualizer\Roslyn.SyntaxVisualizer.DgmlHelper\Roslyn.SyntaxVisualizer.DgmlHelper.vbproj", "{DE3A48A7-5368-468A-8EB3-F5E1A3A15EFF}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Roslyn.SyntaxVisualizer.DgmlHelper", "src\RoslynSdk\VisualStudio.Roslyn.SDK\SyntaxVisualizer\Roslyn.SyntaxVisualizer.DgmlHelper\Roslyn.SyntaxVisualizer.DgmlHelper.vbproj", "{DE3A48A7-5368-468A-8EB3-F5E1A3A15EFF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SyntaxVisualizer.Extension", "src\VisualStudio.Roslyn.SDK\SyntaxVisualizer\Roslyn.SyntaxVisualizer.Extension\Roslyn.SyntaxVisualizer.Extension.csproj", "{BF3477AA-22C9-4751-A4C0-01EF30728AE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SyntaxVisualizer.Extension", "src\RoslynSdk\VisualStudio.Roslyn.SDK\SyntaxVisualizer\Roslyn.SyntaxVisualizer.Extension\Roslyn.SyntaxVisualizer.Extension.csproj", "{BF3477AA-22C9-4751-A4C0-01EF30728AE9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.CodeAnalysis.Testing", "Microsoft.CodeAnalysis.Testing", "{A3E08CE3-2358-4D36-875B-82C99AC61CD8}"
 	ProjectSection(SolutionItems) = preProject
-		src\Microsoft.CodeAnalysis.Testing\Directory.Build.props = src\Microsoft.CodeAnalysis.Testing\Directory.Build.props
-		src\Microsoft.CodeAnalysis.Testing\Directory.Build.targets = src\Microsoft.CodeAnalysis.Testing\Directory.Build.targets
+		src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Directory.Build.props = src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Directory.Build.props
+		src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Directory.Build.targets = src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Directory.Build.targets
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Analyzer.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj", "{36F8BB88-BBDB-4917-BCF4-269E7652A314}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Analyzer.Testing", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.Analyzer.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.csproj", "{36F8BB88-BBDB-4917-BCF4-269E7652A314}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CodeFix.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CodeFix.Testing\Microsoft.CodeAnalysis.CodeFix.Testing.csproj", "{F2892BD1-6FB9-4346-89A2-EC4C3076FC9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CodeFix.Testing", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CodeFix.Testing\Microsoft.CodeAnalysis.CodeFix.Testing.csproj", "{F2892BD1-6FB9-4346-89A2-EC4C3076FC9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.Analyzer.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.csproj", "{F8785C36-69E1-423B-9E4A-36DF8A9CF904}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.Analyzer.Testing", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.csproj", "{F8785C36-69E1-423B-9E4A-36DF8A9CF904}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.CodeFix.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.csproj", "{7B7D8972-B167-4338-B112-2BB37DBDBF71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.CodeFix.Testing", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.csproj", "{7B7D8972-B167-4338-B112-2BB37DBDBF71}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.vbproj", "{0FF93648-F249-4F25-AF46-15C96168682B}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.vbproj", "{0FF93648-F249-4F25-AF46-15C96168682B}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.vbproj", "{D130C11C-6E09-4D2D-BFB7-C40545E26C1B}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.vbproj", "{D130C11C-6E09-4D2D-BFB7-C40545E26C1B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8C343846-5F9F-4033-9B52-B44C61962449}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.CodeAnalysis.Testing", "Microsoft.CodeAnalysis.Testing", "{9905147E-CC1F-42A0-BD27-05586C583DF7}"
 	ProjectSection(SolutionItems) = preProject
-		tests\Microsoft.CodeAnalysis.Testing\Directory.Build.props = tests\Microsoft.CodeAnalysis.Testing\Directory.Build.props
-		tests\Microsoft.CodeAnalysis.Testing\Directory.Build.targets = tests\Microsoft.CodeAnalysis.Testing\Directory.Build.targets
+		src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Directory.Build.props = src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Directory.Build.props
+		src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Directory.Build.targets = src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Directory.Build.targets
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Analyzer.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.Analyzer.Testing.UnitTests\Microsoft.CodeAnalysis.Analyzer.Testing.UnitTests.csproj", "{FE26E824-EC4D-4CF9-9927-7E4B81502349}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Analyzer.Testing.UnitTests", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.Analyzer.Testing.UnitTests\Microsoft.CodeAnalysis.Analyzer.Testing.UnitTests.csproj", "{FE26E824-EC4D-4CF9-9927-7E4B81502349}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CodeFix.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CodeFix.Testing.UnitTests\Microsoft.CodeAnalysis.CodeFix.Testing.UnitTests.csproj", "{56490F48-5770-4EAB-81A3-AF915398871C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CodeFix.Testing.UnitTests", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.CodeFix.Testing.UnitTests\Microsoft.CodeAnalysis.CodeFix.Testing.UnitTests.csproj", "{56490F48-5770-4EAB-81A3-AF915398871C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.UnitTests\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.UnitTests.csproj", "{78102FBF-4418-42FE-ACBA-A23BB2706F0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.UnitTests", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.UnitTests\Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.UnitTests.csproj", "{78102FBF-4418-42FE-ACBA-A23BB2706F0A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.UnitTests\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.UnitTests.csproj", "{0DD2AF99-AAA6-448A-8A9C-16EE373AFDAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.UnitTests", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.UnitTests\Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.UnitTests.csproj", "{0DD2AF99-AAA6-448A-8A9C-16EE373AFDAB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Testing.Utilities", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.Testing.Utilities\Microsoft.CodeAnalysis.Testing.Utilities.csproj", "{5DE03057-D112-4D96-AB25-9B295405AFA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Testing.Utilities", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.Testing.Utilities\Microsoft.CodeAnalysis.Testing.Utilities.csproj", "{5DE03057-D112-4D96-AB25-9B295405AFA7}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.UnitTests\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.UnitTests.vbproj", "{64B8D716-2D65-4324-9F49-C400BFD44A27}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.UnitTests", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.UnitTests\Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.UnitTests.vbproj", "{64B8D716-2D65-4324-9F49-C400BFD44A27}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.UnitTests\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.UnitTests.vbproj", "{CB54BA8F-2484-4E94-9950-2B293928CD9B}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.UnitTests", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.UnitTests\Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.UnitTests.vbproj", "{CB54BA8F-2484-4E94-9950-2B293928CD9B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CodeRefactoring.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CodeRefactoring.Testing\Microsoft.CodeAnalysis.CodeRefactoring.Testing.csproj", "{E4A13773-25AC-4CBA-B853-156FF04A5F93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CodeRefactoring.Testing", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CodeRefactoring.Testing\Microsoft.CodeAnalysis.CodeRefactoring.Testing.csproj", "{E4A13773-25AC-4CBA-B853-156FF04A5F93}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing\Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.csproj", "{2B2A5675-EA12-4921-A075-5C8BCB10D02D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing\Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.csproj", "{2B2A5675-EA12-4921-A075-5C8BCB10D02D}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.vbproj", "{7642812C-564D-40CD-985A-F53EC821CBE3}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.vbproj", "{7642812C-564D-40CD-985A-F53EC821CBE3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CodeRefactoring.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CodeRefactoring.Testing.UnitTests\Microsoft.CodeAnalysis.CodeRefactoring.Testing.UnitTests.csproj", "{8E9B5FE5-6C6B-4CC2-816B-8CDA6F3D1297}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CodeRefactoring.Testing.UnitTests", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.CodeRefactoring.Testing.UnitTests\Microsoft.CodeAnalysis.CodeRefactoring.Testing.UnitTests.csproj", "{8E9B5FE5-6C6B-4CC2-816B-8CDA6F3D1297}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.UnitTests\Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.UnitTests.csproj", "{995E5475-2032-4A23-A85B-F8400C02CAFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.UnitTests", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.UnitTests\Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.UnitTests.csproj", "{995E5475-2032-4A23-A85B-F8400C02CAFE}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.UnitTests\Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.UnitTests.vbproj", "{68DEB3AF-8572-45A9-9EED-E71B5F1F35CA}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.UnitTests", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.UnitTests\Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.UnitTests.vbproj", "{68DEB3AF-8572-45A9-9EED-E71B5F1F35CA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VisualStudio.Roslyn.SDK", "VisualStudio.Roslyn.SDK", "{A3AF556C-276C-49BA-A9ED-E7D42FECAA46}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK.IntegrationTests", "tests\VisualStudio.Roslyn.SDK\Roslyn.SDK.IntegrationTests\Roslyn.SDK.IntegrationTests.csproj", "{6DBBFF7B-2C28-47D7-8618-B6085044E38D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK.IntegrationTests", "src\RoslynSdk\VisualStudio.Roslyn.SDK\Test\Roslyn.SDK.IntegrationTests\Roslyn.SDK.IntegrationTests.csproj", "{6DBBFF7B-2C28-47D7-8618-B6085044E38D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK.UnitTests", "tests\VisualStudio.Roslyn.SDK\Roslyn.SDK.UnitTests\Roslyn.SDK.UnitTests.csproj", "{11B1F856-9025-4A4C-B90D-B1237743B672}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.SDK.UnitTests", "src\RoslynSdk\VisualStudio.Roslyn.SDK\Test\Roslyn.SDK.UnitTests\Roslyn.SDK.UnitTests.csproj", "{11B1F856-9025-4A4C-B90D-B1237743B672}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.SourceGenerators.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.SourceGenerators.Testing\Microsoft.CodeAnalysis.SourceGenerators.Testing.csproj", "{05A91267-ABC8-4249-9A04-166C08EAD849}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.SourceGenerators.Testing", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.SourceGenerators.Testing\Microsoft.CodeAnalysis.SourceGenerators.Testing.csproj", "{05A91267-ABC8-4249-9A04-166C08EAD849}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing\Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.csproj", "{99D7BB0C-DE8D-4952-A9BF-63A5215256C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing\Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.csproj", "{99D7BB0C-DE8D-4952-A9BF-63A5215256C4}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing", "src\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing\Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing.vbproj", "{EC96BD3F-2DFE-4072-86F5-BFB349FF77D9}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing\Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing.vbproj", "{EC96BD3F-2DFE-4072-86F5-BFB349FF77D9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.SourceGenerators.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.SourceGenerators.Testing.UnitTests\Microsoft.CodeAnalysis.SourceGenerators.Testing.UnitTests.csproj", "{68CAEBF3-D428-4B50-8305-4BE4F7753CA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.SourceGenerators.Testing.UnitTests", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.SourceGenerators.Testing.UnitTests\Microsoft.CodeAnalysis.SourceGenerators.Testing.UnitTests.csproj", "{68CAEBF3-D428-4B50-8305-4BE4F7753CA8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.UnitTests\Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.UnitTests.csproj", "{0E75580E-10E6-4CAC-87C2-D83C6C0B1D10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.UnitTests", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.UnitTests\Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.UnitTests.csproj", "{0E75580E-10E6-4CAC-87C2-D83C6C0B1D10}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing.UnitTests", "tests\Microsoft.CodeAnalysis.Testing\Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing.UnitTests\Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing.UnitTests.vbproj", "{ED7BCD8E-F553-48F0-962F-019BE7C2B78E}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing.UnitTests", "src\RoslynSdk\Microsoft.CodeAnalysis.Testing\Test\Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing.UnitTests\Microsoft.CodeAnalysis.VisualBasic.SourceGenerators.Testing.UnitTests.vbproj", "{ED7BCD8E-F553-48F0-962F-019BE7C2B78E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.ComponentDebugger", "src\VisualStudio.Roslyn.SDK\ComponentDebugger\Roslyn.ComponentDebugger.csproj", "{421DE59C-8246-4679-9D69-79F16A7187BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.ComponentDebugger", "src\RoslynSdk\VisualStudio.Roslyn.SDK\ComponentDebugger\Roslyn.ComponentDebugger.csproj", "{421DE59C-8246-4679-9D69-79F16A7187BE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "util", "util", "{7A94E723-ADD6-48C4-BBE7-1D5B311187A8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssemblyVersionGenerator", "src\VisualStudio.Roslyn.SDK\AssemblyVersionGenerator\AssemblyVersionGenerator.csproj", "{AB6B3C69-9F6F-461C-BFD8-D3F25B9F44AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssemblyVersionGenerator", "src\RoslynSdk\VisualStudio.Roslyn.SDK\AssemblyVersionGenerator\AssemblyVersionGenerator.csproj", "{AB6B3C69-9F6F-461C-BFD8-D3F25B9F44AD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{B403A356-738B-48CC-B9DD-81D5AE8ABE10}"
 	ProjectSection(SolutionItems) = preProject
