@@ -4,5 +4,5 @@
 *.groovy @dotnet/roslyn-infrastructure
 .github/ @dotnet/roslyn-infrastructure
 build/ @dotnet/roslyn-infrastructure
-samples/ @dotnet/analyzer-samples
 src/ @dotnet/roslyn-sdk
+src/RoslynSdk/Microsoft.CodeAnalysis.Testing/Samples/ @dotnet/analyzer-samples
