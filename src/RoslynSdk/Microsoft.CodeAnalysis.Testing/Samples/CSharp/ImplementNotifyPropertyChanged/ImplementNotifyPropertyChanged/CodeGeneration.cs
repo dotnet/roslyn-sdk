@@ -17,8 +17,8 @@ namespace ImplementNotifyPropertyChangedCS
     {
         internal static CompilationUnitSyntax ImplementINotifyPropertyChanged(CompilationUnitSyntax root, SemanticModel model, IEnumerable<ExpandablePropertyInfo> properties, Workspace workspace)
         {
-            TypeDeclarationSyntax typeDeclaration = properties.First().PropertyDeclaration.FirstAncestorOrSelf<TypeDeclarationSyntax>();
-            Dictionary<PropertyDeclarationSyntax, string> backingFieldLookup = Enumerable.ToDictionary(properties, info => info.PropertyDeclaration, info => info.BackingFieldName);
+            var typeDeclaration = properties.First().PropertyDeclaration.FirstAncestorOrSelf<TypeDeclarationSyntax>();
+            var backingFieldLookup = Enumerable.ToDictionary(properties, info => info.PropertyDeclaration, info => info.BackingFieldName);
 
             root = root.ReplaceNodes(properties.Select(p => p.PropertyDeclaration as SyntaxNode).Concat(new[] { typeDeclaration }),
                 (original, updated) => original.IsKind(SyntaxKind.PropertyDeclaration)
@@ -54,12 +54,12 @@ namespace ImplementNotifyPropertyChangedCS
         private static TypeDeclarationSyntax WithBackingFields(this TypeDeclarationSyntax node, IEnumerable<ExpandablePropertyInfo> properties, Workspace workspace)
         {
             // generate backing field for auto-props
-            foreach (ExpandablePropertyInfo p in properties)
+            foreach (var p in properties)
             {
-                MemberDeclarationSyntax fieldDecl = GenerateBackingField(p, workspace);
+                var fieldDecl = GenerateBackingField(p, workspace);
 
                 // put field just before property
-                PropertyDeclarationSyntax currentProp = node.DescendantNodes().OfType<PropertyDeclarationSyntax>().First(d => d.Identifier.Text == p.PropertyDeclaration.Identifier.Text);
+                var currentProp = node.DescendantNodes().OfType<PropertyDeclarationSyntax>().First(d => d.Identifier.Text == p.PropertyDeclaration.Identifier.Text);
                 node = node.InsertNodesBefore(currentProp, new[] { fieldDecl });
             }
 
@@ -68,16 +68,16 @@ namespace ImplementNotifyPropertyChangedCS
 
         private static MemberDeclarationSyntax GenerateBackingField(ExpandablePropertyInfo property, Workspace workspace)
         {
-            SyntaxGenerator g = SyntaxGenerator.GetGenerator(workspace, LanguageNames.CSharp);
-            SyntaxNode type = g.TypeExpression(property.Type);
+            var g = SyntaxGenerator.GetGenerator(workspace, LanguageNames.CSharp);
+            var type = g.TypeExpression(property.Type);
 
-            FieldDeclarationSyntax fieldDecl = (FieldDeclarationSyntax)ParseMember(string.Format("private _fieldType_ {0};", property.BackingFieldName));
+            var fieldDecl = (FieldDeclarationSyntax)ParseMember(string.Format("private _fieldType_ {0};", property.BackingFieldName));
             return fieldDecl.ReplaceNode(fieldDecl.Declaration.Type, type).WithAdditionalAnnotations(Formatter.Annotation);
         }
 
         private static MemberDeclarationSyntax ParseMember(string member)
         {
-            MemberDeclarationSyntax decl = ((ClassDeclarationSyntax)SyntaxFactory.ParseCompilationUnit("class x {\r\n" + member + "\r\n}").Members[0]).Members[0];
+            var decl = ((ClassDeclarationSyntax)SyntaxFactory.ParseCompilationUnit("class x {\r\n" + member + "\r\n}").Members[0]).Members[0];
             return decl.WithAdditionalAnnotations(Formatter.Annotation);
         }
 
@@ -103,14 +103,14 @@ namespace ImplementNotifyPropertyChangedCS
 
         private static PropertyDeclarationSyntax ExpandProperty(PropertyDeclarationSyntax property, string backingFieldName)
         {
-            if (!ExpansionChecker.TryGetAccessors(property, out AccessorDeclarationSyntax getter, out AccessorDeclarationSyntax setter))
+            if (!ExpansionChecker.TryGetAccessors(property, out var getter, out var setter))
             {
                 throw new ArgumentException();
             }
 
             if (getter.Body == null)
             {
-                StatementSyntax returnFieldStatement = SyntaxFactory.ParseStatement(string.Format("return {0};", backingFieldName));
+                var returnFieldStatement = SyntaxFactory.ParseStatement(string.Format("return {0};", backingFieldName));
                 getter = getter
                     .WithBody(SyntaxFactory.Block(SyntaxFactory.SingletonList(returnFieldStatement)));
             }
@@ -118,12 +118,12 @@ namespace ImplementNotifyPropertyChangedCS
             getter = getter
                 .WithSemicolonToken(default(SyntaxToken));
 
-            StatementSyntax setPropertyStatement = SyntaxFactory.ParseStatement(string.Format("SetProperty(ref {0}, value, \"{1}\");", backingFieldName, property.Identifier.ValueText));
+            var setPropertyStatement = SyntaxFactory.ParseStatement(string.Format("SetProperty(ref {0}, value, \"{1}\");", backingFieldName, property.Identifier.ValueText));
             setter = setter
                 .WithBody(SyntaxFactory.Block(SyntaxFactory.SingletonList(setPropertyStatement)))
                 .WithSemicolonToken(default(SyntaxToken));
 
-            PropertyDeclarationSyntax newProperty = property
+            var newProperty = property
                 .WithAccessorList(SyntaxFactory.AccessorList(SyntaxFactory.List(new[] { getter, setter })))
                 .WithAdditionalAnnotations(Formatter.Annotation);
 
@@ -134,13 +134,13 @@ namespace ImplementNotifyPropertyChangedCS
 
         private static TypeDeclarationSyntax WithBaseType(this TypeDeclarationSyntax node, TypeDeclarationSyntax original, SemanticModel semanticModel)
         {
-            INamedTypeSymbol classSymbol = semanticModel.GetDeclaredSymbol(original);
-            INamedTypeSymbol interfaceSymbol = semanticModel.Compilation.GetTypeByMetadataName(InterfaceName);
+            var classSymbol = semanticModel.GetDeclaredSymbol(original);
+            var interfaceSymbol = semanticModel.Compilation.GetTypeByMetadataName(InterfaceName);
 
             // Does this class already implement INotifyPropertyChanged? If not, add it to the base list.
             if (!classSymbol.AllInterfaces.Contains(interfaceSymbol))
             {
-                TypeSyntax baseTypeName = SyntaxFactory.ParseTypeName(InterfaceName)
+                var baseTypeName = SyntaxFactory.ParseTypeName(InterfaceName)
                     .WithAdditionalAnnotations(Simplifier.Annotation);
 
                 node = node.IsKind(SyntaxKind.ClassDeclaration)
@@ -158,15 +158,15 @@ namespace ImplementNotifyPropertyChangedCS
 
         private static TypeDeclarationSyntax WithPropertyChangedEvent(this TypeDeclarationSyntax node, TypeDeclarationSyntax original, SemanticModel semanticModel, Workspace workspace)
         {
-            INamedTypeSymbol classSymbol = semanticModel.GetDeclaredSymbol(original);
-            INamedTypeSymbol interfaceSymbol = semanticModel.Compilation.GetTypeByMetadataName(InterfaceName);
-            IEventSymbol propertyChangedEventSymbol = (IEventSymbol)interfaceSymbol.GetMembers("PropertyChanged").Single();
-            ISymbol propertyChangedEvent = classSymbol.FindImplementationForInterfaceMember(propertyChangedEventSymbol);
+            var classSymbol = semanticModel.GetDeclaredSymbol(original);
+            var interfaceSymbol = semanticModel.Compilation.GetTypeByMetadataName(InterfaceName);
+            var propertyChangedEventSymbol = (IEventSymbol)interfaceSymbol.GetMembers("PropertyChanged").Single();
+            var propertyChangedEvent = classSymbol.FindImplementationForInterfaceMember(propertyChangedEventSymbol);
 
             // Does this class contain an implementation for the PropertyChanged event? If not, add it.
             if (propertyChangedEvent == null)
             {
-                MemberDeclarationSyntax propertyChangedEventDecl = GeneratePropertyChangedEvent();
+                var propertyChangedEventDecl = GeneratePropertyChangedEvent();
                 node = node.AddMembers(propertyChangedEventDecl);
             }
 
@@ -175,23 +175,23 @@ namespace ImplementNotifyPropertyChangedCS
 
         internal static MemberDeclarationSyntax GeneratePropertyChangedEvent()
         {
-            EventFieldDeclarationSyntax decl = (EventFieldDeclarationSyntax)ParseMember("public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;");
+            var decl = (EventFieldDeclarationSyntax)ParseMember("public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;");
             return decl.ReplaceNode(decl.Declaration.Type, decl.Declaration.Type.WithAdditionalAnnotations(Simplifier.Annotation));
         }
 
         private static IMethodSymbol FindSetPropertyMethod(this INamedTypeSymbol classSymbol, Compilation compilation)
         {
             // Find SetProperty<T>(ref T, T, string) method.
-            IMethodSymbol setPropertyMethod = classSymbol
+            var setPropertyMethod = classSymbol
                 .GetMembers("SetProperty")
                 .OfType<IMethodSymbol>()
                 .FirstOrDefault(m => m.Parameters.Length == 3 && m.TypeParameters.Length == 1);
 
             if (setPropertyMethod != null)
             {
-                System.Collections.Immutable.ImmutableArray<IParameterSymbol> parameters = setPropertyMethod.Parameters;
-                ITypeParameterSymbol typeParameter = setPropertyMethod.TypeParameters[0];
-                INamedTypeSymbol stringType = compilation.GetSpecialType(SpecialType.System_String);
+                var parameters = setPropertyMethod.Parameters;
+                var typeParameter = setPropertyMethod.TypeParameters[0];
+                var stringType = compilation.GetSpecialType(SpecialType.System_String);
 
                 if (setPropertyMethod.ReturnsVoid &&
                     parameters[0].RefKind == RefKind.Ref &&
@@ -208,15 +208,15 @@ namespace ImplementNotifyPropertyChangedCS
 
         private static TypeDeclarationSyntax WithSetPropertyMethod(this TypeDeclarationSyntax node, TypeDeclarationSyntax original, SemanticModel semanticModel, Workspace workspace)
         {
-            INamedTypeSymbol classSymbol = semanticModel.GetDeclaredSymbol(original);
-            INamedTypeSymbol interfaceSymbol = semanticModel.Compilation.GetTypeByMetadataName(InterfaceName);
-            IEventSymbol propertyChangedEventSymbol = (IEventSymbol)interfaceSymbol.GetMembers("PropertyChanged").Single();
-            ISymbol propertyChangedEvent = classSymbol.FindImplementationForInterfaceMember(propertyChangedEventSymbol);
+            var classSymbol = semanticModel.GetDeclaredSymbol(original);
+            var interfaceSymbol = semanticModel.Compilation.GetTypeByMetadataName(InterfaceName);
+            var propertyChangedEventSymbol = (IEventSymbol)interfaceSymbol.GetMembers("PropertyChanged").Single();
+            var propertyChangedEvent = classSymbol.FindImplementationForInterfaceMember(propertyChangedEventSymbol);
 
-            IMethodSymbol setPropertyMethod = classSymbol.FindSetPropertyMethod(semanticModel.Compilation);
+            var setPropertyMethod = classSymbol.FindSetPropertyMethod(semanticModel.Compilation);
             if (setPropertyMethod == null)
             {
-                MethodDeclarationSyntax setPropertyDecl = GenerateSetPropertyMethod();
+                var setPropertyDecl = GenerateSetPropertyMethod();
                 node = AddMembers(node, setPropertyDecl);
             }
 

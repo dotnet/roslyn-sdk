@@ -12,7 +12,7 @@ namespace Sample.Analyzers.Test
         [Fact]
         public async Task CompilationStartedAnalyzerTest()
         {
-            string test = @"
+            var test = @"
 namespace MyInterfaces
 {
     public interface Interface {}
@@ -23,7 +23,7 @@ namespace MyInterfaces
     {
     }
 }";
-            DiagnosticResult expected = Verify.Diagnostic().WithArguments("MyInterfaceImpl2", CompilationStartedAnalyzer.DontInheritInterfaceTypeName).WithLocation(8, 11);
+            var expected = Verify.Diagnostic().WithArguments("MyInterfaceImpl2", CompilationStartedAnalyzer.DontInheritInterfaceTypeName).WithLocation(8, 11);
             await Verify.VerifyAnalyzerAsync(test, expected);
         }
     }

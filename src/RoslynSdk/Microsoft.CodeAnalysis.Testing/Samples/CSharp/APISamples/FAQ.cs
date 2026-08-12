@@ -52,7 +52,7 @@ namespace APISamples
         [Fact]
         public void GetTypeForIdentifier()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class Program
 {
     public static void Main()
@@ -60,17 +60,17 @@ class Program
         var i = 0; i += 1;
     }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation",
+            var compilation = CSharpCompilation.Create("MyCompilation",
                 syntaxTrees: new[] { tree }, references: new[] { Mscorlib });
-            SemanticModel model = compilation.GetSemanticModel(tree);
+            var model = compilation.GetSemanticModel(tree);
 
             // Get IdentifierNameSyntax corresponding to the identifier 'var' above.
-            IdentifierNameSyntax identifier = tree.GetRoot()
+            var identifier = tree.GetRoot()
                 .DescendantNodes().OfType<IdentifierNameSyntax>()
                 .Single(i => i.IsVar);
 
             // Use GetTypeInfo() to get TypeSymbol corresponding to the identifier 'var' above.
-            ITypeSymbol type = model.GetTypeInfo(identifier).Type;
+            var type = model.GetTypeInfo(identifier).Type;
             Assert.Equal(SpecialType.System_Int32, type.SpecialType);
             Assert.Equal("int", type.ToDisplayString());
 
@@ -84,7 +84,7 @@ class Program
         [Fact]
         public void GetTypeForVariableDeclaration()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class Program
 {
     public static void Main()
@@ -92,18 +92,18 @@ class Program
         var i = 0; i += 1;
     }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation")
+            var compilation = CSharpCompilation.Create("MyCompilation")
                 .AddReferences(Mscorlib)
                 .AddSyntaxTrees(tree);
-            SemanticModel model = compilation.GetSemanticModel(tree);
+            var model = compilation.GetSemanticModel(tree);
 
             // Get VariableDeclaratorSyntax corresponding to the statement 'var i = ...' above.
-            VariableDeclaratorSyntax variableDeclarator = tree.GetRoot()
+            var variableDeclarator = tree.GetRoot()
                 .DescendantNodes().OfType<VariableDeclaratorSyntax>()
                 .Single();
 
             // Get TypeSymbol corresponding to 'var i' above.
-            ITypeSymbol type = ((ILocalSymbol)model.GetDeclaredSymbol(variableDeclarator)).Type;
+            var type = ((ILocalSymbol)model.GetDeclaredSymbol(variableDeclarator)).Type;
             Assert.Equal(SpecialType.System_Int32, type.SpecialType);
             Assert.Equal("int", type.ToDisplayString());
         }
@@ -112,7 +112,7 @@ class Program
         [Fact]
         public async Task GetTypeForExpressions()
         {
-            string source = @"
+            var source = @"
 using System;
 class Program
 {
@@ -125,36 +125,36 @@ class Program
     {
     }
 }";
-            ProjectId projectId = ProjectId.CreateNewId();
-            DocumentId documentId = DocumentId.CreateNewId(projectId);
+            var projectId = ProjectId.CreateNewId();
+            var documentId = DocumentId.CreateNewId(projectId);
 
-            Solution solution = new AdhocWorkspace().CurrentSolution
+            var solution = new AdhocWorkspace().CurrentSolution
                 .AddProject(projectId, "MyProject", "MyProject", LanguageNames.CSharp)
                 .AddMetadataReference(projectId, Mscorlib)
                 .AddDocument(documentId, "MyFile.cs", source);
-            Document document = solution.GetDocument(documentId);
-            SemanticModel model = (SemanticModel)await document.GetSemanticModelAsync();
+            var document = solution.GetDocument(documentId);
+            var model = (SemanticModel)await document.GetSemanticModelAsync();
 
             // Get BinaryExpressionSyntax corresponding to the expression 's[0] + d' above.
-            BinaryExpressionSyntax addExpression = (await document.GetSyntaxRootAsync())
+            var addExpression = (await document.GetSyntaxRootAsync())
                 .DescendantNodes().OfType<BinaryExpressionSyntax>().Single();
 
             // Get TypeSymbol corresponding to expression 's[0] + d' above.
-            TypeInfo expressionTypeInfo = model.GetTypeInfo(addExpression);
-            ITypeSymbol expressionType = expressionTypeInfo.Type;
+            var expressionTypeInfo = model.GetTypeInfo(addExpression);
+            var expressionType = expressionTypeInfo.Type;
             Assert.Equal(SpecialType.System_Double, expressionType.SpecialType);
             Assert.Equal("double", expressionType.ToDisplayString());
             Assert.Equal(SpecialType.System_Double, expressionTypeInfo.ConvertedType.SpecialType);
 
-            Conversion conversion = model.GetConversion(addExpression);
+            var conversion = model.GetConversion(addExpression);
             Assert.True(conversion.IsIdentity);
 
             // Get IdentifierNameSyntax corresponding to the variable 'd' in expression 's[0] + d' above.
-            IdentifierNameSyntax identifier = (IdentifierNameSyntax)addExpression.Right;
+            var identifier = (IdentifierNameSyntax)addExpression.Right;
 
             // Use GetTypeInfo() to get TypeSymbol corresponding to variable 'd' above.
-            TypeInfo variableTypeInfo = model.GetTypeInfo(identifier);
-            ITypeSymbol variableType = variableTypeInfo.Type;
+            var variableTypeInfo = model.GetTypeInfo(identifier);
+            var variableType = variableTypeInfo.Type;
             Assert.Equal(SpecialType.System_Double, variableType.SpecialType);
             Assert.Equal("double", variableType.ToDisplayString());
             Assert.Equal(SpecialType.System_Double, variableTypeInfo.ConvertedType.SpecialType);
@@ -168,7 +168,7 @@ class Program
             Assert.Equal("double", variableType.ToDisplayString());
 
             // Get ElementAccessExpressionSyntax corresponding to 's[0]' in expression 's[0] + d' above.
-            ElementAccessExpressionSyntax elementAccess = (ElementAccessExpressionSyntax)addExpression.Left;
+            var elementAccess = (ElementAccessExpressionSyntax)addExpression.Left;
 
             // Use GetTypeInfo() to get TypeSymbol corresponding to 's[0]' above.
             expressionTypeInfo = model.GetTypeInfo(elementAccess);
@@ -202,7 +202,7 @@ class Program
         [Fact(Skip = "Need to load correct assembly references now that this is a .NET core app")]
         public void GetInScopeSymbols()
         {
-            string source = @"
+            var source = @"
 class C
 {
 }
@@ -216,19 +216,19 @@ class Program
         // What symbols are in scope here?
     }
 }";
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(source);
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation",
+            var tree = SyntaxFactory.ParseSyntaxTree(source);
+            var compilation = CSharpCompilation.Create("MyCompilation",
                 syntaxTrees: new[] { tree }, references: new[] { Mscorlib });
-            SemanticModel model = compilation.GetSemanticModel(tree);
+            var model = compilation.GetSemanticModel(tree);
 
             // Get position of the comment above.
-            int position = source.IndexOf("//");
+            var position = source.IndexOf("//");
 
             // Get 'all' symbols that are in scope at the above position. 
-            System.Collections.Immutable.ImmutableArray<ISymbol> symbols = model.LookupSymbols(position);
+            var symbols = model.LookupSymbols(position);
 
             // Note: "Windows" only appears as a symbol at this location in Windows 8.1.
-            string results = string.Join("\r\n", symbols.Select(symbol => symbol.ToDisplayString()).Where(s => s != "Windows").OrderBy(s => s));
+            var results = string.Join("\r\n", symbols.Select(symbol => symbol.ToDisplayString()).Where(s => s != "Windows").OrderBy(s => s));
 
             Assert.Equal(@"C
 j
@@ -275,7 +275,7 @@ Program.i", results);
         [Fact]
         public void GetSymbolsForAccessibleMembersOfAType()
         {
-            string source = @"
+            var source = @"
 using System;
 public class C
 {
@@ -304,25 +304,25 @@ class Program
         c.ToString();
     }
 }";
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(source);
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation")
+            var tree = SyntaxFactory.ParseSyntaxTree(source);
+            var compilation = CSharpCompilation.Create("MyCompilation")
                 .AddReferences(Mscorlib)
                 .AddSyntaxTrees(tree);
-            SemanticModel model = compilation.GetSemanticModel(tree);
+            var model = compilation.GetSemanticModel(tree);
 
             // Get position of 'c.ToString()' above.
-            int position = source.IndexOf("c.ToString()");
+            var position = source.IndexOf("c.ToString()");
 
             // Get IdentifierNameSyntax corresponding to identifier 'c' above.
-            IdentifierNameSyntax identifier = (IdentifierNameSyntax)tree.GetRoot().FindToken(position).Parent;
+            var identifier = (IdentifierNameSyntax)tree.GetRoot().FindToken(position).Parent;
 
             // Get TypeSymbol corresponding to variable 'c' above.
-            ITypeSymbol type = model.GetTypeInfo(identifier).Type;
+            var type = model.GetTypeInfo(identifier).Type;
 
             // Get symbols for 'accessible' members on the above TypeSymbol.
-            System.Collections.Immutable.ImmutableArray<ISymbol> symbols = model.LookupSymbols(position, container: type,
+            var symbols = model.LookupSymbols(position, container: type,
                 includeReducedExtensionMethods: true);
-            string results = string.Join("\r\n", symbols
+            var results = string.Join("\r\n", symbols
                 .Select(symbol => symbol.ToDisplayString())
                 .OrderBy(result => result));
 
@@ -342,7 +342,7 @@ object.ToString()", results);
         [Fact]
         public void FindAllInvocationsOfAMethod()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class C1
 {
     public void M1() { M2(); }
@@ -357,24 +357,24 @@ class Program
 {
     static void Main() { }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation",
+            var compilation = CSharpCompilation.Create("MyCompilation",
                 syntaxTrees: new[] { tree }, references: new[] { Mscorlib });
-            SemanticModel model = compilation.GetSemanticModel(tree);
+            var model = compilation.GetSemanticModel(tree);
 
             // Get MethodDeclarationSyntax corresponding to method C1.M2() above.
-            MethodDeclarationSyntax methodDeclaration = tree.GetRoot()
+            var methodDeclaration = tree.GetRoot()
                 .DescendantNodes().OfType<ClassDeclarationSyntax>().Single(c => c.Identifier.ValueText == "C1")
                 .DescendantNodes().OfType<MethodDeclarationSyntax>().Single(m => m.Identifier.ValueText == "M2");
 
             // Get MethodSymbol corresponding to method C1.M2() above.
-            IMethodSymbol method = model.GetDeclaredSymbol(methodDeclaration);
+            var method = model.GetDeclaredSymbol(methodDeclaration);
 
             // Get all InvocationExpressionSyntax in the above code.
-            IEnumerable<InvocationExpressionSyntax> allInvocations = tree.GetRoot()
+            var allInvocations = tree.GetRoot()
                 .DescendantNodes().OfType<InvocationExpressionSyntax>();
 
             // Use GetSymbolInfo() to find invocations of method C1.M2() above.
-            IEnumerable<InvocationExpressionSyntax> matchingInvocations = allInvocations
+            var matchingInvocations = allInvocations
                 .Where(i => model.GetSymbolInfo(i).Symbol.Equals(method));
             Assert.Equal(2, matchingInvocations.Count());
         }
@@ -383,7 +383,7 @@ class Program
         [Fact]
         public async Task FindAllReferencesToAMethodInASolution()
         {
-            string source1 = @"
+            var source1 = @"
 namespace NS
 {
     public class C
@@ -397,7 +397,7 @@ namespace NS
         }
     }
 }";
-            string source2 = @"
+            var source2 = @"
 using NS;
 using Alias=NS.C;
 class Program
@@ -411,12 +411,12 @@ class Program
         c2.MethodThatWeAreTryingToFind(); // Third Reference.
     }
 }";
-            ProjectId project1Id = ProjectId.CreateNewId();
-            ProjectId project2Id = ProjectId.CreateNewId();
-            DocumentId document1Id = DocumentId.CreateNewId(project1Id);
-            DocumentId document2Id = DocumentId.CreateNewId(project2Id);
+            var project1Id = ProjectId.CreateNewId();
+            var project2Id = ProjectId.CreateNewId();
+            var document1Id = DocumentId.CreateNewId(project1Id);
+            var document2Id = DocumentId.CreateNewId(project2Id);
 
-            Solution solution = new AdhocWorkspace().CurrentSolution
+            var solution = new AdhocWorkspace().CurrentSolution
                 .AddProject(project1Id, "Project1", "Project1", LanguageNames.CSharp)
                 .AddMetadataReference(project1Id, Mscorlib)
                 .AddDocument(document1Id, "File1.cs", source1)
@@ -431,25 +431,25 @@ class Program
             // var solution = Solution.Load("<Path>");
             // OR var solution = Workspace.LoadSolution("<Path>").CurrentSolution;
 
-            Project project1 = solution.GetProject(project1Id);
-            Document document1 = project1.GetDocument(document1Id);
+            var project1 = solution.GetProject(project1Id);
+            var document1 = project1.GetDocument(document1Id);
 
             // Get MethodDeclarationSyntax corresponding to the 'MethodThatWeAreTryingToFind'.
-            MethodDeclarationSyntax methodDeclaration = (await document1.GetSyntaxRootAsync())
+            var methodDeclaration = (await document1.GetSyntaxRootAsync())
                 .DescendantNodes().OfType<MethodDeclarationSyntax>()
                 .Single(m => m.Identifier.ValueText == "MethodThatWeAreTryingToFind");
 
             // Get MethodSymbol corresponding to the 'MethodThatWeAreTryingToFind'.
-            IMethodSymbol method = (IMethodSymbol)(await document1.GetSemanticModelAsync())
+            var method = (IMethodSymbol)(await document1.GetSemanticModelAsync())
                 .GetDeclaredSymbol(methodDeclaration);
 
             // Find all references to the 'MethodThatWeAreTryingToFind' in the solution.
-            IEnumerable<ReferencedSymbol> methodReferences = await SymbolFinder.FindReferencesAsync(method, solution);
+            var methodReferences = await SymbolFinder.FindReferencesAsync(method, solution);
             Assert.Single(methodReferences);
-            ReferencedSymbol methodReference = methodReferences.Single();
+            var methodReference = methodReferences.Single();
             Assert.Equal(3, methodReference.Locations.Count());
 
-            IMethodSymbol methodDefinition = (IMethodSymbol)methodReference.Definition;
+            var methodDefinition = (IMethodSymbol)methodReference.Definition;
             Assert.Equal("MethodThatWeAreTryingToFind", methodDefinition.Name);
             Assert.True(methodReference.Definition.Locations.Single().IsInSource);
             Assert.Equal("File1.cs", methodReference.Definition.Locations.Single().SourceTree.FilePath);
@@ -466,7 +466,7 @@ class Program
         [Fact(Skip = "Need to load correct assembly references now that this is a .NET core app")]
         public void FindAllInvocationsToMethodsFromAParticularNamespace()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 using System;
 using System.Threading.Tasks;
 class Program
@@ -487,13 +487,13 @@ class Program
         a();
     }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation")
+            var compilation = CSharpCompilation.Create("MyCompilation")
                 .AddReferences(Mscorlib)
                 .AddSyntaxTrees(tree);
-            SemanticModel model = compilation.GetSemanticModel(tree);
+            var model = compilation.GetSemanticModel(tree);
 
             // Instantiate MethodInvocationWalker (below) and tell it to find invocations to methods from the System.Threading.Tasks namespace.
-            MethodInvocationWalker walker = new MethodInvocationWalker()
+            var walker = new MethodInvocationWalker()
             {
                 SemanticModel = model,
                 Namespace = "System.Threading.Tasks"
@@ -523,12 +523,12 @@ Line 16: t.Wait()", walker.Results.ToString());
 
             private bool CheckWhetherMethodIsFromNamespace(ExpressionSyntax node)
             {
-                bool isMatch = false;
+                var isMatch = false;
                 if (SemanticModel != null)
                 {
-                    SymbolInfo symbolInfo = SemanticModel.GetSymbolInfo(node);
+                    var symbolInfo = SemanticModel.GetSymbolInfo(node);
 
-                    string ns = symbolInfo.Symbol.ContainingNamespace.ToDisplayString();
+                    var ns = symbolInfo.Symbol.ContainingNamespace.ToDisplayString();
                     if (ns == Namespace)
                     {
                         Results.AppendLine();
@@ -560,7 +560,7 @@ Line 16: t.Wait()", walker.Results.ToString());
         [Fact]
         public void GetAllFieldAndMethodSymbolsInACompilation()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 using System;
 namespace NS1
 {
@@ -590,25 +590,25 @@ class Program
         c.ToString();
     }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation",
+            var compilation = CSharpCompilation.Create("MyCompilation",
                 syntaxTrees: new[] { tree }, references: new[] { Mscorlib });
-            StringBuilder results = new StringBuilder();
+            var results = new StringBuilder();
 
             // Traverse the symbol tree to find all namespaces, types, methods and fields.
-            foreach (INamespaceSymbol ns in compilation.Assembly.GlobalNamespace.GetNamespaceMembers())
+            foreach (var ns in compilation.Assembly.GlobalNamespace.GetNamespaceMembers())
             {
                 results.AppendLine();
                 results.Append(ns.Kind);
                 results.Append(": ");
                 results.Append(ns.Name);
-                foreach (INamedTypeSymbol type in ns.GetTypeMembers())
+                foreach (var type in ns.GetTypeMembers())
                 {
                     results.AppendLine();
                     results.Append("    ");
                     results.Append(type.TypeKind);
                     results.Append(": ");
                     results.Append(type.Name);
-                    foreach (ISymbol member in type.GetMembers())
+                    foreach (var member in type.GetMembers())
                     {
                         results.AppendLine();
                         results.Append("       ");
@@ -637,7 +637,7 @@ Namespace: NS2
         [Fact]
         public void TraverseAllExpressionsInASyntaxTreeUsingAWalker()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 using System;
 class Program
 {
@@ -647,11 +647,11 @@ class Program
         i += 1 + 2L;
     }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation")
+            var compilation = CSharpCompilation.Create("MyCompilation")
                 .AddReferences(Mscorlib)
                 .AddSyntaxTrees(tree);
-            SemanticModel model = compilation.GetSemanticModel(tree);
-            ExpressionWalker walker = new ExpressionWalker() { SemanticModel = model };
+            var model = compilation.GetSemanticModel(tree);
+            var walker = new ExpressionWalker() { SemanticModel = model };
 
             walker.Visit(tree.GetRoot());
             Assert.Equal(@"
@@ -678,9 +678,9 @@ LiteralExpressionSyntax 2L has type long", walker.Results.ToString());
 
             public override void Visit(SyntaxNode node)
             {
-                if (node is ExpressionSyntax)
+                if (node is ExpressionSyntax expression)
                 {
-                    ITypeSymbol type = SemanticModel.GetTypeInfo((ExpressionSyntax)node).Type;
+                    var type = SemanticModel.GetTypeInfo(expression).Type;
                     if (type != null)
                     {
                         Results.AppendLine();
@@ -700,7 +700,7 @@ LiteralExpressionSyntax 2L has type long", walker.Results.ToString());
         [Fact]
         public void CompareSyntax()
         {
-            string source = @"
+            var source = @"
 using System;
 class Program
 {
@@ -710,10 +710,10 @@ class Program
         i += 1 + 2L;
     }
 }";
-            SyntaxTree tree1 = SyntaxFactory.ParseSyntaxTree(source);
-            SyntaxTree tree2 = SyntaxFactory.ParseSyntaxTree(source);
-            SyntaxNode node1 = tree1.GetRoot();
-            SyntaxNode node2 = tree2.GetRoot();
+            var tree1 = SyntaxFactory.ParseSyntaxTree(source);
+            var tree2 = SyntaxFactory.ParseSyntaxTree(source);
+            var node1 = tree1.GetRoot();
+            var node2 = tree2.GetRoot();
 
             // Compare trees and nodes that are identical.
             Assert.True(tree1.IsEquivalentTo(tree2));
@@ -722,7 +722,7 @@ class Program
             Assert.True(SyntaxFactory.AreEquivalent(tree1, tree2, topLevel: false));
 
             // tree3 is identical to tree1 except for a single comment.
-            SyntaxTree tree3 = SyntaxFactory.ParseSyntaxTree(@"
+            var tree3 = SyntaxFactory.ParseSyntaxTree(@"
 using System;
 class Program
 {
@@ -733,7 +733,7 @@ class Program
         i += 1 + 2L;
     }
 }");
-            SyntaxNode node3 = tree3.GetRoot();
+            var node3 = tree3.GetRoot();
 
             // Compare trees and nodes that are identical except for trivia.
             Assert.True(tree1.IsEquivalentTo(tree3)); // Trivia differences are ignored.
@@ -742,14 +742,14 @@ class Program
             Assert.True(SyntaxFactory.AreEquivalent(tree1, tree3, topLevel: false)); // Trivia differences are ignored.
 
             // tree4 is identical to tree1 except for method body contents.
-            SyntaxTree tree4 = SyntaxFactory.ParseSyntaxTree(@"using System;
+            var tree4 = SyntaxFactory.ParseSyntaxTree(@"using System;
 class Program
 {
     static void Main()
     {
     }
 }");
-            SyntaxNode node4 = tree4.GetRoot();
+            var node4 = tree4.GetRoot();
 
             // Compare trees and nodes that are identical at the top-level.
             Assert.True(tree1.IsEquivalentTo(tree4, topLevel: true)); // Only top-level nodes are considered.
@@ -758,11 +758,11 @@ class Program
             Assert.True(SyntaxFactory.AreEquivalent(tree1, tree4, topLevel: true)); // Only top-level nodes are considered.
 
             // Tokens and Trivia can also be compared.
-            SyntaxToken token1 = node1.DescendantTokens().First();
-            SyntaxToken token2 = node2.DescendantTokens().First();
+            var token1 = node1.DescendantTokens().First();
+            var token2 = node2.DescendantTokens().First();
             Assert.True(token1.IsEquivalentTo(token2));
-            SyntaxTrivia trivia1 = node1.DescendantTrivia().First(t => t.Kind() == SyntaxKind.WhitespaceTrivia);
-            SyntaxTrivia trivia2 = node2.DescendantTrivia().Last(t => t.Kind() == SyntaxKind.EndOfLineTrivia);
+            var trivia1 = node1.DescendantTrivia().First(t => t.Kind() == SyntaxKind.WhitespaceTrivia);
+            var trivia2 = node2.DescendantTrivia().Last(t => t.Kind() == SyntaxKind.EndOfLineTrivia);
             Assert.False(trivia1.IsEquivalentTo(trivia2));
         }
 
@@ -770,7 +770,7 @@ class Program
         [Fact]
         public void TraverseAllCommentsInASyntaxTreeUsingAWalker()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 using System;
 /// <summary>First Comment</summary>
 class Program
@@ -781,7 +781,7 @@ class Program
         // Third Comment
     }
 }");
-            CommentWalker walker = new CommentWalker();
+            var walker = new CommentWalker();
             walker.Visit(tree.GetRoot());
 
             Assert.Equal(@"
@@ -803,7 +803,7 @@ class Program
 
             public override void VisitTrivia(SyntaxTrivia trivia)
             {
-                bool isDocComment = SyntaxFacts.IsDocumentationCommentTrivia(trivia.Kind());
+                var isDocComment = SyntaxFacts.IsDocumentationCommentTrivia(trivia.Kind());
                 if (isDocComment ||
                     trivia.Kind() == SyntaxKind.SingleLineCommentTrivia ||
                     trivia.Kind() == SyntaxKind.MultiLineCommentTrivia)
@@ -818,7 +818,7 @@ class Program
                         // Trivia for xml documentation comments have additional 'structure'
                         // available under a child DocumentationCommentSyntax.
                         Assert.True(trivia.HasStructure);
-                        DocumentationCommentTriviaSyntax documentationComment =
+                        var documentationComment =
                             (DocumentationCommentTriviaSyntax)trivia.GetStructure();
                         Assert.True(documentationComment.ParentTrivia == trivia);
                         Results.Append(" (Structured)");
@@ -833,7 +833,7 @@ class Program
         [Fact]
         public void CompareSymbols()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 using System;
 class C
 {
@@ -845,16 +845,16 @@ class Program
         var c = new C(); Console.WriteLine(c.ToString());
     }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation",
+            var compilation = CSharpCompilation.Create("MyCompilation",
                 syntaxTrees: new[] { tree }, references: new[] { Mscorlib });
-            SemanticModel model = compilation.GetSemanticModel(tree);
+            var model = compilation.GetSemanticModel(tree);
 
             // Get VariableDeclaratorSyntax corresponding to the statement 'var c = ...' above.
-            VariableDeclaratorSyntax variableDeclarator = tree.GetRoot()
+            var variableDeclarator = tree.GetRoot()
                 .DescendantNodes().OfType<VariableDeclaratorSyntax>().Single();
 
             // Get TypeSymbol corresponding to 'var c' above.
-            ITypeSymbol type = ((ILocalSymbol)model.GetDeclaredSymbol(variableDeclarator)).Type;
+            var type = ((ILocalSymbol)model.GetDeclaredSymbol(variableDeclarator)).Type;
 
             ITypeSymbol expectedType = compilation.GetTypeByMetadataName("C");
             Assert.True(type.Equals(expectedType));
@@ -864,7 +864,7 @@ class Program
         [Fact]
         public void TestWhetherANodeIsPartOfATreeOrASemanticModel()
         {
-            string source = @"
+            var source = @"
 using System;
 class C
 {
@@ -876,16 +876,16 @@ class Program
         var c = new C(); Console.WriteLine(c.ToString());
     }
 }";
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(source);
-            SyntaxTree other = SyntaxFactory.ParseSyntaxTree(source);
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation")
+            var tree = SyntaxFactory.ParseSyntaxTree(source);
+            var other = SyntaxFactory.ParseSyntaxTree(source);
+            var compilation = CSharpCompilation.Create("MyCompilation")
                 .AddReferences(Mscorlib)
                 .AddSyntaxTrees(tree);
-            SemanticModel model = compilation.GetSemanticModel(tree);
+            var model = compilation.GetSemanticModel(tree);
 
-            SyntaxNode nodeFromTree = tree.GetRoot();
-            SyntaxToken tokenNotFromTree = SyntaxFactory.Token(SyntaxKind.ClassKeyword);
-            SyntaxNode nodeNotFromTree = other.GetRoot();
+            var nodeFromTree = tree.GetRoot();
+            var tokenNotFromTree = SyntaxFactory.Token(SyntaxKind.ClassKeyword);
+            var nodeNotFromTree = other.GetRoot();
 
             Assert.Equal(nodeFromTree.SyntaxTree, tree);
             Assert.Equal(nodeFromTree.SyntaxTree, model.SyntaxTree);
@@ -898,7 +898,7 @@ class Program
         [Fact]
         public void ValueVersusValueTextVersusGetTextForTokens()
         {
-            string source = @"
+            var source = @"
 using System;
 class Program
 {
@@ -907,13 +907,13 @@ class Program
         var @long = 1L; Console.WriteLine(@long);
     }
 }";
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(source);
+            var tree = SyntaxFactory.ParseSyntaxTree(source);
 
             // Get token corresponding to identifier '@long' above.
-            SyntaxToken token1 = tree.GetRoot().FindToken(source.IndexOf("@long"));
+            var token1 = tree.GetRoot().FindToken(source.IndexOf("@long"));
 
             // Get token corresponding to literal '1L' above.
-            SyntaxToken token2 = tree.GetRoot().FindToken(source.IndexOf("1L"));
+            var token2 = tree.GetRoot().FindToken(source.IndexOf("1L"));
 
             Assert.Equal("String", token1.Value.GetType().Name);
             Assert.Equal("long", token1.Value);
@@ -930,7 +930,7 @@ class Program
         [Fact]
         public void GetLineAndColumnInfo()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class Program
 {
     public static void Main()
@@ -939,11 +939,11 @@ class Program
 }", path: "MyCodeFile.cs");
 
             // Get BlockSyntax corresponding to the method block for 'void Main()' above.
-            BlockSyntax node = (BlockSyntax)tree.GetRoot().DescendantNodes().Last();
+            var node = (BlockSyntax)tree.GetRoot().DescendantNodes().Last();
 
             // Use GetLocation() and GetLineSpan() to get file, line and column info for above BlockSyntax.
-            Location location = node.GetLocation();
-            FileLinePositionSpan lineSpan = location.GetLineSpan();
+            var location = node.GetLocation();
+            var lineSpan = location.GetLineSpan();
             Assert.True(location.IsInSource);
             Assert.Equal("MyCodeFile.cs", lineSpan.Path);
             Assert.Equal(4, lineSpan.StartLinePosition.Line);
@@ -964,7 +964,7 @@ class Program
 
             // SyntaxTokens also have GetLocation(). 
             // Use GetLocation() to get the position of the '{' token under the above BlockSyntax.
-            SyntaxToken token = node.DescendantTokens().First();
+            var token = node.DescendantTokens().First();
             location = token.GetLocation();
             lineSpan = location.GetLineSpan();
             Assert.Equal("MyCodeFile.cs", lineSpan.Path);
@@ -973,7 +973,7 @@ class Program
 
             // SyntaxTrivia also have GetLocation(). 
             // Use GetLocation() to get the position of the first WhiteSpaceTrivia under the above SyntaxToken.
-            SyntaxTrivia trivia = token.LeadingTrivia.First();
+            var trivia = token.LeadingTrivia.First();
             location = trivia.GetLocation();
             lineSpan = location.GetLineSpan();
             Assert.Equal("MyCodeFile.cs", lineSpan.Path);
@@ -985,7 +985,7 @@ class Program
         [Fact]
         public void GetEmptySourceLinesFromASyntaxTree()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class Program
 {
     public static void Main()
@@ -993,11 +993,11 @@ class Program
         
     }
 }", path: "MyCodeFile.cs");
-            SourceText text = tree.GetText();
+            var text = tree.GetText();
             Assert.Equal(8, text.Lines.Count);
 
             // Enumerate empty lines.
-            string results = string.Join("\r\n", text.Lines
+            var results = string.Join("\r\n", text.Lines
                 .Where(line => string.IsNullOrWhiteSpace(line.ToString()))
                 .Select(line => string.Format("Line {0} (Span {1}-{2}) is empty", line.LineNumber, line.Start, line.End)));
 
@@ -1009,7 +1009,7 @@ Line 5 (Span 58-66) is empty", results);
         [Fact]
         public void UseSyntaxWalker()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class Program
 {
     public static void Main()
@@ -1024,7 +1024,7 @@ class Program
 struct S
 {
 }");
-            IfStatementIfKeywordAndTypeDeclarationWalker walker = new IfStatementIfKeywordAndTypeDeclarationWalker();
+            var walker = new IfStatementIfKeywordAndTypeDeclarationWalker();
             walker.Visit(tree.GetRoot());
 
             Assert.Equal(@"
@@ -1107,7 +1107,7 @@ Visiting StructDeclarationSyntax (Kind = StructDeclaration)", walker.Results.ToS
         [Fact]
         public async Task GetFullyQualifiedName()
         {
-            string source = @"
+            var source = @"
 using System;
 using Alias=NS.C<int>;
 namespace NS
@@ -1126,34 +1126,34 @@ class Program
         Alias.S<long> s = new Alias.S<long>(); Console.WriteLine(s.ToString());
     }
 }";
-            ProjectId projectId = ProjectId.CreateNewId();
-            DocumentId documentId = DocumentId.CreateNewId(projectId);
+            var projectId = ProjectId.CreateNewId();
+            var documentId = DocumentId.CreateNewId(projectId);
 
-            Solution solution = new AdhocWorkspace().CurrentSolution
+            var solution = new AdhocWorkspace().CurrentSolution
                 .AddProject(projectId, "MyProject", "MyProject", LanguageNames.CSharp)
                 .AddMetadataReference(projectId, Mscorlib)
                 .AddDocument(documentId, "MyFile.cs", source);
-            Document document = solution.GetDocument(documentId);
-            SyntaxNode root = await document.GetSyntaxRootAsync();
-            SemanticModel model = (SemanticModel)await document.GetSemanticModelAsync();
+            var document = solution.GetDocument(documentId);
+            var root = await document.GetSyntaxRootAsync();
+            var model = (SemanticModel)await document.GetSemanticModelAsync();
 
             // Get StructDeclarationSyntax corresponding to 'struct S' above.
-            StructDeclarationSyntax structDeclaration = root.DescendantNodes()
+            var structDeclaration = root.DescendantNodes()
                 .OfType<StructDeclarationSyntax>().Single();
 
             // Get TypeSymbol corresponding to 'struct S' above.
-            INamedTypeSymbol structType = model.GetDeclaredSymbol(structDeclaration);
+            var structType = model.GetDeclaredSymbol(structDeclaration);
 
             // Use ToDisplayString() to get fully qualified name.
             Assert.Equal("NS.C<T>.S<U>", structType.ToDisplayString());
             Assert.Equal("global::NS.C<T>.S<U>", structType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
 
             // Get VariableDeclaratorSyntax corresponding to 'Alias.S<long> s = ...' above.
-            VariableDeclaratorSyntax variableDeclarator = root.DescendantNodes()
+            var variableDeclarator = root.DescendantNodes()
                 .OfType<VariableDeclaratorSyntax>().Single();
 
             // Get TypeSymbol corresponding to above VariableDeclaratorSyntax.
-            ITypeSymbol variableType = ((ILocalSymbol)model.GetDeclaredSymbol(variableDeclarator)).Type;
+            var variableType = ((ILocalSymbol)model.GetDeclaredSymbol(variableDeclarator)).Type;
 
             Assert.False(variableType.Equals(structType)); // Type of variable is a closed generic type while that of the struct is an open generic type.
             Assert.True(variableType.OriginalDefinition.Equals(structType)); // OriginalDefinition for a closed generic type points to corresponding open generic type.
@@ -1165,7 +1165,7 @@ class Program
         [Fact]
         public void OverloadBindingDetermination()
         {
-            string source = @"
+            var source = @"
 class Program
 {
     private static int Identity(int a)
@@ -1187,26 +1187,26 @@ class Program
 }
 ";
 
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(source);
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation", new[] { tree }, new[] { Mscorlib });
-            SemanticModel model = compilation.GetSemanticModel(tree);
+            var tree = SyntaxFactory.ParseSyntaxTree(source);
+            var compilation = CSharpCompilation.Create("MyCompilation", new[] { tree }, new[] { Mscorlib });
+            var model = compilation.GetSemanticModel(tree);
 
-            IEnumerable<InvocationExpressionSyntax> allInvocations = tree.GetRoot().DescendantNodes().OfType<InvocationExpressionSyntax>();
+            var allInvocations = tree.GetRoot().DescendantNodes().OfType<InvocationExpressionSyntax>();
             // Below, we expect to find that the Method taking an int was selected.
             // We can confidently index into the invocations because we are following the source line-by-line. This is not always a safe practice.
-            InvocationExpressionSyntax intInvocation = allInvocations.ElementAt(0);
-            SymbolInfo info = model.GetSymbolInfo(intInvocation);
+            var intInvocation = allInvocations.ElementAt(0);
+            var info = model.GetSymbolInfo(intInvocation);
             Assert.NotNull(info.Symbol);
             Assert.Equal("Program.Identity(int)", info.Symbol.ToDisplayString());
 
             // Below, we expect to find that the Method taking a char was selected.
-            InvocationExpressionSyntax charInvocation = allInvocations.ElementAt(1);
+            var charInvocation = allInvocations.ElementAt(1);
             info = model.GetSymbolInfo(charInvocation);
             Assert.NotNull(info.Symbol);
             Assert.Equal("Program.Identity(char)", info.Symbol.ToDisplayString());
 
             // Below, we expect to find that no suitable Method was found, and therefore none were selected.
-            InvocationExpressionSyntax stringInvocation = allInvocations.ElementAt(2);
+            var stringInvocation = allInvocations.ElementAt(2);
             info = model.GetSymbolInfo(stringInvocation);
             Assert.Null(info.Symbol);
             Assert.Equal(2, info.CandidateSymbols.Length);
@@ -1217,7 +1217,7 @@ class Program
         [Fact]
         public void ClassifyConversionFromAnExpressionToATypeSymbol()
         {
-            string source = @"
+            var source = @"
 using System;
 class Program
 {
@@ -1245,26 +1245,26 @@ class Program
        // Perform conversion classification here.
     }
 }";
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(source);
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation")
+            var tree = SyntaxFactory.ParseSyntaxTree(source);
+            var compilation = CSharpCompilation.Create("MyCompilation")
                 .AddReferences(Mscorlib)
                 .AddSyntaxTrees(tree);
-            SemanticModel model = compilation.GetSemanticModel(tree);
+            var model = compilation.GetSemanticModel(tree);
 
             // Get VariableDeclaratorSyntax corresponding to variable 'ii' above.
-            VariableDeclaratorSyntax variableDeclarator = (VariableDeclaratorSyntax)tree.GetRoot()
+            var variableDeclarator = (VariableDeclaratorSyntax)tree.GetRoot()
                 .FindToken(source.IndexOf("ii")).Parent;
 
             // Get TypeSymbol corresponding to above VariableDeclaratorSyntax.
-            ITypeSymbol targetType = ((ILocalSymbol)model.GetDeclaredSymbol(variableDeclarator)).Type;
+            var targetType = ((ILocalSymbol)model.GetDeclaredSymbol(variableDeclarator)).Type;
 
             // Perform ClassifyConversion for expressions from within the above SyntaxTree.
-            ExpressionSyntax sourceExpression1 = (ExpressionSyntax)tree.GetRoot()
+            var sourceExpression1 = (ExpressionSyntax)tree.GetRoot()
                 .FindToken(source.IndexOf("jj)")).Parent;
-            Conversion conversion = model.ClassifyConversion(sourceExpression1, targetType);
+            var conversion = model.ClassifyConversion(sourceExpression1, targetType);
             Assert.True(conversion.IsImplicit && conversion.IsNumeric);
 
-            ExpressionSyntax sourceExpression2 = (ExpressionSyntax)tree.GetRoot()
+            var sourceExpression2 = (ExpressionSyntax)tree.GetRoot()
                 .FindToken(source.IndexOf("ss)")).Parent;
             conversion = model.ClassifyConversion(sourceExpression2, targetType);
             Assert.False(conversion.Exists);
@@ -1272,7 +1272,7 @@ class Program
             // Perform ClassifyConversion for constructed expressions
             // at the position identified by the comment '// Perform ...' above.
             ExpressionSyntax sourceExpression3 = SyntaxFactory.IdentifierName("jj");
-            int position = source.IndexOf("//");
+            var position = source.IndexOf("//");
             conversion = model.ClassifyConversion(position, sourceExpression3, targetType);
             Assert.True(conversion.IsImplicit && conversion.IsNumeric);
 
@@ -1280,7 +1280,7 @@ class Program
             conversion = model.ClassifyConversion(position, sourceExpression4, targetType);
             Assert.False(conversion.Exists);
 
-            ExpressionSyntax sourceExpression5 = SyntaxFactory.ParseExpression("100L");
+            var sourceExpression5 = SyntaxFactory.ParseExpression("100L");
             conversion = model.ClassifyConversion(position, sourceExpression5, targetType);
             Assert.True(conversion.IsExplicit && conversion.IsNumeric);
         }
@@ -1289,28 +1289,28 @@ class Program
         [Fact]
         public void ClassifyConversionFromOneTypeSymbolToAnother()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class Program
 {
     static void Main() { }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation",
+            var compilation = CSharpCompilation.Create("MyCompilation",
                 syntaxTrees: new[] { tree }, references: new[] { Mscorlib });
 
-            INamedTypeSymbol int32Type = compilation.GetSpecialType(SpecialType.System_Int32);
-            INamedTypeSymbol int16Type = compilation.GetSpecialType(SpecialType.System_Int16);
-            INamedTypeSymbol stringType = compilation.GetSpecialType(SpecialType.System_String);
-            INamedTypeSymbol int64Type = compilation.GetSpecialType(SpecialType.System_Int64);
+            var int32Type = compilation.GetSpecialType(SpecialType.System_Int32);
+            var int16Type = compilation.GetSpecialType(SpecialType.System_Int16);
+            var stringType = compilation.GetSpecialType(SpecialType.System_String);
+            var int64Type = compilation.GetSpecialType(SpecialType.System_Int64);
 
             Assert.True(compilation.ClassifyConversion(int32Type, int32Type).IsIdentity);
 
-            Conversion conversion1 = compilation.ClassifyConversion(int16Type, int32Type);
+            var conversion1 = compilation.ClassifyConversion(int16Type, int32Type);
 
             Assert.True(conversion1.IsImplicit && conversion1.IsNumeric);
 
             Assert.False(compilation.ClassifyConversion(stringType, int32Type).Exists);
 
-            Conversion conversion2 = compilation.ClassifyConversion(int64Type, int32Type);
+            var conversion2 = compilation.ClassifyConversion(int64Type, int32Type);
 
             Assert.True(conversion2.IsExplicit && conversion2.IsNumeric);
         }
@@ -1319,16 +1319,16 @@ class Program
         [Fact]
         public void GetTargetFrameworkVersionForCompilation()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class Program
 {
     static void Main() { }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation")
+            var compilation = CSharpCompilation.Create("MyCompilation")
                 .AddReferences(Mscorlib)
                 .AddSyntaxTrees(tree);
 
-            Version version = compilation.GetSpecialType(SpecialType.System_Object).ContainingAssembly.Identity.Version;
+            var version = compilation.GetSpecialType(SpecialType.System_Object).ContainingAssembly.Identity.Version;
             Assert.Equal(4, version.Major);
         }
 
@@ -1336,17 +1336,17 @@ class Program
         [Fact]
         public async Task GetAssemblySymbolsAndSyntaxTreesFromAProject()
         {
-            string source = @"
+            var source = @"
 class Program
 {
     static void Main()
     {
     }
 }";
-            ProjectId projectId = ProjectId.CreateNewId();
-            DocumentId documentId = DocumentId.CreateNewId(projectId);
+            var projectId = ProjectId.CreateNewId();
+            var documentId = DocumentId.CreateNewId(projectId);
 
-            Solution solution = new AdhocWorkspace().CurrentSolution
+            var solution = new AdhocWorkspace().CurrentSolution
                 .AddProject(projectId, "MyProject", "MyProject", LanguageNames.CSharp)
                 .AddMetadataReference(projectId, Mscorlib)
                 .AddDocument(documentId, "MyFile.cs", source);
@@ -1355,17 +1355,17 @@ class Program
             // var project = Solution.LoadStandaloneProject("<Path>");
             // OR var project = Workspace.LoadStandaloneProject("<Path>").CurrentSolution.Projects.First();
 
-            Project project = solution.Projects.Single();
-            Compilation compilation = await project.GetCompilationAsync();
+            var project = solution.Projects.Single();
+            var compilation = await project.GetCompilationAsync();
 
             // Get AssemblySymbols for above compilation and the assembly (mscorlib) referenced by it.
-            IAssemblySymbol compilationAssembly = compilation.Assembly;
-            IAssemblySymbol referencedAssembly = (IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(project.MetadataReferences.Single());
+            var compilationAssembly = compilation.Assembly;
+            var referencedAssembly = (IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(project.MetadataReferences.Single());
 
             Assert.True(compilation.GetTypeByMetadataName("Program").ContainingAssembly.Equals(compilationAssembly));
             Assert.True(compilation.GetTypeByMetadataName("System.Object").ContainingAssembly.Equals(referencedAssembly));
 
-            SyntaxTree tree = await project.Documents.Single().GetSyntaxTreeAsync();
+            var tree = await project.Documents.Single().GetSyntaxTreeAsync();
             Assert.Equal("MyFile.cs", tree.FilePath);
         }
 
@@ -1373,7 +1373,7 @@ class Program
         [Fact]
         public void UseSyntaxAnnotations()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 using System;
 class Program
 {
@@ -1384,20 +1384,20 @@ class Program
 }");
 
             // Tag all tokens that contain the letter 'i'.
-            MyAnnotator rewriter = new MyAnnotator();
-            SyntaxNode oldRoot = tree.GetRoot();
-            SyntaxNode newRoot = rewriter.Visit(oldRoot);
+            var rewriter = new MyAnnotator();
+            var oldRoot = tree.GetRoot();
+            var newRoot = rewriter.Visit(oldRoot);
 
             Assert.False(oldRoot.ContainsAnnotations);
             Assert.True(newRoot.ContainsAnnotations);
 
             // Find all tokens that were tagged with annotations of type MyAnnotation.
-            IEnumerable<SyntaxNodeOrToken> annotatedTokens = newRoot.GetAnnotatedNodesAndTokens(MyAnnotation.Kind);
-            string results = string.Join("\r\n",
+            var annotatedTokens = newRoot.GetAnnotatedNodesAndTokens(MyAnnotation.Kind);
+            var results = string.Join("\r\n",
                 annotatedTokens.Select(nodeOrToken =>
                 {
                     Assert.True(nodeOrToken.IsToken);
-                    SyntaxAnnotation annotation = nodeOrToken.GetAnnotations(MyAnnotation.Kind).Single();
+                    var annotation = nodeOrToken.GetAnnotations(MyAnnotation.Kind).Single();
                     return string.Format("{0} (position {1})", nodeOrToken.ToString(), MyAnnotation.GetPosition(annotation));
                 }));
 
@@ -1416,8 +1416,8 @@ i (position 0)", results);
         {
             public override SyntaxToken VisitToken(SyntaxToken token)
             {
-                SyntaxToken newToken = base.VisitToken(token);
-                int position = token.ToString().IndexOf('i');
+                var newToken = base.VisitToken(token);
+                var position = token.ToString().IndexOf('i');
                 if (position >= 0)
                 {
                     newToken = newToken.WithAdditionalAnnotations(MyAnnotation.Create(position));
@@ -1446,7 +1446,7 @@ i (position 0)", results);
         [Fact]
         public void GetBaseTypesAndOverridingRelationships()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 using System;
 abstract class C1
 {
@@ -1462,15 +1462,15 @@ class C3 : C2
     public override sealed int F1(short s) { return 2; }
     public override int P1 { get; set; }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation",
+            var compilation = CSharpCompilation.Create("MyCompilation",
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                 syntaxTrees: new[] { tree }, references: new[] { Mscorlib });
 
             // Get TypeSymbols for types C1, C2 and C3 above.
-            INamedTypeSymbol typeC1 = compilation.GetTypeByMetadataName("C1");
-            INamedTypeSymbol typeC2 = compilation.GetTypeByMetadataName("C2");
-            INamedTypeSymbol typeC3 = compilation.GetTypeByMetadataName("C3");
-            INamedTypeSymbol typeObject = compilation.GetSpecialType(SpecialType.System_Object);
+            var typeC1 = compilation.GetTypeByMetadataName("C1");
+            var typeC2 = compilation.GetTypeByMetadataName("C2");
+            var typeC3 = compilation.GetTypeByMetadataName("C3");
+            var typeObject = compilation.GetSpecialType(SpecialType.System_Object);
 
             Assert.True(typeC1.IsAbstract);
             Assert.True(typeC2.IsAbstract);
@@ -1482,9 +1482,9 @@ class C3 : C2
             Assert.True(typeC3.BaseType.Equals(typeC2));
 
             // Get MethodSymbols for methods named F1 in types C1, C2 and C3 above.
-            IMethodSymbol methodC1F1 = (IMethodSymbol)typeC1.GetMembers("F1").Single();
-            IMethodSymbol methodC2F1 = (IMethodSymbol)typeC2.GetMembers("F1").Single();
-            IMethodSymbol methodC3F1 = (IMethodSymbol)typeC3.GetMembers("F1").Single();
+            var methodC1F1 = (IMethodSymbol)typeC1.GetMembers("F1").Single();
+            var methodC2F1 = (IMethodSymbol)typeC2.GetMembers("F1").Single();
+            var methodC3F1 = (IMethodSymbol)typeC3.GetMembers("F1").Single();
 
             // Get overriding relationships between above MethodSymbols.
             Assert.True(methodC1F1.IsVirtual);
@@ -1496,8 +1496,8 @@ class C3 : C2
             Assert.False(methodC3F1.OverriddenMethod.Equals(methodC1F1));
 
             // Get PropertySymbols for properties named P1 in types C1 and C3 above.
-            IPropertySymbol propertyC1P1 = (IPropertySymbol)typeC1.GetMembers("P1").Single();
-            IPropertySymbol propertyC3P1 = (IPropertySymbol)typeC3.GetMembers("P1").Single();
+            var propertyC1P1 = (IPropertySymbol)typeC1.GetMembers("P1").Single();
+            var propertyC3P1 = (IPropertySymbol)typeC3.GetMembers("P1").Single();
 
             // Get overriding relationships between above PropertySymbols.
             Assert.True(propertyC1P1.IsAbstract);
@@ -1510,7 +1510,7 @@ class C3 : C2
         [Fact]
         public void GetInterfacesAndImplementationRelationships()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 using System;
 interface I1
 {
@@ -1536,16 +1536,16 @@ class C3 : C2, I1
     public override int P1 { get; set; }
     int I1.P1 { get; set; }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation",
+            var compilation = CSharpCompilation.Create("MyCompilation",
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                 syntaxTrees: new[] { tree }, references: new[] { Mscorlib });
 
             // Get TypeSymbols for types I1, I2, C1, C2 and C3 above.
-            INamedTypeSymbol typeI1 = compilation.GetTypeByMetadataName("I1");
-            INamedTypeSymbol typeI2 = compilation.GetTypeByMetadataName("I2");
-            INamedTypeSymbol typeC1 = compilation.GetTypeByMetadataName("C1");
-            INamedTypeSymbol typeC2 = compilation.GetTypeByMetadataName("C2");
-            INamedTypeSymbol typeC3 = compilation.GetTypeByMetadataName("C3");
+            var typeI1 = compilation.GetTypeByMetadataName("I1");
+            var typeI2 = compilation.GetTypeByMetadataName("I2");
+            var typeC1 = compilation.GetTypeByMetadataName("C1");
+            var typeC2 = compilation.GetTypeByMetadataName("C2");
+            var typeC3 = compilation.GetTypeByMetadataName("C3");
 
             Assert.Null(typeI1.BaseType);
             Assert.Null(typeI2.BaseType);
@@ -1568,11 +1568,11 @@ class C3 : C2, I1
             Assert.NotNull(typeC3.AllInterfaces.Single(type => type.Equals(typeI2)));
 
             // Get MethodSymbols for methods named M1 and M2 in types I1, I2, C1 and C2 above.
-            IMethodSymbol methodI1M1 = (IMethodSymbol)typeI1.GetMembers("M1").Single();
-            IMethodSymbol methodI2M2 = (IMethodSymbol)typeI2.GetMembers("M2").Single();
-            IMethodSymbol methodC1M1 = (IMethodSymbol)typeC1.GetMembers("M1").Single();
-            IMethodSymbol methodC1M2 = (IMethodSymbol)typeC1.GetMembers("M2").Single();
-            IMethodSymbol methodC2M1 = (IMethodSymbol)typeC2.GetMembers("M1").Single();
+            var methodI1M1 = (IMethodSymbol)typeI1.GetMembers("M1").Single();
+            var methodI2M2 = (IMethodSymbol)typeI2.GetMembers("M2").Single();
+            var methodC1M1 = (IMethodSymbol)typeC1.GetMembers("M1").Single();
+            var methodC1M2 = (IMethodSymbol)typeC1.GetMembers("M2").Single();
+            var methodC2M1 = (IMethodSymbol)typeC2.GetMembers("M1").Single();
 
             // Get interface implementation relationships between above MethodSymbols.
             Assert.True(typeC1.FindImplementationForInterfaceMember(methodI1M1).Equals(methodC1M1));
@@ -1582,10 +1582,10 @@ class C3 : C2, I1
             Assert.True(typeC3.FindImplementationForInterfaceMember(methodI2M2).Equals(methodC1M2));
 
             // Get PropertySymbols for properties named P1 in types I1, C1 and C3 above.
-            IPropertySymbol propertyI1P1 = (IPropertySymbol)typeI1.GetMembers("P1").Single();
-            IPropertySymbol propertyC1P1 = (IPropertySymbol)typeC1.GetMembers("P1").Single();
-            IPropertySymbol propertyC3P1 = (IPropertySymbol)typeC3.GetMembers("P1").Single();
-            IPropertySymbol propertyC3I1P1 = (IPropertySymbol)typeC3.GetMembers("I1.P1").Single();
+            var propertyI1P1 = (IPropertySymbol)typeI1.GetMembers("P1").Single();
+            var propertyC1P1 = (IPropertySymbol)typeC1.GetMembers("P1").Single();
+            var propertyC3P1 = (IPropertySymbol)typeC3.GetMembers("P1").Single();
+            var propertyC3I1P1 = (IPropertySymbol)typeC3.GetMembers("I1.P1").Single();
 
             // Get interface implementation relationships between above PropertySymbols.
             Assert.True(typeC1.FindImplementationForInterfaceMember(propertyI1P1).Equals(propertyC1P1));
@@ -1600,7 +1600,7 @@ class C3 : C2, I1
         [Fact]
         public void GetAppliedAttributes()
         {
-            string source = @"
+            var source = @"
 using System;
 
 class Class1
@@ -1642,29 +1642,29 @@ class Class1
     }
 }
 ";
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(source);
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation",
+            var tree = SyntaxFactory.ParseSyntaxTree(source);
+            var compilation = CSharpCompilation.Create("MyCompilation",
                                                        options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                                                        syntaxTrees: new[] { tree },
                                                        references: new[] { Mscorlib });
-            System.Collections.Immutable.ImmutableArray<Diagnostic> diagnostics = compilation.GetDiagnostics();
+            var diagnostics = compilation.GetDiagnostics();
             Assert.Empty(diagnostics);
-            SemanticModel model = compilation.GetSemanticModel(tree);
+            var model = compilation.GetSemanticModel(tree);
 
             IMethodSymbol getMethod(string name) => (from declaration in tree.GetRoot().DescendantNodes().OfType<MethodDeclarationSyntax>()
                                                      where declaration.Identifier.Text.Equals(name)
                                                      select model.GetDeclaredSymbol(declaration)).Single();
-            INamedTypeSymbol attributeSymbol = (from declaration in tree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>()
-                                                where declaration.Identifier.Text.Equals("ExampleAttribute")
-                                                select model.GetDeclaredSymbol(declaration)).Single();
+            var attributeSymbol = (from declaration in tree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>()
+                                   where declaration.Identifier.Text.Equals("ExampleAttribute")
+                                   select model.GetDeclaredSymbol(declaration)).Single();
 
             // Verify that a method has no attributes
-            IMethodSymbol methodSymbol = getMethod("Method1");
+            var methodSymbol = getMethod("Method1");
             Assert.Empty(methodSymbol.GetAttributes());
 
             // Inspect the attributes that have been given to methods 2 and 3
             methodSymbol = getMethod("Method2");
-            AttributeData appliedAttribute = methodSymbol.GetAttributes().Single();
+            var appliedAttribute = methodSymbol.GetAttributes().Single();
             Assert.Equal(attributeSymbol, appliedAttribute.AttributeClass);
             Assert.Equal(TypedConstantKind.Primitive, appliedAttribute.ConstructorArguments[0].Kind);
             Assert.Equal(1, (int)appliedAttribute.ConstructorArguments[0].Value);
@@ -1682,27 +1682,27 @@ class Class1
         [Fact]
         public void AddMethodToClass()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class C
 {
 }");
-            CompilationUnitSyntax compilationUnit = (CompilationUnitSyntax)tree.GetRoot();
+            var compilationUnit = (CompilationUnitSyntax)tree.GetRoot();
 
             // Get ClassDeclarationSyntax corresponding to 'class C' above.
-            ClassDeclarationSyntax classDeclaration = compilationUnit.ChildNodes()
+            var classDeclaration = compilationUnit.ChildNodes()
                 .OfType<ClassDeclarationSyntax>().Single();
 
             // Construct a new MethodDeclarationSyntax.
-            MethodDeclarationSyntax newMethodDeclaration =
+            var newMethodDeclaration =
                 SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName("void"), "M")
                     .WithBody(SyntaxFactory.Block());
 
             // Add this new MethodDeclarationSyntax to the above ClassDeclarationSyntax.
-            ClassDeclarationSyntax newClassDeclaration =
+            var newClassDeclaration =
                 classDeclaration.AddMembers(newMethodDeclaration);
 
             // Update the CompilationUnitSyntax with the new ClassDeclarationSyntax.
-            CompilationUnitSyntax newCompilationUnit =
+            var newCompilationUnit =
                 compilationUnit.ReplaceNode(classDeclaration, newClassDeclaration);
 
             // normalize the whitespace
@@ -1721,7 +1721,7 @@ class C
         [Fact]
         public void ReplaceSubExpression()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class Program
 {
     static void Main()
@@ -1730,29 +1730,29 @@ class Program
         Console.WriteLine((i + j) - (i + j));
     }
 }");
-            CompilationUnitSyntax compilationUnit = (CompilationUnitSyntax)tree.GetRoot();
+            var compilationUnit = (CompilationUnitSyntax)tree.GetRoot();
 
             // Get BinaryExpressionSyntax corresponding to the two addition expressions 'i + j' above.
-            BinaryExpressionSyntax addExpression1 = compilationUnit.DescendantNodes()
+            var addExpression1 = compilationUnit.DescendantNodes()
                 .OfType<BinaryExpressionSyntax>().First(b => b.Kind() == SyntaxKind.AddExpression);
-            BinaryExpressionSyntax addExpression2 = compilationUnit.DescendantNodes()
+            var addExpression2 = compilationUnit.DescendantNodes()
                 .OfType<BinaryExpressionSyntax>().Last(b => b.Kind() == SyntaxKind.AddExpression);
 
             // Replace addition expressions 'i + j' with multiplication expressions 'i * j'.
-            BinaryExpressionSyntax multipyExpression1 = SyntaxFactory.BinaryExpression(SyntaxKind.MultiplyExpression,
+            var multipyExpression1 = SyntaxFactory.BinaryExpression(SyntaxKind.MultiplyExpression,
                 addExpression1.Left,
                 SyntaxFactory.Token(SyntaxKind.AsteriskToken)
                     .WithLeadingTrivia(addExpression1.OperatorToken.LeadingTrivia)
                     .WithTrailingTrivia(addExpression1.OperatorToken.TrailingTrivia),
                 addExpression1.Right);
-            BinaryExpressionSyntax multipyExpression2 = SyntaxFactory.BinaryExpression(SyntaxKind.MultiplyExpression,
+            var multipyExpression2 = SyntaxFactory.BinaryExpression(SyntaxKind.MultiplyExpression,
                 addExpression2.Left,
                 SyntaxFactory.Token(SyntaxKind.AsteriskToken)
                     .WithLeadingTrivia(addExpression2.OperatorToken.LeadingTrivia)
                     .WithTrailingTrivia(addExpression2.OperatorToken.TrailingTrivia),
                 addExpression2.Right);
 
-            CompilationUnitSyntax newCompilationUnit = compilationUnit
+            var newCompilationUnit = compilationUnit
                 .ReplaceNodes(nodes: new[] { addExpression1, addExpression2 },
                               computeReplacementNode:
                                 (originalNode, originalNodeWithReplacedDescendants) =>
@@ -1786,7 +1786,7 @@ class Program
         [Fact]
         public void UseSymbolicInformationPlusRewriterToMakeCodeChanges()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 using System;
 class Program
 {
@@ -1804,26 +1804,26 @@ class C
         y = new C();
     }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation")
+            var compilation = CSharpCompilation.Create("MyCompilation")
                 .AddReferences(Mscorlib)
                 .AddSyntaxTrees(tree);
-            SemanticModel model = compilation.GetSemanticModel(tree);
+            var model = compilation.GetSemanticModel(tree);
 
             // Get the ClassDeclarationSyntax corresponding to 'class C' above.
-            ClassDeclarationSyntax classDeclaration = tree.GetRoot()
+            var classDeclaration = tree.GetRoot()
                 .DescendantNodes().OfType<ClassDeclarationSyntax>()
                 .Single(c => c.Identifier.ToString() == "C");
 
             // Get Symbol corresponding to class C above.
-            INamedTypeSymbol searchSymbol = model.GetDeclaredSymbol(classDeclaration);
-            SyntaxNode oldRoot = tree.GetRoot();
-            ClassRenamer rewriter = new ClassRenamer()
+            var searchSymbol = model.GetDeclaredSymbol(classDeclaration);
+            var oldRoot = tree.GetRoot();
+            var rewriter = new ClassRenamer()
             {
                 SearchSymbol = searchSymbol,
                 SemanticModel = model,
                 NewName = "C1"
             };
-            SyntaxNode newRoot = rewriter.Visit(oldRoot);
+            var newRoot = rewriter.Visit(oldRoot);
 
             Assert.Equal(@"
 using System;
@@ -1859,15 +1859,15 @@ class C1
             // Replace old ClassDeclarationSyntax with new one.
             public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
             {
-                ClassDeclarationSyntax updatedClassDeclaration = (ClassDeclarationSyntax)base.VisitClassDeclaration(node);
+                var updatedClassDeclaration = (ClassDeclarationSyntax)base.VisitClassDeclaration(node);
 
                 // Get TypeSymbol corresponding to the ClassDeclarationSyntax and check whether
                 // it is the same as the TypeSymbol we are searching for.
-                INamedTypeSymbol classSymbol = SemanticModel.GetDeclaredSymbol(node);
+                var classSymbol = SemanticModel.GetDeclaredSymbol(node);
                 if (classSymbol.Equals(SearchSymbol))
                 {
                     // Replace the identifier token containing the name of the class.
-                    SyntaxToken updatedIdentifierToken =
+                    var updatedIdentifierToken =
                         SyntaxFactory.Identifier(
                             updatedClassDeclaration.Identifier.LeadingTrivia,
                             NewName,
@@ -1882,16 +1882,16 @@ class C1
             // Replace old ConstructorDeclarationSyntax with new one.
             public override SyntaxNode VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
             {
-                ConstructorDeclarationSyntax updatedConstructorDeclaration = (ConstructorDeclarationSyntax)base.VisitConstructorDeclaration(node);
+                var updatedConstructorDeclaration = (ConstructorDeclarationSyntax)base.VisitConstructorDeclaration(node);
 
                 // Get TypeSymbol corresponding to the containing ClassDeclarationSyntax for the 
                 // ConstructorDeclarationSyntax and check whether it is the same as the TypeSymbol
                 // we are searching for.
-                ITypeSymbol classSymbol = (ITypeSymbol)SemanticModel.GetDeclaredSymbol(node).ContainingSymbol;
+                var classSymbol = (ITypeSymbol)SemanticModel.GetDeclaredSymbol(node).ContainingSymbol;
                 if (classSymbol.Equals(SearchSymbol))
                 {
                     // Replace the identifier token containing the name of the class.
-                    SyntaxToken updatedIdentifierToken =
+                    var updatedIdentifierToken =
                         SyntaxFactory.Identifier(
                             updatedConstructorDeclaration.Identifier.LeadingTrivia,
                             NewName,
@@ -1906,25 +1906,25 @@ class C1
             // Replace all occurrences of old class name with new one.
             public override SyntaxNode VisitIdentifierName(IdentifierNameSyntax node)
             {
-                IdentifierNameSyntax updatedIdentifierName = (IdentifierNameSyntax)base.VisitIdentifierName(node);
+                var updatedIdentifierName = (IdentifierNameSyntax)base.VisitIdentifierName(node);
 
                 // Get TypeSymbol corresponding to the IdentifierNameSyntax and check whether
                 // it is the same as the TypeSymbol we are searching for.
-                ISymbol identifierSymbol = SemanticModel.GetSymbolInfo(node).Symbol;
+                var identifierSymbol = SemanticModel.GetSymbolInfo(node).Symbol;
 
                 // Handle |C| x = new C().
-                bool isMatchingTypeName = identifierSymbol.Equals(SearchSymbol);
+                var isMatchingTypeName = identifierSymbol.Equals(SearchSymbol);
 
                 // Handle C x = new |C|().
-                bool isMatchingConstructor =
-                    identifierSymbol is IMethodSymbol &&
-                    ((IMethodSymbol)identifierSymbol).MethodKind == MethodKind.Constructor &&
+                var isMatchingConstructor =
+                    identifierSymbol is IMethodSymbol methodSymbol &&
+                    methodSymbol.MethodKind == MethodKind.Constructor &&
                     identifierSymbol.ContainingSymbol.Equals(SearchSymbol);
 
                 if (isMatchingTypeName || isMatchingConstructor)
                 {
                     // Replace the identifier token containing the name of the class.
-                    SyntaxToken updatedIdentifierToken =
+                    var updatedIdentifierToken =
                         SyntaxFactory.Identifier(
                             updatedIdentifierName.Identifier.LeadingTrivia,
                             NewName,
@@ -1941,7 +1941,7 @@ class C1
         [Fact]
         public void DeleteAssignmentStatementsFromASyntaxTree()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class Program
 {
     static void Main()
@@ -1953,9 +1953,9 @@ class Program
         else x = 4;
     }
 }");
-            SyntaxNode oldRoot = tree.GetRoot();
-            AssignmentStatementRemover rewriter = new AssignmentStatementRemover();
-            SyntaxNode newRoot = rewriter.Visit(oldRoot);
+            var oldRoot = tree.GetRoot();
+            var rewriter = new AssignmentStatementRemover();
+            var newRoot = rewriter.Visit(oldRoot);
 
             Assert.Equal(@"
 class Program
@@ -1975,7 +1975,7 @@ class Program
         {
             public override SyntaxNode VisitExpressionStatement(ExpressionStatementSyntax node)
             {
-                SyntaxNode updatedNode = base.VisitExpressionStatement(node);
+                var updatedNode = base.VisitExpressionStatement(node);
 
                 if (node.Expression.Kind() == SyntaxKind.SimpleAssignmentExpression)
                 {
@@ -2002,20 +2002,20 @@ class Program
         [Fact]
         public void ConstructPointerOrArrayType()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class Program
 {
     static void Main() { }
 }");
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation",
+            var compilation = CSharpCompilation.Create("MyCompilation",
                 syntaxTrees: new[] { tree }, references: new[] { Mscorlib });
 
-            INamedTypeSymbol elementType = compilation.GetSpecialType(SpecialType.System_Int32);
+            var elementType = compilation.GetSpecialType(SpecialType.System_Int32);
 
-            IPointerTypeSymbol pointerType = compilation.CreatePointerTypeSymbol(elementType);
+            var pointerType = compilation.CreatePointerTypeSymbol(elementType);
             Assert.Equal("int*", pointerType.ToDisplayString());
 
-            IArrayTypeSymbol arrayType = compilation.CreateArrayTypeSymbol(elementType, rank: 3);
+            var arrayType = compilation.CreateArrayTypeSymbol(elementType, rank: 3);
             Assert.Equal("int[*,*,*]", arrayType.ToDisplayString());
         }
 
@@ -2023,7 +2023,7 @@ class Program
         [Fact]
         public void DeleteRegionsUsingRewriter()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 using System;
 #region Program
 class Program
@@ -2038,9 +2038,9 @@ class C
 {
 }
 #endregion");
-            SyntaxNode oldRoot = tree.GetRoot();
+            var oldRoot = tree.GetRoot();
 
-            string expected = @"
+            var expected = @"
 using System;
 class Program
 {
@@ -2053,7 +2053,7 @@ class C
 }
 ";
             CSharpSyntaxRewriter rewriter = new RegionRemover1();
-            SyntaxNode newRoot = rewriter.Visit(oldRoot);
+            var newRoot = rewriter.Visit(oldRoot);
             Assert.Equal(expected, newRoot.ToFullString());
 
             rewriter = new RegionRemover2();
@@ -2066,7 +2066,7 @@ class C
         {
             public override SyntaxTrivia VisitTrivia(SyntaxTrivia trivia)
             {
-                SyntaxTrivia updatedTrivia = base.VisitTrivia(trivia);
+                var updatedTrivia = base.VisitTrivia(trivia);
                 if (trivia.Kind() == SyntaxKind.RegionDirectiveTrivia ||
                     trivia.Kind() == SyntaxKind.EndRegionDirectiveTrivia)
                 {
@@ -2101,7 +2101,7 @@ class C
         [Fact]
         public void DeleteRegions()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 using System;
 #region Program
 class Program
@@ -2116,14 +2116,14 @@ class C
 {
 }
 #endregion");
-            SyntaxNode oldRoot = tree.GetRoot();
+            var oldRoot = tree.GetRoot();
 
             // Get all RegionDirective and EndRegionDirective trivia.
-            IEnumerable<SyntaxTrivia> trivia = oldRoot.DescendantTrivia()
+            var trivia = oldRoot.DescendantTrivia()
                 .Where(t => t.Kind() == SyntaxKind.RegionDirectiveTrivia ||
                             t.Kind() == SyntaxKind.EndRegionDirectiveTrivia);
 
-            SyntaxNode newRoot = oldRoot.ReplaceTrivia(trivia: trivia,
+            var newRoot = oldRoot.ReplaceTrivia(trivia: trivia,
                 computeReplacementTrivia:
                     (originalTrivia, originalTriviaWithReplacedDescendants) => default(SyntaxTrivia));
 
@@ -2145,7 +2145,7 @@ class C
         [Fact(Skip = "Need to load correct assembly references now that this is a .NET core app")]
         public void InsertLoggingStatements()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"
+            var tree = SyntaxFactory.ParseSyntaxTree(@"
 class Program
 {
     static void Main()
@@ -2159,17 +2159,17 @@ class Program
         if (true) total += 5;
     }
 }");
-            SyntaxNode oldRoot = tree.GetRoot();
-            ConsoleWriteLineInserter rewriter = new ConsoleWriteLineInserter();
-            SyntaxNode newRoot = rewriter.Visit(oldRoot);
+            var oldRoot = tree.GetRoot();
+            var rewriter = new ConsoleWriteLineInserter();
+            var newRoot = rewriter.Visit(oldRoot);
             newRoot = newRoot.NormalizeWhitespace(); // fix up the whitespace so it is legible.
 
-            SyntaxTree newTree = SyntaxFactory.SyntaxTree(newRoot, path: "MyCodeFile.cs", encoding: Encoding.UTF8);
-            CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation")
+            var newTree = SyntaxFactory.SyntaxTree(newRoot, path: "MyCodeFile.cs", encoding: Encoding.UTF8);
+            var compilation = CSharpCompilation.Create("MyCompilation")
                 .AddReferences(Mscorlib)
                 .AddSyntaxTrees(newTree);
 
-            string output = Execute(compilation);
+            var output = Execute(compilation);
             Assert.Equal(@"
 0
 1
@@ -2186,7 +2186,7 @@ class Program
         {
             public override SyntaxNode VisitExpressionStatement(ExpressionStatementSyntax node)
             {
-                SyntaxNode updatedNode = base.VisitExpressionStatement(node);
+                var updatedNode = base.VisitExpressionStatement(node);
 
                 if (node.Expression.Kind() == SyntaxKind.AddAssignmentExpression ||
                     node.Expression.Kind() == SyntaxKind.SubtractAssignmentExpression ||
@@ -2195,8 +2195,8 @@ class Program
                 {
                     // Print value of the variable on the 'Left' side of
                     // compound assignment statements encountered.
-                    AssignmentExpressionSyntax compoundAssignmentExpression = (AssignmentExpressionSyntax)node.Expression;
-                    StatementSyntax consoleWriteLineStatement =
+                    var compoundAssignmentExpression = (AssignmentExpressionSyntax)node.Expression;
+                    var consoleWriteLineStatement =
                         SyntaxFactory.ParseStatement(string.Format("System.Console.WriteLine({0});", compoundAssignmentExpression.Left.ToString()));
 
                     updatedNode =
@@ -2217,15 +2217,15 @@ class Program
         // A simple helper to execute the code present inside a compilation.
         public string Execute(Compilation comp)
         {
-            StringBuilder output = new StringBuilder();
+            var output = new StringBuilder();
             string exeFilename = "OutputCS.exe", pdbFilename = "OutputCS.pdb", xmlCommentsFilename = "OutputCS.xml";
             EmitResult emitResult = null;
 
-            using (FileStream ilStream = new FileStream(exeFilename, FileMode.OpenOrCreate))
+            using (var ilStream = new FileStream(exeFilename, FileMode.OpenOrCreate))
             {
-                using (FileStream pdbStream = new FileStream(pdbFilename, FileMode.OpenOrCreate))
+                using (var pdbStream = new FileStream(pdbFilename, FileMode.OpenOrCreate))
                 {
-                    using (FileStream xmlCommentsStream = new FileStream(xmlCommentsFilename, FileMode.OpenOrCreate))
+                    using (var xmlCommentsStream = new FileStream(xmlCommentsFilename, FileMode.OpenOrCreate))
                     {
                         // Emit IL, PDB and xml documentation comments for the compilation to disk.
                         emitResult = comp.Emit(ilStream, pdbStream, xmlCommentsStream);
@@ -2235,7 +2235,7 @@ class Program
 
             if (emitResult.Success)
             {
-                Process p = Process.Start(
+                var p = Process.Start(
                     new ProcessStartInfo()
                     {
                         FileName = exeFilename,
@@ -2248,7 +2248,7 @@ class Program
             else
             {
                 output.AppendLine("Errors:");
-                foreach (Diagnostic diag in emitResult.Diagnostics)
+                foreach (var diag in emitResult.Diagnostics)
                 {
                     output.AppendLine(diag.ToString());
                 }
@@ -2299,7 +2299,7 @@ class Program
         [Fact]
         public async Task UseServices()
         {
-            string source = @"using System.Diagnostics;
+            var source = @"using System.Diagnostics;
 using System;
 using System.IO;
 namespace NS
@@ -2317,18 +2317,18 @@ class Program
             Console.WriteLine(p.Id);
     }
 }";
-            ProjectId projectId = ProjectId.CreateNewId();
-            DocumentId documentId = DocumentId.CreateNewId(projectId);
+            var projectId = ProjectId.CreateNewId();
+            var documentId = DocumentId.CreateNewId(projectId);
 
-            Solution solution = new AdhocWorkspace().CurrentSolution
+            var solution = new AdhocWorkspace().CurrentSolution
                 .AddProject(projectId, "MyProject", "MyProject", LanguageNames.CSharp)
                 .AddMetadataReference(projectId, Mscorlib)
                 .AddDocument(documentId, "MyFile.cs", source);
-            Document document = solution.GetDocument(documentId);
+            var document = solution.GetDocument(documentId);
 
             // Format the document.
             document = await Formatter.FormatAsync(document);
-            string expected = @"using System.Diagnostics;
+            var expected = @"using System.Diagnostics;
 using System;
 using System.IO;
 namespace NS
@@ -2346,11 +2346,11 @@ class Program
         Console.WriteLine(p.Id);
     }
 }";
-            string actual = (await document.GetSyntaxRootAsync()).ToString();
+            var actual = (await document.GetSyntaxRootAsync()).ToString();
             Assert.Equal(expected, actual);
 
             // Simplify names used in the document i.e. remove unnecessary namespace qualifiers.
-            SyntaxNode newRoot = await document.GetSyntaxRootAsync();
+            var newRoot = await document.GetSyntaxRootAsync();
             newRoot = new SimplifyNamesAnnotionRewriter().Visit(newRoot);
             document = document.WithSyntaxRoot(newRoot);
 

@@ -20,8 +20,8 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
         public static bool Applicable(SemanticModel semanticModel, ArgumentSyntax argument, IEnumerable<ParameterSyntax> parameters)
         {
-            SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(argument.Expression);
-            ISymbol symbol = symbolInfo.Symbol;
+            var symbolInfo = semanticModel.GetSymbolInfo(argument.Expression);
+            var symbol = symbolInfo.Symbol;
 
             if (symbol == null)
             {
@@ -58,7 +58,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
         private SyntaxToken GetOutOrRefModifier()
         {
             // special case where argument == parameter
-            SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(argument.Expression);
+            var symbolInfo = semanticModel.GetSymbolInfo(argument.Expression);
             if (symbolInfo.Symbol != null && symbolInfo.Symbol.Kind == SymbolKind.Parameter)
             {
                 if (IsSameParameter(symbolInfo.Symbol as IParameterSymbol, parameters))
@@ -67,13 +67,13 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
                 }
             }
 
-            BaseMethodDeclarationSyntax method = parameters.Select(p => p.AncestorAndSelf<BaseMethodDeclarationSyntax>()).FirstOrDefault(m => m.Body != null);
+            var method = parameters.Select(p => p.AncestorAndSelf<BaseMethodDeclarationSyntax>()).FirstOrDefault(m => m.Body != null);
             if (method == null)
             {
                 return SyntaxFactory.Token(SyntaxKind.RefKeyword);
             }
 
-            DataFlowAnalysis dataFlow = semanticModel.AnalyzeDataFlow(method.Body);
+            var dataFlow = semanticModel.AnalyzeDataFlow(method.Body);
             if (ContainSameParameter(dataFlow.ReadInside, parameters))
             {
                 return SyntaxFactory.Token(SyntaxKind.RefKeyword);
@@ -84,7 +84,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
         private static bool ContainSameParameter(IEnumerable<ISymbol> symbols, IEnumerable<ParameterSyntax> parameters)
         {
-            foreach (ISymbol symbol in symbols)
+            foreach (var symbol in symbols)
             {
                 if (!(symbol is IParameterSymbol parameterSymbol))
                 {
@@ -102,7 +102,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
         private static bool IsSameParameter(IParameterSymbol parameterSymbol, IEnumerable<ParameterSyntax> parameters)
         {
-            IEnumerable<ParameterSyntax> parametersFromSymbol = parameterSymbol.Locations.Select(l => l.FindToken().AncestorAndSelf<ParameterSyntax>());
+            var parametersFromSymbol = parameterSymbol.Locations.Select(l => l.FindToken().AncestorAndSelf<ParameterSyntax>());
             if (parameters.Any(p => parametersFromSymbol.Any(p2 => p == p2)))
             {
                 return true;
@@ -113,9 +113,9 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
         protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
         {
-            SyntaxToken modifier = GetOutOrRefModifier();
+            var modifier = GetOutOrRefModifier();
 
-            Dictionary<SyntaxNode, SyntaxNode> map = new Dictionary<SyntaxNode, SyntaxNode>
+            var map = new Dictionary<SyntaxNode, SyntaxNode>
             {
                 {
                     argument,
@@ -124,15 +124,15 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
                 }
             };
 
-            foreach (ParameterSyntax parameter in parameters)
+            foreach (var parameter in parameters)
             {
                 map.Add(parameter,
                         SyntaxFactory.Parameter(parameter.AttributeLists, parameter.Modifiers.Add(modifier), parameter.Type, parameter.Identifier, parameter.Default)
                             .WithAdditionalAnnotations(Formatter.Annotation));
             }
 
-            SyntaxNode root = (SyntaxNode)await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxNode newRoot = root.ReplaceNodes(map.Keys, (o, n) => map[o]);
+            var root = (SyntaxNode)await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var newRoot = root.ReplaceNodes(map.Keys, (o, n) => map[o]);
 
             return document.WithSyntaxRoot(newRoot);
         }

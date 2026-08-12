@@ -12,7 +12,7 @@ namespace Sample.Analyzers.Test
         [Fact]
         public async Task CompilationStartedAnalyzerWithCompilationWideAnalysisTest()
         {
-            string test = @"
+            var test = @"
 namespace MyNamespace
 {
     public class UnsecureMethodAttribute : System.Attribute { }
@@ -40,7 +40,7 @@ namespace MyNamespace
         public void F() {}
     }
 }";
-            DiagnosticResult expected = Verify.Diagnostic().WithArguments("MyInterfaceImpl2", CompilationStartedAnalyzerWithCompilationWideAnalysis.SecureTypeInterfaceName, "IUnsecureInterface").WithLocation(19, 11);
+            var expected = Verify.Diagnostic().WithArguments("MyInterfaceImpl2", CompilationStartedAnalyzerWithCompilationWideAnalysis.SecureTypeInterfaceName, "IUnsecureInterface").WithLocation(19, 11);
             await Verify.VerifyAnalyzerAsync(test, expected);
         }
     }

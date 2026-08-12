@@ -44,24 +44,24 @@ namespace Sample.Analyzers
         private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
             // Get all the suppressed analyzer diagnostic IDs.
-            IEnumerable<string> suppressedAnalyzerDiagnosticIds = GetSuppressedAnalyzerDiagnosticIds(context.Compilation.Options.SpecificDiagnosticOptions);
+            var suppressedAnalyzerDiagnosticIds = GetSuppressedAnalyzerDiagnosticIds(context.Compilation.Options.SpecificDiagnosticOptions);
 
-            foreach (string suppressedDiagnosticId in suppressedAnalyzerDiagnosticIds)
+            foreach (var suppressedDiagnosticId in suppressedAnalyzerDiagnosticIds)
             {
                 // For all such suppressed diagnostic IDs, produce a diagnostic.
-                Diagnostic diagnostic = Diagnostic.Create(Rule, Location.None, suppressedDiagnosticId);
+                var diagnostic = Diagnostic.Create(Rule, Location.None, suppressedDiagnosticId);
                 context.ReportDiagnostic(diagnostic);
             }
         }
 
         private static IEnumerable<string> GetSuppressedAnalyzerDiagnosticIds(ImmutableDictionary<string, ReportDiagnostic> specificOptions)
         {
-            foreach (KeyValuePair<string, ReportDiagnostic> kvp in specificOptions)
+            foreach (var kvp in specificOptions)
             {
                 if (kvp.Value == ReportDiagnostic.Suppress)
                 {
                     if (kvp.Key.StartsWith("CS", StringComparison.OrdinalIgnoreCase) &&
-                        int.TryParse(kvp.Key.Substring(2), out int intId))
+                        int.TryParse(kvp.Key.Substring(2), out var intId))
                     {
                         continue;
                     }

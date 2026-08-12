@@ -47,24 +47,24 @@ namespace Roslyn.UnitTestFramework
             position = null;
             spans = new Dictionary<string, IList<TextSpan>>();
 
-            StringBuilder outputBuilder = new StringBuilder();
+            var outputBuilder = new StringBuilder();
 
-            int currentIndexInInput = 0;
-            int inputOutputOffset = 0;
+            var currentIndexInInput = 0;
+            var inputOutputOffset = 0;
 
             // A stack of span starts along with their associated annotation name.  [||] spans simply
             // have empty string for their annotation name.
-            Stack<Tuple<int, string>> spanStartStack = new Stack<Tuple<int, string>>();
+            var spanStartStack = new Stack<Tuple<int, string>>();
 
             while (true)
             {
-                List<Tuple<int, string>> matches = new List<Tuple<int, string>>();
+                var matches = new List<Tuple<int, string>>();
                 AddMatch(input, PositionString, currentIndexInInput, matches);
                 AddMatch(input, SpanStartString, currentIndexInInput, matches);
                 AddMatch(input, SpanEndString, currentIndexInInput, matches);
                 AddMatch(input, NamedSpanEndString, currentIndexInInput, matches);
 
-                Match namedSpanStartMatch = s_namedSpanStartRegex.Match(input, currentIndexInInput);
+                var namedSpanStartMatch = s_namedSpanStartRegex.Match(input, currentIndexInInput);
                 if (namedSpanStartMatch.Success)
                 {
                     matches.Add(Tuple.Create(namedSpanStartMatch.Index, namedSpanStartMatch.Value));
@@ -76,7 +76,7 @@ namespace Roslyn.UnitTestFramework
                     break;
                 }
 
-                List<Tuple<int, string>> orderedMatches = matches.OrderBy((t1, t2) => t1.Item1 - t2.Item1).ToList();
+                var orderedMatches = matches.OrderBy((t1, t2) => t1.Item1 - t2.Item1).ToList();
                 if (orderedMatches.Count >= 2 &&
                     spanStartStack.Count > 0 &&
                     matches[0].Item1 == matches[1].Item1 - 1)
@@ -96,12 +96,12 @@ namespace Roslyn.UnitTestFramework
                 }
 
                 // Order the matches by their index
-                Tuple<int, string> firstMatch = orderedMatches.First();
+                var firstMatch = orderedMatches.First();
 
-                int matchIndexInInput = firstMatch.Item1;
-                string matchString = firstMatch.Item2;
+                var matchIndexInInput = firstMatch.Item1;
+                var matchString = firstMatch.Item2;
 
-                int matchIndexInOutput = matchIndexInInput - inputOutputOffset;
+                var matchIndexInOutput = matchIndexInInput - inputOutputOffset;
                 outputBuilder.Append(input.Substring(currentIndexInInput, matchIndexInInput - currentIndexInInput));
 
                 currentIndexInInput = matchIndexInInput + matchString.Length;
@@ -137,7 +137,7 @@ namespace Roslyn.UnitTestFramework
                         break;
 
                     case NamedSpanStartString:
-                        string name = namedSpanStartMatch.Groups[1].Value;
+                        var name = namedSpanStartMatch.Groups[1].Value;
                         spanStartStack.Push(Tuple.Create(matchIndexInOutput, name));
                         break;
 
@@ -175,15 +175,15 @@ namespace Roslyn.UnitTestFramework
             IDictionary<string, IList<TextSpan>> spans,
             int finalIndex)
         {
-            Tuple<int, string> spanStartTuple = spanStartStack.Pop();
+            var spanStartTuple = spanStartStack.Pop();
 
-            TextSpan span = TextSpan.FromBounds(spanStartTuple.Item1, finalIndex);
+            var span = TextSpan.FromBounds(spanStartTuple.Item1, finalIndex);
             spans.GetOrAdd(spanStartTuple.Item2, () => new List<TextSpan>()).Add(span);
         }
 
         private static void AddMatch(string input, string value, int currentIndex, List<Tuple<int, string>> matches)
         {
-            int index = input.IndexOf(value, currentIndex);
+            var index = input.IndexOf(value, currentIndex);
             if (index >= 0)
             {
                 matches.Add(Tuple.Create(index, value));
@@ -197,7 +197,7 @@ namespace Roslyn.UnitTestFramework
 
         public static void GetPositionAndSpans(string input, out int? cursorPositionOpt, out IDictionary<string, IList<TextSpan>> spans)
         {
-            GetPositionAndSpans(input, out string output, out cursorPositionOpt, out spans);
+            GetPositionAndSpans(input, out var output, out cursorPositionOpt, out spans);
         }
 
         public static void GetPositionAndSpans(string input, out string output, out int cursorPosition, out IDictionary<string, IList<TextSpan>> spans)
@@ -214,14 +214,14 @@ namespace Roslyn.UnitTestFramework
 
         public static void GetPositionAndSpans(string input, out string output, out int? cursorPositionOpt, out IList<TextSpan> spans)
         {
-            Parse(input, out output, out cursorPositionOpt, out IDictionary<string, IList<TextSpan>> dictionary);
+            Parse(input, out output, out cursorPositionOpt, out var dictionary);
 
             spans = dictionary.GetOrAdd(string.Empty, () => new List<TextSpan>());
         }
 
         public static void GetPositionAndSpans(string input, out int? cursorPositionOpt, out IList<TextSpan> spans)
         {
-            GetPositionAndSpans(input, out string output, out cursorPositionOpt, out spans);
+            GetPositionAndSpans(input, out var output, out cursorPositionOpt, out spans);
         }
 
         public static void GetPositionAndSpans(string input, out string output, out int cursorPosition, out IList<TextSpan> spans)
@@ -267,10 +267,10 @@ namespace Roslyn.UnitTestFramework
 
         public static string CreateTestFile(string code, IDictionary<string, IList<TextSpan>> spans, int cursor = -1)
         {
-            StringBuilder sb = new StringBuilder();
-            IList<TextSpan> anonymousSpans = spans.GetOrAdd(string.Empty, () => new List<TextSpan>());
+            var sb = new StringBuilder();
+            var anonymousSpans = spans.GetOrAdd(string.Empty, () => new List<TextSpan>());
 
-            for (int i = 0; i <= code.Length; i++)
+            for (var i = 0; i <= code.Length; i++)
             {
                 if (i == cursor)
                 {
@@ -297,9 +297,9 @@ namespace Roslyn.UnitTestFramework
             int position,
             bool start)
         {
-            foreach (KeyValuePair<string, IList<TextSpan>> kvp in items)
+            foreach (var kvp in items)
             {
-                foreach (TextSpan span in kvp.Value)
+                foreach (var span in kvp.Value)
                 {
                     if (start && span.Start == position)
                     {

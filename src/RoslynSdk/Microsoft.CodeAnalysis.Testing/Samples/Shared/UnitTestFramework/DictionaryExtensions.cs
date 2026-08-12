@@ -10,7 +10,7 @@ namespace Roslyn.UnitTestFramework
         // Copied from ConcurrentDictionary since IDictionary doesn't have this useful method
         public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> function)
         {
-            if (!dictionary.TryGetValue(key, out TValue value))
+            if (!dictionary.TryGetValue(key, out var value))
             {
                 value = function(key);
                 dictionary.Add(key, value);

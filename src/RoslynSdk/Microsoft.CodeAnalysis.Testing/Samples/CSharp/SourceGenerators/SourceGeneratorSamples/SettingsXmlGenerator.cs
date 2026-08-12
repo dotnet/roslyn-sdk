@@ -17,8 +17,8 @@ namespace Analyzer1
         public void Execute(GeneratorExecutionContext context)
         {
             // Using the context, get any additional files that end in .xmlsettings
-            IEnumerable<AdditionalText> settingsFiles = context.AdditionalFiles.Where(at => at.Path.EndsWith(".xmlsettings"));
-            foreach (AdditionalText settingsFile in settingsFiles)
+            var settingsFiles = context.AdditionalFiles.Where(at => at.Path.EndsWith(".xmlsettings"));
+            foreach (var settingsFile in settingsFiles)
             {
                 ProcessSettingsFile(settingsFile, context);
             }
@@ -27,8 +27,8 @@ namespace Analyzer1
         private void ProcessSettingsFile(AdditionalText xmlFile, GeneratorExecutionContext context)
         {
             // try and load the settings file
-            XmlDocument xmlDoc = new XmlDocument();
-            string text = xmlFile.GetText(context.CancellationToken).ToString();
+            var xmlDoc = new XmlDocument();
+            var text = xmlFile.GetText(context.CancellationToken).ToString();
             try
             {
                 xmlDoc.LoadXml(text);
@@ -41,10 +41,10 @@ namespace Analyzer1
 
 
             // create a class in the XmlSetting class that represnts this entry, and a static field that contains a singleton instance.
-            string fileName = Path.GetFileName(xmlFile.Path);
-            string name = xmlDoc.DocumentElement.GetAttribute("name");
+            var fileName = Path.GetFileName(xmlFile.Path);
+            var name = xmlDoc.DocumentElement.GetAttribute("name");
 
-            StringBuilder sb = new StringBuilder($@"
+            var sb = new StringBuilder($@"
 namespace AutoSettings
 {{
     using System;
@@ -71,11 +71,11 @@ namespace AutoSettings
             }}
 ");
 
-            for (int i = 0; i < xmlDoc.DocumentElement.ChildNodes.Count; i++)
+            for (var i = 0; i < xmlDoc.DocumentElement.ChildNodes.Count; i++)
             {
-                XmlElement setting = (XmlElement)xmlDoc.DocumentElement.ChildNodes[i];
-                string settingName = setting.GetAttribute("name");
-                string settingType = setting.GetAttribute("type");
+                var setting = (XmlElement)xmlDoc.DocumentElement.ChildNodes[i];
+                var settingName = setting.GetAttribute("name");
+                var settingType = setting.GetAttribute("type");
 
                 sb.Append($@"
 

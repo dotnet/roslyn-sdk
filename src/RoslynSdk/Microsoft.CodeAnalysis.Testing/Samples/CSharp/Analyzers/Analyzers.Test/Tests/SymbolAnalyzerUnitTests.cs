@@ -12,7 +12,7 @@ namespace Sample.Analyzers.Test
         [Fact]
         public async Task SymbolAnalyzerTest()
         {
-            string test = @"
+            var test = @"
 class BadOne
 {
     public void BadOne() {}

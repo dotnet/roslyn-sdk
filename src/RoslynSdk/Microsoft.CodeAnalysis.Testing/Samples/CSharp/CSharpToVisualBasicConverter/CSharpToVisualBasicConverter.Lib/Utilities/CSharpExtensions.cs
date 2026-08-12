@@ -13,20 +13,20 @@ namespace CSharpToVisualBasicConverter.Utilities
         public static IEnumerable<T> GetAncestorsOrThis<T>(this SyntaxNode node, bool allowStructuredTrivia = false)
             where T : SyntaxNode
         {
-            SyntaxNode current = node;
+            var current = node;
             while (current != null)
             {
-                if (current is T)
+                if (current is T ancestor)
                 {
-                    yield return (T)current;
+                    yield return ancestor;
                 }
 
                 if (allowStructuredTrivia &&
                     current.IsStructuredTrivia &&
                     current.Parent == null)
                 {
-                    StructuredTriviaSyntax structuredTrivia = (StructuredTriviaSyntax)current;
-                    SyntaxTrivia parentTrivia = structuredTrivia.ParentTrivia;
+                    var structuredTrivia = (StructuredTriviaSyntax)current;
+                    var parentTrivia = structuredTrivia.ParentTrivia;
                     current = parentTrivia.Token.Parent;
                 }
                 else

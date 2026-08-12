@@ -38,7 +38,7 @@ Namespace Global.HelloWorldGenerated
 ")
 
             ' for testing... let's include a comment with the current date/time.
-            sourceBuilder.AppendLine($"            ' Generated at {DateTime.Now}")
+            sourceBuilder.AppendLine($"            ' Generated at {Date.Now}")
 
             ' using the context, get a list of syntax trees in the users compilation
             ' add the filepath of each tree to the class we're building

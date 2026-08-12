@@ -15,8 +15,8 @@ namespace APISamples
         [Fact]
         public void TextParseTreeRoundtrip()
         {
-            string text = "class C { void M() { } } // exact text round trip, including comments and whitespace";
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(text);
+            var text = "class C { void M() { } } // exact text round trip, including comments and whitespace";
+            var tree = SyntaxFactory.ParseSyntaxTree(text);
             Assert.Equal(text, tree.ToString());
         }
 
@@ -29,7 +29,7 @@ namespace APISamples
 
         private void ValidIdentifier(string identifier, bool expectedValid)
         {
-            SyntaxToken token = SyntaxFactory.ParseToken(identifier);
+            var token = SyntaxFactory.ParseToken(identifier);
             Assert.Equal(expectedValid,
                 token.Kind() == SyntaxKind.IdentifierToken && token.Span.Length == identifier.Length);
         }
@@ -51,8 +51,8 @@ namespace APISamples
         [Fact]
         public void ParseTokens()
         {
-            IEnumerable<SyntaxToken> tokens = SyntaxFactory.ParseTokens("class C { // trivia");
-            IEnumerable<string> fullTexts = tokens.Select(token => token.ToFullString());
+            var tokens = SyntaxFactory.ParseTokens("class C { // trivia");
+            var fullTexts = tokens.Select(token => token.ToFullString());
 
             Assert.True(fullTexts.SequenceEqual(new[]
             {
@@ -66,14 +66,14 @@ namespace APISamples
         [Fact]
         public void ParseExpression()
         {
-            ExpressionSyntax expression = SyntaxFactory.ParseExpression("1 + 2");
+            var expression = SyntaxFactory.ParseExpression("1 + 2");
             if (expression.Kind() == SyntaxKind.AddExpression)
             {
-                BinaryExpressionSyntax binaryExpression = (BinaryExpressionSyntax)expression;
-                SyntaxToken operatorToken = binaryExpression.OperatorToken;
+                var binaryExpression = (BinaryExpressionSyntax)expression;
+                var operatorToken = binaryExpression.OperatorToken;
                 Assert.Equal("+", operatorToken.ToString());
 
-                ExpressionSyntax left = binaryExpression.Left;
+                var left = binaryExpression.Left;
                 Assert.Equal(SyntaxKind.NumericLiteralExpression, left.Kind());
             }
         }
@@ -81,12 +81,12 @@ namespace APISamples
         [Fact]
         public void IncrementalParse()
         {
-            SourceText oldText = SourceText.From("class C { }");
-            SourceText newText = oldText.WithChanges(new TextChange(new TextSpan(9, 0), "void M() { } "));
+            var oldText = SourceText.From("class C { }");
+            var newText = oldText.WithChanges(new TextChange(new TextSpan(9, 0), "void M() { } "));
 
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(oldText);
+            var tree = SyntaxFactory.ParseSyntaxTree(oldText);
 
-            SyntaxTree newTree = tree.WithChangedText(newText);
+            var newTree = tree.WithChangedText(newText);
 
             Assert.Equal(newText.ToString(), newTree.ToString());
         }
@@ -94,23 +94,23 @@ namespace APISamples
         [Fact]
         public void PreprocessorDirectives()
         {
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(@"#if true
+            var tree = SyntaxFactory.ParseSyntaxTree(@"#if true
 class A { }
 #else
 class B { }
 #endif");
-            SyntaxToken eof = tree.GetRoot().FindToken(tree.GetText().Length, false);
+            var eof = tree.GetRoot().FindToken(tree.GetText().Length, false);
             Assert.True(eof.HasLeadingTrivia);
             Assert.False(eof.HasTrailingTrivia);
             Assert.True(eof.ContainsDirectives);
 
-            SyntaxTriviaList trivia = eof.LeadingTrivia;
+            var trivia = eof.LeadingTrivia;
             Assert.Equal(3, trivia.Count);
             Assert.Equal("#else", trivia.ElementAt(0).ToString());
             Assert.Equal(SyntaxKind.DisabledTextTrivia, trivia.ElementAt(1).Kind());
             Assert.Equal("#endif", trivia.ElementAt(2).ToString());
 
-            DirectiveTriviaSyntax directive = tree.GetRoot().GetLastDirective();
+            var directive = tree.GetRoot().GetLastDirective();
             Assert.Equal("endif", directive.DirectiveNameToken.Value);
 
             directive = directive.GetPreviousDirective();

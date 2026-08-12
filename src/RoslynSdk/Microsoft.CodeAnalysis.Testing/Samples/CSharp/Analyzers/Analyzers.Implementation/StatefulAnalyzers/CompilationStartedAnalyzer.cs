@@ -44,7 +44,7 @@ namespace Sample.Analyzers
             context.RegisterCompilationStartAction(compilationContext =>
             {
                 // We only care about compilations where interface type "DontInheritInterfaceTypeName" is available.
-                INamedTypeSymbol interfaceType = compilationContext.Compilation.GetTypeByMetadataName(DontInheritInterfaceTypeName);
+                var interfaceType = compilationContext.Compilation.GetTypeByMetadataName(DontInheritInterfaceTypeName);
                 if (interfaceType == null)
                 {
                     return;
@@ -60,11 +60,11 @@ namespace Sample.Analyzers
         private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol interfaceType)
         {
             // Check if the symbol implements the interface type
-            INamedTypeSymbol namedType = (INamedTypeSymbol)context.Symbol;
+            var namedType = (INamedTypeSymbol)context.Symbol;
             if (namedType.Interfaces.Contains(interfaceType) &&
                 !namedType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat).Equals(AllowedInternalImplementationTypeName))
             {
-                Diagnostic diagnostic = Diagnostic.Create(Rule, namedType.Locations[0], namedType.Name, DontInheritInterfaceTypeName);
+                var diagnostic = Diagnostic.Create(Rule, namedType.Locations[0], namedType.Name, DontInheritInterfaceTypeName);
                 context.ReportDiagnostic(diagnostic);
             }
         }

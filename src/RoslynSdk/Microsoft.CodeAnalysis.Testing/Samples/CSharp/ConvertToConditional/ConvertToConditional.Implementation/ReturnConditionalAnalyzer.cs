@@ -18,7 +18,7 @@ namespace ConvertToConditional
         {
             returnStatement = null;
 
-            ExpressionSyntax conditional = new ReturnConditionalAnalyzer(ifStatement, semanticModel).CreateConditional();
+            var conditional = new ReturnConditionalAnalyzer(ifStatement, semanticModel).CreateConditional();
             if (conditional == null)
             {
                 return false;
@@ -31,24 +31,24 @@ namespace ConvertToConditional
 
         protected override ExpressionSyntax CreateConditional()
         {
-            if (!TryGetReturnStatements(IfStatement, out ReturnStatementSyntax whenTrueStatement, out ReturnStatementSyntax whenFalseStatement))
+            if (!TryGetReturnStatements(IfStatement, out var whenTrueStatement, out var whenFalseStatement))
             {
                 return null;
             }
 
-            ExpressionSyntax whenTrue = whenTrueStatement.Expression;
-            ExpressionSyntax whenFalse = whenFalseStatement.Expression;
+            var whenTrue = whenTrueStatement.Expression;
+            var whenFalse = whenFalseStatement.Expression;
             if (whenTrue == null || whenFalse == null)
             {
                 return null;
             }
 
-            MemberDeclarationSyntax parentMember = IfStatement.FirstAncestorOrSelf<MemberDeclarationSyntax>();
-            ISymbol memberSymbol = SemanticModel.GetDeclaredSymbol(parentMember);
+            var parentMember = IfStatement.FirstAncestorOrSelf<MemberDeclarationSyntax>();
+            var memberSymbol = SemanticModel.GetDeclaredSymbol(parentMember);
             switch (memberSymbol.Kind)
             {
                 case SymbolKind.Method:
-                    IMethodSymbol methodSymbol = (IMethodSymbol)memberSymbol;
+                    var methodSymbol = (IMethodSymbol)memberSymbol;
                     return !methodSymbol.ReturnsVoid
                         ? CreateConditional(whenTrue, whenFalse, methodSymbol.ReturnType)
                         : null;

@@ -53,14 +53,14 @@ namespace Sample.Analyzers
                 }
 
                 // We only care about methods with parameters.
-                IMethodSymbol method = (IMethodSymbol)startCodeBlockContext.OwningSymbol;
+                var method = (IMethodSymbol)startCodeBlockContext.OwningSymbol;
                 if (method.Parameters.IsEmpty)
                 {
                     return;
                 }
 
                 // Initialize local mutable state in the start action.
-                UnusedParametersAnalyzer analyzer = new UnusedParametersAnalyzer(method);
+                var analyzer = new UnusedParametersAnalyzer(method);
 
                 // Register an intermediate non-end action that accesses and modifies the state.
                 startCodeBlockContext.RegisterSyntaxNodeAction(analyzer.AnalyzeSyntaxNode, SyntaxKind.IdentifierName);
@@ -84,7 +84,7 @@ namespace Sample.Analyzers
             public UnusedParametersAnalyzer(IMethodSymbol method)
             {
                 // Initialization: Assume all parameters are unused.
-                IEnumerable<IParameterSymbol> parameters = method.Parameters.Where(p => !p.IsImplicitlyDeclared && p.Locations.Length > 0);
+                var parameters = method.Parameters.Where(p => !p.IsImplicitlyDeclared && p.Locations.Length > 0);
                 _unusedParameters = new HashSet<IParameterSymbol>(parameters);
                 _unusedParameterNames = new HashSet<string>(parameters.Select(p => p.Name));
             }
@@ -102,7 +102,7 @@ namespace Sample.Analyzers
                 }
 
                 // Syntactic check to avoid invoking GetSymbolInfo for every identifier.
-                IdentifierNameSyntax identifier = (IdentifierNameSyntax)context.Node;
+                var identifier = (IdentifierNameSyntax)context.Node;
                 if (!_unusedParameterNames.Contains(identifier.Identifier.ValueText))
                 {
                     return;
@@ -124,9 +124,9 @@ namespace Sample.Analyzers
             public void CodeBlockEndAction(CodeBlockAnalysisContext context)
             {
                 // Report diagnostics for unused parameters.
-                foreach (IParameterSymbol parameter in _unusedParameters)
+                foreach (var parameter in _unusedParameters)
                 {
-                    Diagnostic diagnostic = Diagnostic.Create(Rule, parameter.Locations[0], parameter.Name, parameter.ContainingSymbol.Name);
+                    var diagnostic = Diagnostic.Create(Rule, parameter.Locations[0], parameter.Name, parameter.ContainingSymbol.Name);
                     context.ReportDiagnostic(diagnostic);
                 }
             }

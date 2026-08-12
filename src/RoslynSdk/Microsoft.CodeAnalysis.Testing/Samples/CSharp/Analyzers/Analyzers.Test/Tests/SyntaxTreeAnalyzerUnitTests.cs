@@ -15,14 +15,14 @@ namespace Sample.Analyzers.Test
         [Fact]
         public async Task SyntaxTreeAnalyzerTest()
         {
-            string test = @"
+            var test = @"
 class C
 {
     public void M()
     {
     }
 }";
-            DiagnosticResult expected = Verify.Diagnostic().WithArguments("Test0.cs");
+            var expected = Verify.Diagnostic().WithArguments("Test0.cs");
 
             await new CSharpAnalyzerTest<SyntaxTreeAnalyzer, DefaultVerifier>
             {
@@ -31,7 +31,7 @@ class C
                 {
                     (solution, projectId) =>
                     {
-                        CSharpParseOptions parseOptions = CSharpParseOptions.Default.WithDocumentationMode(DocumentationMode.Diagnose);
+                        var parseOptions = CSharpParseOptions.Default.WithDocumentationMode(DocumentationMode.Diagnose);
                         return solution.WithProjectParseOptions(projectId, parseOptions);
                     },
                 }
@@ -45,7 +45,7 @@ class C
                 {
                     (solution, projectId) =>
                     {
-                        CSharpParseOptions parseOptions = CSharpParseOptions.Default.WithDocumentationMode(DocumentationMode.None);
+                        var parseOptions = CSharpParseOptions.Default.WithDocumentationMode(DocumentationMode.None);
                         return solution.WithProjectParseOptions(projectId, parseOptions);
                     },
                 }
@@ -59,7 +59,7 @@ class C
                 {
                     (solution, projectId) =>
                     {
-                        CSharpParseOptions parseOptions = CSharpParseOptions.Default.WithDocumentationMode(DocumentationMode.Parse);
+                        var parseOptions = CSharpParseOptions.Default.WithDocumentationMode(DocumentationMode.Parse);
                         return solution.WithProjectParseOptions(projectId, parseOptions);
                     },
                 }

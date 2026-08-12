@@ -32,7 +32,7 @@ namespace CSharpToVisualBasicConverter
 
             internal SyntaxToken VisitToken(SyntaxToken token)
             {
-                SyntaxToken result = VisitTokenWorker(token);
+                var result = VisitTokenWorker(token);
                 return CopyTriviaTo(token, result);
             }
 
@@ -53,7 +53,7 @@ namespace CSharpToVisualBasicConverter
 
             private SyntaxToken VisitTokenWorker(SyntaxToken token)
             {
-                SyntaxKind kind = token.Kind();
+                var kind = token.Kind();
                 if (kind == CS.SyntaxKind.IdentifierToken)
                 {
                     return VB.SyntaxFactory.Identifier(token.ValueText);
@@ -122,13 +122,13 @@ namespace CSharpToVisualBasicConverter
                         return VB.SyntaxFactory.IntegerLiteralToken(token.ValueText, VB.Syntax.LiteralBase.Decimal, VB.Syntax.TypeCharacter.None, 0);
                     case CS.SyntaxKind.CharacterLiteralToken:
                         {
-                            string text = Microsoft.CodeAnalysis.VisualBasic.SymbolDisplay.FormatPrimitive(token.ValueText[0], quoteStrings: true, useHexadecimalNumbers: true);
+                            var text = Microsoft.CodeAnalysis.VisualBasic.SymbolDisplay.FormatPrimitive(token.ValueText[0], quoteStrings: true, useHexadecimalNumbers: true);
                             return VB.SyntaxFactory.CharacterLiteralToken(text, token.ValueText[0]);
                         }
 
                     case CS.SyntaxKind.StringLiteralToken:
                         {
-                            string text = Microsoft.CodeAnalysis.VisualBasic.SymbolDisplay.FormatPrimitive(token.ValueText, quoteStrings: true, useHexadecimalNumbers: true);
+                            var text = Microsoft.CodeAnalysis.VisualBasic.SymbolDisplay.FormatPrimitive(token.ValueText, quoteStrings: true, useHexadecimalNumbers: true);
                             return VB.SyntaxFactory.StringLiteralToken(text, token.ValueText);
                         }
                 }
@@ -179,12 +179,12 @@ namespace CSharpToVisualBasicConverter
                 {
                     return null;
                 }
-                else if (node is VB.Syntax.ExpressionSyntax)
+                else if (node is VB.Syntax.ExpressionSyntax expression)
                 {
-                    return (VB.Syntax.ExpressionSyntax)node;
+                    return expression;
                 }
 
-                string error = CreateCouldNotBeConvertedString(((SyntaxNode)node).ToFullString(), typeof(VB.Syntax.ExpressionSyntax));
+                var error = CreateCouldNotBeConvertedString(((SyntaxNode)node).ToFullString(), typeof(VB.Syntax.ExpressionSyntax));
                 return VB.SyntaxFactory.StringLiteralExpression(VB.SyntaxFactory.StringLiteralToken(error, error));
             }
 
@@ -194,17 +194,17 @@ namespace CSharpToVisualBasicConverter
                 {
                     return null;
                 }
-                else if (node is VB.Syntax.StatementSyntax)
+                else if (node is VB.Syntax.StatementSyntax statement)
                 {
-                    return (VB.Syntax.StatementSyntax)node;
+                    return statement;
                 }
-                else if (node is VB.Syntax.InvocationExpressionSyntax)
+                else if (node is VB.Syntax.InvocationExpressionSyntax invocation)
                 {
-                    return VB.SyntaxFactory.ExpressionStatement((VB.Syntax.InvocationExpressionSyntax)node);
+                    return VB.SyntaxFactory.ExpressionStatement(invocation);
                 }
-                else if (node is VB.Syntax.AwaitExpressionSyntax)
+                else if (node is VB.Syntax.AwaitExpressionSyntax awaitExpression)
                 {
-                    return VB.SyntaxFactory.ExpressionStatement((VB.Syntax.AwaitExpressionSyntax)node);
+                    return VB.SyntaxFactory.ExpressionStatement(awaitExpression);
                 }
                 else
                 {
@@ -222,13 +222,13 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitCompilationUnit(CS.Syntax.CompilationUnitSyntax node)
             {
-                SyntaxList<VB.Syntax.AttributeListSyntax> blocks = List(node.AttributeLists.Select(Visit<VB.Syntax.AttributeListSyntax>));
+                var blocks = List(node.AttributeLists.Select(Visit<VB.Syntax.AttributeListSyntax>));
 
-                SyntaxList<VB.Syntax.AttributesStatementSyntax> attributes = blocks.Count > 0
+                var attributes = blocks.Count > 0
                     ? List(VB.SyntaxFactory.AttributesStatement(blocks))
                     : default(SyntaxList<VB.Syntax.AttributesStatementSyntax>);
 
-                IEnumerable<VB.Syntax.ImportsStatementSyntax> vbImports = node.Externs.Select(Visit<VB.Syntax.ImportsStatementSyntax>)
+                var vbImports = node.Externs.Select(Visit<VB.Syntax.ImportsStatementSyntax>)
                                     .Concat(node.Usings.Select(Visit<VB.Syntax.ImportsStatementSyntax>));
 
                 return VB.SyntaxFactory.CompilationUnit(
@@ -274,16 +274,16 @@ namespace CSharpToVisualBasicConverter
 
             internal SyntaxToken ConvertIdentifier(SyntaxToken name)
             {
-                string text = name.ValueText;
-                if (identifierMap != null && identifierMap.TryGetValue(text, out string replace))
+                var text = name.ValueText;
+                if (identifierMap != null && identifierMap.TryGetValue(text, out var replace))
                 {
                     text = replace;
                 }
 
-                SyntaxNode node = name.Parent;
-                bool afterDot1 = node.IsParentKind(CS.SyntaxKind.QualifiedName) && ((CS.Syntax.QualifiedNameSyntax)node.Parent).Right == node;
-                bool afterDot2 = node.IsParentKind(CS.SyntaxKind.SimpleMemberAccessExpression) && ((CS.Syntax.MemberAccessExpressionSyntax)node.Parent).Name == node;
-                bool afterDot = afterDot1 || afterDot2;
+                var node = name.Parent;
+                var afterDot1 = node.IsParentKind(CS.SyntaxKind.QualifiedName) && ((CS.Syntax.QualifiedNameSyntax)node.Parent).Right == node;
+                var afterDot2 = node.IsParentKind(CS.SyntaxKind.SimpleMemberAccessExpression) && ((CS.Syntax.MemberAccessExpressionSyntax)node.Parent).Name == node;
+                var afterDot = afterDot1 || afterDot2;
 
                 if (!afterDot && VB.SyntaxFacts.GetKeywordKind(text) != VB.SyntaxKind.None)
                 {
@@ -301,7 +301,7 @@ namespace CSharpToVisualBasicConverter
             {
                 if (trivia.HasStructure)
                 {
-                    VB.Syntax.StructuredTriviaSyntax structure = Visit<VB.Syntax.StructuredTriviaSyntax>(trivia.GetStructure());
+                    var structure = Visit<VB.Syntax.StructuredTriviaSyntax>(trivia.GetStructure());
 
                     if (structure is VB.Syntax.BadDirectiveTriviaSyntax)
                     {
@@ -342,7 +342,7 @@ namespace CSharpToVisualBasicConverter
             {
                 if (node.Right.IsKind(CS.SyntaxKind.GenericName))
                 {
-                    GenericNameSyntax genericName = (CS.Syntax.GenericNameSyntax)node.Right;
+                    var genericName = (CS.Syntax.GenericNameSyntax)node.Right;
                     return VB.SyntaxFactory.QualifiedName(
                         VisitName(node.Left),
                         VB.SyntaxFactory.GenericName(
@@ -364,21 +364,21 @@ namespace CSharpToVisualBasicConverter
             private VB.Syntax.TypeArgumentListSyntax ConvertTypeArguments(
                 CS.Syntax.TypeArgumentListSyntax typeArgumentList)
             {
-                VB.Syntax.TypeSyntax[] types = typeArgumentList.Arguments.Select(VisitType).ToArray();
+                var types = typeArgumentList.Arguments.Select(VisitType).ToArray();
                 return VB.SyntaxFactory.TypeArgumentList(types);
             }
 
             public override SyntaxNode VisitTypeParameterList(CS.Syntax.TypeParameterListSyntax node)
             {
-                VB.Syntax.TypeParameterSyntax[] parameters = node.Parameters.Select(Visit<VB.Syntax.TypeParameterSyntax>).ToArray();
+                var parameters = node.Parameters.Select(Visit<VB.Syntax.TypeParameterSyntax>).ToArray();
                 return VB.SyntaxFactory.TypeParameterList(parameters);
             }
 
             private VB.Syntax.TypeParameterListSyntax ConvertTypeParameters(SeparatedSyntaxList<CS.Syntax.TypeParameterSyntax> list)
             {
-                VB.Syntax.TypeParameterSyntax[] parameters = list.Select(t =>
+                var parameters = list.Select(t =>
                 {
-                    SyntaxToken variance = t.VarianceKeyword.IsKind(CS.SyntaxKind.None)
+                    var variance = t.VarianceKeyword.IsKind(CS.SyntaxKind.None)
                         ? new SyntaxToken()
                         : t.VarianceKeyword.IsKind(CS.SyntaxKind.InKeyword)
                             ? VB.SyntaxFactory.Token(VB.SyntaxKind.InKeyword)
@@ -400,7 +400,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitEnumDeclaration(CS.Syntax.EnumDeclarationSyntax node)
             {
-                VB.Syntax.EnumStatementSyntax declaration = VB.SyntaxFactory.EnumStatement(
+                var declaration = VB.SyntaxFactory.EnumStatement(
                     ConvertAttributes(node.AttributeLists),
                     ConvertModifiers(node.Modifiers),
                     ConvertIdentifier(node.Identifier),
@@ -417,8 +417,8 @@ namespace CSharpToVisualBasicConverter
                 VB.SyntaxKind declarationKind;
                 VB.SyntaxKind endKind;
                 SyntaxToken keyword;
-                SyntaxList<VB.Syntax.InheritsStatementSyntax> inherits = List<VB.Syntax.InheritsStatementSyntax>();
-                SyntaxList<VB.Syntax.ImplementsStatementSyntax> implements = List<VB.Syntax.ImplementsStatementSyntax>();
+                var inherits = List<VB.Syntax.InheritsStatementSyntax>();
+                var implements = List<VB.Syntax.ImplementsStatementSyntax>();
 
                 if (node.Modifiers.Any(CS.SyntaxKind.StaticKeyword))
                 {
@@ -440,8 +440,8 @@ namespace CSharpToVisualBasicConverter
                     // hack. in C# it's just a list of types.  We can't tell if the first one is a
                     // class or not.  So we just check if it starts with a capital I or not and use
                     // that as a weak enough heuristic.
-                    TypeSyntax firstType = node.BaseList.Types[0].Type;
-                    SyntaxToken rightName = GetRightmostNamePart(firstType);
+                    var firstType = node.BaseList.Types[0].Type;
+                    var rightName = GetRightmostNamePart(firstType);
                     if (rightName.ValueText.Length >= 2 &&
                         rightName.ValueText[0] == 'I' &&
                         char.IsUpper(rightName.ValueText[1]))
@@ -463,11 +463,11 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitStructDeclaration(CS.Syntax.StructDeclarationSyntax node)
             {
-                VB.SyntaxKind blockKind = VB.SyntaxKind.StructureBlock;
-                VB.SyntaxKind declarationKind = VB.SyntaxKind.StructureStatement;
-                VB.SyntaxKind endKind = VB.SyntaxKind.EndStructureStatement;
-                SyntaxToken keyword = VB.SyntaxFactory.Token(VB.SyntaxKind.StructureKeyword);
-                SyntaxList<VB.Syntax.ImplementsStatementSyntax> implements = List<VB.Syntax.ImplementsStatementSyntax>();
+                var blockKind = VB.SyntaxKind.StructureBlock;
+                var declarationKind = VB.SyntaxKind.StructureStatement;
+                var endKind = VB.SyntaxKind.EndStructureStatement;
+                var keyword = VB.SyntaxFactory.Token(VB.SyntaxKind.StructureKeyword);
+                var implements = List<VB.Syntax.ImplementsStatementSyntax>();
                 if (node.BaseList != null)
                 {
                     implements = ConvertImplementsList(node.BaseList.Types.Select(t => t.Type));
@@ -478,11 +478,11 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitInterfaceDeclaration(CS.Syntax.InterfaceDeclarationSyntax node)
             {
-                VB.SyntaxKind blockKind = VB.SyntaxKind.InterfaceBlock;
-                VB.SyntaxKind declarationKind = VB.SyntaxKind.InterfaceStatement;
-                VB.SyntaxKind endKind = VB.SyntaxKind.EndInterfaceStatement;
-                SyntaxToken keyword = VB.SyntaxFactory.Token(VB.SyntaxKind.InterfaceKeyword);
-                SyntaxList<VB.Syntax.InheritsStatementSyntax> inherits = List<VB.Syntax.InheritsStatementSyntax>();
+                var blockKind = VB.SyntaxKind.InterfaceBlock;
+                var declarationKind = VB.SyntaxKind.InterfaceStatement;
+                var endKind = VB.SyntaxKind.EndInterfaceStatement;
+                var keyword = VB.SyntaxFactory.Token(VB.SyntaxKind.InterfaceKeyword);
+                var inherits = List<VB.Syntax.InheritsStatementSyntax>();
                 if (node.BaseList != null)
                 {
                     inherits = ConvertInheritsList(node.BaseList.Types.Select(t => t.Type));
@@ -496,10 +496,10 @@ namespace CSharpToVisualBasicConverter
                 VB.SyntaxKind blockKind, VB.SyntaxKind declarationKind, VB.SyntaxKind endKind,
                 SyntaxToken keyword, SyntaxList<VB.Syntax.InheritsStatementSyntax> inherits, SyntaxList<VB.Syntax.ImplementsStatementSyntax> implements)
             {
-                SyntaxToken identifier = ConvertIdentifier(node.Identifier);
-                VB.Syntax.TypeParameterListSyntax typeParameters = Visit<VB.Syntax.TypeParameterListSyntax>(node.TypeParameterList);
+                var identifier = ConvertIdentifier(node.Identifier);
+                var typeParameters = Visit<VB.Syntax.TypeParameterListSyntax>(node.TypeParameterList);
 
-                VB.Syntax.TypeStatementSyntax declaration = VB.SyntaxFactory.TypeStatement(
+                var declaration = VB.SyntaxFactory.TypeStatement(
                     declarationKind,
                     ConvertAttributes(node.AttributeLists),
                     ConvertModifiers(node.Modifiers.Where(t => !t.IsKind(CS.SyntaxKind.StaticKeyword))),
@@ -507,7 +507,7 @@ namespace CSharpToVisualBasicConverter
                     identifier,
                     typeParameters);
 
-                VB.Syntax.TypeBlockSyntax typeBlock = VB.SyntaxFactory.TypeBlock(
+                var typeBlock = VB.SyntaxFactory.TypeBlock(
                     blockKind,
                     declaration,
                     inherits,
@@ -515,10 +515,10 @@ namespace CSharpToVisualBasicConverter
                     List(node.Members.Select(Visit<VB.Syntax.StatementSyntax>)),
                     VB.SyntaxFactory.EndBlockStatement(endKind, VB.SyntaxFactory.Token(VB.SyntaxKind.EndKeyword), keyword));
 
-                SyntaxTrivia docComment = node.GetLeadingTrivia().FirstOrDefault(t => CS.SyntaxFacts.IsDocumentationCommentTrivia(t.Kind()));
+                var docComment = node.GetLeadingTrivia().FirstOrDefault(t => CS.SyntaxFacts.IsDocumentationCommentTrivia(t.Kind()));
                 if (!docComment.IsKind(CS.SyntaxKind.None))
                 {
-                    IEnumerable<SyntaxTrivia> vbDocComment = VisitTrivia(docComment);
+                    var vbDocComment = VisitTrivia(docComment);
                     return typeBlock.WithLeadingTrivia(typeBlock.GetLeadingTrivia().Concat(vbDocComment));
                 }
                 else
@@ -568,7 +568,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitMethodDeclaration(CS.Syntax.MethodDeclarationSyntax node)
             {
-                bool isVoid = node.ReturnType.IsKind(CS.SyntaxKind.PredefinedType) &&
+                var isVoid = node.ReturnType.IsKind(CS.SyntaxKind.PredefinedType) &&
                     ((CS.Syntax.PredefinedTypeSyntax)node.ReturnType).Keyword.IsKind(CS.SyntaxKind.VoidKeyword);
 
                 VB.Syntax.ImplementsClauseSyntax implementsClause = null;
@@ -582,18 +582,18 @@ namespace CSharpToVisualBasicConverter
 
                 VB.Syntax.MethodStatementSyntax begin;
 
-                SyntaxToken identifier = ConvertIdentifier(node.Identifier);
-                VB.Syntax.TypeParameterListSyntax typeParameters = Visit<VB.Syntax.TypeParameterListSyntax>(node.TypeParameterList);
+                var identifier = ConvertIdentifier(node.Identifier);
+                var typeParameters = Visit<VB.Syntax.TypeParameterListSyntax>(node.TypeParameterList);
 
-                bool isExtension =
+                var isExtension =
                     node.ParameterList.Parameters.Count > 0 &&
                     node.ParameterList.Parameters[0].Modifiers.Any(CS.SyntaxKind.ThisKeyword);
 
-                List<SyntaxToken> modifiers = isExtension
+                var modifiers = isExtension
                      ? node.Modifiers.Where(t => !t.IsKind(CS.SyntaxKind.StaticKeyword)).ToList()
                      : node.Modifiers.ToList();
 
-                List<AttributeListSyntax> attributes = isExtension
+                var attributes = isExtension
                     ? node.AttributeLists.Concat(CreateExtensionAttribute()).ToList()
                     : node.AttributeLists.ToList();
 
@@ -611,7 +611,7 @@ namespace CSharpToVisualBasicConverter
                 }
                 else
                 {
-                    SplitAttributes(attributes, out SyntaxList<VB.Syntax.AttributeListSyntax> returnAttributes, out SyntaxList<VB.Syntax.AttributeListSyntax> remainAttributes);
+                    SplitAttributes(attributes, out var returnAttributes, out var remainAttributes);
 
                     begin = VB.SyntaxFactory.FunctionStatement(
                         remainAttributes,
@@ -624,10 +624,10 @@ namespace CSharpToVisualBasicConverter
                         implementsClause: implementsClause);
                 }
 
-                SyntaxTrivia docComment = node.GetLeadingTrivia().FirstOrDefault(t => CS.SyntaxFacts.IsDocumentationCommentTrivia(t.Kind()));
+                var docComment = node.GetLeadingTrivia().FirstOrDefault(t => CS.SyntaxFacts.IsDocumentationCommentTrivia(t.Kind()));
                 if (!docComment.IsKind(CS.SyntaxKind.None))
                 {
-                    IEnumerable<SyntaxTrivia> vbDocComment = VisitTrivia(docComment);
+                    var vbDocComment = VisitTrivia(docComment);
                     begin = begin.WithLeadingTrivia(begin.GetLeadingTrivia().Concat(vbDocComment));
                 }
 
@@ -662,10 +662,10 @@ namespace CSharpToVisualBasicConverter
                 out SyntaxList<VB.Syntax.AttributeListSyntax> returnAttributes,
                 out SyntaxList<VB.Syntax.AttributeListSyntax> remainingAttributes)
             {
-                AttributeListSyntax returnAttribute =
+                var returnAttribute =
                     attributes.FirstOrDefault(a => a.Target != null && a.Target.Identifier.IsKind(CS.SyntaxKind.ReturnKeyword));
 
-                IEnumerable<AttributeListSyntax> rest =
+                var rest =
                     attributes.Where(a => a != returnAttribute);
 
                 returnAttributes = List(Visit<VB.Syntax.AttributeListSyntax>(returnAttribute));
@@ -682,10 +682,10 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitParameter(CS.Syntax.ParameterSyntax node)
             {
-                VB.Syntax.SimpleAsClauseSyntax asClause = node.Type == null
+                var asClause = node.Type == null
                     ? null
                     : VB.SyntaxFactory.SimpleAsClause(VisitType(node.Type));
-                SyntaxTokenList modifiers = ConvertModifiers(node.Modifiers);
+                var modifiers = ConvertModifiers(node.Modifiers);
                 if (node.Default != null)
                 {
                     modifiers = TokenList(modifiers.Concat(VB.SyntaxFactory.Token(VB.SyntaxKind.OptionalKeyword)));
@@ -706,7 +706,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitTypeParameter(CS.Syntax.TypeParameterSyntax node)
             {
-                SyntaxToken variance = node.VarianceKeyword.IsKind(CS.SyntaxKind.None)
+                var variance = node.VarianceKeyword.IsKind(CS.SyntaxKind.None)
                     ? default(SyntaxToken)
                     : node.VarianceKeyword.IsKind(CS.SyntaxKind.InKeyword)
                         ? VB.SyntaxFactory.Token(VB.SyntaxKind.InKeyword)
@@ -768,7 +768,7 @@ namespace CSharpToVisualBasicConverter
                 switch (node.Kind())
                 {
                     case CS.SyntaxKind.ArgListExpression:
-                        string error = CreateCouldNotBeConvertedString(node.ToFullString(), typeof(SyntaxNode));
+                        var error = CreateCouldNotBeConvertedString(node.ToFullString(), typeof(SyntaxNode));
                         return VB.SyntaxFactory.StringLiteralExpression(
                             VB.SyntaxFactory.StringLiteralToken(error, error));
                     case CS.SyntaxKind.BaseExpression:
@@ -827,13 +827,13 @@ namespace CSharpToVisualBasicConverter
 
             private SyntaxNode ConvertStringLiteralExpression(CS.Syntax.LiteralExpressionSyntax node)
             {
-                int start = this.text.Lines.IndexOf(node.Token.Span.Start);
-                int end = this.text.Lines.IndexOf(node.Token.Span.End);
+                var start = this.text.Lines.IndexOf(node.Token.Span.Start);
+                var end = this.text.Lines.IndexOf(node.Token.Span.End);
 
                 if (node.Token.IsVerbatimStringLiteral() &&
                     start != end)
                 {
-                    string text = node.Token.ToString();
+                    var text = node.Token.ToString();
                     text = text.Substring(2, text.Length - 3);
                     text = System.Security.SecurityElement.Escape(text);
 
@@ -860,8 +860,8 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitVariableDeclarator(CS.Syntax.VariableDeclaratorSyntax node)
             {
-                TypeSyntax type = node.GetVariableType();
-                bool isVar = type is CS.Syntax.IdentifierNameSyntax && ((CS.Syntax.IdentifierNameSyntax)type).Identifier.ValueText == "var";
+                var type = node.GetVariableType();
+                var isVar = type is CS.Syntax.IdentifierNameSyntax identifierName && identifierName.Identifier.ValueText == "var";
 
                 VB.Syntax.EqualsValueSyntax initializer = null;
                 if (node.Initializer != null)
@@ -912,7 +912,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitFieldDeclaration(CS.Syntax.FieldDeclarationSyntax node)
             {
-                SyntaxTokenList modifiers = ConvertModifiers(node.Modifiers);
+                var modifiers = ConvertModifiers(node.Modifiers);
                 if (modifiers.Count == 0)
                 {
                     modifiers = VB.SyntaxFactory.TokenList(VB.SyntaxFactory.Token(VB.SyntaxKind.DimKeyword));
@@ -926,7 +926,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitConstructorDeclaration(CS.Syntax.ConstructorDeclarationSyntax node)
             {
-                VB.Syntax.SubNewStatementSyntax declaration = VB.SyntaxFactory.SubNewStatement(
+                var declaration = VB.SyntaxFactory.SubNewStatement(
                     ConvertAttributes(node.AttributeLists),
                     ConvertModifiers(node.Modifiers),
                     Visit<VB.Syntax.ParameterListSyntax>(node.ParameterList));
@@ -953,7 +953,7 @@ namespace CSharpToVisualBasicConverter
                 }
                 else if (node.Name.IsKind(CS.SyntaxKind.GenericName))
                 {
-                    GenericNameSyntax genericName = (CS.Syntax.GenericNameSyntax)node.Name;
+                    var genericName = (CS.Syntax.GenericNameSyntax)node.Name;
                     return VB.SyntaxFactory.SimpleMemberAccessExpression(
                         VisitExpression(node.Expression),
                         VB.SyntaxFactory.Token(VB.SyntaxKind.DotToken),
@@ -968,8 +968,8 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitBinaryExpression(CS.Syntax.BinaryExpressionSyntax node)
             {
-                VB.Syntax.ExpressionSyntax left = VisitExpression(node.Left);
-                VB.Syntax.ExpressionSyntax right = VisitExpression(node.Right);
+                var left = VisitExpression(node.Left);
+                var right = VisitExpression(node.Right);
 
                 switch (node.OperatorToken.Kind())
                 {
@@ -1039,8 +1039,8 @@ namespace CSharpToVisualBasicConverter
                     case CS.SyntaxKind.QuestionToken:
                     case CS.SyntaxKind.QuestionQuestionToken:
                         {
-                            VB.Syntax.ArgumentSyntax[] args = new VB.Syntax.ArgumentSyntax[] { VB.SyntaxFactory.SimpleArgument(left), VB.SyntaxFactory.SimpleArgument(right) };
-                            SeparatedSyntaxList<VB.Syntax.ArgumentSyntax> arguments = SeparatedCommaList(args);
+                            var args = new VB.Syntax.ArgumentSyntax[] { VB.SyntaxFactory.SimpleArgument(left), VB.SyntaxFactory.SimpleArgument(right) };
+                            var arguments = SeparatedCommaList(args);
                             return VB.SyntaxFactory.InvocationExpression(
                                 VB.SyntaxFactory.IdentifierName(VB.SyntaxFactory.Identifier("If")),
                                 VB.SyntaxFactory.ArgumentList(arguments));
@@ -1055,14 +1055,14 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitAssignmentExpression(CS.Syntax.AssignmentExpressionSyntax node)
             {
-                VB.Syntax.ExpressionSyntax left = VisitExpression(node.Left);
-                VB.Syntax.ExpressionSyntax right = VisitExpression(node.Right);
+                var left = VisitExpression(node.Left);
+                var right = VisitExpression(node.Right);
 
                 switch (node.OperatorToken.Kind())
                 {
                     case CS.SyntaxKind.AmpersandEqualsToken:
                         {
-                            VB.Syntax.ExpressionSyntax left2 = VisitExpression(node.Left);
+                            var left2 = VisitExpression(node.Left);
                             return VB.SyntaxFactory.SimpleAssignmentStatement(
                                 left,
                                 VB.SyntaxFactory.Token(VB.SyntaxKind.EqualsToken),
@@ -1074,7 +1074,7 @@ namespace CSharpToVisualBasicConverter
 
                     case CS.SyntaxKind.BarEqualsToken:
                         {
-                            VB.Syntax.ExpressionSyntax left2 = VisitExpression(node.Left);
+                            var left2 = VisitExpression(node.Left);
                             return VB.SyntaxFactory.SimpleAssignmentStatement(
                                 left,
                                 VB.SyntaxFactory.Token(VB.SyntaxKind.EqualsToken),
@@ -1083,7 +1083,7 @@ namespace CSharpToVisualBasicConverter
 
                     case CS.SyntaxKind.CaretEqualsToken:
                         {
-                            VB.Syntax.ExpressionSyntax left2 = VisitExpression(node.Left);
+                            var left2 = VisitExpression(node.Left);
                             return VB.SyntaxFactory.SimpleAssignmentStatement(
                                 left,
                                 VB.SyntaxFactory.Token(VB.SyntaxKind.EqualsToken),
@@ -1098,7 +1098,7 @@ namespace CSharpToVisualBasicConverter
 
                     case CS.SyntaxKind.GreaterThanGreaterThanEqualsToken:
                         {
-                            VB.Syntax.ExpressionSyntax left2 = VisitExpression(node.Left);
+                            var left2 = VisitExpression(node.Left);
                             return VB.SyntaxFactory.SimpleAssignmentStatement(
                                 left,
                                 VB.SyntaxFactory.Token(VB.SyntaxKind.EqualsToken),
@@ -1107,7 +1107,7 @@ namespace CSharpToVisualBasicConverter
 
                     case CS.SyntaxKind.LessThanLessThanEqualsToken:
                         {
-                            VB.Syntax.ExpressionSyntax left2 = VisitExpression(node.Left);
+                            var left2 = VisitExpression(node.Left);
                             return VB.SyntaxFactory.SimpleAssignmentStatement(
                                 left,
                                 VB.SyntaxFactory.Token(VB.SyntaxKind.EqualsToken),
@@ -1116,7 +1116,7 @@ namespace CSharpToVisualBasicConverter
 
                     case CS.SyntaxKind.PercentEqualsToken:
                         {
-                            VB.Syntax.ExpressionSyntax left2 = VisitExpression(node.Left);
+                            var left2 = VisitExpression(node.Left);
                             return VB.SyntaxFactory.SimpleAssignmentStatement(
                                 left,
                                 VB.SyntaxFactory.Token(VB.SyntaxKind.EqualsToken),
@@ -1161,8 +1161,8 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitParenthesizedLambdaExpression(CS.Syntax.ParenthesizedLambdaExpressionSyntax node)
             {
-                VB.Syntax.ParameterListSyntax parameters = Visit<VB.Syntax.ParameterListSyntax>(node.ParameterList);
-                VB.Syntax.LambdaHeaderSyntax lambdaHeader = VB.SyntaxFactory.FunctionLambdaHeader(
+                var parameters = Visit<VB.Syntax.ParameterListSyntax>(node.ParameterList);
+                var lambdaHeader = VB.SyntaxFactory.FunctionLambdaHeader(
                     new SyntaxList<VB.Syntax.AttributeListSyntax>(),
                     node.AsyncKeyword.IsKind(CS.SyntaxKind.None) ? VB.SyntaxFactory.TokenList() : VB.SyntaxFactory.TokenList(VisitToken(node.AsyncKeyword)),
                     parameters,
@@ -1184,11 +1184,11 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitSimpleLambdaExpression(CS.Syntax.SimpleLambdaExpressionSyntax node)
             {
-                VB.Syntax.ParameterSyntax parameter = VB.SyntaxFactory.Parameter(
+                var parameter = VB.SyntaxFactory.Parameter(
                     VB.SyntaxFactory.ModifiedIdentifier(
                         ConvertIdentifier(node.Parameter.Identifier)));
 
-                VB.Syntax.LambdaHeaderSyntax lambdaHeader = VB.SyntaxFactory.FunctionLambdaHeader(
+                var lambdaHeader = VB.SyntaxFactory.FunctionLambdaHeader(
                     new SyntaxList<VB.Syntax.AttributeListSyntax>(),
                     node.AsyncKeyword.IsKind(CS.SyntaxKind.None) ? VB.SyntaxFactory.TokenList() : VB.SyntaxFactory.TokenList(VisitToken(node.AsyncKeyword)),
                     VB.SyntaxFactory.ParameterList(SeparatedList(parameter)),
@@ -1210,7 +1210,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitConditionalExpression(CS.Syntax.ConditionalExpressionSyntax node)
             {
-                VB.Syntax.ArgumentSyntax[] argumentsArray = new VB.Syntax.ArgumentSyntax[]
+                var argumentsArray = new VB.Syntax.ArgumentSyntax[]
                     {
                         VB.SyntaxFactory.SimpleArgument(VisitExpression(node.Condition)),
                         VB.SyntaxFactory.SimpleArgument(VisitExpression(node.WhenTrue)),
@@ -1238,12 +1238,12 @@ namespace CSharpToVisualBasicConverter
             {
                 if (node.Parent.IsKind(CS.SyntaxKind.AnonymousObjectCreationExpression))
                 {
-                    List<VB.Syntax.FieldInitializerSyntax> fieldInitializers = new List<VB.Syntax.FieldInitializerSyntax>();
-                    foreach (ExpressionSyntax expression in node.Expressions)
+                    var fieldInitializers = new List<VB.Syntax.FieldInitializerSyntax>();
+                    foreach (var expression in node.Expressions)
                     {
                         if (expression.IsKind(CS.SyntaxKind.SimpleAssignmentExpression))
                         {
-                            AssignmentExpressionSyntax assignment = (CS.Syntax.AssignmentExpressionSyntax)expression;
+                            var assignment = (CS.Syntax.AssignmentExpressionSyntax)expression;
                             if (assignment.Left.IsKind(CS.SyntaxKind.IdentifierName))
                             {
                                 fieldInitializers.Add(VB.SyntaxFactory.NamedFieldInitializer(
@@ -1263,12 +1263,12 @@ namespace CSharpToVisualBasicConverter
                     if (node.Expressions.Count > 0 &&
                         node.Expressions[0].IsKind(CS.SyntaxKind.SimpleAssignmentExpression))
                     {
-                        List<VB.Syntax.FieldInitializerSyntax> initializers = new List<VB.Syntax.FieldInitializerSyntax>();
-                        foreach (ExpressionSyntax e in node.Expressions)
+                        var initializers = new List<VB.Syntax.FieldInitializerSyntax>();
+                        foreach (var e in node.Expressions)
                         {
                             if (e.IsKind(CS.SyntaxKind.SimpleAssignmentExpression))
                             {
-                                AssignmentExpressionSyntax assignment = (CS.Syntax.AssignmentExpressionSyntax)e;
+                                var assignment = (CS.Syntax.AssignmentExpressionSyntax)e;
                                 if (assignment.Left.IsKind(CS.SyntaxKind.IdentifierName))
                                 {
                                     initializers.Add(
@@ -1301,7 +1301,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitForEachStatement(CS.Syntax.ForEachStatementSyntax node)
             {
-                VB.Syntax.ForEachStatementSyntax begin = VB.SyntaxFactory.ForEachStatement(
+                var begin = VB.SyntaxFactory.ForEachStatement(
                     VB.SyntaxFactory.IdentifierName(ConvertIdentifier(node.Identifier)),
                     VisitExpression(node.Expression));
                 return VB.SyntaxFactory.ForEachBlock(
@@ -1316,7 +1316,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitAttribute(CS.Syntax.AttributeSyntax node)
             {
-                AttributeListSyntax parent = (CS.Syntax.AttributeListSyntax)node.Parent;
+                var parent = (CS.Syntax.AttributeListSyntax)node.Parent;
                 return VB.SyntaxFactory.Attribute(
                     Visit<VB.Syntax.AttributeTargetSyntax>(parent.Target),
                     VisitType(node.Name),
@@ -1337,7 +1337,7 @@ namespace CSharpToVisualBasicConverter
                         return null;
                     case "assembly":
                     case "module":
-                        SyntaxToken modifier = VisitToken(node.Identifier);
+                        var modifier = VisitToken(node.Identifier);
                         return VB.SyntaxFactory.AttributeTarget(
                             modifier,
                             VB.SyntaxFactory.Token(VB.SyntaxKind.ColonToken));
@@ -1364,7 +1364,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitPropertyDeclaration(CS.Syntax.PropertyDeclarationSyntax node)
             {
-                SyntaxTokenList modifiers = ConvertModifiers(node.Modifiers);
+                var modifiers = ConvertModifiers(node.Modifiers);
                 if (node.AccessorList.Accessors.Count == 1)
                 {
                     if (node.AccessorList.Accessors[0].Keyword.IsKind(CS.SyntaxKind.GetKeyword))
@@ -1377,7 +1377,7 @@ namespace CSharpToVisualBasicConverter
                     }
                 }
 
-                VB.Syntax.PropertyStatementSyntax begin = VB.SyntaxFactory.PropertyStatement(
+                var begin = VB.SyntaxFactory.PropertyStatement(
                     ConvertAttributes(node.AttributeLists),
                     modifiers,
                     ConvertIdentifier(node.Identifier),
@@ -1398,7 +1398,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitIndexerDeclaration(CS.Syntax.IndexerDeclarationSyntax node)
             {
-                VB.Syntax.PropertyStatementSyntax begin = VB.SyntaxFactory.PropertyStatement(
+                var begin = VB.SyntaxFactory.PropertyStatement(
                     ConvertAttributes(node.AttributeLists),
                     ConvertModifiers(node.Modifiers),
                     VB.SyntaxFactory.Identifier("Item"),
@@ -1414,15 +1414,15 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitAccessorDeclaration(CS.Syntax.AccessorDeclarationSyntax node)
             {
-                SyntaxList<VB.Syntax.AttributeListSyntax> attributes = ConvertAttributes(node.AttributeLists);
-                SyntaxTokenList modifiers = ConvertModifiers(node.Modifiers);
-                SyntaxList<VB.Syntax.StatementSyntax> body = statementVisitor.VisitStatement(node.Body);
+                var attributes = ConvertAttributes(node.AttributeLists);
+                var modifiers = ConvertModifiers(node.Modifiers);
+                var body = statementVisitor.VisitStatement(node.Body);
 
                 switch (node.Kind())
                 {
                     case CS.SyntaxKind.AddAccessorDeclaration:
                         {
-                            VB.Syntax.AccessorStatementSyntax begin = VB.SyntaxFactory.AddHandlerAccessorStatement(
+                            var begin = VB.SyntaxFactory.AddHandlerAccessorStatement(
                                 attributes, modifiers, null);
 
                             return VB.SyntaxFactory.AddHandlerAccessorBlock(
@@ -1432,7 +1432,7 @@ namespace CSharpToVisualBasicConverter
 
                     case CS.SyntaxKind.GetAccessorDeclaration:
                         {
-                            VB.Syntax.AccessorStatementSyntax begin = VB.SyntaxFactory.GetAccessorStatement(
+                            var begin = VB.SyntaxFactory.GetAccessorStatement(
                                 attributes, modifiers, null);
 
                             return VB.SyntaxFactory.GetAccessorBlock(
@@ -1442,7 +1442,7 @@ namespace CSharpToVisualBasicConverter
 
                     case CS.SyntaxKind.RemoveAccessorDeclaration:
                         {
-                            VB.Syntax.AccessorStatementSyntax begin = VB.SyntaxFactory.RemoveHandlerAccessorStatement(
+                            var begin = VB.SyntaxFactory.RemoveHandlerAccessorStatement(
                                 attributes, modifiers, null);
 
                             return VB.SyntaxFactory.RemoveHandlerAccessorBlock(
@@ -1452,7 +1452,7 @@ namespace CSharpToVisualBasicConverter
 
                     case CS.SyntaxKind.SetAccessorDeclaration:
                         {
-                            VB.Syntax.AccessorStatementSyntax begin = VB.SyntaxFactory.SetAccessorStatement(
+                            var begin = VB.SyntaxFactory.SetAccessorStatement(
                                 attributes, modifiers, null);
 
                             return VB.SyntaxFactory.SetAccessorBlock(
@@ -1473,8 +1473,8 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitDocumentationCommentTrivia(CS.Syntax.DocumentationCommentTriviaSyntax node)
             {
-                string text = node.ToFullString().Replace("///", "'''");
-                VB.Syntax.CompilationUnitSyntax root = VB.SyntaxFactory.ParseSyntaxTree(text).GetRoot() as VB.Syntax.CompilationUnitSyntax;
+                var text = node.ToFullString().Replace("///", "'''");
+                var root = VB.SyntaxFactory.ParseSyntaxTree(text).GetRoot() as VB.Syntax.CompilationUnitSyntax;
                 return root.EndOfFileToken.LeadingTrivia.ElementAt(0).GetStructure();
             }
 
@@ -1491,13 +1491,13 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitArrayCreationExpression(CS.Syntax.ArrayCreationExpressionSyntax node)
             {
-                VB.Syntax.CollectionInitializerSyntax initializer = Visit<VB.Syntax.CollectionInitializerSyntax>(node.Initializer);
+                var initializer = Visit<VB.Syntax.CollectionInitializerSyntax>(node.Initializer);
                 if (initializer == null)
                 {
                     initializer = VB.SyntaxFactory.CollectionInitializer();
                 }
 
-                VB.Syntax.ArrayTypeSyntax arrayType = (VB.Syntax.ArrayTypeSyntax)VisitType(node.Type);
+                var arrayType = (VB.Syntax.ArrayTypeSyntax)VisitType(node.Type);
 
                 return VB.SyntaxFactory.ArrayCreationExpression(
                     VB.SyntaxFactory.Token(VB.SyntaxKind.NewKeyword),
@@ -1515,7 +1515,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitPostfixUnaryExpression(CS.Syntax.PostfixUnaryExpressionSyntax node)
             {
-                VB.Syntax.ExpressionSyntax operand = VisitExpression(node.Operand);
+                var operand = VisitExpression(node.Operand);
 
                 switch (node.Kind())
                 {
@@ -1618,9 +1618,9 @@ namespace CSharpToVisualBasicConverter
                     default:
                         throw new NotImplementedException();
                 }
-                SplitAttributes(node.AttributeLists.ToList(), out SyntaxList<VB.Syntax.AttributeListSyntax> returnAttributes, out SyntaxList<VB.Syntax.AttributeListSyntax> remainingAttributes);
+                SplitAttributes(node.AttributeLists.ToList(), out var returnAttributes, out var remainingAttributes);
 
-                VB.Syntax.OperatorStatementSyntax begin = VB.SyntaxFactory.OperatorStatement(
+                var begin = VB.SyntaxFactory.OperatorStatement(
                     remainingAttributes,
                     ConvertModifiers(node.Modifiers),
                     @operator,
@@ -1655,7 +1655,7 @@ namespace CSharpToVisualBasicConverter
                         return Visit<SyntaxNode>(node.Operand);
                     case CS.SyntaxKind.PreDecrementExpression:
                         {
-                            VB.Syntax.ExpressionSyntax operand = VisitExpression(node.Operand);
+                            var operand = VisitExpression(node.Operand);
                             return VB.SyntaxFactory.SimpleAssignmentStatement(
                                 operand,
                                 VB.SyntaxFactory.Token(VB.SyntaxKind.EqualsToken),
@@ -1665,7 +1665,7 @@ namespace CSharpToVisualBasicConverter
 
                     case CS.SyntaxKind.PreIncrementExpression:
                         {
-                            VB.Syntax.ExpressionSyntax operand = VisitExpression(node.Operand);
+                            var operand = VisitExpression(node.Operand);
                             return VB.SyntaxFactory.SimpleAssignmentStatement(
                                 operand,
                                 VB.SyntaxFactory.Token(VB.SyntaxKind.EqualsToken),
@@ -1751,7 +1751,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitBadDirectiveTrivia(CS.Syntax.BadDirectiveTriviaSyntax node)
             {
-                SyntaxTrivia comment = VB.SyntaxFactory.CommentTrivia(CreateCouldNotBeConvertedComment(node.ToFullString(), typeof(VB.Syntax.DirectiveTriviaSyntax)));
+                var comment = VB.SyntaxFactory.CommentTrivia(CreateCouldNotBeConvertedComment(node.ToFullString(), typeof(VB.Syntax.DirectiveTriviaSyntax)));
                 return VB.SyntaxFactory.BadDirectiveTrivia(
                     VB.SyntaxFactory.Token(VB.SyntaxKind.HashToken).WithTrailingTrivia(comment));
             }
@@ -1801,8 +1801,8 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitEnumMemberDeclaration(CS.Syntax.EnumMemberDeclarationSyntax node)
             {
-                VB.Syntax.ExpressionSyntax expression = node.EqualsValue == null ? null : VisitExpression(node.EqualsValue.Value);
-                VB.Syntax.EqualsValueSyntax initializer = expression == null ? null : VB.SyntaxFactory.EqualsValue(expression);
+                var expression = node.EqualsValue == null ? null : VisitExpression(node.EqualsValue.Value);
+                var initializer = expression == null ? null : VB.SyntaxFactory.EqualsValue(expression);
                 return VB.SyntaxFactory.EnumMemberDeclaration(
                     ConvertAttributes(node.AttributeLists),
                     ConvertIdentifier(node.Identifier),
@@ -1814,7 +1814,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitAnonymousMethodExpression(CS.Syntax.AnonymousMethodExpressionSyntax node)
             {
-                VB.Syntax.LambdaHeaderSyntax begin = VB.SyntaxFactory.FunctionLambdaHeader(
+                var begin = VB.SyntaxFactory.FunctionLambdaHeader(
                     new SyntaxList<VB.Syntax.AttributeListSyntax>(),
                     new SyntaxTokenList(),
                     Visit<VB.Syntax.ParameterListSyntax>(node.ParameterList),
@@ -1827,7 +1827,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitQueryExpression(CS.Syntax.QueryExpressionSyntax node)
             {
-                IEnumerable<VB.Syntax.QueryClauseSyntax> newClauses =
+                var newClauses =
                     Enumerable.Repeat(Visit<VB.Syntax.QueryClauseSyntax>(node.FromClause), 1)
                     .Concat(node.Body.Clauses.Select(Visit<VB.Syntax.QueryClauseSyntax>))
                     .Concat(Visit<VB.Syntax.QueryClauseSyntax>(node.Body.SelectOrGroup));
@@ -1840,7 +1840,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitFromClause(CS.Syntax.FromClauseSyntax node)
             {
-                VB.Syntax.CollectionRangeVariableSyntax initializer = VB.SyntaxFactory.CollectionRangeVariable(
+                var initializer = VB.SyntaxFactory.CollectionRangeVariable(
                     VB.SyntaxFactory.ModifiedIdentifier(ConvertIdentifier(node.Identifier)),
                     node.Type == null ? null : VB.SyntaxFactory.SimpleAsClause(VisitType(node.Type)),
                     VisitExpression(node.Expression));
@@ -1901,11 +1901,11 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitGroupClause(CS.Syntax.GroupClauseSyntax node)
             {
-                VB.Syntax.ExpressionRangeVariableSyntax groupExpression = VB.SyntaxFactory.ExpressionRangeVariable(
+                var groupExpression = VB.SyntaxFactory.ExpressionRangeVariable(
                     null, VisitExpression(node.GroupExpression));
-                VB.Syntax.ExpressionRangeVariableSyntax byExpression = VB.SyntaxFactory.ExpressionRangeVariable(
+                var byExpression = VB.SyntaxFactory.ExpressionRangeVariable(
                     null, VisitExpression(node.ByExpression));
-                QueryExpressionSyntax query = (CS.Syntax.QueryExpressionSyntax)node.Parent;
+                var query = (CS.Syntax.QueryExpressionSyntax)node.Parent;
                 VB.Syntax.AggregationRangeVariableSyntax rangeVariable;
                 if (query.Body.Continuation == null)
                 {
@@ -1990,11 +1990,11 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitConversionOperatorDeclaration(CS.Syntax.ConversionOperatorDeclarationSyntax node)
             {
-                SyntaxToken direction = node.Modifiers.Any(t => t.IsKind(CS.SyntaxKind.ImplicitKeyword))
+                var direction = node.Modifiers.Any(t => t.IsKind(CS.SyntaxKind.ImplicitKeyword))
                     ? VB.SyntaxFactory.Token(VB.SyntaxKind.WideningKeyword)
                     : VB.SyntaxFactory.Token(VB.SyntaxKind.NarrowingKeyword);
 
-                VB.Syntax.OperatorStatementSyntax begin = VB.SyntaxFactory.OperatorStatement(
+                var begin = VB.SyntaxFactory.OperatorStatement(
                     ConvertAttributes(node.AttributeLists),
                     TokenList(ConvertModifiers(node.Modifiers).Concat(direction)),
                     VB.SyntaxFactory.Token(VB.SyntaxKind.CTypeKeyword),
@@ -2018,7 +2018,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitDestructorDeclaration(CS.Syntax.DestructorDeclarationSyntax node)
             {
-                VB.Syntax.MethodStatementSyntax begin = VB.SyntaxFactory.SubStatement(
+                var begin = VB.SyntaxFactory.SubStatement(
                     new SyntaxList<VB.Syntax.AttributeListSyntax>(),
                     new SyntaxTokenList(),
                     VB.SyntaxFactory.Identifier("Finalize"),
@@ -2039,8 +2039,8 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitDelegateDeclaration(CS.Syntax.DelegateDeclarationSyntax node)
             {
-                SyntaxToken identifier = ConvertIdentifier(node.Identifier);
-                VB.Syntax.TypeParameterListSyntax typeParameters = Visit<VB.Syntax.TypeParameterListSyntax>(node.TypeParameterList);
+                var identifier = ConvertIdentifier(node.Identifier);
+                var typeParameters = Visit<VB.Syntax.TypeParameterListSyntax>(node.TypeParameterList);
 
                 if (node.ReturnType.IsKind(CS.SyntaxKind.PredefinedType) &&
                     ((CS.Syntax.PredefinedTypeSyntax)node.ReturnType).Keyword.IsKind(CS.SyntaxKind.VoidKeyword))
@@ -2076,9 +2076,9 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitEventDeclaration(CS.Syntax.EventDeclarationSyntax node)
             {
-                SyntaxToken identifier = ConvertIdentifier(node.Identifier);
+                var identifier = ConvertIdentifier(node.Identifier);
 
-                VB.Syntax.EventStatementSyntax begin = VB.SyntaxFactory.EventStatement(
+                var begin = VB.SyntaxFactory.EventStatement(
                     ConvertAttributes(node.AttributeLists),
                     ConvertModifiers(node.Modifiers),
                     identifier,
@@ -2094,7 +2094,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitStackAllocArrayCreationExpression(CS.Syntax.StackAllocArrayCreationExpressionSyntax node)
             {
-                string error = CreateCouldNotBeConvertedString(node.ToFullString(), typeof(SyntaxNode));
+                var error = CreateCouldNotBeConvertedString(node.ToFullString(), typeof(SyntaxNode));
                 return VB.SyntaxFactory.StringLiteralExpression(
                     VB.SyntaxFactory.StringLiteralToken(error, error));
             }
@@ -2110,10 +2110,10 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxNode VisitExternAliasDirective(CS.Syntax.ExternAliasDirectiveSyntax node)
             {
-                IEnumerable<SyntaxTrivia> leadingTrivia = node.GetFirstToken(includeSkipped: true).LeadingTrivia.SelectMany(VisitTrivia);
-                IEnumerable<SyntaxTrivia> trailingTrivia = node.GetLastToken(includeSkipped: true).TrailingTrivia.SelectMany(VisitTrivia);
+                var leadingTrivia = node.GetFirstToken(includeSkipped: true).LeadingTrivia.SelectMany(VisitTrivia);
+                var trailingTrivia = node.GetLastToken(includeSkipped: true).TrailingTrivia.SelectMany(VisitTrivia);
 
-                SyntaxTrivia comment = VB.SyntaxFactory.CommentTrivia(
+                var comment = VB.SyntaxFactory.CommentTrivia(
                     CreateCouldNotBeConvertedComment(node.ToString(), typeof(VB.Syntax.ImportsStatementSyntax)));
                 leadingTrivia = leadingTrivia.Concat(comment);
 
@@ -2134,7 +2134,7 @@ namespace CSharpToVisualBasicConverter
                     expr = VB.SyntaxFactory.MyClassExpression();
                 }
 
-                VB.Syntax.InvocationExpressionSyntax invocation = VB.SyntaxFactory.InvocationExpression(
+                var invocation = VB.SyntaxFactory.InvocationExpression(
                     VB.SyntaxFactory.SimpleMemberAccessExpression(
                         expr,
                         VB.SyntaxFactory.Token(VB.SyntaxKind.DotToken),

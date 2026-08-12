@@ -24,8 +24,8 @@ namespace CSharpToVisualBasicConverter.Utilities
             }
             else
             {
-                StringBuilder builder = new StringBuilder(s.Length * count);
-                for (int i = 0; i < count; i++)
+                var builder = new StringBuilder(s.Length * count);
+                for (var i = 0; i < count; i++)
                 {
                     builder.Append(s);
                 }

@@ -15,15 +15,15 @@ namespace Roslyn.UnitTestFramework
     {
         protected Document CreateDocument(string code)
         {
-            string fileExtension = LanguageName == LanguageNames.CSharp ? ".cs" : ".vb";
+            var fileExtension = LanguageName == LanguageNames.CSharp ? ".cs" : ".vb";
 
-            ProjectId projectId = ProjectId.CreateNewId(debugName: "TestProject");
-            DocumentId documentId = DocumentId.CreateNewId(projectId, debugName: "Test" + fileExtension);
+            var projectId = ProjectId.CreateNewId(debugName: "TestProject");
+            var documentId = DocumentId.CreateNewId(projectId, debugName: "Test" + fileExtension);
 
             // find these assemblies in the running process
             string[] simpleNames = { "mscorlib", "System.Core", "System" };
 
-            IEnumerable<PortableExecutableReference> references = AppDomain.CurrentDomain.GetAssemblies()
+            var references = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(a => simpleNames.Contains(a.GetName().Name, StringComparer.OrdinalIgnoreCase))
                 .Select(a => MetadataReference.CreateFromFile(a.Location));
 
@@ -48,7 +48,7 @@ namespace Roslyn.UnitTestFramework
 
         private SyntaxNode Format(Document document)
         {
-            Document updatedDocument = document.WithSyntaxRoot(document.GetSyntaxRootAsync().Result);
+            var updatedDocument = document.WithSyntaxRoot(document.GetSyntaxRootAsync().Result);
             return Formatter.FormatAsync(Simplifier.ReduceAsync(updatedDocument, Simplifier.Annotation).Result, Formatter.Annotation).Result.GetSyntaxRootAsync().Result;
         }
 
@@ -61,18 +61,18 @@ namespace Roslyn.UnitTestFramework
 
         private bool VerifyTokens(string expected, string actual)
         {
-            IList<SyntaxToken> expectedNewTokens = ParseTokens(expected);
-            IList<SyntaxToken> actualNewTokens = ParseTokens(actual);
+            var expectedNewTokens = ParseTokens(expected);
+            var actualNewTokens = ParseTokens(actual);
 
-            for (int i = 0; i < Math.Min(expectedNewTokens.Count, actualNewTokens.Count); i++)
+            for (var i = 0; i < Math.Min(expectedNewTokens.Count, actualNewTokens.Count); i++)
             {
                 Assert.Equal(expectedNewTokens[i].ToString(), actualNewTokens[i].ToString());
             }
 
             if (expectedNewTokens.Count != actualNewTokens.Count)
             {
-                string expectedDisplay = string.Join(" ", expectedNewTokens.Select(t => t.ToString()));
-                string actualDisplay = string.Join(" ", actualNewTokens.Select(t => t.ToString()));
+                var expectedDisplay = string.Join(" ", expectedNewTokens.Select(t => t.ToString()));
+                var actualDisplay = string.Join(" ", actualNewTokens.Select(t => t.ToString()));
                 Assert.True(false,
                     string.Format("Wrong token count. Expected '{0}', Actual '{1}', Expected Text: '{2}', Actual Text: '{3}'",
                         expectedNewTokens.Count, actualNewTokens.Count, expectedDisplay, actualDisplay));
@@ -83,7 +83,7 @@ namespace Roslyn.UnitTestFramework
 
         private bool VerifyText(string expected, Document document)
         {
-            string actual = Format(document).ToString();
+            var actual = Format(document).ToString();
             Assert.Equal(expected, actual);
             return true;
         }

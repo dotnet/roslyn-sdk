@@ -27,7 +27,7 @@ namespace ConvertToAutoProperty
             {
                 if (name.Identifier.ValueText.Equals(backingField.Name))
                 {
-                    SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(name);
+                    var symbolInfo = semanticModel.GetSymbolInfo(name);
 
                     // Check binding info
                     if (symbolInfo.Symbol != null &&
@@ -86,7 +86,7 @@ namespace ConvertToAutoProperty
         private PropertyDeclarationSyntax ConvertToAutoProperty(PropertyDeclarationSyntax propertyDeclaration)
         {
             // Produce the new property.
-            PropertyDeclarationSyntax newProperty = property
+            var newProperty = property
                 .WithAccessorList(
                     SyntaxFactory.AccessorList(
                         SyntaxFactory.List(new[]

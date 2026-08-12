@@ -23,7 +23,7 @@ namespace TreeTransforms
 
             if (transformKind == TransformKind.AnonMethodToLambda)
             {
-                SyntaxToken arrowToken = SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken);
+                var arrowToken = SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken);
 
                 return SyntaxFactory.ParenthesizedLambdaExpression(default(SyntaxToken), node.ParameterList, arrowToken, node.Block);
             }
@@ -38,7 +38,7 @@ namespace TreeTransforms
             if (transformKind == TransformKind.LambdaToAnonMethod)
             {
                 // If any of the lambda parameters do not have type explicitly specified then we don't do any transforms.
-                foreach (ParameterSyntax parameter in node.ParameterList.Parameters)
+                foreach (var parameter in node.ParameterList.Parameters)
                 {
                     if (parameter.Type == null)
                     {
@@ -69,26 +69,26 @@ namespace TreeTransforms
             if (transformKind == TransformKind.DoToWhile)
             {
                 // Get the different syntax nodes components of the Do Statement
-                SyntaxToken doKeyword = node.DoKeyword;
-                StatementSyntax doStatement = node.Statement;
-                SyntaxToken whileKeyword = node.WhileKeyword;
-                ExpressionSyntax condition = node.Condition;
-                SyntaxToken openParen = node.OpenParenToken;
-                SyntaxToken closeParen = node.CloseParenToken;
-                SyntaxToken semicolon = node.SemicolonToken;
+                var doKeyword = node.DoKeyword;
+                var doStatement = node.Statement;
+                var whileKeyword = node.WhileKeyword;
+                var condition = node.Condition;
+                var openParen = node.OpenParenToken;
+                var closeParen = node.CloseParenToken;
+                var semicolon = node.SemicolonToken;
 
                 // Preserve some level of trivia that was in the original Do keyword node.
-                SyntaxToken newWhileKeyword = SyntaxFactory.Token(doKeyword.LeadingTrivia, SyntaxKind.WhileKeyword, whileKeyword.TrailingTrivia);
+                var newWhileKeyword = SyntaxFactory.Token(doKeyword.LeadingTrivia, SyntaxKind.WhileKeyword, whileKeyword.TrailingTrivia);
 
                 // Preserve some level of trivia that was in the original Do keyword node and the original CloseParen token.
-                List<SyntaxTrivia> newCloseParenTrivias = closeParen.TrailingTrivia.ToList();
+                var newCloseParenTrivias = closeParen.TrailingTrivia.ToList();
                 newCloseParenTrivias.AddRange(doKeyword.TrailingTrivia.ToList());
-                SyntaxTriviaList newCloseParenTriviaList = SyntaxFactory.TriviaList(newCloseParenTrivias);
-                SyntaxToken newCloseParen = SyntaxFactory.Token(closeParen.LeadingTrivia, SyntaxKind.CloseParenToken, newCloseParenTriviaList);
+                var newCloseParenTriviaList = SyntaxFactory.TriviaList(newCloseParenTrivias);
+                var newCloseParen = SyntaxFactory.Token(closeParen.LeadingTrivia, SyntaxKind.CloseParenToken, newCloseParenTriviaList);
 
-                List<SyntaxTrivia> newTrailingTrivias = doStatement.GetTrailingTrivia().ToList();
+                var newTrailingTrivias = doStatement.GetTrailingTrivia().ToList();
                 newTrailingTrivias.AddRange(semicolon.TrailingTrivia.ToList());
-                StatementSyntax newWhileStatement = doStatement.WithTrailingTrivia(newTrailingTrivias);
+                var newWhileStatement = doStatement.WithTrailingTrivia(newTrailingTrivias);
 
                 return SyntaxFactory.WhileStatement(newWhileKeyword, openParen, condition, newCloseParen, newWhileStatement);
             }
@@ -103,18 +103,18 @@ namespace TreeTransforms
             if (transformKind == TransformKind.WhileToDo)
             {
                 // Get the different syntax nodes components of the While Statement
-                SyntaxToken whileKeyword = node.WhileKeyword;
-                SyntaxToken openParen = node.OpenParenToken;
-                ExpressionSyntax condition = node.Condition;
-                SyntaxToken closeParen = node.CloseParenToken;
-                StatementSyntax whileStatement = node.Statement;
+                var whileKeyword = node.WhileKeyword;
+                var openParen = node.OpenParenToken;
+                var condition = node.Condition;
+                var closeParen = node.CloseParenToken;
+                var whileStatement = node.Statement;
 
                 // Preserve as much trivia and formatting info as possible while constructing the new nodes.
-                SyntaxToken newDoKeyword = SyntaxFactory.Token(whileKeyword.LeadingTrivia, SyntaxKind.DoKeyword, closeParen.TrailingTrivia);
-                SyntaxToken newWhileKeyword = SyntaxFactory.Token(SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker), SyntaxKind.WhileKeyword, whileKeyword.TrailingTrivia);
-                SyntaxToken semiColonToken = SyntaxFactory.Token(SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker), SyntaxKind.SemicolonToken, whileStatement.GetTrailingTrivia());
-                SyntaxToken newCloseParen = SyntaxFactory.Token(closeParen.LeadingTrivia, SyntaxKind.CloseParenToken, SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker));
-                StatementSyntax newDoStatement = whileStatement.ReplaceTrivia(whileStatement.GetTrailingTrivia().Last(), SyntaxFactory.TriviaList());
+                var newDoKeyword = SyntaxFactory.Token(whileKeyword.LeadingTrivia, SyntaxKind.DoKeyword, closeParen.TrailingTrivia);
+                var newWhileKeyword = SyntaxFactory.Token(SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker), SyntaxKind.WhileKeyword, whileKeyword.TrailingTrivia);
+                var semiColonToken = SyntaxFactory.Token(SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker), SyntaxKind.SemicolonToken, whileStatement.GetTrailingTrivia());
+                var newCloseParen = SyntaxFactory.Token(closeParen.LeadingTrivia, SyntaxKind.CloseParenToken, SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker));
+                var newDoStatement = whileStatement.ReplaceTrivia(whileStatement.GetTrailingTrivia().Last(), SyntaxFactory.TriviaList());
 
                 return SyntaxFactory.DoStatement(newDoKeyword, newDoStatement, newWhileKeyword, openParen, condition, newCloseParen, semiColonToken);
             }
@@ -127,19 +127,19 @@ namespace TreeTransforms
             node = (CheckedStatementSyntax)base.VisitCheckedStatement(node);
 
             // Get the components of the checked statement
-            SyntaxToken keyword = node.Keyword;
-            BlockSyntax block = node.Block;
+            var keyword = node.Keyword;
+            var block = node.Block;
 
             if ((transformKind == TransformKind.CheckedStmtToUncheckedStmt) && (keyword.Kind() == SyntaxKind.CheckedKeyword))
             {
-                SyntaxToken uncheckedToken = SyntaxFactory.Token(keyword.LeadingTrivia, SyntaxKind.UncheckedKeyword, keyword.TrailingTrivia);
+                var uncheckedToken = SyntaxFactory.Token(keyword.LeadingTrivia, SyntaxKind.UncheckedKeyword, keyword.TrailingTrivia);
 
                 return SyntaxFactory.CheckedStatement(SyntaxKind.UncheckedStatement, uncheckedToken, block);
             }
 
             if ((transformKind == TransformKind.UncheckedStmtToCheckedStmt) && (keyword.Kind() == SyntaxKind.UncheckedKeyword))
             {
-                SyntaxToken checkedToken = SyntaxFactory.Token(keyword.LeadingTrivia, SyntaxKind.CheckedKeyword, keyword.TrailingTrivia);
+                var checkedToken = SyntaxFactory.Token(keyword.LeadingTrivia, SyntaxKind.CheckedKeyword, keyword.TrailingTrivia);
                 return SyntaxFactory.CheckedStatement(SyntaxKind.CheckedStatement, checkedToken, block);
             }
 
@@ -151,21 +151,21 @@ namespace TreeTransforms
             node = (CheckedExpressionSyntax)base.VisitCheckedExpression(node);
 
             // Get the components of the checked expression
-            SyntaxToken keyword = node.Keyword;
-            SyntaxToken openParenToken = SyntaxFactory.Token(node.OpenParenToken.LeadingTrivia, SyntaxKind.OpenParenToken, node.OpenParenToken.TrailingTrivia);
-            ExpressionSyntax expression = node.Expression;
-            SyntaxToken closeParenToken = SyntaxFactory.Token(node.CloseParenToken.LeadingTrivia, SyntaxKind.CloseParenToken, node.CloseParenToken.TrailingTrivia);
+            var keyword = node.Keyword;
+            var openParenToken = SyntaxFactory.Token(node.OpenParenToken.LeadingTrivia, SyntaxKind.OpenParenToken, node.OpenParenToken.TrailingTrivia);
+            var expression = node.Expression;
+            var closeParenToken = SyntaxFactory.Token(node.CloseParenToken.LeadingTrivia, SyntaxKind.CloseParenToken, node.CloseParenToken.TrailingTrivia);
 
             if ((transformKind == TransformKind.CheckedExprToUncheckedExpr) && (keyword.Kind() == SyntaxKind.CheckedKeyword))
             {
-                SyntaxToken uncheckedToken = SyntaxFactory.Token(keyword.LeadingTrivia, SyntaxKind.UncheckedKeyword, keyword.TrailingTrivia);
+                var uncheckedToken = SyntaxFactory.Token(keyword.LeadingTrivia, SyntaxKind.UncheckedKeyword, keyword.TrailingTrivia);
 
                 return SyntaxFactory.CheckedExpression(SyntaxKind.UncheckedExpression, uncheckedToken, openParenToken, expression, closeParenToken);
             }
 
             if ((transformKind == TransformKind.UncheckedExprToCheckedExpr) && (keyword.Kind() == SyntaxKind.UncheckedKeyword))
             {
-                SyntaxToken checkedToken = SyntaxFactory.Token(keyword.LeadingTrivia, SyntaxKind.CheckedKeyword, keyword.TrailingTrivia);
+                var checkedToken = SyntaxFactory.Token(keyword.LeadingTrivia, SyntaxKind.CheckedKeyword, keyword.TrailingTrivia);
 
                 return SyntaxFactory.CheckedExpression(SyntaxKind.CheckedExpression, checkedToken, openParenToken, expression, closeParenToken);
             }
@@ -177,18 +177,18 @@ namespace TreeTransforms
         {
             node = (LiteralExpressionSyntax)base.VisitLiteralExpression(node);
 
-            SyntaxToken token = node.Token;
+            var token = node.Token;
 
             if ((transformKind == TransformKind.TrueToFalse) && (node.Kind() == SyntaxKind.TrueLiteralExpression))
             {
-                SyntaxToken newToken = SyntaxFactory.Token(token.LeadingTrivia, SyntaxKind.FalseKeyword, token.TrailingTrivia);
+                var newToken = SyntaxFactory.Token(token.LeadingTrivia, SyntaxKind.FalseKeyword, token.TrailingTrivia);
 
                 return SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression, newToken);
             }
 
             if ((transformKind == TransformKind.FalseToTrue) && (node.Kind() == SyntaxKind.FalseLiteralExpression))
             {
-                SyntaxToken newToken = SyntaxFactory.Token(token.LeadingTrivia, SyntaxKind.TrueKeyword, token.TrailingTrivia);
+                var newToken = SyntaxFactory.Token(token.LeadingTrivia, SyntaxKind.TrueKeyword, token.TrailingTrivia);
 
                 return SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression, newToken);
             }
@@ -199,15 +199,15 @@ namespace TreeTransforms
         public override SyntaxNode VisitAssignmentExpression(AssignmentExpressionSyntax node)
         {
             node = (AssignmentExpressionSyntax)base.VisitAssignmentExpression(node);
-            ExpressionSyntax left = node.Left;
-            ExpressionSyntax right = node.Right;
-            SyntaxToken operatorToken = node.OperatorToken;
+            var left = node.Left;
+            var right = node.Right;
+            var operatorToken = node.OperatorToken;
 
             if ((transformKind == TransformKind.AddAssignToAssign) && (node.Kind() == SyntaxKind.AddAssignmentExpression))
             {
-                SyntaxToken equalsToken = SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.EqualsToken, operatorToken.TrailingTrivia);
-                ExpressionSyntax newLeft = left.WithLeadingTrivia(SyntaxFactory.TriviaList());
-                BinaryExpressionSyntax addExpression = SyntaxFactory.BinaryExpression(SyntaxKind.AddExpression, newLeft, SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.PlusToken, operatorToken.TrailingTrivia), right);
+                var equalsToken = SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.EqualsToken, operatorToken.TrailingTrivia);
+                var newLeft = left.WithLeadingTrivia(SyntaxFactory.TriviaList());
+                var addExpression = SyntaxFactory.BinaryExpression(SyntaxKind.AddExpression, newLeft, SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.PlusToken, operatorToken.TrailingTrivia), right);
 
                 return SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, left, equalsToken, addExpression);
             }
@@ -221,11 +221,11 @@ namespace TreeTransforms
 
             if ((transformKind == TransformKind.RefParamToOutParam) || (transformKind == TransformKind.OutParamToRefParam))
             {
-                List<SyntaxToken> listOfModifiers = new List<SyntaxToken>();
+                var listOfModifiers = new List<SyntaxToken>();
 
-                foreach (SyntaxToken modifier in node.Modifiers)
+                foreach (var modifier in node.Modifiers)
                 {
-                    SyntaxToken modifierToken = modifier;
+                    var modifierToken = modifier;
 
                     if ((modifier.Kind() == SyntaxKind.RefKeyword) && (transformKind == TransformKind.RefParamToOutParam))
                     {
@@ -239,7 +239,7 @@ namespace TreeTransforms
                     listOfModifiers.Add(modifierToken);
                 }
 
-                SyntaxTokenList newModifiers = SyntaxFactory.TokenList(listOfModifiers);
+                var newModifiers = SyntaxFactory.TokenList(listOfModifiers);
 
                 return SyntaxFactory.Parameter(node.AttributeLists, newModifiers, node.Type, node.Identifier, node.Default);
             }
@@ -251,18 +251,18 @@ namespace TreeTransforms
         {
             node = (ArgumentSyntax)base.VisitArgument(node);
 
-            SyntaxToken refOrOut = node.RefOrOutKeyword;
+            var refOrOut = node.RefOrOutKeyword;
 
             if ((transformKind == TransformKind.RefArgToOutArg) && (refOrOut.Kind() == SyntaxKind.RefKeyword))
             {
-                SyntaxToken outKeyword = SyntaxFactory.Token(refOrOut.LeadingTrivia, SyntaxKind.OutKeyword, refOrOut.TrailingTrivia);
+                var outKeyword = SyntaxFactory.Token(refOrOut.LeadingTrivia, SyntaxKind.OutKeyword, refOrOut.TrailingTrivia);
 
                 return SyntaxFactory.Argument(node.NameColon, outKeyword, node.Expression);
             }
 
             if ((transformKind == TransformKind.OutArgToRefArg) && (refOrOut.Kind() == SyntaxKind.OutKeyword))
             {
-                SyntaxToken refKeyword = SyntaxFactory.Token(refOrOut.LeadingTrivia, SyntaxKind.RefKeyword, refOrOut.TrailingTrivia);
+                var refKeyword = SyntaxFactory.Token(refOrOut.LeadingTrivia, SyntaxKind.RefKeyword, refOrOut.TrailingTrivia);
 
                 return SyntaxFactory.Argument(node.NameColon, refKeyword, node.Expression);
             }
@@ -274,18 +274,18 @@ namespace TreeTransforms
         {
             node = (OrderingSyntax)base.VisitOrdering(node);
 
-            SyntaxToken orderingKind = node.AscendingOrDescendingKeyword;
+            var orderingKind = node.AscendingOrDescendingKeyword;
 
             if ((transformKind == TransformKind.OrderByAscToOrderByDesc) && (orderingKind.Kind() == SyntaxKind.AscendingKeyword))
             {
-                SyntaxToken descToken = SyntaxFactory.Token(orderingKind.LeadingTrivia, SyntaxKind.DescendingKeyword, orderingKind.TrailingTrivia);
+                var descToken = SyntaxFactory.Token(orderingKind.LeadingTrivia, SyntaxKind.DescendingKeyword, orderingKind.TrailingTrivia);
 
                 return SyntaxFactory.Ordering(SyntaxKind.DescendingOrdering, node.Expression, descToken);
             }
 
             if ((transformKind == TransformKind.OrderByDescToOrderByAsc) && (orderingKind.Kind() == SyntaxKind.DescendingKeyword))
             {
-                SyntaxToken ascToken = SyntaxFactory.Token(orderingKind.LeadingTrivia, SyntaxKind.AscendingKeyword, orderingKind.TrailingTrivia);
+                var ascToken = SyntaxFactory.Token(orderingKind.LeadingTrivia, SyntaxKind.AscendingKeyword, orderingKind.TrailingTrivia);
 
                 return SyntaxFactory.Ordering(SyntaxKind.AscendingOrdering, node.Expression, ascToken);
             }
@@ -297,20 +297,20 @@ namespace TreeTransforms
         {
             node = (VariableDeclarationSyntax)base.VisitVariableDeclaration(node);
 
-            TypeSyntax type = node.Type;
-            SeparatedSyntaxList<VariableDeclaratorSyntax> declarations = node.Variables;
+            var type = node.Type;
+            var declarations = node.Variables;
 
-            List<VariableDeclaratorSyntax> listOfVariables = new List<VariableDeclaratorSyntax>();
+            var listOfVariables = new List<VariableDeclaratorSyntax>();
 
-            List<SyntaxToken> listOfSeperators = new List<SyntaxToken>();
+            var listOfSeperators = new List<SyntaxToken>();
 
             if (transformKind == TransformKind.DefaultInitAllVars)
             {
-                foreach (VariableDeclaratorSyntax decl in declarations)
+                foreach (var decl in declarations)
                 {
                     if (decl.Initializer == null)
                     {
-                        TypeSyntax newType = type;
+                        var newType = type;
 
                         if (newType.HasLeadingTrivia)
                         {
@@ -322,11 +322,11 @@ namespace TreeTransforms
                             newType = newType.WithLeadingTrivia(new SyntaxTriviaList());
                         }
 
-                        SyntaxTrivia whiteSpaceTrivia = SyntaxFactory.Whitespace(" ");
-                        DefaultExpressionSyntax defaultExpr = SyntaxFactory.DefaultExpression(newType);
-                        EqualsValueClauseSyntax equalsClause = SyntaxFactory.EqualsValueClause(SyntaxFactory.Token(SyntaxFactory.TriviaList(whiteSpaceTrivia), SyntaxKind.EqualsToken, SyntaxFactory.TriviaList(whiteSpaceTrivia)), defaultExpr);
+                        var whiteSpaceTrivia = SyntaxFactory.Whitespace(" ");
+                        var defaultExpr = SyntaxFactory.DefaultExpression(newType);
+                        var equalsClause = SyntaxFactory.EqualsValueClause(SyntaxFactory.Token(SyntaxFactory.TriviaList(whiteSpaceTrivia), SyntaxKind.EqualsToken, SyntaxFactory.TriviaList(whiteSpaceTrivia)), defaultExpr);
 
-                        VariableDeclaratorSyntax newDecl = SyntaxFactory.VariableDeclarator(decl.Identifier, decl.ArgumentList, equalsClause);
+                        var newDecl = SyntaxFactory.VariableDeclarator(decl.Identifier, decl.ArgumentList, equalsClause);
                         listOfVariables.Add(newDecl);
                     }
                     else
@@ -335,13 +335,13 @@ namespace TreeTransforms
                     }
                 }
 
-                for (int i = 0; i < declarations.SeparatorCount; i++)
+                for (var i = 0; i < declarations.SeparatorCount; i++)
                 {
-                    SyntaxToken seperator = declarations.GetSeparator(i);
+                    var seperator = declarations.GetSeparator(i);
                     listOfSeperators.Add(SyntaxFactory.Token(seperator.LeadingTrivia, seperator.Kind(), seperator.TrailingTrivia));
                 }
 
-                SeparatedSyntaxList<VariableDeclaratorSyntax> seperatedSyntaxList = SyntaxFactory.SeparatedList(listOfVariables, listOfSeperators);
+                var seperatedSyntaxList = SyntaxFactory.SeparatedList(listOfVariables, listOfSeperators);
 
                 return SyntaxFactory.VariableDeclaration(type, seperatedSyntaxList);
             }
@@ -352,11 +352,11 @@ namespace TreeTransforms
         public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
         {
             node = (ClassDeclarationSyntax)base.VisitClassDeclaration(node);
-            SyntaxToken typeDeclKindKeyword = node.Keyword;
+            var typeDeclKindKeyword = node.Keyword;
 
             if (transformKind == TransformKind.ClassDeclToStructDecl)
             {
-                SyntaxToken structToken = SyntaxFactory.Token(typeDeclKindKeyword.LeadingTrivia, SyntaxKind.StructKeyword, typeDeclKindKeyword.TrailingTrivia);
+                var structToken = SyntaxFactory.Token(typeDeclKindKeyword.LeadingTrivia, SyntaxKind.StructKeyword, typeDeclKindKeyword.TrailingTrivia);
 
                 return SyntaxFactory.StructDeclaration(node.AttributeLists, node.Modifiers, structToken, node.Identifier,
                     node.TypeParameterList, node.BaseList, node.ConstraintClauses, node.OpenBraceToken, node.Members, node.CloseBraceToken,
@@ -369,11 +369,11 @@ namespace TreeTransforms
         public override SyntaxNode VisitStructDeclaration(StructDeclarationSyntax node)
         {
             node = (StructDeclarationSyntax)base.VisitStructDeclaration(node);
-            SyntaxToken typeDeclKindKeyword = node.Keyword;
+            var typeDeclKindKeyword = node.Keyword;
 
             if (transformKind == TransformKind.StructDeclToClassDecl)
             {
-                SyntaxToken classToken = SyntaxFactory.Token(typeDeclKindKeyword.LeadingTrivia, SyntaxKind.ClassKeyword, typeDeclKindKeyword.TrailingTrivia);
+                var classToken = SyntaxFactory.Token(typeDeclKindKeyword.LeadingTrivia, SyntaxKind.ClassKeyword, typeDeclKindKeyword.TrailingTrivia);
 
                 return SyntaxFactory.ClassDeclaration(node.AttributeLists, node.Modifiers, classToken, node.Identifier,
                     node.TypeParameterList, node.BaseList, node.ConstraintClauses, node.OpenBraceToken, node.Members, node.CloseBraceToken,
@@ -391,11 +391,11 @@ namespace TreeTransforms
         public override SyntaxNode VisitPredefinedType(PredefinedTypeSyntax node)
         {
             node = (PredefinedTypeSyntax)base.VisitPredefinedType(node);
-            SyntaxToken token = node.Keyword;
+            var token = node.Keyword;
 
             if ((transformKind == TransformKind.IntTypeToLongType) && (token.Kind() == SyntaxKind.IntKeyword))
             {
-                SyntaxToken longToken = SyntaxFactory.Token(token.LeadingTrivia, SyntaxKind.LongKeyword, token.TrailingTrivia);
+                var longToken = SyntaxFactory.Token(token.LeadingTrivia, SyntaxKind.LongKeyword, token.TrailingTrivia);
 
                 return SyntaxFactory.PredefinedType(longToken);
             }
@@ -409,11 +409,11 @@ namespace TreeTransforms
 
             if (transformKind == TransformKind.PostfixToPrefix)
             {
-                SyntaxToken operatorToken = node.OperatorToken;
-                ExpressionSyntax operand = node.Operand;
+                var operatorToken = node.OperatorToken;
+                var operand = node.Operand;
 
-                SyntaxToken newOperatorToken = SyntaxFactory.Token(operand.GetLeadingTrivia(), operatorToken.Kind(), SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker));
-                ExpressionSyntax newOperand = operand.WithLeadingTrivia(operatorToken.LeadingTrivia);
+                var newOperatorToken = SyntaxFactory.Token(operand.GetLeadingTrivia(), operatorToken.Kind(), SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker));
+                var newOperand = operand.WithLeadingTrivia(operatorToken.LeadingTrivia);
                 newOperand = newOperand.WithTrailingTrivia(operatorToken.TrailingTrivia);
 
                 if (node.Kind() == SyntaxKind.PostIncrementExpression)
@@ -436,11 +436,11 @@ namespace TreeTransforms
 
             if (transformKind == TransformKind.PrefixToPostfix)
             {
-                SyntaxToken operatorToken = node.OperatorToken;
-                ExpressionSyntax operand = node.Operand;
+                var operatorToken = node.OperatorToken;
+                var operand = node.Operand;
 
-                SyntaxToken newOperatorToken = SyntaxFactory.Token(SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker), operatorToken.Kind(), operand.GetTrailingTrivia());
-                ExpressionSyntax newOperand = operand.WithTrailingTrivia(operatorToken.TrailingTrivia);
+                var newOperatorToken = SyntaxFactory.Token(SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker), operatorToken.Kind(), operand.GetTrailingTrivia());
+                var newOperand = operand.WithTrailingTrivia(operatorToken.TrailingTrivia);
                 newOperand = newOperand.WithLeadingTrivia(operatorToken.LeadingTrivia);
 
                 if (node.Kind() == SyntaxKind.PreIncrementExpression)

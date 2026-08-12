@@ -12,7 +12,7 @@ namespace Sample.Analyzers.Test
         [Fact]
         public async Task SyntaxNodeAnalyzerTest()
         {
-            string test = @"
+            var test = @"
 class C
 {
     public void M()
@@ -21,7 +21,7 @@ class C
         int explicitTypedLocal = 1;
     }
 }";
-            DiagnosticResult expected = Verify.Diagnostic().WithArguments("implicitTypedLocal").WithLocation(6, 13);
+            var expected = Verify.Diagnostic().WithArguments("implicitTypedLocal").WithLocation(6, 13);
             await Verify.VerifyAnalyzerAsync(test, expected);
         }
     }

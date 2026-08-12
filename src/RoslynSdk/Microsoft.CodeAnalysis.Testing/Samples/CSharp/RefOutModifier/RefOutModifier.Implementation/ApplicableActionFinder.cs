@@ -26,16 +26,16 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
         public async Task<(TextSpan, CodeAction)> GetSpanAndActionAsync()
         {
-            SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxTree tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
             if (!tree.OnArgumentOrParameter(position))
             {
                 return (default, null);
             }
 
-            SyntaxNode root = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxToken token = root.FindToken(position);
-            CodeAction action = await GetActionAsync(semanticModel, tree, token).ConfigureAwait(false);
+            var root = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+            var token = root.FindToken(position);
+            var action = await GetActionAsync(semanticModel, tree, token).ConfigureAwait(false);
             if (action == null)
             {
                 return (default, null);
@@ -46,7 +46,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
         private async Task<CodeAction> GetActionAsync(SemanticModel semanticModel, SyntaxTree tree, SyntaxToken token)
         {
-            IMethodSymbol methodSymbol = GetMethodDefinitionSymbol(semanticModel, token);
+            var methodSymbol = GetMethodDefinitionSymbol(semanticModel, token);
             if (methodSymbol == null || methodSymbol.Locations.Any(l => l.IsInMetadata))
             {
                 // can't find method definition defined in source
@@ -59,14 +59,14 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
                 return null;
             }
 
-            (ArgumentSyntax argument, IEnumerable<ParameterSyntax> parameters) = await GetArgumentAndParametersAsync(semanticModel, methodSymbol, token).ConfigureAwait(false);
+            (var argument, var parameters) = await GetArgumentAndParametersAsync(semanticModel, methodSymbol, token).ConfigureAwait(false);
             if (argument == null || parameters == null)
             {
                 return null;
             }
 
             // currently only support everything in one file
-            IEnumerable<SyntaxNode> nodes = (new SyntaxNode[] { argument }).Concat(parameters);
+            var nodes = (new SyntaxNode[] { argument }).Concat(parameters);
             if (document.Project.GetContainingDocuments(nodes, cancellationToken).Count() != 1)
             {
                 return null;
@@ -91,13 +91,13 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
             IMethodSymbol methodSymbol,
             SyntaxToken token)
         {
-            (int parameterIndex, IEnumerable<ParameterSyntax> parameters) = GetParameterInfo(semanticModel, methodSymbol, token);
+            (var parameterIndex, var parameters) = GetParameterInfo(semanticModel, methodSymbol, token);
             if (parameters == null)
             {
                 return (null, null);
             }
 
-            ArgumentSyntax argument = await GetArgumentAsync(methodSymbol, parameterIndex, parameters.First()).ConfigureAwait(false);
+            var argument = await GetArgumentAsync(methodSymbol, parameterIndex, parameters.First()).ConfigureAwait(false);
             if (argument == null)
             {
                 return (null, null);
@@ -108,8 +108,8 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
         private async Task<ArgumentSyntax> GetArgumentAsync(IMethodSymbol methodSymbol, int parameterIndex, ParameterSyntax parameter)
         {
-            Solution solution = document.Project.Solution;
-            IEnumerable<ReferencedSymbol> result = await SymbolFinder.FindReferencesAsync(methodSymbol, solution, cancellationToken: cancellationToken).ConfigureAwait(false);
+            var solution = document.Project.Solution;
+            var result = await SymbolFinder.FindReferencesAsync(methodSymbol, solution, cancellationToken: cancellationToken).ConfigureAwait(false);
             if (result == null)
             {
                 return null;
@@ -122,19 +122,19 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
                 return null;
             }
 
-            InvocationExpressionSyntax invocation = result.Single()
+            var invocation = result.Single()
                                                           .Locations
                                                           .Cast<Location>()
                                                           .Select(l => l.FindToken().AncestorAndSelf<InvocationExpressionSyntax>())
                                                           .Single();
 
-            string parameterName = parameter.Identifier.ValueText;
-            List<ArgumentSyntax> list = new List<ArgumentSyntax>();
+            var parameterName = parameter.Identifier.ValueText;
+            var list = new List<ArgumentSyntax>();
 
-            for (int i = 0; i < invocation.ArgumentList.Arguments.Count; i++)
+            for (var i = 0; i < invocation.ArgumentList.Arguments.Count; i++)
             {
                 // position based
-                ArgumentSyntax argument = invocation.ArgumentList.Arguments[i];
+                var argument = invocation.ArgumentList.Arguments[i];
                 if (argument.NameColon == null && i == parameterIndex)
                 {
                     return argument;
@@ -143,7 +143,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
                 // named parameter
                 if (argument.NameColon != null)
                 {
-                    ArgumentSyntax namedArgument = invocation.ArgumentList
+                    var namedArgument = invocation.ArgumentList
                                                              .Arguments
                                                              .Where(a => a.NameColon != null)
                                                              .FirstOrDefault(a => a.NameColon.Name.Identifier.ValueText == parameterName);
@@ -164,14 +164,14 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
             IMethodSymbol methodSymbol,
             SyntaxToken token)
         {
-            int parameterIndex = GetParameterIndex(methodSymbol, token);
+            var parameterIndex = GetParameterIndex(methodSymbol, token);
             if (parameterIndex < 0)
             {
                 return (default, null);
             }
 
             // find all parameter syntax for the index
-            IEnumerable<ParameterSyntax> parameters = methodSymbol.Locations
+            var parameters = methodSymbol.Locations
                                                                   .Select(l => l.FindToken().AncestorAndSelf<BaseMethodDeclarationSyntax>())
                                                                   .Select(n => n.ParameterList.Parameters[parameterIndex]);
 
@@ -185,13 +185,13 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
         private int GetParameterIndex(IMethodSymbol methodSymbol, SyntaxToken token)
         {
-            ArgumentSyntax argument = token.AncestorAndSelf<ArgumentSyntax>();
+            var argument = token.AncestorAndSelf<ArgumentSyntax>();
             if (argument != null)
             {
                 // name parameter?
                 if (argument.NameColon != null)
                 {
-                    IParameterSymbol symbol = methodSymbol.Parameters.FirstOrDefault(p => p.Name == argument.NameColon.Name.Identifier.ValueText);
+                    var symbol = methodSymbol.Parameters.FirstOrDefault(p => p.Name == argument.NameColon.Name.Identifier.ValueText);
                     if (symbol == null)
                     {
                         // named parameter is used but can't find one?
@@ -202,10 +202,10 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
                 }
 
                 // positional argument
-                ArgumentListSyntax list = argument.Parent as ArgumentListSyntax;
-                for (int i = 0; i < list.Arguments.Count; i++)
+                var list = argument.Parent as ArgumentListSyntax;
+                for (var i = 0; i < list.Arguments.Count; i++)
                 {
-                    ArgumentSyntax arg = list.Arguments[i];
+                    var arg = list.Arguments[i];
 
                     // malformed call
                     if (arg.NameColon != null)
@@ -222,10 +222,10 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
                 return -1;
             }
 
-            ParameterSyntax parameter = token.AncestorAndSelf<ParameterSyntax>();
+            var parameter = token.AncestorAndSelf<ParameterSyntax>();
             if (parameter != null)
             {
-                ParameterListSyntax parameterList = parameter.AncestorAndSelf<ParameterListSyntax>();
+                var parameterList = parameter.AncestorAndSelf<ParameterListSyntax>();
                 return parameterList.Parameters.IndexOf(parameter);
             }
 
@@ -234,10 +234,10 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
         private IMethodSymbol GetMethodDefinitionSymbol(SemanticModel semanticModel, SyntaxToken token)
         {
-            ArgumentSyntax argument = token.AncestorAndSelf<ArgumentSyntax>();
+            var argument = token.AncestorAndSelf<ArgumentSyntax>();
             if (argument != null)
             {
-                InvocationExpressionSyntax invocation = argument.AncestorAndSelf<InvocationExpressionSyntax>();
+                var invocation = argument.AncestorAndSelf<InvocationExpressionSyntax>();
                 if (invocation == null)
                 {
                     return null;
@@ -246,17 +246,17 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
                 return semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol as IMethodSymbol;
             }
 
-            ParameterSyntax parameter = token.AncestorAndSelf<ParameterSyntax>();
+            var parameter = token.AncestorAndSelf<ParameterSyntax>();
             if (parameter != null)
             {
-                ParameterListSyntax parameterList = parameter.AncestorAndSelf<ParameterListSyntax>();
+                var parameterList = parameter.AncestorAndSelf<ParameterListSyntax>();
                 if (parameterList == null)
                 {
                     // doesn't support lambda
                     return null;
                 }
 
-                SyntaxNode definitionNode = parameterList.Parent;
+                var definitionNode = parameterList.Parent;
                 return semanticModel.GetDeclaredSymbol(definitionNode, cancellationToken) as IMethodSymbol;
             }
 

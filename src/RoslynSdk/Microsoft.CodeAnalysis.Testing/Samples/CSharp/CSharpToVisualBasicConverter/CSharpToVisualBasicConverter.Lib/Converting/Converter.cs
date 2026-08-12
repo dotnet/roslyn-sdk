@@ -19,10 +19,10 @@ namespace CSharpToVisualBasicConverter
             IDictionary<string, string> identifierMap = null,
             bool convertStrings = false)
         {
-            SourceText text = syntaxTree.GetText();
-            SyntaxNode node = syntaxTree.GetRoot();
+            var text = syntaxTree.GetText();
+            var node = syntaxTree.GetRoot();
 
-            string vbText = Convert(text, node, identifierMap, convertStrings);
+            var vbText = Convert(text, node, identifierMap, convertStrings);
 
             return VB.SyntaxFactory.ParseSyntaxTree(vbText).GetRoot();
         }
@@ -32,16 +32,16 @@ namespace CSharpToVisualBasicConverter
             IDictionary<string, string> identifierMap = null,
             bool convertStrings = false)
         {
-            List<Func<string, SyntaxNode>> parseFunctions = new List<Func<string, SyntaxNode>>()
+            var parseFunctions = new List<Func<string, SyntaxNode>>()
             {
                 s => CS.SyntaxFactory.ParseExpression(s),
                 s => CS.SyntaxFactory.ParseStatement(s),
             };
 
-            foreach (Func<string, SyntaxNode> parse in parseFunctions)
+            foreach (var parse in parseFunctions)
             {
-                SyntaxNode node = parse(text);
-                SourceText stringText = SourceText.From(text);
+                var node = parse(text);
+                var stringText = SourceText.From(text);
 
                 if (!node.ContainsDiagnostics && node.FullSpan.Length == text.Length)
                 {
@@ -60,16 +60,16 @@ namespace CSharpToVisualBasicConverter
         {
             if (node is CS.Syntax.StatementSyntax)
             {
-                NodeVisitor nodeVisitor = new NodeVisitor(text, identifierMap, convertStrings);
-                StatementVisitor statementVisitor = new StatementVisitor(nodeVisitor, text);
-                SyntaxList<VB.Syntax.StatementSyntax> vbStatements = statementVisitor.Visit(node);
+                var nodeVisitor = new NodeVisitor(text, identifierMap, convertStrings);
+                var statementVisitor = new StatementVisitor(nodeVisitor, text);
+                var vbStatements = statementVisitor.Visit(node);
 
                 return string.Join(Environment.NewLine, vbStatements.Select(s => s.NormalizeWhitespace()));
             }
             else
             {
-                NodeVisitor visitor = new NodeVisitor(text, identifierMap, convertStrings);
-                SyntaxNode vbNode = visitor.Visit(node);
+                var visitor = new NodeVisitor(text, identifierMap, convertStrings);
+                var vbNode = visitor.Visit(node);
 
                 return vbNode.NormalizeWhitespace().ToFullString();
             }
@@ -90,12 +90,12 @@ namespace CSharpToVisualBasicConverter
         private static SeparatedSyntaxList<T> SeparatedCommaList<T>(IEnumerable<T> nodes)
             where T : SyntaxNode
         {
-            IList<T> nodesList = nodes as IList<T> ?? nodes.ToList();
-            List<SyntaxNodeOrToken> builder = new List<SyntaxNodeOrToken>();
-            SyntaxToken token = VB.SyntaxFactory.Token(VB.SyntaxKind.CommaToken);
+            var nodesList = nodes as IList<T> ?? nodes.ToList();
+            var builder = new List<SyntaxNodeOrToken>();
+            var token = VB.SyntaxFactory.Token(VB.SyntaxKind.CommaToken);
 
-            bool first = true;
-            foreach (T node in nodes)
+            var first = true;
+            foreach (var node in nodes)
             {
                 if (!first)
                 {
@@ -123,36 +123,36 @@ namespace CSharpToVisualBasicConverter
 
         private static VB.Syntax.StatementSyntax CreateBadStatement(string text, Type type)
         {
-            string comment = CreateCouldNotBeConvertedComment(text, type);
-            SyntaxTrivia trivia = VB.SyntaxFactory.CommentTrivia(comment);
+            var comment = CreateCouldNotBeConvertedComment(text, type);
+            var trivia = VB.SyntaxFactory.CommentTrivia(comment);
 
-            SyntaxToken token = VB.SyntaxFactory.Token(SyntaxTriviaList.Create(trivia), VB.SyntaxKind.EmptyToken);
+            var token = VB.SyntaxFactory.Token(SyntaxTriviaList.Create(trivia), VB.SyntaxKind.EmptyToken);
             return VB.SyntaxFactory.EmptyStatement(token);
         }
 
         private static VB.Syntax.StatementSyntax CreateBadStatement(SyntaxNode node, NodeVisitor visitor)
         {
-            IEnumerable<SyntaxTrivia> leadingTrivia = node.GetFirstToken(includeSkipped: true).LeadingTrivia.SelectMany(visitor.VisitTrivia);
-            IEnumerable<SyntaxTrivia> trailingTrivia = node.GetLastToken(includeSkipped: true).TrailingTrivia.SelectMany(visitor.VisitTrivia);
+            var leadingTrivia = node.GetFirstToken(includeSkipped: true).LeadingTrivia.SelectMany(visitor.VisitTrivia);
+            var trailingTrivia = node.GetLastToken(includeSkipped: true).TrailingTrivia.SelectMany(visitor.VisitTrivia);
 
-            string comment = CreateCouldNotBeConvertedComment(node.ToString(), typeof(VB.Syntax.StatementSyntax));
+            var comment = CreateCouldNotBeConvertedComment(node.ToString(), typeof(VB.Syntax.StatementSyntax));
             leadingTrivia = leadingTrivia.Concat(
                 VB.SyntaxFactory.CommentTrivia(comment));
 
-            SyntaxToken token = VB.SyntaxFactory.Token(TriviaList(leadingTrivia), VB.SyntaxKind.EmptyToken, trailing: TriviaList(trailingTrivia));
+            var token = VB.SyntaxFactory.Token(TriviaList(leadingTrivia), VB.SyntaxKind.EmptyToken, trailing: TriviaList(trailingTrivia));
             return VB.SyntaxFactory.EmptyStatement(token);
         }
 
         private static VB.Syntax.StructuredTriviaSyntax CreateBadDirective(SyntaxNode node, NodeVisitor visitor)
         {
-            IEnumerable<SyntaxTrivia> leadingTrivia = node.GetFirstToken(includeSkipped: true).LeadingTrivia.SelectMany(visitor.VisitTrivia).Where(t => !t.IsKind(VB.SyntaxKind.EndOfLineTrivia));
-            IEnumerable<SyntaxTrivia> trailingTrivia = node.GetLastToken(includeSkipped: true).TrailingTrivia.SelectMany(visitor.VisitTrivia).Where(t => !t.IsKind(VB.SyntaxKind.EndOfLineTrivia));
+            var leadingTrivia = node.GetFirstToken(includeSkipped: true).LeadingTrivia.SelectMany(visitor.VisitTrivia).Where(t => !t.IsKind(VB.SyntaxKind.EndOfLineTrivia));
+            var trailingTrivia = node.GetLastToken(includeSkipped: true).TrailingTrivia.SelectMany(visitor.VisitTrivia).Where(t => !t.IsKind(VB.SyntaxKind.EndOfLineTrivia));
 
-            string comment = CreateCouldNotBeConvertedComment(node.ToString(), typeof(VB.Syntax.StatementSyntax));
+            var comment = CreateCouldNotBeConvertedComment(node.ToString(), typeof(VB.Syntax.StatementSyntax));
             leadingTrivia = leadingTrivia.Concat(
                 VB.SyntaxFactory.CommentTrivia(comment));
 
-            SyntaxToken token = VB.SyntaxFactory.Token(TriviaList(leadingTrivia), VB.SyntaxKind.HashToken, trailing: TriviaList(trailingTrivia), text: "");
+            var token = VB.SyntaxFactory.Token(TriviaList(leadingTrivia), VB.SyntaxKind.HashToken, trailing: TriviaList(trailingTrivia), text: "");
             return VB.SyntaxFactory.BadDirectiveTrivia(token);
         }
     }

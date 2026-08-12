@@ -23,7 +23,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
         public static bool Applicable(SemanticModel semanticModel, ArgumentSyntax argument, IEnumerable<ParameterSyntax> parameters)
         {
-            BaseMethodDeclarationSyntax method = argument.AncestorAndSelf<BaseMethodDeclarationSyntax>();
+            var method = argument.AncestorAndSelf<BaseMethodDeclarationSyntax>();
             if (method == null ||
                 method.Body == null)
             {
@@ -37,22 +37,22 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
             Debug.Assert(argument.RefOrOutKeyword.Kind() == SyntaxKind.OutKeyword);
 
-            SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(argument.Expression);
+            var symbolInfo = semanticModel.GetSymbolInfo(argument.Expression);
             if (!(symbolInfo.Symbol != null && symbolInfo.Symbol.Kind == SymbolKind.Local))
             {
                 return true;
             }
 
             // for local, make sure it is definitely assigned before removing "out" keyword
-            InvocationExpressionSyntax invocation = argument.AncestorAndSelf<InvocationExpressionSyntax>();
+            var invocation = argument.AncestorAndSelf<InvocationExpressionSyntax>();
             if (invocation == null)
             {
                 return false;
             }
 
-            Tuple<StatementSyntax, StatementSyntax> range = GetStatementRangeForFlowAnalysis<StatementSyntax>(method.Body, TextSpan.FromBounds(method.Body.OpenBraceToken.Span.End, invocation.Span.Start));
-            DataFlowAnalysis dataFlow = semanticModel.AnalyzeDataFlow(range.Item1, range.Item2);
-            foreach (ISymbol symbol in dataFlow.AlwaysAssigned)
+            var range = GetStatementRangeForFlowAnalysis<StatementSyntax>(method.Body, TextSpan.FromBounds(method.Body.OpenBraceToken.Span.End, invocation.Span.Start));
+            var dataFlow = semanticModel.AnalyzeDataFlow(range.Item1, range.Item2);
+            foreach (var symbol in dataFlow.AlwaysAssigned)
             {
                 if (symbolInfo.Symbol == symbol)
                 {
@@ -68,7 +68,7 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
             T firstStatement = null;
             T lastStatement = null;
 
-            foreach (T stmt in node.DescendantNodesAndSelf().OfType<T>())
+            foreach (var stmt in node.DescendantNodesAndSelf().OfType<T>())
             {
                 if (firstStatement == null && stmt.Span.Start >= textSpan.Start)
                 {
@@ -108,19 +108,19 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
         protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
         {
-            Dictionary<SyntaxToken, SyntaxToken> map = new Dictionary<SyntaxToken, SyntaxToken>
+            var map = new Dictionary<SyntaxToken, SyntaxToken>
             {
                 { argument.RefOrOutKeyword, default }
             };
 
-            SyntaxToken tokenBeforeArgumentModifier = argument.RefOrOutKeyword.GetPreviousToken(includeSkipped: true);
+            var tokenBeforeArgumentModifier = argument.RefOrOutKeyword.GetPreviousToken(includeSkipped: true);
             map.Add(tokenBeforeArgumentModifier,
                     tokenBeforeArgumentModifier.MergeTrailingTrivia(argument.RefOrOutKeyword)
                                                .WithAdditionalAnnotations(Formatter.Annotation));
 
-            foreach (ParameterSyntax parameter in parameters)
+            foreach (var parameter in parameters)
             {
-                SyntaxToken outOrRefModifier = parameter.Modifiers.FirstOrDefault(t => t.Kind() == SyntaxKind.OutKeyword || t.Kind() == SyntaxKind.RefKeyword);
+                var outOrRefModifier = parameter.Modifiers.FirstOrDefault(t => t.Kind() == SyntaxKind.OutKeyword || t.Kind() == SyntaxKind.RefKeyword);
                 if (outOrRefModifier.Kind() == SyntaxKind.None)
                 {
                     continue;
@@ -128,13 +128,13 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
 
                 map.Add(outOrRefModifier, default);
 
-                SyntaxToken tokenBeforeParameterModifier = outOrRefModifier.GetPreviousToken(includeSkipped: true);
+                var tokenBeforeParameterModifier = outOrRefModifier.GetPreviousToken(includeSkipped: true);
                 map.Add(tokenBeforeParameterModifier, tokenBeforeParameterModifier.MergeTrailingTrivia(outOrRefModifier)
                                                                                   .WithAdditionalAnnotations(Formatter.Annotation));
             }
 
-            SyntaxNode root = (SyntaxNode)await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxNode newRoot = root.ReplaceTokens(map.Keys, (o, n) => map[o]);
+            var root = (SyntaxNode)await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var newRoot = root.ReplaceTokens(map.Keys, (o, n) => map[o]);
 
             return document.WithSyntaxRoot(newRoot);
         }

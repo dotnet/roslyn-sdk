@@ -44,8 +44,8 @@ namespace TreeTransforms
         /// <returns>Transformed source code as a string</returns>
         public static string Transform(string sourceText, TransformKind transformKind)
         {
-            SyntaxTree sourceTree = SyntaxFactory.ParseSyntaxTree(sourceText);
-            TransformVisitor visitor = new TransformVisitor(sourceTree, transformKind);
+            var sourceTree = SyntaxFactory.ParseSyntaxTree(sourceText);
+            var visitor = new TransformVisitor(sourceTree, transformKind);
 
             return visitor.Visit(sourceTree.GetRoot()).ToFullString();
         }

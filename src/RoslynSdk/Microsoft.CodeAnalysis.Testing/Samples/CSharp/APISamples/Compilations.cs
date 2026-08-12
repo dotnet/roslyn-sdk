@@ -18,8 +18,8 @@ namespace APISamples
         [Fact]
         public void EndToEndCompileAndRun()
         {
-            string expression = "6 * 7";
-            string text = @"public class Calculator
+            var expression = "6 * 7";
+            var text = @"public class Calculator
 {
     public static object Evaluate()
     {
@@ -27,23 +27,23 @@ namespace APISamples
     } 
 }".Replace("$", expression);
 
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(text);
-            CSharpCompilation compilation = CSharpCompilation.Create(
+            var tree = SyntaxFactory.ParseSyntaxTree(text);
+            var compilation = CSharpCompilation.Create(
                 "calc.dll",
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                 syntaxTrees: new[] { tree },
                 references: new[] { MetadataReference.CreateFromFile(typeof(object).Assembly.Location) });
 
             Assembly compiledAssembly;
-            using (MemoryStream stream = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
-                Microsoft.CodeAnalysis.Emit.EmitResult compileResult = compilation.Emit(stream);
+                var compileResult = compilation.Emit(stream);
                 compiledAssembly = Assembly.Load(stream.GetBuffer());
             }
 
-            Type calculator = compiledAssembly.GetType("Calculator");
-            MethodInfo evaluate = calculator.GetMethod("Evaluate");
-            string answer = evaluate.Invoke(null, null).ToString();
+            var calculator = compiledAssembly.GetType("Calculator");
+            var evaluate = calculator.GetMethod("Evaluate");
+            var answer = evaluate.Invoke(null, null).ToString();
 
             Assert.Equal("42", answer);
         }
@@ -51,28 +51,28 @@ namespace APISamples
         [Fact]
         public void GetErrorsAndWarnings()
         {
-            string text = @"class Program
+            var text = @"class Program
 {
     static int Main(string[] args)
     {
     }
 }";
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(text);
-            CSharpCompilation compilation = CSharpCompilation
+            var tree = SyntaxFactory.ParseSyntaxTree(text);
+            var compilation = CSharpCompilation
                 .Create("program.exe")
                 .AddSyntaxTrees(tree)
                 .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
             IEnumerable<Diagnostic> errorsAndWarnings = compilation.GetDiagnostics();
             Assert.Single(errorsAndWarnings);
-            Diagnostic error = errorsAndWarnings.First();
+            var error = errorsAndWarnings.First();
             Assert.Equal(
                 "'Program.Main(string[])': not all code paths return a value",
                 error.GetMessage(CultureInfo.InvariantCulture));
-            Location errorLocation = error.Location;
+            var errorLocation = error.Location;
             Assert.Equal(4, error.Location.SourceSpan.Length);
-            SourceText programText = errorLocation.SourceTree.GetText();
+            var programText = errorLocation.SourceTree.GetText();
             Assert.Equal("Main", programText.ToString(errorLocation.SourceSpan));
-            FileLinePositionSpan span = error.Location.GetLineSpan();
+            var span = error.Location.GetLineSpan();
             Assert.Equal(15, span.StartLinePosition.Character);
             Assert.Equal(2, span.StartLinePosition.Line);
         }

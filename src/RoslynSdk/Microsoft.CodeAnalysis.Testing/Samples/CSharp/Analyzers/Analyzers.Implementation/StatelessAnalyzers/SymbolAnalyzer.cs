@@ -42,7 +42,7 @@ namespace Sample.Analyzers
 
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            INamedTypeSymbol namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
 
             // Find just those named type symbols that have members with the same name as the named type.
             if (namedTypeSymbol.GetMembers(namedTypeSymbol.Name).Any())

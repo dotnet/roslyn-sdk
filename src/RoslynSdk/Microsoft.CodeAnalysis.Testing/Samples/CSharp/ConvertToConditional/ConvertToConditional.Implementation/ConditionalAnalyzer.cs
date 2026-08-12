@@ -20,8 +20,8 @@ namespace ConvertToConditional
 
         private bool ConversionExists(ExpressionSyntax whenTrue, ExpressionSyntax whenFalse)
         {
-            TypeInfo whenTrueInfo = SemanticModel.GetTypeInfo(whenTrue);
-            TypeInfo whenFalseInfo = SemanticModel.GetTypeInfo(whenFalse);
+            var whenTrueInfo = SemanticModel.GetTypeInfo(whenTrue);
+            var whenFalseInfo = SemanticModel.GetTypeInfo(whenFalse);
 
             return whenTrueInfo.Type != null
                 && whenFalseInfo.Type != null
@@ -43,8 +43,8 @@ namespace ConvertToConditional
             // one or both of the branches.
             if (!ConversionExists(whenTrue, whenFalse))
             {
-                Conversion whenTrueConversion = SemanticModel.ClassifyConversion(whenTrue, targetType);
-                Conversion whenFalseConversion = SemanticModel.ClassifyConversion(whenFalse, targetType);
+                var whenTrueConversion = SemanticModel.ClassifyConversion(whenTrue, targetType);
+                var whenFalseConversion = SemanticModel.ClassifyConversion(whenFalse, targetType);
 
                 if (whenTrueConversion.IsExplicit)
                 {
@@ -60,7 +60,7 @@ namespace ConvertToConditional
                 }
             }
 
-            ExpressionSyntax condition = IfStatement.Condition.Kind() == SyntaxKind.SimpleAssignmentExpression
+            var condition = IfStatement.Condition.Kind() == SyntaxKind.SimpleAssignmentExpression
                 ? IfStatement.Condition.Parenthesize()
                 : IfStatement.Condition;
 
@@ -70,7 +70,7 @@ namespace ConvertToConditional
             // insert a cast. We do this be speculatively determining the conversion classification
             // of the conditional expression to the target type in the same scope as the original
             // if-statement.
-            Conversion conversion = SemanticModel.ClassifyConversion(IfStatement.Span.Start, result, targetType);
+            var conversion = SemanticModel.ClassifyConversion(IfStatement.Span.Start, result, targetType);
             if (conversion.IsExplicit)
             {
                 result = result.CastTo(targetType);

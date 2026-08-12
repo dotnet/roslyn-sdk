@@ -7,7 +7,7 @@ root = true
 [*]
 indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
-# spelling_exclusion_path = SpellingExclusions.dic # file does not exist in roslyn-sdk
+spelling_exclusion_path = SpellingExclusions.dic
 
 # Code files
 [*.{cs,csx,vb,vbx}]
@@ -245,20 +245,12 @@ csharp_preserve_single_line_statements = true
 # IDE0060: Remove unused parameter
 dotnet_diagnostic.IDE0060.severity = warning
 
-# Samples are nested under src for the Roslyn merge layout, but keep their sample-specific analyzer settings.
-[src/RoslynSdk/Microsoft.CodeAnalysis.Testing/Samples/**/*.{cs,vb}]
-
-# Samples preserve unused parameters to demonstrate extensibility points.
-dotnet_diagnostic.IDE0060.severity = none
-
 [src/{Compilers,ExpressionEvaluator,Scripting}/**Test**/*.{cs,vb}]
 
 # IDE0060: Remove unused parameter
 dotnet_diagnostic.IDE0060.severity = none
 
-# Apply production style rules to product projects only. Test and Samples are intentionally excluded
-# because they lived outside src before the Roslyn merge layout and use different style settings.
-[src/RoslynSdk/{Microsoft.CodeAnalysis.Testing/Microsoft.CodeAnalysis.*,VisualStudio.Roslyn.SDK/AssemblyVersionGenerator,VisualStudio.Roslyn.SDK/ComponentDebugger,VisualStudio.Roslyn.SDK/Roslyn.SDK,VisualStudio.Roslyn.SDK/Roslyn.SDK.Template.Wizard,VisualStudio.Roslyn.SDK/SyntaxVisualizer}/**/*.{cs,vb}]
+[src/{Analyzers,CodeStyle,Features,Workspaces,EditorFeatures,VisualStudio}/**/*.{cs,vb}]
 
 # IDE0011: Add braces
 csharp_prefer_braces = when_multiline:warning
@@ -301,8 +293,7 @@ dotnet_diagnostic.IDE2005.severity = warning
 # csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental
 dotnet_diagnostic.IDE2006.severity = warning
 
-# Apply the partner-facing API rule to Visual Studio SDK product code, but not its tests.
-[src/RoslynSdk/VisualStudio.Roslyn.SDK/{AssemblyVersionGenerator,ComponentDebugger,Roslyn.SDK,Roslyn.SDK.Template.Wizard,SyntaxVisualizer}/**/*.{cs,vb}]
+[src/{VisualStudio}/**/*.{cs,vb}]
 # CA1822: Make member static
 # There is a risk of accidentally breaking an internal API that partners rely on though IVT.
 dotnet_code_quality.CA1822.api_surface = private

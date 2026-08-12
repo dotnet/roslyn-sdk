@@ -27,26 +27,26 @@ namespace Mustache
 
         public void Execute(GeneratorExecutionContext context)
         {
-            SyntaxReceiver rx = (SyntaxReceiver)context.SyntaxContextReceiver!;
-            foreach ((string name, string template, string hash) in rx.TemplateInfo)
+            var rx = (SyntaxReceiver)context.SyntaxContextReceiver!;
+            foreach ((var name, var template, var hash) in rx.TemplateInfo)
             {
-                string source = SourceFileFromMustachePath(name, template, hash);
+                var source = SourceFileFromMustachePath(name, template, hash);
                 context.AddSource($"Mustache{name}.g.cs", source);
             }
         }
 
         static string SourceFileFromMustachePath(string name, string template, string hash)
         {
-            Func<object, string> tree = HandlebarsDotNet.Handlebars.Compile(template);
-            object? @object = Newtonsoft.Json.JsonConvert.DeserializeObject(hash);
+            var tree = HandlebarsDotNet.Handlebars.Compile(template);
+            var @object = Newtonsoft.Json.JsonConvert.DeserializeObject(hash);
             if (@object is null)
             {
                 return string.Empty;
             }
 
-            string mustacheText = tree(@object);
+            var mustacheText = tree(@object);
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append($@"
 namespace Mustache {{
 
@@ -76,9 +76,9 @@ namespace Mustache {{
                     && attrib.ArgumentList?.Arguments.Count == 3
                     && context.SemanticModel.GetTypeInfo(attrib).Type?.ToDisplayString() == "MustacheAttribute")
                 {
-                    string name = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[0].Expression).ToString();
-                    string template = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[1].Expression).ToString();
-                    string hash = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[2].Expression).ToString();
+                    var name = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[0].Expression).ToString();
+                    var template = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[1].Expression).ToString();
+                    var hash = context.SemanticModel.GetConstantValue(attrib.ArgumentList.Arguments[2].Expression).ToString();
 
                     TemplateInfo.Add((name, template, hash));
                 }

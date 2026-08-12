@@ -17,7 +17,7 @@ namespace APISamples
         [Fact]
         public void GetExpressionType()
         {
-            TestCode testCode = new TestCode(@"class Program
+            var testCode = new TestCode(@"class Program
 {
     public static void Method()
     {
@@ -25,26 +25,26 @@ namespace APISamples
     } 
 }");
 
-            TypeSyntax varNode = testCode.SyntaxTree.GetRoot()
+            var varNode = testCode.SyntaxTree.GetRoot()
                 .DescendantNodes()
                 .OfType<LocalDeclarationStatementSyntax>()
                 .First()
                 .Declaration
                 .Type;
 
-            TypeInfo semanticInfo = testCode.SemanticModel.GetTypeInfo(varNode);
+            var semanticInfo = testCode.SemanticModel.GetTypeInfo(varNode);
             Assert.Equal("String", semanticInfo.Type.Name);
         }
 
         [Fact]
         public void BindNameToSymbol()
         {
-            TestCode testCode = new TestCode("using System;");
-            CompilationUnitSyntax compilationUnit = testCode.SyntaxTree.GetRoot() as CompilationUnitSyntax;
-            NameSyntax node = compilationUnit.Usings[0].Name;
+            var testCode = new TestCode("using System;");
+            var compilationUnit = testCode.SyntaxTree.GetRoot() as CompilationUnitSyntax;
+            var node = compilationUnit.Usings[0].Name;
 
-            SymbolInfo semanticInfo = testCode.SemanticModel.GetSymbolInfo(node);
-            INamespaceSymbol namespaceSymbol = semanticInfo.Symbol as INamespaceSymbol;
+            var semanticInfo = testCode.SemanticModel.GetSymbolInfo(node);
+            var namespaceSymbol = semanticInfo.Symbol as INamespaceSymbol;
 
             Assert.Contains(namespaceSymbol.GetNamespaceMembers(), symbol => symbol.Name == "Collections");
         }
@@ -52,8 +52,8 @@ namespace APISamples
         [Fact]
         public void GetDeclaredSymbol()
         {
-            TestCode testCode = new TestCode("namespace Acme { internal class C$lass1 { } }");
-            INamedTypeSymbol symbol = testCode.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)testCode.SyntaxNode);
+            var testCode = new TestCode("namespace Acme { internal class C$lass1 { } }");
+            var symbol = testCode.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)testCode.SyntaxNode);
 
             Assert.True(symbol.CanBeReferencedByName);
             Assert.Equal("Acme", symbol.ContainingNamespace.Name);
@@ -67,15 +67,15 @@ namespace APISamples
         [Fact]
         public void GetSymbolXmlDocComments()
         {
-            TestCode testCode = new TestCode(@"
+            var testCode = new TestCode(@"
 /// <summary>
 /// This is a test class!
 /// </summary>
 class C$lass1 { }");
-            INamedTypeSymbol symbol = testCode.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)testCode.SyntaxNode);
+            var symbol = testCode.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)testCode.SyntaxNode);
 
-            string actualXml = symbol.GetDocumentationCommentXml();
-            string expectedXml =
+            var actualXml = symbol.GetDocumentationCommentXml();
+            var expectedXml =
 @"<member name=""T:Class1"">
     <summary>
     This is a test class!
@@ -88,13 +88,13 @@ class C$lass1 { }");
         [Fact]
         public void SymbolDisplayFormatTest()
         {
-            TestCode testCode = new TestCode(@"
+            var testCode = new TestCode(@"
 class C1<T> { }
 class C2 {
     public static TSource M<TSource>(this C1<TSource> source, // comment here
 int index) {} }");
 
-            SymbolDisplayFormat format = new SymbolDisplayFormat(
+            var format = new SymbolDisplayFormat(
                 extensionMethodStyle: SymbolDisplayExtensionMethodStyle.StaticMethod,
                 genericsOptions:
                     SymbolDisplayGenericsOptions.IncludeTypeParameters |
@@ -112,7 +112,7 @@ int index) {} }");
                     SymbolDisplayParameterOptions.IncludeDefaultValue,
                 miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
-            ISymbol symbol = testCode.Compilation
+            var symbol = testCode.Compilation
                 .SourceModule
                 .GlobalNamespace
                 .GetTypeMembers("C2")[0]
@@ -124,15 +124,15 @@ int index) {} }");
         [Fact]
         public void EnumerateSymbolsInCompilation()
         {
-            string file1 = "public class Animal { public virtual void MakeSound() { } }";
-            string file2 = "class Cat : Animal { public override void MakeSound() { } }";
-            CSharpCompilation compilation = CSharpCompilation.Create("test")
+            var file1 = "public class Animal { public virtual void MakeSound() { } }";
+            var file2 = "class Cat : Animal { public override void MakeSound() { } }";
+            var compilation = CSharpCompilation.Create("test")
                     .AddSyntaxTrees(SyntaxFactory.ParseSyntaxTree(file1), SyntaxFactory.ParseSyntaxTree(file2))
                     .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
 
-            INamespaceSymbol globalNamespace = compilation.SourceModule.GlobalNamespace;
+            var globalNamespace = compilation.SourceModule.GlobalNamespace;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             EnumSymbols(globalNamespace, symbol => sb.AppendLine(symbol.ToString()));
 
             Assert.Equal(@"<global namespace>
@@ -148,7 +148,7 @@ Cat.Cat()
         private void EnumSymbols(ISymbol symbol, Action<ISymbol> callback)
         {
             callback(symbol);
-            foreach (ISymbol childSymbol in GetMembers(symbol))
+            foreach (var childSymbol in GetMembers(symbol))
             {
                 EnumSymbols(childSymbol, callback);
             }
@@ -167,7 +167,7 @@ Cat.Cat()
         [Fact]
         public void AnalyzeRegionControlFlow()
         {
-            TestCode testCode = new TestCode(@"
+            var testCode = new TestCode(@"
 class C {
     public void F()
     {
@@ -179,15 +179,15 @@ class C {
         goto L1; // 2
     }
 }");
-            testCode.GetStatementsBetweenMarkers(out StatementSyntax firstStatement, out StatementSyntax lastStatement);
-            ControlFlowAnalysis regionControlFlowAnalysis =
+            testCode.GetStatementsBetweenMarkers(out var firstStatement, out var lastStatement);
+            var regionControlFlowAnalysis =
                 testCode.SemanticModel.AnalyzeControlFlow(firstStatement, lastStatement);
 
             Assert.Single(regionControlFlowAnalysis.EntryPoints);
             Assert.Single(regionControlFlowAnalysis.ExitPoints);
             Assert.True(regionControlFlowAnalysis.EndPointIsReachable);
 
-            BlockSyntax methodBody = testCode.SyntaxTree
+            var methodBody = testCode.SyntaxTree
                 .GetRoot()
                 .DescendantNodes()
                 .OfType<MethodDeclarationSyntax>()
@@ -202,7 +202,7 @@ class C {
         [Fact]
         public void AnalyzeRegionDataFlow()
         {
-            TestCode testCode = new TestCode(@"
+            var testCode = new TestCode(@"
 class C {
     public void F(int x)
     {
@@ -215,8 +215,8 @@ class C {
         int c;
     }
 }");
-            testCode.GetStatementsBetweenMarkers(out StatementSyntax firstStatement, out StatementSyntax lastStatement);
-            DataFlowAnalysis regionDataFlowAnalysis = testCode.SemanticModel.AnalyzeDataFlow(firstStatement, lastStatement);
+            testCode.GetStatementsBetweenMarkers(out var firstStatement, out var lastStatement);
+            var regionDataFlowAnalysis = testCode.SemanticModel.AnalyzeDataFlow(firstStatement, lastStatement);
 
             Assert.Equal("b,x,y,z", string.Join(",", regionDataFlowAnalysis
                 .VariablesDeclared
@@ -226,7 +226,7 @@ class C {
         [Fact]
         public void FailedOverloadResolution()
         {
-            TestCode testCode = new TestCode(@"
+            var testCode = new TestCode(@"
 class Program
 {
     static void Main(string[] args)
@@ -243,8 +243,8 @@ class X
     public static void f(int i) { }
 }
 ");
-            TypeInfo typeInfo = testCode.SemanticModel.GetTypeInfo((ExpressionSyntax)testCode.SyntaxNode);
-            SymbolInfo semanticInfo = testCode.SemanticModel.GetSymbolInfo((ExpressionSyntax)testCode.SyntaxNode);
+            var typeInfo = testCode.SemanticModel.GetTypeInfo((ExpressionSyntax)testCode.SyntaxNode);
+            var semanticInfo = testCode.SemanticModel.GetSymbolInfo((ExpressionSyntax)testCode.SyntaxNode);
 
             Assert.Null(typeInfo.Type);
             Assert.Null(typeInfo.ConvertedType);
@@ -252,16 +252,16 @@ class X
             Assert.Null(semanticInfo.Symbol);
             Assert.Equal(CandidateReason.OverloadResolutionFailure, semanticInfo.CandidateReason);
             Assert.Equal(2, semanticInfo.CandidateSymbols.Length);
-            ISymbol[] sortedCandidates = semanticInfo.CandidateSymbols.AsEnumerable().OrderBy(s => s.ToDisplayString()).ToArray();
+            var sortedCandidates = semanticInfo.CandidateSymbols.AsEnumerable().OrderBy(s => s.ToDisplayString()).ToArray();
             Assert.Equal("X.f()", sortedCandidates[0].ToDisplayString());
             Assert.Equal(SymbolKind.Method, sortedCandidates[0].Kind);
             Assert.Equal("X.f(int)", sortedCandidates[1].ToDisplayString());
             Assert.Equal(SymbolKind.Method, sortedCandidates[1].Kind);
 
-            System.Collections.Immutable.ImmutableArray<ISymbol> memberGroup = testCode.SemanticModel.GetMemberGroup((ExpressionSyntax)testCode.SyntaxNode);
+            var memberGroup = testCode.SemanticModel.GetMemberGroup((ExpressionSyntax)testCode.SyntaxNode);
 
             Assert.Equal(2, memberGroup.Length);
-            ISymbol[] sortedMemberGroup = memberGroup.AsEnumerable().OrderBy(s => s.ToDisplayString()).ToArray();
+            var sortedMemberGroup = memberGroup.AsEnumerable().OrderBy(s => s.ToDisplayString()).ToArray();
             Assert.Equal("X.f()", sortedMemberGroup[0].ToDisplayString());
             Assert.Equal("X.f(int)", sortedMemberGroup[1].ToDisplayString());
         }
@@ -312,13 +312,13 @@ class X
 
             public void GetStatementsBetweenMarkers(out StatementSyntax firstStatement, out StatementSyntax lastStatement)
             {
-                TextSpan span = GetSpanBetweenMarkers();
-                IEnumerable<StatementSyntax> statementsInside = SyntaxTree
+                var span = GetSpanBetweenMarkers();
+                var statementsInside = SyntaxTree
                     .GetRoot()
                     .DescendantNodes(span)
                     .OfType<StatementSyntax>()
                     .Where(s => span.Contains(s.Span));
-                StatementSyntax first = firstStatement = statementsInside
+                var first = firstStatement = statementsInside
                     .First();
                 lastStatement = statementsInside
                     .Where(s => s.Parent == first.Parent)
@@ -327,16 +327,16 @@ class X
 
             public TextSpan GetSpanBetweenMarkers()
             {
-                SyntaxTrivia startComment = SyntaxTree
+                var startComment = SyntaxTree
                     .GetRoot()
                     .DescendantTrivia()
                     .First(syntaxTrivia => syntaxTrivia.ToString().Contains("start"));
-                SyntaxTrivia endComment = SyntaxTree
+                var endComment = SyntaxTree
                     .GetRoot()
                     .DescendantTrivia()
                     .First(syntaxTrivia => syntaxTrivia.ToString().Contains("end"));
 
-                TextSpan textSpan = TextSpan.FromBounds(
+                var textSpan = TextSpan.FromBounds(
                     startComment.FullSpan.End,
                     endComment.FullSpan.Start);
                 return textSpan;

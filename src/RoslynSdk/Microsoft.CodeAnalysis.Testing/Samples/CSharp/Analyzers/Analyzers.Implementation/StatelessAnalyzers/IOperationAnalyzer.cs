@@ -35,12 +35,12 @@ namespace Sample.Analyzers.StatelessAnalyzers
 
         private void AnalyzeOperation(OperationAnalysisContext context)
         {
-            IArrayCreationOperation creationExpression = (IArrayCreationOperation)context.Operation;
+            var creationExpression = (IArrayCreationOperation)context.Operation;
 
             if (creationExpression.DimensionSizes.Length == 1 && creationExpression.DimensionSizes[0].ConstantValue.HasValue)
             {
-                object arrayDimension = creationExpression.DimensionSizes[0].ConstantValue.Value;
-                if (arrayDimension is int && (int)arrayDimension == 0)
+                var arrayDimension = creationExpression.DimensionSizes[0].ConstantValue.Value;
+                if (arrayDimension is int dimension && dimension == 0)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation()));
                 }

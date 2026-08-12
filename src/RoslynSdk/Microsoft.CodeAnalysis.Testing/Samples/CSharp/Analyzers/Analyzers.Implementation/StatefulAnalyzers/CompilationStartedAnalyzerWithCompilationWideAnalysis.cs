@@ -57,21 +57,21 @@ namespace Sample.Analyzers
             context.RegisterCompilationStartAction(compilationContext =>
             {
                 // Check if the attribute type marking unsecure methods is defined.
-                INamedTypeSymbol unsecureMethodAttributeType = compilationContext.Compilation.GetTypeByMetadataName(UnsecureMethodAttributeName);
+                var unsecureMethodAttributeType = compilationContext.Compilation.GetTypeByMetadataName(UnsecureMethodAttributeName);
                 if (unsecureMethodAttributeType == null)
                 {
                     return;
                 }
 
                 // Check if the interface type marking secure types is defined.
-                INamedTypeSymbol secureTypeInterfaceType = compilationContext.Compilation.GetTypeByMetadataName(SecureTypeInterfaceName);
+                var secureTypeInterfaceType = compilationContext.Compilation.GetTypeByMetadataName(SecureTypeInterfaceName);
                 if (secureTypeInterfaceType == null)
                 {
                     return;
                 }
 
                 // Initialize state in the start action.
-                CompilationAnalyzer analyzer = new CompilationAnalyzer(unsecureMethodAttributeType, secureTypeInterfaceType);
+                var analyzer = new CompilationAnalyzer(unsecureMethodAttributeType, secureTypeInterfaceType);
 
                 // Register an intermediate non-end action that accesses and modifies the state.
                 compilationContext.RegisterSymbolAction(analyzer.AnalyzeSymbol, SymbolKind.NamedType, SymbolKind.Method);
@@ -108,7 +108,7 @@ namespace Sample.Analyzers
                 {
                     case SymbolKind.NamedType:
                         // Check if the symbol implements "_secureTypeInterfaceType".
-                        INamedTypeSymbol namedType = (INamedTypeSymbol)context.Symbol;
+                        var namedType = (INamedTypeSymbol)context.Symbol;
                         if (namedType.AllInterfaces.Contains(_secureTypeInterfaceType))
                         {
                             lock (_secureTypes)
@@ -121,7 +121,7 @@ namespace Sample.Analyzers
 
                     case SymbolKind.Method:
                         // Check if this is an interface method with "_unsecureMethodAttributeType" attribute.
-                        IMethodSymbol method = (IMethodSymbol)context.Symbol;
+                        var method = (IMethodSymbol)context.Symbol;
                         if (method.ContainingType.TypeKind == TypeKind.Interface &&
                             method.GetAttributes().Any(a => a.AttributeClass.Equals(_unsecureMethodAttributeType)))
                         {
@@ -144,9 +144,9 @@ namespace Sample.Analyzers
                 }
 
                 // Report diagnostic for violating named types.
-                foreach (INamedTypeSymbol secureType in _secureTypes)
+                foreach (var secureType in _secureTypes)
                 {
-                    foreach (INamedTypeSymbol unsecureInterface in _interfacesWithUnsecureMethods)
+                    foreach (var unsecureInterface in _interfacesWithUnsecureMethods)
                     {
                         if (secureType.AllInterfaces.Contains(unsecureInterface))
                         {

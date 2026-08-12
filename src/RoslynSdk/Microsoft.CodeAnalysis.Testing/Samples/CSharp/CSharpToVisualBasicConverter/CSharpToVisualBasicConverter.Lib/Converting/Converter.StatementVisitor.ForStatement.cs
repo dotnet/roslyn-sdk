@@ -25,10 +25,10 @@ namespace CSharpToVisualBasicConverter
 
             private SyntaxList<VB.Syntax.StatementSyntax> VisitSimpleForStatement(CS.Syntax.ForStatementSyntax node)
             {
-                VB.Syntax.ForStatementSyntax forStatement = CreateForStatement(node);
-                IEnumerable<VB.Syntax.StatementSyntax> statements = VisitStatementEnumerable(node.Statement);
+                var forStatement = CreateForStatement(node);
+                var statements = VisitStatementEnumerable(node.Statement);
 
-                VB.Syntax.ForBlockSyntax forBlock = VB.SyntaxFactory.ForBlock(
+                var forBlock = VB.SyntaxFactory.ForBlock(
                     forStatement,
                     List(statements),
                     VB.SyntaxFactory.NextStatement());
@@ -38,9 +38,9 @@ namespace CSharpToVisualBasicConverter
 
             private VB.Syntax.ForStatementSyntax CreateForStatement(CS.Syntax.ForStatementSyntax node)
             {
-                string variableName = node.Declaration.Variables[0].Identifier.ValueText;
-                VB.Syntax.ForStepClauseSyntax stepClause = CreateForStepClause(node);
-                VB.Syntax.ExpressionSyntax toValue = CreateForToValue(node);
+                var variableName = node.Declaration.Variables[0].Identifier.ValueText;
+                var stepClause = CreateForStepClause(node);
+                var toValue = CreateForToValue(node);
                 return VB.SyntaxFactory.ForStatement(
                     controlVariable: VB.SyntaxFactory.IdentifierName(variableName),
                     fromValue: nodeVisitor.VisitExpression(node.Declaration.Variables[0].Initializer.Value),
@@ -50,7 +50,7 @@ namespace CSharpToVisualBasicConverter
 
             private VB.Syntax.ExpressionSyntax CreateForToValue(CS.Syntax.ForStatementSyntax node)
             {
-                VB.Syntax.ExpressionSyntax expression = nodeVisitor.VisitExpression(((CS.Syntax.BinaryExpressionSyntax)node.Condition).Right);
+                var expression = nodeVisitor.VisitExpression(((CS.Syntax.BinaryExpressionSyntax)node.Condition).Right);
 
                 if (!node.Condition.IsKind(CS.SyntaxKind.LessThanOrEqualExpression) &&
                     !node.Condition.IsKind(CS.SyntaxKind.GreaterThanOrEqualExpression))
@@ -73,7 +73,7 @@ namespace CSharpToVisualBasicConverter
 
             private VB.Syntax.ForStepClauseSyntax CreateForStepClause(CS.Syntax.ForStatementSyntax node)
             {
-                ExpressionSyntax incrementor = node.Incrementors[0];
+                var incrementor = node.Incrementors[0];
                 if (!incrementor.IsKind(CS.SyntaxKind.PreIncrementExpression) &&
                     !incrementor.IsKind(CS.SyntaxKind.PostIncrementExpression))
                 {
@@ -132,7 +132,7 @@ namespace CSharpToVisualBasicConverter
                     return false;
                 }
 
-                string variableName = node.Declaration.Variables[0].Identifier.ValueText;
+                var variableName = node.Declaration.Variables[0].Identifier.ValueText;
 
                 return
                     IsSimpleForDeclaration(node) &&
@@ -177,7 +177,7 @@ namespace CSharpToVisualBasicConverter
                         node.Condition.IsKind(CS.SyntaxKind.GreaterThanExpression) ||
                         node.Condition.IsKind(CS.SyntaxKind.GreaterThanOrEqualExpression))
                     {
-                        BinaryExpressionSyntax binaryExpression = (CS.Syntax.BinaryExpressionSyntax)node.Condition;
+                        var binaryExpression = (CS.Syntax.BinaryExpressionSyntax)node.Condition;
                         return binaryExpression.Left is CS.Syntax.IdentifierNameSyntax identifierName &&
                                identifierName.Identifier.ValueText == variableName;
                     }
@@ -198,7 +198,7 @@ namespace CSharpToVisualBasicConverter
 #endif
                 if (node.Incrementors.Count == 1)
                 {
-                    ExpressionSyntax incrementor = node.Incrementors[0];
+                    var incrementor = node.Incrementors[0];
                     if (incrementor.IsKind(CS.SyntaxKind.PostIncrementExpression) ||
                         incrementor.IsKind(CS.SyntaxKind.PostDecrementExpression))
                     {
@@ -216,7 +216,7 @@ namespace CSharpToVisualBasicConverter
                     if (incrementor.IsKind(CS.SyntaxKind.AddAssignmentExpression) ||
                         incrementor.IsKind(CS.SyntaxKind.SubtractAssignmentExpression))
                     {
-                        AssignmentExpressionSyntax binaryExpression = (CS.Syntax.AssignmentExpressionSyntax)incrementor;
+                        var binaryExpression = (CS.Syntax.AssignmentExpressionSyntax)incrementor;
                         return binaryExpression.Left is CS.Syntax.IdentifierNameSyntax identifierName &&
                                identifierName.Identifier.ValueText == variableName;
                     }
@@ -248,17 +248,17 @@ namespace CSharpToVisualBasicConverter
                         condition: nodeVisitor.VisitExpression(node.Condition));
                 }
 
-                SyntaxList<VB.Syntax.StatementSyntax> initialBlock = Visit(node.Statement);
+                var initialBlock = Visit(node.Statement);
 
-                List<VB.Syntax.StatementSyntax> whileStatements = initialBlock.Concat(
+                var whileStatements = initialBlock.Concat(
                     node.Incrementors.Select(nodeVisitor.VisitStatement)).ToList();
-                SyntaxList<VB.Syntax.StatementSyntax> whileBody = List<VB.Syntax.StatementSyntax>(whileStatements);
+                var whileBody = List<VB.Syntax.StatementSyntax>(whileStatements);
 
-                VB.Syntax.WhileBlockSyntax whileBlock = VB.SyntaxFactory.WhileBlock(
+                var whileBlock = VB.SyntaxFactory.WhileBlock(
                     begin,
                     whileBody);
 
-                List<VB.Syntax.StatementSyntax> statements = new List<VB.Syntax.StatementSyntax>();
+                var statements = new List<VB.Syntax.StatementSyntax>();
                 if (node.Declaration != null)
                 {
                     statements.Add(nodeVisitor.Visit<VB.Syntax.StatementSyntax>(node.Declaration));

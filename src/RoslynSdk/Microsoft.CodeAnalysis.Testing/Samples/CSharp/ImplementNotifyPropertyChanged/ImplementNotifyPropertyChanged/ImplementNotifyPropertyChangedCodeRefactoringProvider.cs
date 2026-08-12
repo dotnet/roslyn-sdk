@@ -19,28 +19,28 @@ namespace ImplementNotifyPropertyChangedCS
     {
         public sealed override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
         {
-            Document document = context.Document;
-            Microsoft.CodeAnalysis.Text.TextSpan textSpan = context.Span;
-            CancellationToken cancellationToken = context.CancellationToken;
+            var document = context.Document;
+            var textSpan = context.Span;
+            var cancellationToken = context.CancellationToken;
 
-            CompilationUnitSyntax root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false) as CompilationUnitSyntax;
-            SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false) as CompilationUnitSyntax;
+            var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             // if length is 0 then no particular range is selected, so pick the first enclosing member
             if (textSpan.Length == 0)
             {
-                MemberDeclarationSyntax decl = root.FindToken(textSpan.Start).Parent.AncestorsAndSelf().OfType<MemberDeclarationSyntax>().FirstOrDefault();
+                var decl = root.FindToken(textSpan.Start).Parent.AncestorsAndSelf().OfType<MemberDeclarationSyntax>().FirstOrDefault();
                 if (decl != null)
                 {
                     textSpan = decl.FullSpan;
                 }
             }
 
-            IEnumerable<ExpandablePropertyInfo> properties = ExpansionChecker.GetExpandableProperties(textSpan, root, model);
+            var properties = ExpansionChecker.GetExpandableProperties(textSpan, root, model);
 
             if (properties.Any())
             {
-                CodeAction action = CodeAction.Create(
+                var action = CodeAction.Create(
                     "Apply INotifyPropertyChanged pattern",
                     c => ImplementNotifyPropertyChangedAsync(document, root, model, properties, c),
                     equivalenceKey: nameof(ImplementNotifyPropertyChangedCodeRefactoringProvider));

@@ -40,16 +40,16 @@ namespace Sample.Analyzers
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 // Find the additional file with the terms.
-                ImmutableArray<AdditionalText> additionalFiles = compilationStartContext.Options.AdditionalFiles;
-                AdditionalText termsFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).Equals("Terms.txt"));
+                var additionalFiles = compilationStartContext.Options.AdditionalFiles;
+                var termsFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).Equals("Terms.txt"));
 
                 if (termsFile != null)
                 {
-                    HashSet<string> terms = new HashSet<string>();
+                    var terms = new HashSet<string>();
 
                     // Read the file line-by-line to get the terms.
-                    SourceText fileText = termsFile.GetText(compilationStartContext.CancellationToken);
-                    foreach (TextLine line in fileText.Lines)
+                    var fileText = termsFile.GetText(compilationStartContext.CancellationToken);
+                    foreach (var line in fileText.Lines)
                     {
                         terms.Add(line.ToString());
                     }
@@ -57,10 +57,10 @@ namespace Sample.Analyzers
                     // Check every named type for the invalid terms.
                     compilationStartContext.RegisterSymbolAction(symbolAnalysisContext =>
                     {
-                        INamedTypeSymbol namedTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
-                        string symbolName = namedTypeSymbol.Name;
+                        var namedTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
+                        var symbolName = namedTypeSymbol.Name;
 
-                        foreach (string term in terms)
+                        foreach (var term in terms)
                         {
                             if (symbolName.Contains(term))
                             {

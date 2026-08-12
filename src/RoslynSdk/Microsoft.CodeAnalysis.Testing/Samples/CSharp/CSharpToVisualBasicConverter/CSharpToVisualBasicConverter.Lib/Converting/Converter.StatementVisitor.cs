@@ -42,13 +42,13 @@ namespace CSharpToVisualBasicConverter
                 {
                     return null;
                 }
-                else if (node is VB.Syntax.StatementSyntax)
+                else if (node is VB.Syntax.StatementSyntax statement)
                 {
-                    return (VB.Syntax.StatementSyntax)node;
+                    return statement;
                 }
-                else if (node is VB.Syntax.InvocationExpressionSyntax)
+                else if (node is VB.Syntax.InvocationExpressionSyntax invocation)
                 {
-                    return VB.SyntaxFactory.ExpressionStatement((VB.Syntax.InvocationExpressionSyntax)node);
+                    return VB.SyntaxFactory.ExpressionStatement(invocation);
                 }
                 else
                 {
@@ -59,14 +59,14 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxList<VB.Syntax.StatementSyntax> VisitBlock(CS.Syntax.BlockSyntax node)
             {
-                List<VB.Syntax.StatementSyntax> statements = node.Statements.SelectMany(VisitStatementEnumerable).ToList();
+                var statements = node.Statements.SelectMany(VisitStatementEnumerable).ToList();
 
                 if (node.IsParentKind(CS.SyntaxKind.ConstructorDeclaration))
                 {
-                    ConstructorDeclarationSyntax constructor = (CS.Syntax.ConstructorDeclarationSyntax)node.Parent;
+                    var constructor = (CS.Syntax.ConstructorDeclarationSyntax)node.Parent;
                     if (constructor.Initializer != null)
                     {
-                        VB.Syntax.StatementSyntax initializer = nodeVisitor.Visit<VB.Syntax.StatementSyntax>(constructor.Initializer);
+                        var initializer = nodeVisitor.Visit<VB.Syntax.StatementSyntax>(constructor.Initializer);
                         statements.Insert(0, initializer);
                     }
                 }
@@ -76,9 +76,9 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxList<VB.Syntax.StatementSyntax> VisitLocalDeclarationStatement(CS.Syntax.LocalDeclarationStatementSyntax node)
             {
-                SyntaxTriviaList leadingTrivia = TriviaList(node.GetFirstToken(includeSkipped: true).LeadingTrivia.SelectMany(nodeVisitor.VisitTrivia));
+                var leadingTrivia = TriviaList(node.GetFirstToken(includeSkipped: true).LeadingTrivia.SelectMany(nodeVisitor.VisitTrivia));
 
-                SyntaxToken token = node.Modifiers.Any(t => t.IsKind(CS.SyntaxKind.ConstKeyword))
+                var token = node.Modifiers.Any(t => t.IsKind(CS.SyntaxKind.ConstKeyword))
                     ? VB.SyntaxFactory.Token(leadingTrivia, VB.SyntaxKind.ConstKeyword)
                     : VB.SyntaxFactory.Token(leadingTrivia, VB.SyntaxKind.DimKeyword);
 
@@ -103,13 +103,13 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxList<VB.Syntax.StatementSyntax> VisitIfStatement(CS.Syntax.IfStatementSyntax node)
             {
-                VB.Syntax.IfStatementSyntax ifStatement = VB.SyntaxFactory.IfStatement(
+                var ifStatement = VB.SyntaxFactory.IfStatement(
                     VB.SyntaxFactory.Token(VB.SyntaxKind.IfKeyword),
                     nodeVisitor.VisitExpression(node.Condition),
                     VB.SyntaxFactory.Token(VB.SyntaxKind.ThenKeyword));
 
-                List<VB.Syntax.ElseIfBlockSyntax> elseIfBlocks = new List<VB.Syntax.ElseIfBlockSyntax>();
-                ElseClauseSyntax currentElseClause = node.Else;
+                var elseIfBlocks = new List<VB.Syntax.ElseIfBlockSyntax>();
+                var currentElseClause = node.Else;
                 while (currentElseClause != null)
                 {
                     if (!currentElseClause.Statement.IsKind(CS.SyntaxKind.IfStatement))
@@ -117,14 +117,14 @@ namespace CSharpToVisualBasicConverter
                         break;
                     }
 
-                    IfStatementSyntax nestedIf = (CS.Syntax.IfStatementSyntax)currentElseClause.Statement;
+                    var nestedIf = (CS.Syntax.IfStatementSyntax)currentElseClause.Statement;
                     currentElseClause = nestedIf.Else;
 
-                    VB.Syntax.ElseIfStatementSyntax elseIfStatement = VB.SyntaxFactory.ElseIfStatement(
+                    var elseIfStatement = VB.SyntaxFactory.ElseIfStatement(
                         VB.SyntaxFactory.Token(VB.SyntaxKind.ElseIfKeyword),
                         nodeVisitor.VisitExpression(nestedIf.Condition),
                         VB.SyntaxFactory.Token(VB.SyntaxKind.ThenKeyword));
-                    VB.Syntax.ElseIfBlockSyntax elseIfBlock = VB.SyntaxFactory.ElseIfBlock(
+                    var elseIfBlock = VB.SyntaxFactory.ElseIfBlock(
                         elseIfStatement,
                         Visit(nestedIf.Statement));
                     elseIfBlocks.Add(elseIfBlock);
@@ -140,7 +140,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxList<VB.Syntax.StatementSyntax> VisitSwitchStatement(CS.Syntax.SwitchStatementSyntax node)
             {
-                VB.Syntax.SelectStatementSyntax begin = VB.SyntaxFactory.SelectStatement(
+                var begin = VB.SyntaxFactory.SelectStatement(
                     expression: nodeVisitor.VisitExpression(node.Expression));
 
                 return List<VB.Syntax.StatementSyntax>(
@@ -162,7 +162,7 @@ namespace CSharpToVisualBasicConverter
 
             private VB.Syntax.StatementSyntax VisitBreakStatementWorker(CS.Syntax.BreakStatementSyntax node)
             {
-                foreach (SyntaxNode parent in node.GetAncestorsOrThis<SyntaxNode>())
+                foreach (var parent in node.GetAncestorsOrThis<SyntaxNode>())
                 {
                     if (parent.IsBreakableConstruct())
                     {
@@ -175,7 +175,7 @@ namespace CSharpToVisualBasicConverter
                             case CS.SyntaxKind.SwitchStatement:
                                 // If the 'break' is the last statement of a switch block, then we
                                 // don't need to translate it into VB (as it is implied).
-                                SwitchSectionSyntax outerSection = node.FirstAncestorOrSelf<CS.Syntax.SwitchSectionSyntax>();
+                                var outerSection = node.FirstAncestorOrSelf<CS.Syntax.SwitchSectionSyntax>();
                                 if (outerSection != null && outerSection.Statements.Count > 0)
                                 {
                                     if (node == outerSection.Statements.Last())
@@ -202,7 +202,7 @@ namespace CSharpToVisualBasicConverter
 
             private VB.Syntax.StatementSyntax VisitContinueStatementWorker(CS.Syntax.ContinueStatementSyntax node)
             {
-                foreach (SyntaxNode parent in node.GetAncestorsOrThis<SyntaxNode>())
+                foreach (var parent in node.GetAncestorsOrThis<SyntaxNode>())
                 {
                     if (parent.IsContinuableConstruct())
                     {
@@ -224,7 +224,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxList<VB.Syntax.StatementSyntax> VisitWhileStatement(CS.Syntax.WhileStatementSyntax node)
             {
-                VB.Syntax.WhileStatementSyntax begin = VB.SyntaxFactory.WhileStatement(
+                var begin = VB.SyntaxFactory.WhileStatement(
                     nodeVisitor.VisitExpression(node.Condition));
 
                 return List<VB.Syntax.StatementSyntax>(
@@ -235,7 +235,7 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxList<VB.Syntax.StatementSyntax> VisitForEachStatement(CS.Syntax.ForEachStatementSyntax node)
             {
-                VB.Syntax.ForEachStatementSyntax begin = VB.SyntaxFactory.ForEachStatement(
+                var begin = VB.SyntaxFactory.ForEachStatement(
                     VB.SyntaxFactory.IdentifierName(nodeVisitor.ConvertIdentifier(node.Identifier)),
                     nodeVisitor.VisitExpression(node.Expression));
 
@@ -255,9 +255,9 @@ namespace CSharpToVisualBasicConverter
 
             public override SyntaxList<VB.Syntax.StatementSyntax> VisitDoStatement(CS.Syntax.DoStatementSyntax node)
             {
-                VB.Syntax.DoStatementSyntax begin = VB.SyntaxFactory.SimpleDoStatement();
+                var begin = VB.SyntaxFactory.SimpleDoStatement();
 
-                VB.Syntax.LoopStatementSyntax loop = VB.SyntaxFactory.LoopWhileStatement(
+                var loop = VB.SyntaxFactory.LoopWhileStatement(
                     VB.SyntaxFactory.WhileClause(nodeVisitor.VisitExpression(node.Condition)));
 
                 return List<VB.Syntax.StatementSyntax>(
@@ -310,7 +310,7 @@ namespace CSharpToVisualBasicConverter
                         return VB.SyntaxFactory.GoToStatement(
                             VB.SyntaxFactory.IdentifierLabel(VB.SyntaxFactory.Identifier("Else")));
                     case CS.SyntaxKind.GotoCaseStatement:
-                        string text = node.Expression.ToString();
+                        var text = node.Expression.ToString();
                         return VB.SyntaxFactory.GoToStatement(
                             VB.SyntaxFactory.IdentifierLabel(VB.SyntaxFactory.Identifier(text)));
                 }

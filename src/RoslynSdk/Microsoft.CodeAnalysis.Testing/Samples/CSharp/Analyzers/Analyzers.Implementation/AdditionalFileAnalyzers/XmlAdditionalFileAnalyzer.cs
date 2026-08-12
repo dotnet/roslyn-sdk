@@ -42,24 +42,24 @@ namespace Sample.Analyzers
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 // Find the additional file with the terms.
-                ImmutableArray<AdditionalText> additionalFiles = compilationStartContext.Options.AdditionalFiles;
-                AdditionalText termsFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).Equals("Terms.xml"));
+                var additionalFiles = compilationStartContext.Options.AdditionalFiles;
+                var termsFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).Equals("Terms.xml"));
 
                 if (termsFile != null)
                 {
-                    HashSet<string> terms = new HashSet<string>();
-                    SourceText fileText = termsFile.GetText(compilationStartContext.CancellationToken);
+                    var terms = new HashSet<string>();
+                    var fileText = termsFile.GetText(compilationStartContext.CancellationToken);
 
                     // Write the additional file back to a stream.
-                    MemoryStream stream = new MemoryStream();
-                    using (StreamWriter writer = new StreamWriter(stream))
+                    var stream = new MemoryStream();
+                    using (var writer = new StreamWriter(stream))
                     {
                         fileText.Write(writer);
                     }
 
                     // Read all the <Term> elements to get the terms.
-                    XDocument document = XDocument.Load(stream);
-                    foreach (XElement termElement in document.Descendants("Term"))
+                    var document = XDocument.Load(stream);
+                    foreach (var termElement in document.Descendants("Term"))
                     {
                         terms.Add(termElement.Value);
                     }
@@ -67,10 +67,10 @@ namespace Sample.Analyzers
                     // Check every named type for the invalid terms.
                     compilationStartContext.RegisterSymbolAction(symbolAnalysisContext =>
                     {
-                        INamedTypeSymbol namedTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
-                        string symbolName = namedTypeSymbol.Name;
+                        var namedTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
+                        var symbolName = namedTypeSymbol.Name;
 
-                        foreach (string term in terms)
+                        foreach (var term in terms)
                         {
                             if (symbolName.Contains(term))
                             {

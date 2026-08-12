@@ -31,8 +31,8 @@ namespace CSharpToVisualBasicConverter.Cleanup
                 if ((token.HasLeadingTrivia && token.LeadingTrivia.Count >= 2) ||
                     (token.HasTrailingTrivia && token.TrailingTrivia.Count >= 2))
                 {
-                    List<SyntaxTrivia> newLeadingTrivia = RemoveBlankLines(token.LeadingTrivia, ref changed);
-                    List<SyntaxTrivia> newTrailingTrivia = RemoveBlankLines(token.TrailingTrivia, ref changed);
+                    var newLeadingTrivia = RemoveBlankLines(token.LeadingTrivia, ref changed);
+                    var newTrailingTrivia = RemoveBlankLines(token.TrailingTrivia, ref changed);
 
                     if (changed)
                     {
@@ -48,16 +48,16 @@ namespace CSharpToVisualBasicConverter.Cleanup
 
         private static List<SyntaxTrivia> RemoveBlankLines(SyntaxTriviaList trivia, ref bool changed)
         {
-            List<SyntaxTrivia> newTrivia = new List<SyntaxTrivia>();
+            var newTrivia = new List<SyntaxTrivia>();
 
-            for (int i = 0; i < trivia.Count;)
+            for (var i = 0; i < trivia.Count;)
             {
-                SyntaxTrivia trivia1 = trivia.ElementAt(i);
+                var trivia1 = trivia.ElementAt(i);
                 newTrivia.Add(trivia1);
 
                 if (i < trivia.Count - 1)
                 {
-                    SyntaxTrivia trivia2 = trivia.ElementAt(i + 1);
+                    var trivia2 = trivia.ElementAt(i + 1);
 
                     if (trivia1.IsKind(SyntaxKind.EndOfLineTrivia) &&
                         trivia2.IsKind(SyntaxKind.EndOfLineTrivia))

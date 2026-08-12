@@ -67,7 +67,7 @@ namespace ConvertToConditional
         {
             if (statement is BlockSyntax block)
             {
-                List<StatementSyntax> statements = block.Statements.Where(s => !s.IsEmptyBlock()).ToList();
+                var statements = block.Statements.Where(s => !s.IsEmptyBlock()).ToList();
 
                 return statements.Count == 1
                     ? block.Statements[0].SingleStatementOrSelf()

@@ -53,26 +53,26 @@ namespace MakeConst
 
             // Ensure that all variables in the local declaration have initializers that
             // are assigned with constant values.
-            foreach (VariableDeclaratorSyntax variable in localDeclaration.Declaration.Variables)
+            foreach (var variable in localDeclaration.Declaration.Variables)
             {
-                EqualsValueClauseSyntax initializer = variable.Initializer;
+                var initializer = variable.Initializer;
                 if (initializer == null)
                 {
                     return false;
                 }
 
-                Optional<object> constantValue = semanticModel.GetConstantValue(initializer.Value);
+                var constantValue = semanticModel.GetConstantValue(initializer.Value);
                 if (!constantValue.HasValue)
                 {
                     return false;
                 }
 
-                TypeSyntax variableTypeName = localDeclaration.Declaration.Type;
-                ITypeSymbol variableType = semanticModel.GetTypeInfo(variableTypeName).ConvertedType;
+                var variableTypeName = localDeclaration.Declaration.Type;
+                var variableType = semanticModel.GetTypeInfo(variableTypeName).ConvertedType;
 
                 // Ensure that the initializer value can be converted to the type of the
                 // local declaration without a user-defined conversion.
-                Conversion conversion = semanticModel.ClassifyConversion(initializer.Value, variableType);
+                var conversion = semanticModel.ClassifyConversion(initializer.Value, variableType);
                 if (!conversion.Exists || conversion.IsUserDefined)
                 {
                     return false;
@@ -97,13 +97,13 @@ namespace MakeConst
             }
 
             // Perform data flow analysis on the local declaration.
-            DataFlowAnalysis dataFlowAnalysis = semanticModel.AnalyzeDataFlow(localDeclaration);
+            var dataFlowAnalysis = semanticModel.AnalyzeDataFlow(localDeclaration);
 
             // Retrieve the local symbol for each variable in the local declaration
             // and ensure that it is not written outside of the data flow analysis region.
-            foreach (VariableDeclaratorSyntax variable in localDeclaration.Declaration.Variables)
+            foreach (var variable in localDeclaration.Declaration.Variables)
             {
-                ISymbol variableSymbol = semanticModel.GetDeclaredSymbol(variable);
+                var variableSymbol = semanticModel.GetDeclaredSymbol(variable);
                 if (dataFlowAnalysis.WrittenOutside.Contains(variableSymbol))
                 {
                     return false;

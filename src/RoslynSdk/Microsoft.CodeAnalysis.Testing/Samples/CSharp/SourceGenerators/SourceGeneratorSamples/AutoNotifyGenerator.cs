@@ -47,13 +47,13 @@ namespace AutoNotify
                 return;
 
             // get the added attribute, and INotifyPropertyChanged
-            INamedTypeSymbol attributeSymbol = context.Compilation.GetTypeByMetadataName("AutoNotify.AutoNotifyAttribute");
-            INamedTypeSymbol notifySymbol = context.Compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
+            var attributeSymbol = context.Compilation.GetTypeByMetadataName("AutoNotify.AutoNotifyAttribute");
+            var notifySymbol = context.Compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
             // group the fields by class, and generate the source
-            foreach (IGrouping<INamedTypeSymbol, IFieldSymbol> group in receiver.Fields.GroupBy<IFieldSymbol, INamedTypeSymbol>(f => f.ContainingType, SymbolEqualityComparer.Default))
+            foreach (var group in receiver.Fields.GroupBy<IFieldSymbol, INamedTypeSymbol>(f => f.ContainingType, SymbolEqualityComparer.Default))
             {
-                string classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
+                var classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
                 context.AddSource($"{group.Key.Name}_autoNotify.g.cs", SourceText.From(classSource, Encoding.UTF8));
             }
         }
@@ -65,10 +65,10 @@ namespace AutoNotify
                 return null; //TODO: issue a diagnostic that it must be top level
             }
 
-            string namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
+            var namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
 
             // begin building the generated source
-            StringBuilder source = new StringBuilder($@"
+            var source = new StringBuilder($@"
 namespace {namespaceName}
 {{
     public partial class {classSymbol.Name} : {notifySymbol.ToDisplayString()}
@@ -82,7 +82,7 @@ namespace {namespaceName}
             }
 
             // create properties for each field 
-            foreach (IFieldSymbol fieldSymbol in fields)
+            foreach (var fieldSymbol in fields)
             {
                 ProcessField(source, fieldSymbol, attributeSymbol);
             }
@@ -94,14 +94,14 @@ namespace {namespaceName}
         private void ProcessField(StringBuilder source, IFieldSymbol fieldSymbol, ISymbol attributeSymbol)
         {
             // get the name and type of the field
-            string fieldName = fieldSymbol.Name;
-            ITypeSymbol fieldType = fieldSymbol.Type;
+            var fieldName = fieldSymbol.Name;
+            var fieldType = fieldSymbol.Type;
 
             // get the AutoNotify attribute from the field, and any associated data
-            AttributeData attributeData = fieldSymbol.GetAttributes().Single(ad => ad.AttributeClass.Equals(attributeSymbol, SymbolEqualityComparer.Default));
-            TypedConstant overridenNameOpt = attributeData.NamedArguments.SingleOrDefault(kvp => kvp.Key == "PropertyName").Value;
+            var attributeData = fieldSymbol.GetAttributes().Single(ad => ad.AttributeClass.Equals(attributeSymbol, SymbolEqualityComparer.Default));
+            var overridenNameOpt = attributeData.NamedArguments.SingleOrDefault(kvp => kvp.Key == "PropertyName").Value;
 
-            string propertyName = chooseName(fieldName, overridenNameOpt);
+            var propertyName = chooseName(fieldName, overridenNameOpt);
             if (propertyName.Length == 0 || propertyName == fieldName)
             {
                 //TODO: issue a diagnostic that we can't process this field
@@ -160,10 +160,10 @@ public {fieldType} {propertyName}
                 if (context.Node is FieldDeclarationSyntax fieldDeclarationSyntax
                     && fieldDeclarationSyntax.AttributeLists.Count > 0)
                 {
-                    foreach (VariableDeclaratorSyntax variable in fieldDeclarationSyntax.Declaration.Variables)
+                    foreach (var variable in fieldDeclarationSyntax.Declaration.Variables)
                     {
                         // Get the symbol being declared by the field, and keep it if its annotated
-                        IFieldSymbol fieldSymbol = context.SemanticModel.GetDeclaredSymbol(variable) as IFieldSymbol;
+                        var fieldSymbol = context.SemanticModel.GetDeclaredSymbol(variable) as IFieldSymbol;
                         if (fieldSymbol.GetAttributes().Any(ad => ad.AttributeClass.ToDisplayString() == "AutoNotify.AutoNotifyAttribute"))
                         {
                             Fields.Add(fieldSymbol);

@@ -9,7 +9,7 @@ namespace CSharpToVisualBasicConverter.Utilities
     {
         private static IEnumerable<T> ConcatWorker<T>(this IEnumerable<T> source, T value)
         {
-            foreach (T v in source)
+            foreach (var v in source)
             {
                 yield return v;
             }

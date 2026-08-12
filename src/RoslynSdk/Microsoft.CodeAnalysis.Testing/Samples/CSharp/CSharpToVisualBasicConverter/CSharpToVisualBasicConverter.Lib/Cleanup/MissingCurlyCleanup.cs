@@ -23,7 +23,7 @@ namespace CSharpToVisualBasicConverter.Cleanup
                 return node;
             }
 
-            BlockSyntax block = SyntaxFactory.Block(statements: SyntaxFactory.SingletonList(node.Statement));
+            var block = SyntaxFactory.Block(statements: SyntaxFactory.SingletonList(node.Statement));
             return SyntaxFactory.IfStatement(
                 node.IfKeyword,
                 node.OpenParenToken,
@@ -41,7 +41,7 @@ namespace CSharpToVisualBasicConverter.Cleanup
                 return node;
             }
 
-            BlockSyntax block = SyntaxFactory.Block(statements: SyntaxFactory.SingletonList(node.Statement));
+            var block = SyntaxFactory.Block(statements: SyntaxFactory.SingletonList(node.Statement));
             return SyntaxFactory.ElseClause(
                 node.ElseKeyword,
                 block);

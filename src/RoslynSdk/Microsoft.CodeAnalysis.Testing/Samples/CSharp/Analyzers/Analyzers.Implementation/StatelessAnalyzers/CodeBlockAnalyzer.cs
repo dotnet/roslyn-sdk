@@ -51,13 +51,13 @@ namespace Sample.Analyzers
             }
 
             // Report diagnostic for void non-virtual methods with empty method bodies.
-            IMethodSymbol method = (IMethodSymbol)codeBlockContext.OwningSymbol;
-            BlockSyntax block = (BlockSyntax)codeBlockContext.CodeBlock.ChildNodes().FirstOrDefault(n => n.Kind() == SyntaxKind.Block);
+            var method = (IMethodSymbol)codeBlockContext.OwningSymbol;
+            var block = (BlockSyntax)codeBlockContext.CodeBlock.ChildNodes().FirstOrDefault(n => n.Kind() == SyntaxKind.Block);
             if (method.ReturnsVoid && !method.IsVirtual && block != null && block.Statements.Count == 0)
             {
-                SyntaxTree tree = block.SyntaxTree;
-                Location location = method.Locations.First(l => tree.Equals(l.SourceTree));
-                Diagnostic diagnostic = Diagnostic.Create(Rule, location, method.Name);
+                var tree = block.SyntaxTree;
+                var location = method.Locations.First(l => tree.Equals(l.SourceTree));
+                var diagnostic = Diagnostic.Create(Rule, location, method.Name);
                 codeBlockContext.ReportDiagnostic(diagnostic);
             }
         }

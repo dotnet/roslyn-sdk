@@ -40,10 +40,10 @@ namespace CsvGenerator
         // typed objects in such cas. If the file is completely empty, an error is generated.
         public static (string[], string[], string[]?) ExtractProperties(CsvTextFieldParser parser)
         {
-            string[]? headerFields = parser.ReadFields();
+            var headerFields = parser.ReadFields();
             if (headerFields == null) throw new Exception("Empty csv file!");
 
-            string[]? firstLineFields = parser.ReadFields();
+            var firstLineFields = parser.ReadFields();
             if (firstLineFields == null)
             {
                 return (Enumerable.Repeat("string", headerFields.Length).ToArray(), headerFields, firstLineFields);
@@ -60,8 +60,8 @@ namespace CsvGenerator
         // , loading the collection multiple times instead of once. Measures could be taken to avoid that.
         public static string GenerateClassFile(string className, string csvText, CsvLoadType loadTime, bool cacheObjects)
         {
-            StringBuilder sb = new StringBuilder();
-            using CsvTextFieldParser parser = new CsvTextFieldParser(new StringReader(csvText));
+            var sb = new StringBuilder();
+            using var parser = new CsvTextFieldParser(new StringReader(csvText));
 
             //// Usings
             sb.Append(@"
@@ -80,10 +80,10 @@ namespace CSV {
         static {className}() {{ var x = All; }}
 ");
             }
-            (string[] types, string[] names, string[]? fields) = ExtractProperties(parser);
-            int minLen = Math.Min(types.Length, names.Length);
+            (var types, var names, var fields) = ExtractProperties(parser);
+            var minLen = Math.Min(types.Length, names.Length);
 
-            for (int i = 0; i < minLen; i++)
+            for (var i = 0; i < minLen; i++)
             {
                 sb.AppendLine($"        public {types[i]} {StringToValidPropertyName(names[i])} {{ get; set;}} = default!;");
             }
@@ -112,8 +112,8 @@ namespace CSV {
                 if (fields.Length < minLen) throw new Exception("Not enough fields in CSV file.");
 
                 sb.AppendLine($"                c = new {className}();");
-                string value = "";
-                for (int i = 0; i < minLen; i++)
+                var value = "";
+                for (var i = 0; i < minLen; i++)
                 {
                     // Wrap strings in quotes.
                     value = GetCsvFieldType(fields[i]) == "string" ? $"\"{fields[i].Trim().Trim(new char[] { '"' })}\"" : fields[i];
@@ -145,8 +145,8 @@ namespace CSV {
 
         static IEnumerable<(string, string)> SourceFilesFromAdditionalFile(CsvLoadType loadTime, bool cacheObjects, AdditionalText file)
         {
-            string className = Path.GetFileNameWithoutExtension(file.Path);
-            string csvText = file.GetText()!.ToString();
+            var className = Path.GetFileNameWithoutExtension(file.Path);
+            var csvText = file.GetText()!.ToString();
             return new (string, string)[] { (className, GenerateClassFile(className, csvText, loadTime, cacheObjects)) };
         }
 
@@ -155,16 +155,16 @@ namespace CSV {
 
         static IEnumerable<(CsvLoadType, bool, AdditionalText)> GetLoadOptions(GeneratorExecutionContext context)
         {
-            foreach (AdditionalText file in context.AdditionalFiles)
+            foreach (var file in context.AdditionalFiles)
             {
                 if (Path.GetExtension(file.Path).Equals(".csv", StringComparison.OrdinalIgnoreCase))
                 {
                     // are there any options for it?
-                    context.AnalyzerConfigOptions.GetOptions(file).TryGetValue("build_metadata.additionalfiles.CsvLoadType", out string? loadTimeString);
+                    context.AnalyzerConfigOptions.GetOptions(file).TryGetValue("build_metadata.additionalfiles.CsvLoadType", out var loadTimeString);
                     Enum.TryParse(loadTimeString, ignoreCase: true, out CsvLoadType loadType);
 
-                    context.AnalyzerConfigOptions.GetOptions(file).TryGetValue("build_metadata.additionalfiles.CacheObjects", out string? cacheObjectsString);
-                    bool.TryParse(cacheObjectsString, out bool cacheObjects);
+                    context.AnalyzerConfigOptions.GetOptions(file).TryGetValue("build_metadata.additionalfiles.CacheObjects", out var cacheObjectsString);
+                    bool.TryParse(cacheObjectsString, out var cacheObjects);
 
                     yield return (loadType, cacheObjects, file);
                 }
@@ -173,9 +173,9 @@ namespace CSV {
 
         public void Execute(GeneratorExecutionContext context)
         {
-            IEnumerable<(CsvLoadType, bool, AdditionalText)> options = GetLoadOptions(context);
-            IEnumerable<(string, string)> nameCodeSequence = SourceFilesFromAdditionalFiles(options);
-            foreach ((string name, string code) in nameCodeSequence)
+            var options = GetLoadOptions(context);
+            var nameCodeSequence = SourceFilesFromAdditionalFiles(options);
+            foreach ((var name, var code) in nameCodeSequence)
                 context.AddSource($"Csv_{name}.g.cs", SourceText.From(code, Encoding.UTF8));
         }
 

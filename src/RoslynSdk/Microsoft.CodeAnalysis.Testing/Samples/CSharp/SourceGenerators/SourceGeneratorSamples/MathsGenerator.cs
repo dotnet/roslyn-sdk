@@ -212,7 +212,7 @@ namespace Maths {
                 return ctx.buffer;
             }
 
-            string id = token.Value;
+            var id = token.Value;
             if (ctx.globalSymbolTable.Contains(token.Value) ||
                           ctx.symbolTable.Contains(token.Value))
             {
@@ -489,7 +489,7 @@ namespace Maths {
 
         public void Execute(GeneratorExecutionContext context)
         {
-            foreach (AdditionalText file in context.AdditionalFiles)
+            foreach (var file in context.AdditionalFiles)
             {
                 if (Path.GetExtension(file.Path).Equals(".math", StringComparison.OrdinalIgnoreCase))
                 {
@@ -507,7 +507,7 @@ namespace Maths {
                     }
 
                     // Get name of generated namespace from file name
-                    string fileName = Path.GetFileNameWithoutExtension(file.Path);
+                    var fileName = Path.GetFileNameWithoutExtension(file.Path);
 
                     // Parse and gen the formulas functions
                     var tokens = Lexer.Tokenize(mathString);

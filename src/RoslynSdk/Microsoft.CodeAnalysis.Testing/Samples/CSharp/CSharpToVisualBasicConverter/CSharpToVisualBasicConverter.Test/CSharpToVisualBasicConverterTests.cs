@@ -13,19 +13,19 @@ namespace CSharpToVisualBasicConverter.UnitTests.Converting
         [Fact(Skip = "Not Yet Implemented")]
         public void TestAllConstructs()
         {
-            string csharpConstructs = TestFilesHelper.GetFile("AllConstructs.cs");
-            Microsoft.CodeAnalysis.SyntaxNode vbActualConstructs = Converter.Convert(SyntaxFactory.ParseSyntaxTree(csharpConstructs));
+            var csharpConstructs = TestFilesHelper.GetFile("AllConstructs.cs");
+            var vbActualConstructs = Converter.Convert(SyntaxFactory.ParseSyntaxTree(csharpConstructs));
 
-            string vbActual = vbActualConstructs.ToFullString();
-            string vbExpected = TestFilesHelper.GetFile("AllConstructs.txt");
+            var vbActual = vbActualConstructs.ToFullString();
+            var vbExpected = TestFilesHelper.GetFile("AllConstructs.txt");
             Assert.Equal(vbExpected, vbActual);
         }
 
         [Fact]
         public void TestParseAddExpression()
         {
-            string csharpCode = "1+2";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "1+2";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal("1 + 2", vbNode);
         }
@@ -33,8 +33,8 @@ namespace CSharpToVisualBasicConverter.UnitTests.Converting
         [Fact]
         public void TestParseInvocationExpression()
         {
-            string csharpCode = " Console . WriteLine ( ) ";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = " Console . WriteLine ( ) ";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal("Console.WriteLine()", vbNode);
         }
@@ -42,8 +42,8 @@ namespace CSharpToVisualBasicConverter.UnitTests.Converting
         [Fact]
         public void TestParseLambdaExpression()
         {
-            string csharpCode = "a => b + c";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "a => b + c";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal("Function(a) b + c", vbNode);
         }
@@ -51,8 +51,8 @@ namespace CSharpToVisualBasicConverter.UnitTests.Converting
         [Fact]
         public void TestParseReturnStatement()
         {
-            string csharpCode = " return Console . WriteLine ( ) ; ";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = " return Console . WriteLine ( ) ; ";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal("Return Console.WriteLine()", vbNode);
         }
@@ -60,8 +60,8 @@ namespace CSharpToVisualBasicConverter.UnitTests.Converting
         [Fact]
         public void TestParseFieldNoModifier()
         {
-            string csharpCode = "class Test { int i; }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "class Test { int i; }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(
 @"Class Test
@@ -74,8 +74,8 @@ End Class
         [Fact]
         public void TestParseStaticClass()
         {
-            string csharpCode = "static class Test { }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "static class Test { }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(
 @"Module Test
@@ -86,8 +86,8 @@ End Module
         [Fact]
         public void TestParseObjectInitializerTwoInitializers()
         {
-            string csharpCode = "new object { X = null, Y = null }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "new object { X = null, Y = null }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal("New Object With {.X = Nothing, .Y = Nothing}", vbNode);
         }
@@ -95,8 +95,8 @@ End Module
         [Fact]
         public void TestParseAnonymousTypeTwoInitializers()
         {
-            string csharpCode = "new { X = null, Y = null }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "new { X = null, Y = null }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal("New With {.X = Nothing, .Y = Nothing}", vbNode);
         }
@@ -104,8 +104,8 @@ End Module
         [Fact]
         public void TestParseCollectionInitializer()
         {
-            string csharpCode = "new Dictionary<int,string> { { 0, \"\"} }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "new Dictionary<int,string> { { 0, \"\"} }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal("New Dictionary(Of Integer, String) From {{0, \"\"}}", vbNode);
         }
@@ -113,8 +113,8 @@ End Module
         [Fact]
         public void TestParseAbstractClass()
         {
-            string csharpCode = "abstract class Test { }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "abstract class Test { }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(
 @"MustInherit Class Test
@@ -125,8 +125,8 @@ End Class
         [Fact]
         public void TestParseExtensionMethod()
         {
-            string csharpCode = "static class Test { public static int Foo(this string s) { } }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "static class Test { public static int Foo(this string s) { } }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(
 @"Module Test
@@ -141,7 +141,7 @@ End Module
         [Fact(Skip = "Not Yet Implemented")]
         public void TestParseDocComments()
         {
-            string csharpCode =
+            var csharpCode =
 @"
     /// <summary>
     /// On the Insert tab, the galleries include items that are designed to coordinate with the
@@ -161,7 +161,7 @@ End Module
         {
         }
     }";
-            string vbNode = Converter.Convert(csharpCode);
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(
 @"''' <summary>
@@ -188,7 +188,7 @@ End Class
         [Fact]
         public void TestParseExtensionMethodDocComment()
         {
-            string csharpCode =
+            var csharpCode =
 @"static class C
 {
     /// <summary>
@@ -199,7 +199,7 @@ End Class
     }
 }
 ";
-            string vbNode = Converter.Convert(csharpCode);
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(
 @"Module C
@@ -217,8 +217,8 @@ End Module
         [Fact]
         public void TestForStatement1()
         {
-            string csharpCode = "for (int i = 0; i < 10; i++) { }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (int i = 0; i < 10; i++) { }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"For i = 0 To 10 - 1
 Next", vbNode);
@@ -227,8 +227,8 @@ Next", vbNode);
         [Fact]
         public void TestForStatement2()
         {
-            string csharpCode = "for (int i = 0; i <= 10; i++) { }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (int i = 0; i <= 10; i++) { }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"For i = 0 To 10
 Next", vbNode);
@@ -237,8 +237,8 @@ Next", vbNode);
         [Fact]
         public void TestForStatement3()
         {
-            string csharpCode = "for (int i = 0; i <= 10; i += 1) { }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (int i = 0; i <= 10; i += 1) { }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"For i = 0 To 10 Step 1
 Next", vbNode);
@@ -247,8 +247,8 @@ Next", vbNode);
         [Fact]
         public void TestForStatement4()
         {
-            string csharpCode = "for (int i = 0; i <= 10; i += 2) { }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (int i = 0; i <= 10; i += 2) { }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"For i = 0 To 10 Step 2
 Next", vbNode);
@@ -257,8 +257,8 @@ Next", vbNode);
         [Fact]
         public void TestForStatement5()
         {
-            string csharpCode = "for (var i = 0; i <= 10; i += 2) { }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (var i = 0; i <= 10; i += 2) { }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"For i = 0 To 10 Step 2
 Next", vbNode);
@@ -267,8 +267,8 @@ Next", vbNode);
         [Fact]
         public void TestForStatement6()
         {
-            string csharpCode = "for (; i <= 10; i += 2) { }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (; i <= 10; i += 2) { }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"While i <= 10
     i += 2
@@ -278,8 +278,8 @@ End While", vbNode);
         [Fact]
         public void TestForStatement7()
         {
-            string csharpCode = "for (var i = 0; ; i += 2) { }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (var i = 0; ; i += 2) { }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"Dim i = 0
 While True
@@ -290,8 +290,8 @@ End While", vbNode);
         [Fact]
         public void TestForStatement8()
         {
-            string csharpCode = "for (var i = 0; i <= 10; ) { }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (var i = 0; i <= 10; ) { }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"Dim i = 0
 While i <= 10
@@ -301,8 +301,8 @@ End While", vbNode);
         [Fact]
         public void TestForStatement9()
         {
-            string csharpCode = "for (int i = 0; i <= 10; i++) Console.WriteLine(a);";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (int i = 0; i <= 10; i++) Console.WriteLine(a);";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"For i = 0 To 10
     Console.WriteLine(a)
@@ -312,8 +312,8 @@ Next", vbNode);
         [Fact]
         public void TestForStatement10()
         {
-            string csharpCode = "for (int i = 0; i <= 10; i++) { Console.WriteLine(a); }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (int i = 0; i <= 10; i++) { Console.WriteLine(a); }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"For i = 0 To 10
     Console.WriteLine(a)
@@ -323,8 +323,8 @@ Next", vbNode);
         [Fact]
         public void TestForStatement11()
         {
-            string csharpCode = "for (int i = 0; i <= 10; i++) { Console.WriteLine(a); Console.WriteLine(b); }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (int i = 0; i <= 10; i++) { Console.WriteLine(a); Console.WriteLine(b); }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"For i = 0 To 10
     Console.WriteLine(a)
@@ -335,8 +335,8 @@ Next", vbNode);
         [Fact]
         public void TestForStatement12()
         {
-            string csharpCode = "for (int i = x; i >= 0; i--) { }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (int i = x; i >= 0; i--) { }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"For i = x To 0 Step -1
 Next", vbNode);
@@ -345,8 +345,8 @@ Next", vbNode);
         [Fact]
         public void TestForStatement13()
         {
-            string csharpCode = "for (int i = x; i > y; i -= 2) { }";
-            string vbNode = Converter.Convert(csharpCode);
+            var csharpCode = "for (int i = x; i > y; i -= 2) { }";
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(@"For i = x To y + 1 Step -2
 Next", vbNode);
@@ -355,7 +355,7 @@ Next", vbNode);
         [Fact]
         public void TestAsyncModifier()
         {
-            string csharpCode =
+            var csharpCode =
 @"
 class C 
 {
@@ -371,7 +371,7 @@ class C
     {
     }
 }";
-            string vbNode = Converter.Convert(csharpCode);
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(
 @"Class C
@@ -392,12 +392,12 @@ vbNode);
         [Fact(Skip = "Not Yet Implemented")]
         public void TestAwaitExpression()
         {
-            string csharpCode =
+            var csharpCode =
 @"async void Button1_Click(object sender, EventArgs e)
 {
     ResultsTextBox.Text = await httpClient.DownloadStringTaskAsync(""http://somewhere.com/"");
 }";
-            string vbNode = Converter.Convert(csharpCode);
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(
 @"Async Sub Button1_Click(sender As Object, e As EventArgs)
@@ -410,12 +410,12 @@ vbNode);
         [Fact(Skip = "Not Yet Implemented")]
         public void TestAwaitStatement()
         {
-            string csharpCode =
+            var csharpCode =
 @"async void Button1_Click(object sender, EventArgs e)
 {
     await BeepAsync();
 }";
-            string vbNode = Converter.Convert(csharpCode);
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(
 @"Async Sub Button1_Click(sender As Object, e As EventArgs)
@@ -432,13 +432,13 @@ vbNode);
             //       When semantic-aware translation is implemented we should revisit this to ensure that we translate accurately.
             //       In the meantime let's prefer to translate async lambdas as Async Function lambdas in VB, since they're most common
             //       and recommended.
-            string csharpCode =
+            var csharpCode =
 @"void M()
 {
     Task.Run(async () => {});
     Task.Run(async () => await NAsync());
 }";
-            string vbNode = Converter.Convert(csharpCode);
+            var vbNode = Converter.Convert(csharpCode);
 
             Assert.Equal(
 @"Sub M()

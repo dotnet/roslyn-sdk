@@ -1,0 +1,3 @@
+# Making non-private members static can break partner-facing APIs.
+[*.{cs,vb}]
+dotnet_code_quality.CA1822.api_surface = private

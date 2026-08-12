@@ -40,7 +40,7 @@ namespace Sample.Analyzers
         private static void AnalyzeSemanticModel(SemanticModelAnalysisContext context)
         {
             // Find just those source files with declaration diagnostics.
-            int diagnosticsCount = context.SemanticModel.GetDeclarationDiagnostics().Length;
+            var diagnosticsCount = context.SemanticModel.GetDeclarationDiagnostics().Length;
             if (diagnosticsCount > 0)
             {
                 // For all such files, produce a diagnostic.

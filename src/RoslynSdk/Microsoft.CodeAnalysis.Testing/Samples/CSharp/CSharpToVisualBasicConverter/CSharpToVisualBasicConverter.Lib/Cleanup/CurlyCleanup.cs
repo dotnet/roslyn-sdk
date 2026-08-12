@@ -28,20 +28,20 @@ namespace CSharpToVisualBasicConverter.Cleanup
                 return token;
             }
 
-            SyntaxToken nextToken = token.GetNextToken(includeSkipped: true);
+            var nextToken = token.GetNextToken(includeSkipped: true);
 
-            int tokenLine = syntaxTree.GetText().Lines.IndexOf(token.Span.Start);
-            int nextTokenLine = syntaxTree.GetText().Lines.IndexOf(nextToken.Span.Start);
-            bool nextTokenIsCloseBrace = nextToken.IsKind(SyntaxKind.CloseBraceToken);
+            var tokenLine = syntaxTree.GetText().Lines.IndexOf(token.Span.Start);
+            var nextTokenLine = syntaxTree.GetText().Lines.IndexOf(nextToken.Span.Start);
+            var nextTokenIsCloseBrace = nextToken.IsKind(SyntaxKind.CloseBraceToken);
 
-            int expectedDiff = nextTokenIsCloseBrace ? 1 : 2;
+            var expectedDiff = nextTokenIsCloseBrace ? 1 : 2;
             if (nextTokenLine == tokenLine + expectedDiff)
             {
                 return token;
             }
 
-            System.Collections.Generic.IEnumerable<SyntaxTrivia> nonNewLineTrivia = token.TrailingTrivia.Where(t => !t.IsKind(SyntaxKind.EndOfLineTrivia));
-            System.Collections.Generic.IEnumerable<SyntaxTrivia> newTrivia = nonNewLineTrivia.Concat(Enumerable.Repeat(SyntaxFactory.EndOfLine("\r\n"), expectedDiff));
+            var nonNewLineTrivia = token.TrailingTrivia.Where(t => !t.IsKind(SyntaxKind.EndOfLineTrivia));
+            var newTrivia = nonNewLineTrivia.Concat(Enumerable.Repeat(SyntaxFactory.EndOfLine("\r\n"), expectedDiff));
 
             return token.WithTrailingTrivia(SyntaxFactory.TriviaList(newTrivia));
         }

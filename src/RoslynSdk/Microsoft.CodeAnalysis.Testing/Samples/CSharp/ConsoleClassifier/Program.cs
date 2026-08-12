@@ -15,10 +15,10 @@ namespace ConsoleClassifier
     {
         static async Task Main(string[] args)
         {
-            AdhocWorkspace workspace = new AdhocWorkspace();
-            Solution solution = workspace.CurrentSolution;
-            Project project = solution.AddProject("projectName", "assemblyName", LanguageNames.CSharp);
-            Document document = project.AddDocument("name.cs",
+            var workspace = new AdhocWorkspace();
+            var solution = workspace.CurrentSolution;
+            var project = solution.AddProject("projectName", "assemblyName", LanguageNames.CSharp);
+            var document = project.AddDocument("name.cs",
     @"class C
 {
 static void Main()
@@ -27,17 +27,17 @@ WriteLine(""Hello, World!"");
 }
 }");
             document = await Formatter.FormatAsync(document);
-            SourceText text = await document.GetTextAsync();
+            var text = await document.GetTextAsync();
 
-            IEnumerable<ClassifiedSpan> classifiedSpans = await Classifier.GetClassifiedSpansAsync(document, TextSpan.FromBounds(0, text.Length));
+            var classifiedSpans = await Classifier.GetClassifiedSpansAsync(document, TextSpan.FromBounds(0, text.Length));
             Console.BackgroundColor = ConsoleColor.Black;
 
-            IEnumerable<Range> ranges = classifiedSpans.Select(classifiedSpan =>
+            var ranges = classifiedSpans.Select(classifiedSpan =>
                 new Range(classifiedSpan, text.GetSubText(classifiedSpan.TextSpan).ToString()));
 
             ranges = FillGaps(text, ranges);
 
-            foreach (Range range in ranges)
+            foreach (var range in ranges)
             {
                 switch (range.ClassificationType)
                 {
@@ -65,12 +65,12 @@ WriteLine(""Hello, World!"");
         private static IEnumerable<Range> FillGaps(SourceText text, IEnumerable<Range> ranges)
         {
             const string WhitespaceClassification = null;
-            int current = 0;
+            var current = 0;
             Range previous = null;
 
-            foreach (Range range in ranges)
+            foreach (var range in ranges)
             {
-                int start = range.TextSpan.Start;
+                var start = range.TextSpan.Start;
                 if (start > current)
                 {
                     yield return new Range(WhitespaceClassification, TextSpan.FromBounds(current, start), text);

@@ -18,12 +18,12 @@ namespace ConvertToConditional
     {
         public sealed override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
         {
-            Document document = context.Document;
-            Microsoft.CodeAnalysis.Text.TextSpan textSpan = context.Span;
-            CancellationToken cancellationToken = context.CancellationToken;
+            var document = context.Document;
+            var textSpan = context.Span;
+            var cancellationToken = context.CancellationToken;
 
-            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxToken token = root.FindToken(textSpan.Start);
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var token = root.FindToken(textSpan.Start);
 
             // Only trigger if the text span is within the 'if' keyword token of an if-else statement.
 
@@ -39,11 +39,11 @@ namespace ConvertToConditional
                 return;
             }
 
-            SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            if (ReturnConditionalAnalyzer.TryGetNewReturnStatement(ifStatement, semanticModel, out ReturnStatementSyntax returnStatement))
+            if (ReturnConditionalAnalyzer.TryGetNewReturnStatement(ifStatement, semanticModel, out var returnStatement))
             {
-                ConvertToConditionalCodeAction action =
+                var action =
                     new ConvertToConditionalCodeAction("Convert to conditional expression",
                                                        (c) => Task.FromResult(ConvertToConditional(document, semanticModel, ifStatement, returnStatement, c)));
                 context.RegisterRefactoring(action);
@@ -56,8 +56,8 @@ namespace ConvertToConditional
                                               StatementSyntax replacementStatement,
                                               CancellationToken cancellationToken)
         {
-            SyntaxNode oldRoot = semanticModel.SyntaxTree.GetRoot();
-            SyntaxNode newRoot = oldRoot.ReplaceNode(
+            var oldRoot = semanticModel.SyntaxTree.GetRoot();
+            var newRoot = oldRoot.ReplaceNode(
                 oldNode: ifStatement,
                 newNode: replacementStatement.WithAdditionalAnnotations(Formatter.Annotation));
 

@@ -12,7 +12,7 @@ namespace Sample.Analyzers.Test
         [Fact]
         public async Task CodeBlockStartedAnalyzerTest()
         {
-            string test = @"
+            var test = @"
 class C
 {
     public int M1(int p1, int p2)
@@ -25,7 +25,7 @@ class C
         return p1 + p2;
     }
 }";
-            DiagnosticResult expected = Verify.Diagnostic().WithArguments("p2", "M1").WithLocation(4, 31);
+            var expected = Verify.Diagnostic().WithArguments("p2", "M1").WithLocation(4, 31);
             await Verify.VerifyAnalyzerAsync(test, expected);
         }
     }

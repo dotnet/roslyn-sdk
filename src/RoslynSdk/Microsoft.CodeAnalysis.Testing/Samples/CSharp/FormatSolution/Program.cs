@@ -14,31 +14,31 @@ static class Program
         MSBuildLocator.RegisterDefaults();
 
         // The test solution is copied to the output directory when you build this sample.
-        MSBuildWorkspace workspace = MSBuildWorkspace.Create();
+        var workspace = MSBuildWorkspace.Create();
 
         // Open the solution within the workspace.
-        Solution originalSolution = await workspace.OpenSolutionAsync(args[0]);
+        var originalSolution = await workspace.OpenSolutionAsync(args[0]);
 
         // Declare a variable to store the intermediate solution snapshot at each step.
-        Solution newSolution = originalSolution;
+        var newSolution = originalSolution;
 
         // Note how we can't simply iterate over originalSolution.Projects or project.Documents
         // because it will return objects from the unmodified originalSolution, not from the newSolution.
         // We need to use the ProjectIds and DocumentIds (that don't change) to look up the corresponding
         // snapshots in the newSolution.
-        foreach (ProjectId projectId in originalSolution.ProjectIds)
+        foreach (var projectId in originalSolution.ProjectIds)
         {
             // Look up the snapshot for the original project in the latest forked solution.
-            Project project = newSolution.GetProject(projectId);
+            var project = newSolution.GetProject(projectId);
 
-            foreach (DocumentId documentId in project.DocumentIds)
+            foreach (var documentId in project.DocumentIds)
             {
                 // Look up the snapshot for the original document in the latest forked solution.
-                Document document = newSolution.GetDocument(documentId);
+                var document = newSolution.GetDocument(documentId);
 
                 // Get a transformed version of the document (a new solution snapshot is created
                 // under the covers to contain it - none of the existing objects are modified).
-                Document newDocument = await Formatter.FormatAsync(document);
+                var newDocument = await Formatter.FormatAsync(document);
 
                 // Store the solution implicitly constructed in the previous step as the latest
                 // one so we can continue building it up in the next iteration.

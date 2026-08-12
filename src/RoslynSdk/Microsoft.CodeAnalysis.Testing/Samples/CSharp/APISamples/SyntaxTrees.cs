@@ -14,22 +14,22 @@ namespace APISamples
         [Fact]
         public void FindNodeUsingMembers()
         {
-            string text = "class C { void M(int i) { } }";
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(text);
-            CompilationUnitSyntax compilationUnit = (CompilationUnitSyntax)tree.GetRoot();
-            TypeDeclarationSyntax typeDeclaration = (TypeDeclarationSyntax)compilationUnit.Members[0];
-            MethodDeclarationSyntax methodDeclaration = (MethodDeclarationSyntax)typeDeclaration.Members[0];
-            ParameterSyntax parameter = methodDeclaration.ParameterList.Parameters[0];
-            SyntaxToken parameterName = parameter.Identifier;
+            var text = "class C { void M(int i) { } }";
+            var tree = SyntaxFactory.ParseSyntaxTree(text);
+            var compilationUnit = (CompilationUnitSyntax)tree.GetRoot();
+            var typeDeclaration = (TypeDeclarationSyntax)compilationUnit.Members[0];
+            var methodDeclaration = (MethodDeclarationSyntax)typeDeclaration.Members[0];
+            var parameter = methodDeclaration.ParameterList.Parameters[0];
+            var parameterName = parameter.Identifier;
             Assert.Equal("i", parameterName.ValueText);
         }
 
         [Fact]
         public void FindNodeUsingQuery()
         {
-            string text = "class C { void M(int i) { } }";
+            var text = "class C { void M(int i) { } }";
             SyntaxNode root = SyntaxFactory.ParseCompilationUnit(text);
-            ParameterSyntax parameterDeclaration = root
+            var parameterDeclaration = root
                 .DescendantNodes()
                 .OfType<ParameterSyntax>()
                 .First();
@@ -39,14 +39,14 @@ namespace APISamples
         [Fact]
         public void UpdateNode()
         {
-            string text = "class C { void M() { } }";
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(text);
-            CompilationUnitSyntax root = (CompilationUnitSyntax)tree.GetRoot();
-            MethodDeclarationSyntax method = root
+            var text = "class C { void M() { } }";
+            var tree = SyntaxFactory.ParseSyntaxTree(text);
+            var root = (CompilationUnitSyntax)tree.GetRoot();
+            var method = root
                 .DescendantNodes()
                 .OfType<MethodDeclarationSyntax>()
                 .First();
-            MethodDeclarationSyntax newMethod = method.Update(
+            var newMethod = method.Update(
                 method.AttributeLists,
                 method.Modifiers,
                 method.ReturnType,
@@ -67,17 +67,17 @@ namespace APISamples
         [Fact]
         public void InsertNode()
         {
-            string text = "class C { void M() { } }";
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(text);
-            CompilationUnitSyntax root = (CompilationUnitSyntax)tree.GetRoot();
-            ClassDeclarationSyntax classNode = root.ChildNodes().First() as ClassDeclarationSyntax;
+            var text = "class C { void M() { } }";
+            var tree = SyntaxFactory.ParseSyntaxTree(text);
+            var root = (CompilationUnitSyntax)tree.GetRoot();
+            var classNode = root.ChildNodes().First() as ClassDeclarationSyntax;
 
-            MethodDeclarationSyntax newMethod = SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName("int"), SyntaxFactory.Identifier("NewMethod"))
+            var newMethod = SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName("int"), SyntaxFactory.Identifier("NewMethod"))
                 .WithBody(SyntaxFactory.Block());
 
-            SyntaxList<MemberDeclarationSyntax> newMembers = SyntaxFactory.List<MemberDeclarationSyntax>(classNode.Members.Concat(new[] { newMethod }));
+            var newMembers = SyntaxFactory.List<MemberDeclarationSyntax>(classNode.Members.Concat(new[] { newMethod }));
 
-            ClassDeclarationSyntax newClass = SyntaxFactory.ClassDeclaration(
+            var newClass = SyntaxFactory.ClassDeclaration(
                 classNode.AttributeLists,
                 classNode.Modifiers,
                 classNode.Keyword,
@@ -107,9 +107,9 @@ namespace APISamples
         [Fact]
         public void WalkTreeUsingSyntaxWalker()
         {
-            string text = "class Class { void Method1() { } struct S { } void Method2() { } }";
+            var text = "class Class { void Method1() { } struct S { } void Method2() { } }";
             SyntaxNode node = SyntaxFactory.ParseCompilationUnit(text);
-            FileContentsDumper visitor = new FileContentsDumper();
+            var visitor = new FileContentsDumper();
             visitor.Visit(node);
             Assert.Equal(@"class Class
   Method1
@@ -121,9 +121,9 @@ struct S
         [Fact]
         public void TransformTreeUsingSyntaxRewriter()
         {
-            string text = "class C { void M() { } int field; }";
-            SyntaxTree tree = SyntaxFactory.ParseSyntaxTree(text);
-            SyntaxNode newRoot = new RemoveMethodsRewriter().Visit(tree.GetRoot());
+            var text = "class C { void M() { } int field; }";
+            var tree = SyntaxFactory.ParseSyntaxTree(text);
+            var newRoot = new RemoveMethodsRewriter().Visit(tree.GetRoot());
             Assert.Equal("class C { int field; }", newRoot.ToFullString());
         }
 

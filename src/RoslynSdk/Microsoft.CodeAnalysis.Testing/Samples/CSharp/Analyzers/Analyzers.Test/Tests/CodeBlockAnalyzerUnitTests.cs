@@ -12,7 +12,7 @@ namespace Sample.Analyzers.Test
         [Fact]
         public async Task CodeBlockAnalyzerTest()
         {
-            string test = @"
+            var test = @"
 class C
 {
     public void M1()

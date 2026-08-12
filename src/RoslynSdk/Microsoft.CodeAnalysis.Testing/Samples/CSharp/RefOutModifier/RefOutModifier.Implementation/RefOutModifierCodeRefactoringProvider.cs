@@ -13,9 +13,9 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
     {
         public sealed override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
         {
-            Document document = context.Document;
-            TextSpan textSpan = context.Span;
-            CancellationToken cancellationToken = context.CancellationToken;
+            var document = context.Document;
+            var textSpan = context.Span;
+            var cancellationToken = context.CancellationToken;
 
             // shouldn't have selection
             if (!textSpan.IsEmpty)
@@ -24,8 +24,8 @@ namespace Roslyn.Samples.AddOrRemoveRefOutModifier
             }
 
             // get applicable actions
-            ApplicableActionFinder finder = new ApplicableActionFinder(document, textSpan.Start, cancellationToken);
-            (TextSpan span, CodeAction action) = await finder.GetSpanAndActionAsync().ConfigureAwait(false);
+            var finder = new ApplicableActionFinder(document, textSpan.Start, cancellationToken);
+            (var span, var action) = await finder.GetSpanAndActionAsync().ConfigureAwait(false);
             if (action == null || !span.IntersectsWith(textSpan.Start))
             {
                 return;

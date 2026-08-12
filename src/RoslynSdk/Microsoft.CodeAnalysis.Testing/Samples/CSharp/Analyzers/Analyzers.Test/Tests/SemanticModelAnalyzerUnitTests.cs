@@ -12,7 +12,7 @@ namespace Sample.Analyzers.Test
         [Fact]
         public async Task SemanticModelAnalyzerTest()
         {
-            string test = @"
+            var test = @"
 class C
 {
     public async int M()

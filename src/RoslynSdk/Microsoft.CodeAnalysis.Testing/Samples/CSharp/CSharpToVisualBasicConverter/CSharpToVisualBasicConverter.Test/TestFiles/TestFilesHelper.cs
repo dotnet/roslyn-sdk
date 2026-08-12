@@ -9,9 +9,9 @@ namespace CSharpToVisualBasicConverter.UnitTests.TestFiles
     {
         public static string GetFile(string fileName)
         {
-            string fullName = "CSharpToVisualBasicConverter.Test.TestFiles." + fileName;
-            Stream resourceStream = Assembly.GetAssembly(typeof(TestFilesHelper)).GetManifestResourceStream(fullName);
-            using (StreamReader streamReader = new StreamReader(resourceStream))
+            var fullName = "CSharpToVisualBasicConverter.Test.TestFiles." + fileName;
+            var resourceStream = Assembly.GetAssembly(typeof(TestFilesHelper)).GetManifestResourceStream(fullName);
+            using (var streamReader = new StreamReader(resourceStream))
             {
                 return streamReader.ReadToEnd();
             }

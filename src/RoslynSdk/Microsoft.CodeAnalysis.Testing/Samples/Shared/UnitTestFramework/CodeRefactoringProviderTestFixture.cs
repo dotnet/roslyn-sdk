@@ -15,9 +15,9 @@ namespace Roslyn.UnitTestFramework
     {
         private IEnumerable<CodeAction> GetRefactoring(Document document, TextSpan span)
         {
-            CodeRefactoringProvider provider = CreateCodeRefactoringProvider;
-            List<CodeAction> actions = new List<CodeAction>();
-            CodeRefactoringContext context = new CodeRefactoringContext(document, span, (a) => actions.Add(a), CancellationToken.None);
+            var provider = CreateCodeRefactoringProvider;
+            var actions = new List<CodeAction>();
+            var context = new CodeRefactoringContext(document, span, (a) => actions.Add(a), CancellationToken.None);
             provider.ComputeRefactoringsAsync(context).Wait();
             return actions;
         }
@@ -29,10 +29,10 @@ namespace Roslyn.UnitTestFramework
                 markup = markup.Replace("\n", "\r\n");
             }
 
-            MarkupTestFile.GetSpan(markup, out string code, out TextSpan span);
+            MarkupTestFile.GetSpan(markup, out var code, out var span);
 
-            Document document = CreateDocument(code);
-            IEnumerable<CodeAction> actions = GetRefactoring(document, span);
+            var document = CreateDocument(code);
+            var actions = GetRefactoring(document, span);
 
             Assert.True(actions == null || actions.Count() == 0);
         }
@@ -53,17 +53,17 @@ namespace Roslyn.UnitTestFramework
                 expected = expected.Replace("\n", "\r\n");
             }
 
-            MarkupTestFile.GetSpan(markup, out string code, out TextSpan span);
+            MarkupTestFile.GetSpan(markup, out var code, out var span);
 
-            Document document = CreateDocument(code);
-            IEnumerable<CodeAction> actions = GetRefactoring(document, span);
+            var document = CreateDocument(code);
+            var actions = GetRefactoring(document, span);
 
             Assert.NotNull(actions);
 
-            CodeAction action = actions.ElementAt(actionIndex);
+            var action = actions.ElementAt(actionIndex);
             Assert.NotNull(action);
 
-            ApplyChangesOperation edit = action.GetOperationsAsync(CancellationToken.None).Result.OfType<ApplyChangesOperation>().First();
+            var edit = action.GetOperationsAsync(CancellationToken.None).Result.OfType<ApplyChangesOperation>().First();
             VerifyDocument(expected, compareTokens, edit.ChangedSolution.GetDocument(document.Id));
         }
 

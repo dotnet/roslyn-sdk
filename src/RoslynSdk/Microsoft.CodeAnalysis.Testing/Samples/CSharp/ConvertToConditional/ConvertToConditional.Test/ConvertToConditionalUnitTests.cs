@@ -12,7 +12,7 @@ namespace ConvertToConditional.Test
         [Fact]
         public void ReturnSimpleCase()
         {
-            string initialCode =
+            var initialCode =
 @"class C
 {
     int M(bool p)
@@ -24,7 +24,7 @@ namespace ConvertToConditional.Test
     }
 }";
 
-            string expectedCode =
+            var expectedCode =
 @"class C
 {
     int M(bool p)
@@ -39,7 +39,7 @@ namespace ConvertToConditional.Test
         [Fact]
         public void ReturnCastToReturnType()
         {
-            string initialCode =
+            var initialCode =
 @"class C
 {
     byte M(bool p)
@@ -51,7 +51,7 @@ namespace ConvertToConditional.Test
     }
 }";
 
-            string expectedCode =
+            var expectedCode =
 @"class C
 {
     byte M(bool p)
@@ -66,7 +66,7 @@ namespace ConvertToConditional.Test
         [Fact]
         public void ReturnReferenceTypes()
         {
-            string initialCode =
+            var initialCode =
 @"class A
 {
 }
@@ -90,7 +90,7 @@ class D
     }
 }";
 
-            string expectedCode =
+            var expectedCode =
 @"class A
 {
 }
@@ -117,7 +117,7 @@ class D
         [Fact]
         public void ReturnReferenceTypesWithCast()
         {
-            string initialCode =
+            var initialCode =
 @"class A
 {
 }
@@ -141,7 +141,7 @@ class D
     }
 }";
 
-            string expectedCode =
+            var expectedCode =
 @"class A
 {
 }
@@ -168,7 +168,7 @@ class D
         [Fact]
         public void ParenthesizeConditionThatIsBooleanAssignment_Bug8236()
         {
-            string initialCode =
+            var initialCode =
 @"using System;
 
 public class C
@@ -187,7 +187,7 @@ public class C
 }
 ";
 
-            string expectedCode =
+            var expectedCode =
 @"using System;
 
 public class C
@@ -205,7 +205,7 @@ public class C
         [Fact]
         public void ParenthesizeLambdaIfNeeded_Bug8238()
         {
-            string initialCode =
+            var initialCode =
 @"using System;
 
 public class C
@@ -224,7 +224,7 @@ public class C
 }
 ";
 
-            string expectedCode =
+            var expectedCode =
 @"using System;
 
 public class C

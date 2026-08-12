@@ -17,14 +17,14 @@ namespace GeneratedDemo
     {
         public static void Run()
         {
-            ExampleViewModel vm = new ExampleViewModel();
+            var vm = new ExampleViewModel();
 
             // we didn't explicitly create the 'Text' property, it was generated for us 
-            string text = vm.Text;
+            var text = vm.Text;
             Console.WriteLine($"Text = {text}");
 
             // Properties can have differnt names generated based on the PropertyName argument of the attribute
-            int count = vm.Count;
+            var count = vm.Count;
             Console.WriteLine($"Count = {count}");
 
             // the viewmodel will automatically implement INotifyPropertyChanged

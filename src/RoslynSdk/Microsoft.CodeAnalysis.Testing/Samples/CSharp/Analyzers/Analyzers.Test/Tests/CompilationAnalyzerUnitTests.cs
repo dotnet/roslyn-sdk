@@ -16,7 +16,7 @@ namespace Sample.Analyzers.Test
         [Fact]
         public async Task CompilationAnalyzerTest()
         {
-            string test = @"
+            var test = @"
 class C
 {
     public void M()
@@ -24,7 +24,7 @@ class C
     }
 }";
 
-            KeyValuePair<string, ReportDiagnostic> specificOption =
+            var specificOption =
                 new KeyValuePair<string, ReportDiagnostic>(DiagnosticIds.SymbolAnalyzerRuleId, ReportDiagnostic.Error);
 
             await new CSharpAnalyzerTest<CompilationAnalyzer, DefaultVerifier>
@@ -38,7 +38,7 @@ class C
                 {
                     (solution, projectId) =>
                     {
-                        CSharpCompilationOptions options = (CSharpCompilationOptions)solution.GetProject(projectId).CompilationOptions
+                        var options = (CSharpCompilationOptions)solution.GetProject(projectId).CompilationOptions
                             .WithOutputKind(OutputKind.ConsoleApplication)
                             .WithSpecificDiagnosticOptions(new[] { specificOption });
                         return solution.WithProjectCompilationOptions(projectId, options);
@@ -59,7 +59,7 @@ class C
                 {
                     (solution, projectId) =>
                     {
-                        CSharpCompilationOptions options = (CSharpCompilationOptions)solution.GetProject(projectId).CompilationOptions
+                        var options = (CSharpCompilationOptions)solution.GetProject(projectId).CompilationOptions
                             .WithOutputKind(OutputKind.ConsoleApplication)
                             .WithSpecificDiagnosticOptions(new[] { specificOption });
                         return solution.WithProjectCompilationOptions(projectId, options);

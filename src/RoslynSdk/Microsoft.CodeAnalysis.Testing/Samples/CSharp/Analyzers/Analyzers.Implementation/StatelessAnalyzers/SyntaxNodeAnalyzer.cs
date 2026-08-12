@@ -45,10 +45,10 @@ namespace Sample.Analyzers
         private static void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext context)
         {
             // Find implicitly typed variable declarations.
-            VariableDeclarationSyntax declaration = (VariableDeclarationSyntax)context.Node;
+            var declaration = (VariableDeclarationSyntax)context.Node;
             if (declaration.Type.IsVar)
             {
-                foreach (VariableDeclaratorSyntax variable in declaration.Variables)
+                foreach (var variable in declaration.Variables)
                 {
                     // For all such locals, report a diagnostic.
                     context.ReportDiagnostic(

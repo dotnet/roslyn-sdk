@@ -18,18 +18,18 @@ namespace ConvertToAutoProperty
     {
         public sealed override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
         {
-            Document document = context.Document;
-            Microsoft.CodeAnalysis.Text.TextSpan textSpan = context.Span;
-            CancellationToken cancellationToken = context.CancellationToken;
+            var document = context.Document;
+            var textSpan = context.Span;
+            var cancellationToken = context.CancellationToken;
 
-            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxToken token = root.FindToken(textSpan.Start);
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var token = root.FindToken(textSpan.Start);
             if (token.Parent == null)
             {
                 return;
             }
 
-            PropertyDeclarationSyntax propertyDeclaration = token.Parent.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
+            var propertyDeclaration = token.Parent.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
 
             // Refactor only properties with both a getter and a setter.
             if (propertyDeclaration == null ||
@@ -50,9 +50,9 @@ namespace ConvertToAutoProperty
         /// </summary>
         private static bool HasBothAccessors(BasePropertyDeclarationSyntax property)
         {
-            SyntaxList<AccessorDeclarationSyntax> accessors = property.AccessorList.Accessors;
-            AccessorDeclarationSyntax getter = accessors.FirstOrDefault(ad => ad.Kind() == SyntaxKind.GetAccessorDeclaration);
-            AccessorDeclarationSyntax setter = accessors.FirstOrDefault(ad => ad.Kind() == SyntaxKind.SetAccessorDeclaration);
+            var accessors = property.AccessorList.Accessors;
+            var getter = accessors.FirstOrDefault(ad => ad.Kind() == SyntaxKind.GetAccessorDeclaration);
+            var setter = accessors.FirstOrDefault(ad => ad.Kind() == SyntaxKind.SetAccessorDeclaration);
 
             if (getter != null && setter != null)
             {
@@ -65,35 +65,35 @@ namespace ConvertToAutoProperty
 
         private async Task<Document> ConvertToAutoPropertyAsync(Document document, PropertyDeclarationSyntax property, CancellationToken cancellationToken)
         {
-            SyntaxTree tree = (SyntaxTree)await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-            SemanticModel semanticModel = (SemanticModel)await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var tree = (SyntaxTree)await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+            var semanticModel = (SemanticModel)await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             // Retrieves the get accessor declarations of the specified property.
-            AccessorDeclarationSyntax getter = property.AccessorList.Accessors.FirstOrDefault(ad => ad.Kind() == SyntaxKind.GetAccessorDeclaration);
+            var getter = property.AccessorList.Accessors.FirstOrDefault(ad => ad.Kind() == SyntaxKind.GetAccessorDeclaration);
 
             // Retrieves the type that contains the specified property
-            INamedTypeSymbol containingType = semanticModel.GetDeclaredSymbol(property).ContainingType;
+            var containingType = semanticModel.GetDeclaredSymbol(property).ContainingType;
 
             // Find the backing field of the property
-            ISymbol backingField = await GetBackingFieldAsync(document, getter, containingType, cancellationToken).ConfigureAwait(false);
+            var backingField = await GetBackingFieldAsync(document, getter, containingType, cancellationToken).ConfigureAwait(false);
 
             // Rewrite property
-            PropertyRewriter propertyRewriter = new PropertyRewriter(semanticModel, backingField, property);
-            SyntaxNode root = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxNode newRoot = propertyRewriter.Visit(root);
+            var propertyRewriter = new PropertyRewriter(semanticModel, backingField, property);
+            var root = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+            var newRoot = propertyRewriter.Visit(root);
 
             return document.WithSyntaxRoot(newRoot);
         }
 
         private async Task<ISymbol> GetBackingFieldAsync(Document document, AccessorDeclarationSyntax getter, INamedTypeSymbol containingType, CancellationToken cancellationToken)
         {
-            SyntaxList<StatementSyntax> statements = getter.Body.Statements;
+            var statements = getter.Body.Statements;
             if (statements.Count == 1)
             {
                 if (statements.FirstOrDefault() is ReturnStatementSyntax returnStatement && returnStatement.Expression != null)
                 {
-                    SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-                    SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(returnStatement.Expression);
+                    var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                    var symbolInfo = semanticModel.GetSymbolInfo(returnStatement.Expression);
 
                     if (symbolInfo.Symbol is IFieldSymbol fieldSymbol && Equals(fieldSymbol.OriginalDefinition.ContainingType, containingType))
                     {

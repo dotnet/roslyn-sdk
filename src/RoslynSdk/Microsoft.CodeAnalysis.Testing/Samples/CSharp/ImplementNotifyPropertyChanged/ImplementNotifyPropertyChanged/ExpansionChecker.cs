@@ -15,7 +15,7 @@ namespace ImplementNotifyPropertyChangedCS
     {
         internal static IEnumerable<ExpandablePropertyInfo> GetExpandableProperties(TextSpan span, SyntaxNode root, SemanticModel model)
         {
-            IEnumerable<IGrouping<TypeDeclarationSyntax, ExpandablePropertyInfo>> propertiesInTypes = root.DescendantNodes(span)
+            var propertiesInTypes = root.DescendantNodes(span)
                        .OfType<PropertyDeclarationSyntax>()
                        .Select(p => GetExpandablePropertyInfo(p, model))
                        .Where(p => p != null)
@@ -43,7 +43,7 @@ namespace ImplementNotifyPropertyChangedCS
                 return null;
             }
 
-            if (!TryGetAccessors(property, out AccessorDeclarationSyntax getter, out AccessorDeclarationSyntax setter))
+            if (!TryGetAccessors(property, out var getter, out var setter))
             {
                 return null;
             }
@@ -59,7 +59,7 @@ namespace ImplementNotifyPropertyChangedCS
                 };
             }
 
-            return (TryGetBackingFieldFromExpandableGetter(getter, model, out IFieldSymbol backingField)
+            return (TryGetBackingFieldFromExpandableGetter(getter, model, out var backingField)
                 && IsExpandableSetter(setter, model, backingField))
                 ? new ExpandablePropertyInfo { PropertyDeclaration = property, BackingFieldName = backingField.Name }
                 : null;
@@ -74,7 +74,7 @@ namespace ImplementNotifyPropertyChangedCS
             out AccessorDeclarationSyntax getter,
             out AccessorDeclarationSyntax setter)
         {
-            SyntaxList<AccessorDeclarationSyntax> accessors = property.AccessorList.Accessors;
+            var accessors = property.AccessorList.Accessors;
             getter = accessors.FirstOrDefault(ad => ad.Kind() == SyntaxKind.GetAccessorDeclaration);
             setter = accessors.FirstOrDefault(ad => ad.Kind() == SyntaxKind.SetAccessorDeclaration);
 
@@ -83,18 +83,18 @@ namespace ImplementNotifyPropertyChangedCS
 
         private static string GenerateFieldName(PropertyDeclarationSyntax property, SemanticModel semanticModel)
         {
-            string baseName = property.Identifier.ValueText;
+            var baseName = property.Identifier.ValueText;
             baseName = char.ToLower(baseName[0]).ToString() + baseName.Substring(1);
 
-            IPropertySymbol propertySymbol = semanticModel.GetDeclaredSymbol(property);
+            var propertySymbol = semanticModel.GetDeclaredSymbol(property);
             if (propertySymbol == null ||
                 propertySymbol.ContainingType == null)
             {
                 return baseName;
             }
 
-            int index = 0;
-            string name = baseName;
+            var index = 0;
+            var name = baseName;
             while (propertySymbol.ContainingType.MemberNames.Contains(name))
             {
                 name = baseName + (++index).ToString();
@@ -114,7 +114,7 @@ namespace ImplementNotifyPropertyChangedCS
                 return null;
             }
 
-            SyntaxList<StatementSyntax> statements = getter.Body.Statements;
+            var statements = getter.Body.Statements;
             if (statements.Count != 1)
             {
                 return null;
@@ -162,7 +162,7 @@ namespace ImplementNotifyPropertyChangedCS
                 return false;
             }
 
-            AssignmentExpressionSyntax assignment = (AssignmentExpressionSyntax)expression;
+            var assignment = (AssignmentExpressionSyntax)expression;
 
             return IsBackingField(assignment.Left, backingField, semanticModel)
                 && IsPropertyValueParameter(assignment.Right, semanticModel);
@@ -205,7 +205,7 @@ namespace ImplementNotifyPropertyChangedCS
             // Pattern: field = value
             Debug.Assert(setter.Body != null);
 
-            SyntaxList<StatementSyntax> statements = setter.Body.Statements;
+            var statements = setter.Body.Statements;
             if (statements.Count != 1)
             {
                 return false;
@@ -223,7 +223,7 @@ namespace ImplementNotifyPropertyChangedCS
             // Pattern: if (field != value) field = value;
             Debug.Assert(setter.Body != null);
 
-            SyntaxList<StatementSyntax> statements = setter.Body.Statements;
+            var statements = setter.Body.Statements;
             if (statements.Count != 1)
             {
                 return false;
@@ -234,10 +234,10 @@ namespace ImplementNotifyPropertyChangedCS
                 return false;
             }
 
-            StatementSyntax statement = ifStatement.Statement;
-            if (statement is BlockSyntax)
+            var statement = ifStatement.Statement;
+            if (statement is BlockSyntax block)
             {
-                SyntaxList<StatementSyntax> blockStatements = ((BlockSyntax)statement).Statements;
+                var blockStatements = block.Statements;
                 if (blockStatements.Count != 1)
                 {
                     return false;
@@ -274,7 +274,7 @@ namespace ImplementNotifyPropertyChangedCS
 
             Debug.Assert(setter.Body != null);
 
-            SyntaxList<StatementSyntax> statements = setter.Body.Statements;
+            var statements = setter.Body.Statements;
             if (statements.Count != 2)
             {
                 return false;
@@ -285,10 +285,10 @@ namespace ImplementNotifyPropertyChangedCS
                 return false;
             }
 
-            StatementSyntax statement = ifStatement.Statement;
-            if (statement is BlockSyntax)
+            var statement = ifStatement.Statement;
+            if (statement is BlockSyntax block)
             {
-                SyntaxList<StatementSyntax> blockStatements = ((BlockSyntax)statement).Statements;
+                var blockStatements = block.Statements;
                 if (blockStatements.Count != 1)
                 {
                     return false;
