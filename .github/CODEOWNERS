@@ -5,4 +5,4 @@
 .github/ @dotnet/roslyn-infrastructure
 build/ @dotnet/roslyn-infrastructure
 src/ @dotnet/roslyn-sdk
-src/RoslynSdk/Microsoft.CodeAnalysis.Testing/Samples/ @dotnet/analyzer-samples
+src/RoslynSdk/Samples/ @dotnet/analyzer-samples
