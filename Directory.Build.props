@@ -6,6 +6,8 @@
     <Features>strict</Features>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
+    <!-- Match Roslyn until package source mapping is configured: https://github.com/dotnet/roslyn/issues/71667 -->
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
   </PropertyGroup>
 
   <!--
