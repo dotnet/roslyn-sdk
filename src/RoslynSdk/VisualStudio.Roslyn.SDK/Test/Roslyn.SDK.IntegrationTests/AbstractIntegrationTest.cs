@@ -7,8 +7,7 @@ using Xunit;
 
 namespace Microsoft.CodeAnalysis.Testing
 {
-    // Preserve DOTNET_ROOT so Visual Studio can resolve the repo-local SDK selected by the build.
-    [IdeSettings(MinVersion = VisualStudioVersion.VS18, MaxAttempts = 2, EnvironmentVariables = new[] { "DOTNET_MULTILEVEL_LOOKUP=", "DOTNET_INSTALL_DIR=", "DotNetRoot=", "DotNetTool=" })]
+    [IdeSettings(MinVersion = VisualStudioVersion.VS18, MaxAttempts = 2, EnvironmentVariables = new[] { "DOTNET_MULTILEVEL_LOOKUP=", "DOTNET_INSTALL_DIR=", "DOTNET_ROOT=", "DotNetRoot=", "DotNetTool=" })]
     public abstract class AbstractIntegrationTest : AbstractIdeIntegrationTest
     {
     }
