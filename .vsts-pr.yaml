@@ -1,79 +1,16 @@
-# Branches that trigger a build on commit
-trigger:
-- main
-- dev17.0
-
-# Branches that trigger builds on PR
 pr:
 - main
-- dev17.0
 
 variables:
-  - template: /eng/common/templates/variables/pool-providers.yml
-  - name: XUNIT_LOGS
-    value: $(Build.SourcesDirectory)\artifacts\log\$(_configuration)
-  - name: MSBUILDLOGALLENVIRONMENTVARIABLES
-    value: 1
+- template: /eng/common/templates/variables/pool-providers.yml
 
-jobs:
-- job: Windows
-  pool:
-    name: $(DncEngPublicBuildPool)
-    demands: ImageOverride -equals windows.vs2026.amd64.open
-  strategy:
-    maxParallel: 6
-    matrix:
-      Samples Debug Test:
-        _args: -test
-        _configuration: Debug
-        _solution: Samples
-      Samples Release Test:
-        _args: -test
-        _configuration: Release
-        _solution: Samples
-      SDK Debug Test:
-        _args: -test -integrationTest
-        _configuration: Debug
-        _solution: Roslyn-SDK
-      SDK Release Test:
-        _args: -test -integrationTest
-        _configuration: Release
-        _solution: Roslyn-SDK
-      SDK Pack:
-        _args: -pack
-        _configuration: Release
-        _solution: Roslyn-SDK
-      SDK Sign:
-        _args: -sign
-        _configuration: Release
-        _solution: Roslyn-SDK
-  timeoutInMinutes: 90
+pool:
+  name: $(DncEngPublicBuildPool)
+  demands: ImageOverride -equals windows.vs2026.amd64.open
 
-  steps:
-    - task: UseDotNet@2
-      displayName: Install .NET 11 preview SDK
-      inputs:
-        packageType: sdk
-        version: 11.0.100-preview.6.26359.118
-        installationPath: $(Agent.ToolsDirectory)\dotnet
-    - script: |
-        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpType /t REG_DWORD /d 2
-        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpCount /t REG_DWORD /d 2
-        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpFolder /t REG_SZ /d "$(Build.SourcesDirectory)\artifacts\log\$(_configuration)"
-    - script: eng\PRBuild.cmd $(_args) -configuration $(_configuration) -prepareMachine -projects $(Build.SourcesDirectory)\$(_solution).sln /p:OfficialBuild=false
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
-        ArtifactName: '$(_solution) $(_configuration) logs'
-        publishLocation: Container
-      continueOnError: true
-      condition: not(succeeded())
-    - task: PublishTestResults@2
-      inputs:
-        testRunner: 'xUnit'
-        testResultsFiles: '**/*.xml'
-        searchFolder: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)'
-        configuration: '$(_configuration)'
-        publishRunAttachments: true
-      continueOnError: true
-      condition: and(always(), contains(variables['_args'], '-test'))
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: sdk
+    useGlobalJson: true
+    includePreviewVersions: true
