@@ -50,13 +50,12 @@ jobs:
   timeoutInMinutes: 90
 
   steps:
-    - powershell: |
-        . "$(Build.SourcesDirectory)\eng\common\tools.ps1"
-        $sdkVersion = (Get-Content "$(Build.SourcesDirectory)\global.json" -Raw | ConvertFrom-Json).sdk.version
-        $dotnetPath = "$(Agent.ToolsDirectory)\dotnet"
-        InstallDotNetSdk -dotnetRoot $dotnetPath -version $sdkVersion
-        Write-PipelinePrependPath -Path $dotnetPath
-      displayName: Install .NET SDK from global.json
+    - task: UseDotNet@2
+      displayName: Install .NET 11 preview SDK
+      inputs:
+        packageType: sdk
+        version: 11.0.100-preview.6.26359.118
+        installationPath: $(Agent.ToolsDirectory)\dotnet
     - script: |
         reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpType /t REG_DWORD /d 2
         reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpCount /t REG_DWORD /d 2
