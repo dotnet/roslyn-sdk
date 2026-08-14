@@ -10,8 +10,6 @@ pr:
 
 variables:
   - template: /eng/common/templates/variables/pool-providers.yml
-  - name: DOTNET_ROOT
-    value: $(Build.SourcesDirectory)\.dotnet
   - name: XUNIT_LOGS
     value: $(Build.SourcesDirectory)\artifacts\log\$(_configuration)
   - name: MSBUILDLOGALLENVIRONMENTVARIABLES
@@ -52,11 +50,18 @@ jobs:
   timeoutInMinutes: 90
 
   steps:
+    - task: UseDotNet@2
+      displayName: Install .NET 11 preview SDK
+      inputs:
+        packageType: sdk
+        version: 11.0.100-preview.6.26359.118
+        installationPath: $(Agent.ToolsDirectory)\dotnet
     - script: |
         reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpType /t REG_DWORD /d 2
         reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpCount /t REG_DWORD /d 2
         reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /f /v DumpFolder /t REG_SZ /d "$(Build.SourcesDirectory)\artifacts\log\$(_configuration)"
     - script: eng\PRBuild.cmd $(_args) -configuration $(_configuration) -prepareMachine -projects $(Build.SourcesDirectory)\$(_solution).sln /p:OfficialBuild=false
+      displayName: Build and test
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
