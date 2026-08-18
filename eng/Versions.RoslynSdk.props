@@ -9,7 +9,7 @@
 
   <!-- Defaults used only by Roslyn SDK projects. Later Roslyn values take precedence unless explicitly retained by the final compatibility overrides. -->
   <PropertyGroup>
-    <MicrosoftCodeAnalysisPackagesVersion>4.1.0</MicrosoftCodeAnalysisPackagesVersion>
+    <MicrosoftCodeAnalysisPackagesVersion>4.12.0</MicrosoftCodeAnalysisPackagesVersion>
     <MicrosoftVisualStudioShellPackagesVersion>17.3.32809.331</MicrosoftVisualStudioShellPackagesVersion>
     <MicrosoftVisualStudioEditorPackagesVersion>17.3.198</MicrosoftVisualStudioEditorPackagesVersion>
     <MicrosoftVisualStudioExtensibilityTestingVersion>5.10.0-1.26371.19</MicrosoftVisualStudioExtensibilityTestingVersion>
@@ -56,6 +56,8 @@
     <SystemCollectionsImmutable10Version>10.0.8</SystemCollectionsImmutable10Version>
     <SystemMemoryVersion>4.6.3</SystemMemoryVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.1.2</SystemRuntimeCompilerServicesUnsafeVersion>
+    <SystemTextJsonVersion>10.0.10</SystemTextJsonVersion>
+    <SystemThreadingTasksDataflowVersion>10.0.10</SystemThreadingTasksDataflowVersion>
     <SystemThreadingTasksExtensionsVersion>4.6.3</SystemThreadingTasksExtensionsVersion>
     <VSLangProjVersion>$(MicrosoftVisualStudioShellPackagesVersion)</VSLangProjVersion>
     <MicrosoftVisualStudioTemplateWizardInterfaceVersion>17.0.0-preview-1-30928-1111</MicrosoftVisualStudioTemplateWizardInterfaceVersion>
@@ -67,6 +69,7 @@
     <DiffPlexVersion>1.7.2</DiffPlexVersion>
     <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
     <MicrosoftCodeAnalysisTestingVersion>1.1.3-beta1.25564.1</MicrosoftCodeAnalysisTestingVersion>
+    <MicrosoftNETTestSdkVersion>17.14.1</MicrosoftNETTestSdkVersion>
     <xunitassertVersion>$(xunitVersion)</xunitassertVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
     <MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>$(MicrosoftVisualStudioExtensibilityTestingVersion)</MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>
