@@ -1,6 +1,7 @@
 <Project>
   <!-- Signing.props is a required file for the signing validation step. -->
   <ItemGroup>
-
+    <FileSignInfo Include="Nerdbank.MessagePack.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="PolyType.dll" CertificateName="3PartySHA2" />
   </ItemGroup>
 </Project>
